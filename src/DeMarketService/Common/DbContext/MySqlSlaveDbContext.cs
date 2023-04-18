@@ -14,6 +14,11 @@ namespace deMarketService.DbContext
             base.OnModelCreating(builder);
         }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            base.OnConfiguring(optionsBuilder);
+        }
+
         public virtual DbSet<event_logs> event_logs { get; set; }
         public virtual DbSet<orders> orders { get; set; }
         public virtual DbSet<users> users { get; set; }

@@ -12,6 +12,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using System.Text;
+using deMarketService.Proxies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace deMarketService
 {
@@ -21,7 +24,7 @@ namespace deMarketService
         {
             //var builder = new ConfigurationBuilder()
             //    .AddApollo(configuration.GetSection("apollo"))
-            //    .AddNamespace("backend.share")
+            //    .AddNamespace("backend.share") 
             //    .AddDefault();
 
             //Configuration = builder.Build();
@@ -34,10 +37,10 @@ namespace deMarketService
         {
             EncodingProvider provider = CodePagesEncodingProvider.Instance;
             Encoding.RegisterProvider(provider);
-            var identityConn = "Server=39.98.64.53:3306;Database=identities;Uid=buqun;Pwd=Md__1208;sslMode=None;";//Configuration[StringConstant.DatabaseConnectionString];
-            var identityConnRead = "Server=39.98.64.53:3306;Database=identities;Uid=buqun;Pwd=Md__1208;sslMode=None;";//Configuration[StringConstant.DatabaseConnectionString_ReadOnly];
-            services.AddScoped<ExLogFilter>();
+            var identityConn = "Server=97.74.86.12;Database=ebay;Uid=dev;Pwd=Dev@1234;sslMode=None;";//Configuration[StringConstant.DatabaseConnectionString];
 
+            services.AddScoped<ExLogFilter>();
+            services.AddScoped<TokenFilter>();
             services
                 .AddHttpClient()
                 //.AddSingleton(Configuration)
@@ -52,9 +55,14 @@ namespace deMarketService
                    .AllowAnyMethod();
                     });
                 })
-                .AddDbContextPool<MySqlMasterDbContext>(options => options.UseMySql(identityConn), 800)
-                .AddDbContextPool<MySqlSlaveDbContext>(options => options.UseMySql(identityConnRead), 800)
-                .AddMvc(options => options.Filters.Add<ExLogFilter>())
+                //.AddDbContext<MySqlMasterDbContext>(options => options.UseMySql(identityConn))
+                .AddDbContext<MySqlMasterDbContext>(options => options.UseMySql(identityConn, builder => builder.EnableRetryOnFailure()))
+                .AddMvc(
+                options => {
+                    options.Filters.Add<ExLogFilter>();
+                    options.Filters.Add<TokenFilter>();
+                    }
+                )
                 .AddJsonOptions(options =>
                 {
                     options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
@@ -76,6 +84,24 @@ namespace deMarketService
              {
                  options.IncludeXmlComments(System.IO.Path.Combine(Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application.ApplicationBasePath, "deMarketService.xml"));
              });
+
+            //services.AddAuthentication(options =>
+            //{
+            //    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            //    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            //}).AddJwtBearer(options =>
+            //{
+            //    options.TokenValidationParameters = new TokenValidationParameters
+            //    {
+            //        ValidateIssuer = true,
+            //        ValidateAudience = true,
+            //        ValidateLifetime = true,
+            //        ValidateIssuerSigningKey = true,
+            //        ValidIssuer = "deMarketIssuer",
+            //        ValidAudience = "deMarketAudience",
+            //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("f9d4f3ed-a81c-44ed-a42b-d25458c9fcb4"))
+            //    };
+            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
