@@ -2,9 +2,13 @@
 using deMarketService.Common.Model.HttpApiModel.RequestModel;
 using deMarketService.Common.Model.HttpApiModel.ResponseModel;
 using deMarketService.DbContext;
+using deMarketService.Services.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,10 +19,12 @@ namespace deMarketService.Controllers
     public class OrderController : Controller
     {
         MySqlMasterDbContext _mySqlMasterDbContext;
+        private readonly ITxCosUploadeService txCosUploadeService;
 
-        public OrderController(MySqlMasterDbContext mySqlMasterDbContext)
+        public OrderController(MySqlMasterDbContext mySqlMasterDbContext, ITxCosUploadeService txCosUploadeService)
         {
             _mySqlMasterDbContext = mySqlMasterDbContext;
+            this.txCosUploadeService = txCosUploadeService;
         }
 
         /// <summary>
@@ -27,9 +33,38 @@ namespace deMarketService.Controllers
         /// <param name = "req" ></ param >
         /// < returns ></ returns >
         [HttpPost("upload")]
-        public async Task<WebApiResult> upload([FromBody] ReqOrdersVo req)
+        public async Task<JsonResult> upload([FromForm] IFormCollection formCollection)
         {
-            return new WebApiResult(1, "上传图片");
+            if ((formCollection == null || formCollection.Files.Count == 0))
+            {
+                return Json(new WebApiResult(-1, "没有可上传的文件"));
+            }
+            var file = formCollection.Files[0];
+
+            var cosName = string.Format("{0}_{1}_cp{2}", DateTime.Now.ToString("yyyyMMddhhmmss"), new Random().Next(10000), Path.GetExtension(file.FileName));
+
+            using (var stream = file.OpenReadStream())
+            {
+                var bytes = ToByteArray(stream);
+                var res = await txCosUploadeService.Upload(bytes, cosName);
+                return Json(new WebApiResult(1, "上传图片", res));
+            }
+
+        }
+
+
+        private byte[] ToByteArray(Stream input)
+        {
+            byte[] buffer = new byte[16 * 1024];
+            using (var ms = new MemoryStream())
+            {
+                int read;
+                while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    ms.Write(buffer, 0, read);
+                }
+                return ms.ToArray();
+            }
         }
 
 
@@ -39,9 +74,15 @@ namespace deMarketService.Controllers
         /// <param name = "req" ></ param >
         /// < returns ></ returns >
         [HttpPost("list")]
-        public async Task<WebApiResult> list([FromBody] ReqOrdersVo req)
+        public async Task<JsonResult> list([FromBody] ReqOrdersVo req)
         {
-            return new WebApiResult(1, "看名称好形势-我的订单列表");
+            var queryEntities = _mySqlMasterDbContext.orders.AsNoTracking().AsQueryable();
+            var totalCount = await queryEntities.CountAsync();
+            queryEntities = queryEntities.OrderByDescending(p => p.create_time).Skip((req.pageNum - 1) * req.pageSize).Take(req.pageSize);
+            var list = await queryEntities.ToListAsync();
+
+            var res = new PagedModel<orders>(totalCount, list);
+            return Json(new WebApiResult(1, "订单列表", res));
         }
 
 
@@ -50,20 +91,13 @@ namespace deMarketService.Controllers
         /// </summary>
         /// <param name = "req" ></ param >
         /// < returns ></ returns >
-        [HttpPost("detail")]
-        public async Task<WebApiResult> detail([FromBody] ReqOrdersVo req)
+        [HttpGet("detail")]
+        public async Task<JsonResult> detail([FromQuery] long order_id)
         {
-            try
-            {
-                orders order = _mySqlMasterDbContext.orders.Where(x => x.id == 24).FirstOrDefault();
-                return new WebApiResult(1, "订单详情", order);
-            }
-            catch(Exception e)
-            {
-                return new WebApiResult(1, e.ToString());
-            }
-
+            var res = await _mySqlMasterDbContext.orders.FirstOrDefaultAsync(p => p.order_id == order_id);
+            return Json(new WebApiResult(1, "订单详情", res));
         }
+
 
     }
 }

@@ -15,6 +15,9 @@ using System.Text;
 using deMarketService.Proxies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Com.Ctrip.Framework.Apollo;
+using deMarketService.Services.Interfaces;
+using deMarketService.Services;
 
 namespace deMarketService
 {
@@ -22,12 +25,14 @@ namespace deMarketService
     {
         public Startup(IConfiguration configuration)
         {
-            //var builder = new ConfigurationBuilder()
-            //    .AddApollo(configuration.GetSection("apollo"))
-            //    .AddNamespace("backend.share") 
-            //    .AddDefault();
+            //输出debug日志在控制台，方便查找问题
+            Com.Ctrip.Framework.Apollo.Logging.LogManager.UseConsoleLogging(Com.Ctrip.Framework.Apollo.Logging.LogLevel.Debug);
+            var builder = new ConfigurationBuilder()
+                .AddApollo(configuration.GetSection("apollo"))
+                .AddNamespace("backend.share")
+                .AddDefault();
 
-            //Configuration = builder.Build();
+            Configuration = builder.Build();
         }
 
         public IConfiguration Configuration { get; }
@@ -37,10 +42,11 @@ namespace deMarketService
         {
             EncodingProvider provider = CodePagesEncodingProvider.Instance;
             Encoding.RegisterProvider(provider);
-            var identityConn = "Server=97.74.86.12;Database=ebay;Uid=dev;Pwd=Dev@1234;sslMode=None;";//Configuration[StringConstant.DatabaseConnectionString];
+            var deMarketConn = Configuration["DbConnecting"]; //"Server=97.74.86.12;Database=ebay;Uid=dev;Pwd=Dev@1234;sslMode=None;";//Configuration[StringConstant.DatabaseConnectionString];
 
             services.AddScoped<ExLogFilter>();
             services.AddScoped<TokenFilter>();
+            services.AddSingleton<ITxCosUploadeService, TxCosUploadeService>();
             services
                 .AddHttpClient()
                 //.AddSingleton(Configuration)
@@ -56,7 +62,7 @@ namespace deMarketService
                     });
                 })
                 //.AddDbContext<MySqlMasterDbContext>(options => options.UseMySql(identityConn))
-                .AddDbContext<MySqlMasterDbContext>(options => options.UseMySql(identityConn, builder => builder.EnableRetryOnFailure()))
+                .AddDbContext<MySqlMasterDbContext>(options => options.UseMySql(deMarketConn, builder => builder.EnableRetryOnFailure()))
                 .AddMvc(
                 options => {
                     options.Filters.Add<ExLogFilter>();
