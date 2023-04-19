@@ -70,5 +70,8 @@ namespace deMarketService.Common.Model.HttpApiModel.RequestModel
         public int parentId { get; set; }
 
         public String ip { get; set; } //用户登录ip
+
+
+        public String chain { get; set; }
     }
 }

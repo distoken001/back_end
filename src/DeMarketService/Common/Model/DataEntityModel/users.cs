@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace deMarketService.Common.Model.DataEntityModel
 {
-    [Table("users")]
+    [Table("users", Schema = "ebay")]
     public class users
     {
         [Key]
@@ -31,7 +31,7 @@ namespace deMarketService.Common.Model.DataEntityModel
         /**
          * 昵称
          */
-        public String nickName { get; set; }
+        public String nick_name { get; set; }
 
         /**
          * 状态，0：有效，1无效
@@ -41,12 +41,12 @@ namespace deMarketService.Common.Model.DataEntityModel
         /**
          * 创建时间
          */
-        public DateTime createTime { get; set; }
+        public DateTime create_time { get; set; }
 
         /**
          * 修改时间
          */
-        public DateTime updateTime { get; set; }
+        public DateTime update_time { get; set; }
 
         /**
          * 修改人
@@ -61,11 +61,16 @@ namespace deMarketService.Common.Model.DataEntityModel
         /**
          * 上级id
          */
-        public int parentId;
+        public int parent_id;
 
         /*
          * 用户登录ip
          */
         public String ip { get; set; }
+
+        /**
+         * 区块链网络标识
+         */
+        public String chain { get; set; }
     }
 }
