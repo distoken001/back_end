@@ -42,8 +42,10 @@ namespace deMarketService
         {
             EncodingProvider provider = CodePagesEncodingProvider.Instance;
             Encoding.RegisterProvider(provider);
-            var deMarketConn = "Server=97.74.86.12;Database=ebay;Uid=dev;Pwd=Dev@1234;sslMode=None;";//Configuration[StringConstant.DatabaseConnectionString];
+            //var deMarketConn = "Server=97.74.86.12;Database=ebay;Uid=dev;Pwd=Dev@1234;sslMode=None;";//Configuration[StringConstant.DatabaseConnectionString];
+            var deMarketConn = Configuration["DbConnecting"];
 
+            services.AddSingleton<IConfiguration>(Configuration);
             services.AddScoped<ExLogFilter>();
             services.AddScoped<TokenFilter>();
             services.AddSingleton<ITxCosUploadeService, TxCosUploadeService>();

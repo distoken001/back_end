@@ -56,7 +56,7 @@ namespace deMarketService.Proxies
 
                     var jwtToken = (JwtSecurityToken)validatedToken;
                     context.HttpContext.Items["loginAddress"] = jwtToken.Claims.First(x => x.Type == "address").Value;
-                   
+                    context.HttpContext.Items["loginChain"] = jwtToken.Claims.First(x => x.Type == "chain").Value;
 
                 }
                 catch
