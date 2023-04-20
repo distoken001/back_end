@@ -61,38 +61,6 @@ namespace deMarketService.Controllers
                 }
             }
 
-
-            Claim[] userClaims = ConvertToClaims(users);
-            var token = TokenHelper.GenerateToken(StringConstant.secretKey, StringConstant.issuer, StringConstant.audience, 60, userClaims);
-            //对签名消息，原始消息，账号地址三项信息进行认证，判断签名是否有效
-            //if(!EthereumSignatureVerifier.Verify(req.signature, MESSAGE, req.address))
-            //{
-            //    return new WebApiResult(-1, "signature verification failure");
-            //}
-
-            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address == req.address);
-            if (users == null)
-            {
-                users = new Common.Model.DataEntityModel.users
-                {
-                    address = req.address,
-                    chain = req.chain,
-                    status = 1,
-                    create_time = DateTime.Now
-                };
-
-                try
-                {
-                    await _mySqlMasterDbContext.users.AddAsync(users);
-                    await _mySqlMasterDbContext.SaveChangesAsync();
-                }
-                catch (Exception e)
-                {
-
-                }
-            }
-
-
             Claim[] userClaims = ConvertToClaims(users);
             var token = TokenHelper.GenerateToken(StringConstant.secretKey, StringConstant.issuer, StringConstant.audience, 60, userClaims);
             return new WebApiResult(1, data: new { token = token });
