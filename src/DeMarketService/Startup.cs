@@ -131,7 +131,7 @@ namespace deMarketService
             app.UseSwagger()
             .UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint($"{(env.IsDevelopment() ? "" : "/" + Configuration["Consul:ServiceName:deMarketService"])}/swagger/v1/swagger.json", "deMarketService");
+                c.SwaggerEndpoint($"/swagger/v1/swagger.json", "deMarketService");
             });
 
             //Swagger 配置
