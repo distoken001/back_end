@@ -1,0 +1,1 @@
+dotnet restore deMarketService.sln&& dotnet publish --configuration Release --output ./publish&&pm2 start  dotnet --name "back_end" -- ./publish/deMarketService.dll
