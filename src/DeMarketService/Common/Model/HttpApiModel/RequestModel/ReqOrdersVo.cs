@@ -8,7 +8,7 @@ namespace deMarketService.Common.Model.HttpApiModel.RequestModel
 {
     public class ReqOrdersVo
     {
-        public int pageSize { get; set; }
+        public int pageSize { get; set; } = 10;
         public int pageIndex { get; set; } = 1;
         /// <summary>
         /// // 0 所有未购买交易(商品)， 1查询当前登录人所有交易
