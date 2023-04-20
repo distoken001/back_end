@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
@@ -46,8 +48,11 @@ namespace deMarketService
         //          webBuilder.UseStartup<Startup>();
         //      });
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args)
+        {
+
+            string appRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            return WebHost.CreateDefaultBuilder(args)
             .ConfigureLogging(builder =>
             {
                 builder.ClearProviders();
@@ -57,7 +62,8 @@ namespace deMarketService
             {
                 options.ListenAnyIP(5000);
 
-            })
+            }).UseContentRoot(appRoot)
             .UseStartup<Startup>();
+        }
     }
 }
