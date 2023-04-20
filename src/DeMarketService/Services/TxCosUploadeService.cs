@@ -55,7 +55,7 @@ namespace deMarketService.Services
             {
                 var _cosPath = $"de-market/{cosName}";
                 PutObjectRequest putObjectRequest = new PutObjectRequest("demarket-1303108648", _cosPath, bytes);
-                cosXml.PutObject(putObjectRequest);
+                CosXml.PutObject(putObjectRequest);
                 return $"https://demarket-1303108648.cos.ap-beijing.myqcloud.com/{_cosPath}";
             }
             catch (COSXML.CosException.CosClientException clientEx)

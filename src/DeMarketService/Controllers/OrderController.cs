@@ -16,7 +16,7 @@ namespace deMarketService.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class OrderController : Controller
+    public class OrderController : BaseController
     {
         MySqlMasterDbContext _mySqlMasterDbContext;
         private readonly ITxCosUploadeService txCosUploadeService;
@@ -78,8 +78,23 @@ namespace deMarketService.Controllers
         public async Task<JsonResult> list([FromBody] ReqOrdersVo req)
         {
             var queryEntities = _mySqlMasterDbContext.orders.AsNoTracking().AsQueryable();
+            if (req.searchType == 0)
+                queryEntities = queryEntities.Where(p => p.status == 0);
+
+            if (req.searchType == 1)
+            {
+                var currentLoginAddress = this.CurrentLoginAddress;
+                queryEntities = queryEntities.Where(p => p.buyer == currentLoginAddress || p.seller == currentLoginAddress);
+            }
+
+            if (!string.IsNullOrEmpty(req.name))
+                queryEntities = queryEntities.Where(p=>p.name.Contains(req.name));
+
+            if (req.order_id.HasValue)
+                queryEntities = queryEntities.Where(p => p.order_id == req.order_id);
+
             var totalCount = await queryEntities.CountAsync();
-            queryEntities = queryEntities.OrderByDescending(p => p.create_time).Skip((req.pageNum - 1) * req.pageSize).Take(req.pageSize);
+            queryEntities = queryEntities.OrderByDescending(p => p.create_time).Skip((req.pageIndex - 1) * req.pageSize).Take(req.pageSize);
             var list = await queryEntities.ToListAsync();
 
             var res = new PagedModel<orders>(totalCount, list);
