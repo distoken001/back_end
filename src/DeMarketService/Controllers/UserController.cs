@@ -66,7 +66,7 @@ namespace deMarketService.Controllers
 
             Claim[] userClaims = ConvertToClaims(users);
             var token = TokenHelper.GenerateToken(StringConstant.secretKey, StringConstant.issuer, StringConstant.audience, 60, userClaims);
-            return new WebApiResult(1, token);
+            return new WebApiResult(1, data: new { token = token });
         }
 
 
