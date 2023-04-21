@@ -60,10 +60,8 @@ namespace deMarketService.Controllers
                     return new WebApiResult(-1, "database error");
                 }
             }
-
-
             Claim[] userClaims = ConvertToClaims(users);
-            var token = TokenHelper.GenerateToken(StringConstant.secretKey, StringConstant.issuer, StringConstant.audience, 60, userClaims);
+            var token = TokenHelper.GenerateToken(StringConstant.secretKey, StringConstant.issuer, StringConstant.audience, 7, userClaims);
             return new WebApiResult(1, data: new { token = token });
         }
 
