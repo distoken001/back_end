@@ -1,4 +1,5 @@
 ﻿using deMarketService.Common.Common;
+using deMarketService.Common.Model.DataEntityModel;
 using deMarketService.Common.Model.HttpApiModel.RequestModel;
 using deMarketService.Common.Model.HttpApiModel.ResponseModel;
 using deMarketService.DbContext;
@@ -73,6 +74,7 @@ namespace deMarketService.Controllers
         /// <param name = "req" ></ param >
         /// < returns ></ returns >
         [HttpPost("list")]
+        [ProducesResponseType(typeof(orders), 200)]
         public async Task<WebApiResult> list([FromBody] ReqOrdersVo req)
         {
             var list = await _mySqlMasterDbContext.orders.AsTracking().Where(p => p.buyer == req.buyer && p.seller == req.seller).ToListAsync();
