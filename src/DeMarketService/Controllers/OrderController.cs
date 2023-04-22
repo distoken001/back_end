@@ -38,7 +38,7 @@ namespace deMarketService.Controllers
             if ((formCollection == null || formCollection.Files.Count == 0))
             {
                 return Json(new WebApiResult(-1, "没有可上传的文件"));
-            }
+            }   
             var file = formCollection.Files[0];
 
             var cosName = string.Format("{0}_{1}_cp{2}", DateTime.Now.ToString("yyyyMMddhhmmss"), new Random().Next(10000), Path.GetExtension(file.FileName));
@@ -88,7 +88,7 @@ namespace deMarketService.Controllers
             }
 
             if (!string.IsNullOrEmpty(req.name))
-                queryEntities = queryEntities.Where(p=>p.name.Contains(req.name));
+                queryEntities = queryEntities.Where(p => p.name.Contains(req.name));
 
             if (req.order_id.HasValue)
                 queryEntities = queryEntities.Where(p => p.order_id == req.order_id);
