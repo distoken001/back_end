@@ -7,13 +7,13 @@
             watch: false,
             autorestart: true,
             env_development: {
-                EnvironmentName: "Development",
+                ASPNETCORE_ENVIRONMENT: "Development",
             },
             // env_testing: {
             // ASPNETCORE_ENVIRONMENT: "Testing",
             //   },
             env_production: {
-                EnvironmentName: "Production",
+                ASPNETCORE_ENVIRONMENT: "Production",
             },
         },
     ],
