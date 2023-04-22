@@ -12,6 +12,10 @@ dotnet build --configuration Release
 echo "Publishing the project..."
 dotnet publish --configuration Release --output $publish_directory
 
+# 复制 PM2 配置文件到发布目录
+echo "Copying PM2 config file to the publish directory..."
+cp  ./src/DeMarketService/pm2.config.js $publish_directory
+
 # 进入发布目录
 cd $publish_directory
 
