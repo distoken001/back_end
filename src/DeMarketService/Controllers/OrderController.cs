@@ -105,6 +105,12 @@ namespace deMarketService.Controllers
             if (!string.IsNullOrEmpty(req.chain_id))
                 queryEntities = queryEntities.Where(p => p.chain_id.Equals(req.chain_id));
 
+            if (req.priceMin.HasValue)
+                queryEntities = queryEntities.Where(p => p.price >= req.priceMin);
+
+            if (req.priceMax.HasValue)
+                queryEntities = queryEntities.Where(p => p.price <= req.priceMax);
+
             var totalCount = await queryEntities.CountAsync();
             queryEntities = queryEntities.OrderByDescending(p => p.create_time).Skip((req.pageIndex - 1) * req.pageSize).Take(req.pageSize);
             var list = await queryEntities.ToListAsync();
