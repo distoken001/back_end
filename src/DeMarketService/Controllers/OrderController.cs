@@ -84,7 +84,7 @@ namespace deMarketService.Controllers
             if (req.searchType == 1)
             {
                 var currentLoginAddress = this.CurrentLoginAddress;
-                queryEntities = queryEntities.Where(p => p.buyer == currentLoginAddress || p.seller == currentLoginAddress);
+                queryEntities = queryEntities.Where(p => p.buyer.Equals(currentLoginAddress) || p.seller.Equals(currentLoginAddress));
             }
 
             if (!string.IsNullOrEmpty(req.name))
@@ -92,6 +92,8 @@ namespace deMarketService.Controllers
 
             if (req.order_id.HasValue)
                 queryEntities = queryEntities.Where(p => p.order_id == req.order_id);
+            if (!string.IsNullOrEmpty(req.chain_id))
+                queryEntities = queryEntities.Where(p => p.chain_id.Equals(req.chain_id));
 
             var totalCount = await queryEntities.CountAsync();
             queryEntities = queryEntities.OrderByDescending(p => p.create_time).Skip((req.pageIndex - 1) * req.pageSize).Take(req.pageSize);

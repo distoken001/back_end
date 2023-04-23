@@ -77,7 +77,7 @@ namespace deMarketService.Controllers
         [ProducesResponseType(typeof(orders), 200)]
         public async Task<WebApiResult> list([FromBody] ReqOrdersVo req)
         {
-            var list = await _mySqlMasterDbContext.orders.AsTracking().Where(p => p.buyer == req.buyer && p.seller == req.seller).ToListAsync();
+            var list = await _mySqlMasterDbContext.orders.AsTracking().Where(p => p.buyer.Equals(req.buyer) && p.seller.Equals(req.seller) && p.chain_id.Equals(req.chain_id)).ToListAsync();
 
             return new WebApiResult(1, data : list);
         }

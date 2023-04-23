@@ -36,5 +36,10 @@ namespace deMarketService.Common.Model.HttpApiModel.RequestModel
         /// </summary>
         public string buyer { get; set; }
 
+        /// <summary>
+        /// 链id
+        /// </summary>
+        public string chain_id { get; set; }
+
     }
 }
