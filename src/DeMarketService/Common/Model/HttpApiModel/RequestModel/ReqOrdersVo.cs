@@ -14,19 +14,18 @@ namespace deMarketService.Common.Model.HttpApiModel.RequestModel
         /// // 0 所有未购买交易(商品)， 1查询当前登录人所有交易
         /// </summary>
         public int searchType { get; set; }
-
+        /// <summary>
+        /// 商品id
+        /// </summary>
+        public int? order_id { get; set; }
         /// <summary>
         /// 商品名称
         /// </summary>
         public string name { get; set; }
         /// <summary>
-        /// 商品id
+        /// 商品描述
         /// </summary>
-        public int? order_id { get; set; }
-
-
-
-
+        public string description { get; set; }
         /// <summary>
         /// 卖家地址
         /// </summary>

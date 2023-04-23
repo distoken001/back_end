@@ -87,8 +87,18 @@ namespace deMarketService.Controllers
                 queryEntities = queryEntities.Where(p => p.buyer.Equals(currentLoginAddress) || p.seller.Equals(currentLoginAddress));
             }
 
-            if (!string.IsNullOrEmpty(req.name))
+            if (!string.IsNullOrEmpty(req.name) && !string.IsNullOrEmpty(req.description))
+            {
+                queryEntities = queryEntities.Where(p => p.name.Contains(req.name) || p.description.Contains(req.description));
+            }
+            else if (!string.IsNullOrEmpty(req.name) && string.IsNullOrEmpty(req.description))
+            {
                 queryEntities = queryEntities.Where(p => p.name.Contains(req.name));
+            }
+            else if (!string.IsNullOrEmpty(req.description) && string.IsNullOrEmpty(req.name))
+            {
+                queryEntities = queryEntities.Where(p => p.description.Contains(req.description));
+            }
 
             if (req.order_id.HasValue)
                 queryEntities = queryEntities.Where(p => p.order_id == req.order_id);
