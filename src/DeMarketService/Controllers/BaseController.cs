@@ -25,10 +25,10 @@ namespace deMarketService.Controllers
             {
                 try
                 {
-                    var login_chain = User.Claims.FirstOrDefault(x => x.Type == "login_chain")?.Value;
-                    if (!string.IsNullOrEmpty(login_chain))
+                    var chain_id = User.Claims.FirstOrDefault(x => x.Type == "chain_id")?.Value;
+                    if (!string.IsNullOrEmpty(chain_id))
                     {
-                        return int.Parse(login_chain);
+                        return int.Parse(chain_id);
                     }
                     return 0;
                 }

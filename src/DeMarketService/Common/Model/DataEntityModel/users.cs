@@ -71,6 +71,6 @@ namespace deMarketService.Common.Model.DataEntityModel
         /**
          * 区块链网络标识
          */
-        public int chain { get; set; }
+        public int chain_id { get; set; }
     }
 }
