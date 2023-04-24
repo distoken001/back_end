@@ -102,7 +102,7 @@ namespace deMarketService.Controllers
             if (req.order_id.HasValue)
                 queryEntities = queryEntities.Where(p => p.order_id == req.order_id);
             if (this.CurrentLoginChain != 0)
-                queryEntities = queryEntities.Where(p => p.chain_id.Equals(this.CurrentLoginChain));
+                queryEntities = queryEntities.Where(p => p.chain_id == this.CurrentLoginChain);
 
             if (req.priceMin.HasValue)
                 queryEntities = queryEntities.Where(p => p.price >= req.priceMin);
