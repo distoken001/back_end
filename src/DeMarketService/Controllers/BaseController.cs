@@ -47,7 +47,7 @@ namespace deMarketService.Controllers
             {
                 try
                 {
-                    return int.Parse(HttpContext.Request.Headers["chain_id"]);
+                    return int.Parse(HttpContext.Request.Headers["chain_id"].FirstOrDefault());
                 }
                 catch(Exception ex)
                 {
