@@ -26,8 +26,8 @@ namespace deMarketService.Proxies
 
         public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
         {
-            var path = context.HttpContext.Request.Path.Value;
-            if (!path.Equals("/api/User/login"))
+            var path = context.HttpContext.Request.Path.Value.ToLower();
+            if (!path.Equals("/api/user/login"))
             {
                 var token = context.HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
                 var chain = context.HttpContext.Request.Headers["chain"].FirstOrDefault();

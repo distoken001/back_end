@@ -6,6 +6,9 @@ namespace deMarketService.Controllers
 {
     public class BaseController : Controller
     {
+        /// <summary>
+        /// 当前钱包地址
+        /// </summary>
         public string CurrentLoginAddress
         {
             get
@@ -33,6 +36,16 @@ namespace deMarketService.Controllers
                 {
                     return 0;
                 }
+            }
+        }
+        /// <summary>
+        /// 链ID
+        /// </summary>
+        public string ChainId
+        {
+            get
+            {
+                return HttpContext.Request.Headers["chain_id"];
             }
         }
     }
