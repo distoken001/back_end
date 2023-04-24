@@ -57,7 +57,6 @@ namespace deMarketService.Proxies
 
                     var jwtToken = (JwtSecurityToken)validatedToken;
                     var identity = new ClaimsIdentity(jwtToken.Claims);
-                    //identity.AddClaim(new Claim("login_chain", chain_id));
                     context.HttpContext.User = new ClaimsPrincipal(identity);
                 }
                 catch

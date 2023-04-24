@@ -40,13 +40,12 @@ namespace deMarketService.Controllers
                 return new WebApiResult(-1, "signature verification failure");
             }
 
-            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(req.address) && p.chain_id.Equals(req.chain_id));
+            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(req.address));
             if (users == null)
             {
                 users = new Common.Model.DataEntityModel.users
                 {
                     address = req.address,
-                    //chain_id = req.chain_id,
                     status = 1,
                     create_time = DateTime.Now
                 };
@@ -103,7 +102,7 @@ namespace deMarketService.Controllers
         {
             var currentLoginAddress = this.CurrentLoginAddress;
             var currentLoginChain = this.ChainId;
-            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(currentLoginAddress) && p.chain_id == currentLoginChain);
+            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(currentLoginAddress) );
 
             return new WebApiResult(1, data: users);
         }
