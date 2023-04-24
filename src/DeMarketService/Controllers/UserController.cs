@@ -46,7 +46,7 @@ namespace deMarketService.Controllers
                 users = new Common.Model.DataEntityModel.users
                 {
                     address = req.address,
-                    chain_id = req.chain_id,
+                    //chain_id = req.chain_id,
                     status = 1,
                     create_time = DateTime.Now
                 };
@@ -79,13 +79,13 @@ namespace deMarketService.Controllers
         {
             if (!string.IsNullOrEmpty(req.buyer))
             {
-                var list = await _mySqlMasterDbContext.orders.AsTracking().Where(p => p.buyer.Equals(req.buyer) && p.chain_id.Equals(this.CurrentLoginChain)).ToListAsync();
+                var list = await _mySqlMasterDbContext.orders.AsTracking().Where(p => p.buyer.Equals(req.buyer) && p.chain_id.Equals(this.ChainId)).ToListAsync();
 
                 return new WebApiResult(1, data: list);
             }
             else if (!string.IsNullOrEmpty(req.seller))
             {
-                var list = await _mySqlMasterDbContext.orders.AsTracking().Where(p => p.seller.Equals(req.seller) && p.chain_id.Equals(this.CurrentLoginChain)).ToListAsync();
+                var list = await _mySqlMasterDbContext.orders.AsTracking().Where(p => p.seller.Equals(req.seller) && p.chain_id.Equals(this.ChainId)).ToListAsync();
 
                 return new WebApiResult(1, data: list);
             }
@@ -102,7 +102,7 @@ namespace deMarketService.Controllers
         public async Task<WebApiResult> detail([FromBody] ReqOrdersVo req)
         {
             var currentLoginAddress = this.CurrentLoginAddress;
-            var currentLoginChain = this.CurrentLoginChain;
+            var currentLoginChain = this.ChainId;
             var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(currentLoginAddress) && p.chain_id == currentLoginChain);
 
             return new WebApiResult(1, data: users);

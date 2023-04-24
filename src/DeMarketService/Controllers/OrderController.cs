@@ -101,8 +101,8 @@ namespace deMarketService.Controllers
 
             if (req.order_id.HasValue)
                 queryEntities = queryEntities.Where(p => p.order_id == req.order_id);
-            if (this.CurrentLoginChain != 0)
-                queryEntities = queryEntities.Where(p => p.chain_id == this.CurrentLoginChain);
+            if (this.ChainId != 0)
+                queryEntities = queryEntities.Where(p => p.chain_id == this.ChainId);
 
             if (req.priceMin.HasValue)
                 queryEntities = queryEntities.Where(p => p.price >= req.priceMin);
@@ -128,7 +128,7 @@ namespace deMarketService.Controllers
         [ProducesResponseType(typeof(orders), 200)]
         public async Task<JsonResult> detail([FromQuery] long order_id)
         {
-            var res = await _mySqlMasterDbContext.orders.FirstOrDefaultAsync(p => p.order_id == order_id&&p.chain_id==CurrentLoginChain);
+            var res = await _mySqlMasterDbContext.orders.FirstOrDefaultAsync(p => p.order_id == order_id&&p.chain_id==this.ChainId);
             return Json(new WebApiResult(1, "订单详情", res));
         }
 
