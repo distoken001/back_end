@@ -128,7 +128,7 @@ namespace deMarketService.Controllers
         [ProducesResponseType(typeof(orders), 200)]
         public async Task<JsonResult> detail([FromQuery] long order_id)
         {
-            var res = await _mySqlMasterDbContext.orders.FirstOrDefaultAsync(p => p.order_id == order_id);
+            var res = await _mySqlMasterDbContext.orders.FirstOrDefaultAsync(p => p.order_id == order_id&&p.chain_id==CurrentLoginChain);
             return Json(new WebApiResult(1, "订单详情", res));
         }
 
