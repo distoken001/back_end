@@ -81,7 +81,7 @@ namespace deMarketService.Common.Model.DataEntityModel
         /// <summary>
         /// 链id
         /// </summary>
-        public long chain_id { get; set; }
+        public int chain_id { get; set; }
         /// <summary>
         /// 买家比卖家额外多质押数量
         /// </summary>

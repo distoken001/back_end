@@ -17,7 +17,7 @@ namespace deMarketService.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : Controller
+    public class UserController : BaseController
     {
         MySqlMasterDbContext _mySqlMasterDbContext;
 
@@ -79,13 +79,13 @@ namespace deMarketService.Controllers
         {
             if (!string.IsNullOrEmpty(req.buyer))
             {
-                var list = await _mySqlMasterDbContext.orders.AsTracking().Where(p => p.buyer.Equals(req.buyer) && p.chain_id.Equals(req.chain_id)).ToListAsync();
+                var list = await _mySqlMasterDbContext.orders.AsTracking().Where(p => p.buyer.Equals(req.buyer) && p.chain_id.Equals(this.CurrentLoginChain)).ToListAsync();
 
                 return new WebApiResult(1, data: list);
             }
             else if (!string.IsNullOrEmpty(req.seller))
             {
-                var list = await _mySqlMasterDbContext.orders.AsTracking().Where(p => p.seller.Equals(req.seller) && p.chain_id.Equals(req.chain_id)).ToListAsync();
+                var list = await _mySqlMasterDbContext.orders.AsTracking().Where(p => p.seller.Equals(req.seller) && p.chain_id.Equals(this.CurrentLoginChain)).ToListAsync();
 
                 return new WebApiResult(1, data: list);
             }
@@ -101,9 +101,9 @@ namespace deMarketService.Controllers
         [ProducesResponseType(typeof(orders), 200)]
         public async Task<WebApiResult> detail([FromBody] ReqOrdersVo req)
         {
-            var currentLoginAddress = User.Claims.FirstOrDefault(x => x.Type == "address")?.Value;
-            var currentLoginChain = User.Claims.FirstOrDefault(x => x.Type == "loginChain")?.Value;
-            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(currentLoginAddress) && p.chain.Equals(currentLoginChain));
+            var currentLoginAddress = this.CurrentLoginAddress;
+            var currentLoginChain = this.CurrentLoginChain;
+            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(currentLoginAddress) && p.chain == currentLoginChain);
 
             return new WebApiResult(1, data: users);
         }
