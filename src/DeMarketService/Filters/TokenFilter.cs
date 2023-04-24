@@ -18,7 +18,7 @@ namespace deMarketService.Proxies
         private readonly IConfiguration _configuration;
         private readonly bool _requireAuth;
 
-        public TokenFilter(IConfiguration configuration, bool requireAuth = true)
+        public TokenFilter(IConfiguration configuration, bool requireAuth = false)
         {
             _configuration = configuration;
             _requireAuth = requireAuth;
