@@ -30,6 +30,7 @@ namespace deMarketService.Proxies
             if (!path.Equals("/api/User/login"))
             {
                 var token = context.HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+                var chain = context.HttpContext.Request.Headers["chain"].FirstOrDefault();
                 if (token == null)
                 {
                     if (_requireAuth)
@@ -55,9 +56,9 @@ namespace deMarketService.Proxies
                     }, out SecurityToken validatedToken);
 
                     var jwtToken = (JwtSecurityToken)validatedToken;
-                    context.HttpContext.Items["loginAddress"] = jwtToken.Claims.First(x => x.Type == "address").Value;
-                    context.HttpContext.Items["loginChain"] = jwtToken.Claims.First(x => x.Type == "chain").Value;
-
+                    var identity = new ClaimsIdentity(jwtToken.Claims);
+                    identity.AddClaim(new Claim("login_chain", chain));
+                    context.HttpContext.User = new ClaimsPrincipal(identity);
                 }
                 catch
                 {
