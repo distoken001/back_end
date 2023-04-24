@@ -80,10 +80,9 @@ namespace deMarketService.Controllers
             var queryEntities = _mySqlMasterDbContext.orders.AsNoTracking().AsQueryable();
             if (req.searchType == 0)
                 queryEntities = queryEntities.Where(p => p.status == 0);
-
+            var currentLoginAddress = this.CurrentLoginAddress;
             if (req.searchType == 1)
             {
-                var currentLoginAddress = this.CurrentLoginAddress;
                 queryEntities = queryEntities.Where(p => p.buyer.Equals(currentLoginAddress) || p.seller.Equals(currentLoginAddress));
             }
 
@@ -102,8 +101,8 @@ namespace deMarketService.Controllers
 
             if (req.order_id.HasValue)
                 queryEntities = queryEntities.Where(p => p.order_id == req.order_id);
-            //if (!string.IsNullOrEmpty(req.chain_id))
-            queryEntities = queryEntities.Where(p => p.chain_id.Equals(this.ChainId));
+            if (this.CurrentLoginChain != 0)
+                queryEntities = queryEntities.Where(p => p.chain_id.Equals(this.CurrentLoginChain));
 
             if (req.priceMin.HasValue)
                 queryEntities = queryEntities.Where(p => p.price >= req.priceMin);
