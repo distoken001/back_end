@@ -30,7 +30,6 @@ namespace deMarketService.Proxies
             if (!path.Equals("/api/user/login"))
             {
                 var token = context.HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
-                var chain_id = context.HttpContext.Request.Headers["chain_id"].FirstOrDefault();
                 if (token == null)
                 {
                     if (_requireAuth)
