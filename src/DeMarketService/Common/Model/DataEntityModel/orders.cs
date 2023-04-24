@@ -28,11 +28,11 @@ namespace deMarketService.Common.Model.DataEntityModel
         /// <summary>
         /// 商品数量
         /// </summary>
-        public int amount { get; set; }
+        public long amount { get; set; }
         /// <summary>
         /// 商品价格
         /// </summary>
-        public int price { get; set; }
+        public long price { get; set; }
         /// <summary>
         /// 图片
         /// </summary>
@@ -81,7 +81,7 @@ namespace deMarketService.Common.Model.DataEntityModel
         /// <summary>
         /// 链id
         /// </summary>
-        public int chain_id { get; set; }
+        public long chain_id { get; set; }
         /// <summary>
         /// 买家比卖家额外多质押数量
         /// </summary>

@@ -40,5 +40,15 @@ namespace deMarketService.Common.Model.HttpApiModel.RequestModel
         /// </summary>
         public string chain_id { get; set; }
 
+        /// <summary>
+        /// 最小价格
+        /// </summary>
+        public long? priceMin { get; set; }
+
+        // <summary>
+        /// 最大价格
+        /// </summary>
+        public long? priceMax { get; set; }
+
     }
 }
