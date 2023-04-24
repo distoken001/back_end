@@ -22,5 +22,6 @@ namespace deMarketService.DbContext
         public virtual DbSet<event_logs> event_logs { get; set; }
         public virtual DbSet<orders> orders { get; set; }
         public virtual DbSet<users> users { get; set; }
+        public virtual DbSet<contacts> contacts { get; set; }
     }
 }
