@@ -77,11 +77,36 @@ namespace deMarketService.Controllers
         [ProducesResponseType(typeof(orders), 200)]
         public async Task<WebApiResult> list([FromBody] ReqOrdersVo req)
         {
-            var list = await _mySqlMasterDbContext.orders.AsTracking().Where(p => p.buyer.Equals(req.buyer) && p.seller.Equals(req.seller) && p.chain_id.Equals(req.chain_id)).ToListAsync();
+            if (!string.IsNullOrEmpty(req.buyer))
+            {
+                var list = await _mySqlMasterDbContext.orders.AsTracking().Where(p => p.buyer.Equals(req.buyer) && p.chain_id.Equals(req.chain_id)).ToListAsync();
 
-            return new WebApiResult(1, data : list);
+                return new WebApiResult(1, data: list);
+            }
+            else if (!string.IsNullOrEmpty(req.seller))
+            {
+                var list = await _mySqlMasterDbContext.orders.AsTracking().Where(p => p.seller.Equals(req.seller) && p.chain_id.Equals(req.chain_id)).ToListAsync();
+
+                return new WebApiResult(1, data: list);
+            }
+            return new WebApiResult(1, "");
         }
 
+        /// <summary>
+        /// 我的详情
+        /// </summary>
+        /// <param name = "req" ></ param >
+        /// < returns ></ returns >
+        [HttpPost("detail")]
+        [ProducesResponseType(typeof(orders), 200)]
+        public async Task<WebApiResult> detail([FromBody] ReqOrdersVo req)
+        {
+            var currentLoginAddress = User.Claims.FirstOrDefault(x => x.Type == "address")?.Value;
+            var currentLoginChain = User.Claims.FirstOrDefault(x => x.Type == "loginChain")?.Value;
+            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(currentLoginAddress) && p.chain.Equals(currentLoginChain));
+
+            return new WebApiResult(1, data: users);
+        }
 
 
         private Claim[] ConvertToClaims(object obj)
