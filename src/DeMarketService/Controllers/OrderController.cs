@@ -129,7 +129,7 @@ namespace deMarketService.Controllers
         public async Task<JsonResult> detail([FromQuery] long order_id)
         {
             var res = await _mySqlMasterDbContext.orders.FirstOrDefaultAsync(p => p.order_id == order_id && p.chain_id == this.ChainId);
-            return Json(new WebApiResult(1, "订单详情查询成功", res));
+            return Json(new WebApiResult(1, "this.ChainId" + this.ChainId, res));
         }
 
 
