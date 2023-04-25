@@ -19,25 +19,26 @@ namespace deMarketService.Controllers
             }
         }
 
-        //public int CurrentLoginChain
-        //{
-        //    get
-        //    {
-        //        try
-        //        {
-        //            var chain_id = User.Claims.FirstOrDefault(x => x.Type == "chain_id")?.Value;
-        //            if (!string.IsNullOrEmpty(chain_id))
-        //            {
-        //                return int.Parse(chain_id);
-        //            }
-        //            return 0;
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            return 0;
-        //        }
-        //    }
-        //}
+        public int CurrentLoginChain
+        {
+            get
+            {
+                try
+                {
+                    var chain_id = User.Claims.FirstOrDefault(x => x.Type == "login_chain")?.Value;
+                    if (!string.IsNullOrEmpty(chain_id))
+                    {
+                        return int.Parse(chain_id);
+                    }
+                    return 0;
+                }
+                catch (Exception ex)
+                {
+                    return 0;
+                }
+            }
+        }
+
         /// <summary>
         /// 链ID
         /// </summary>
