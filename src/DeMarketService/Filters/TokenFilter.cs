@@ -18,7 +18,7 @@ namespace deMarketService.Proxies
         private readonly IConfiguration _configuration;
         private readonly bool _requireAuth;
 
-        public TokenFilter(IConfiguration configuration, bool requireAuth = true)
+        public TokenFilter(IConfiguration configuration, bool requireAuth = false)
         {
             _configuration = configuration;
             _requireAuth = requireAuth;
@@ -30,7 +30,6 @@ namespace deMarketService.Proxies
             if (!path.Equals("/api/user/login"))
             {
                 var token = context.HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
-                var chain = context.HttpContext.Request.Headers["chain_id"].FirstOrDefault();
                 if (token == null)
                 {
                     if (_requireAuth)
@@ -57,7 +56,6 @@ namespace deMarketService.Proxies
 
                     var jwtToken = (JwtSecurityToken)validatedToken;
                     var identity = new ClaimsIdentity(jwtToken.Claims);
-                    identity.AddClaim(new Claim("login_chain", chain));
                     context.HttpContext.User = new ClaimsPrincipal(identity);
                 }
                 catch

@@ -68,9 +68,5 @@ namespace deMarketService.Common.Model.DataEntityModel
          */
         public String ip { get; set; }
 
-        /**
-         * 区块链网络标识
-         */
-        public int chain { get; set; }
     }
 }

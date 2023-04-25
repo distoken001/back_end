@@ -40,13 +40,12 @@ namespace deMarketService.Controllers
                 return new WebApiResult(-1, "signature verification failure");
             }
 
-            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(req.address) && p.chain.Equals(req.chain));
+            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(req.address));
             if (users == null)
             {
                 users = new Common.Model.DataEntityModel.users
                 {
                     address = req.address,
-                    chain = req.chain,
                     status = 1,
                     create_time = DateTime.Now
                 };
@@ -79,13 +78,13 @@ namespace deMarketService.Controllers
         {
             if (!string.IsNullOrEmpty(req.buyer))
             {
-                var list = await _mySqlMasterDbContext.orders.AsTracking().Where(p => p.buyer.Equals(req.buyer) && p.chain_id.Equals(this.CurrentLoginChain)).ToListAsync();
+                var list = await _mySqlMasterDbContext.orders.AsTracking().Where(p => p.buyer.Equals(req.buyer) && p.chain_id.Equals(this.ChainId)).ToListAsync();
 
                 return new WebApiResult(1, data: list);
             }
             else if (!string.IsNullOrEmpty(req.seller))
             {
-                var list = await _mySqlMasterDbContext.orders.AsTracking().Where(p => p.seller.Equals(req.seller) && p.chain_id.Equals(this.CurrentLoginChain)).ToListAsync();
+                var list = await _mySqlMasterDbContext.orders.AsTracking().Where(p => p.seller.Equals(req.seller) && p.chain_id.Equals(this.ChainId)).ToListAsync();
 
                 return new WebApiResult(1, data: list);
             }
@@ -102,8 +101,8 @@ namespace deMarketService.Controllers
         public async Task<WebApiResult> detail([FromBody] ReqOrdersVo req)
         {
             var currentLoginAddress = this.CurrentLoginAddress;
-            var currentLoginChain = this.CurrentLoginChain;
-            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(currentLoginAddress) && p.chain == currentLoginChain);
+            var currentLoginChain = this.ChainId;
+            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(currentLoginAddress) );
 
             return new WebApiResult(1, data: users);
         }
