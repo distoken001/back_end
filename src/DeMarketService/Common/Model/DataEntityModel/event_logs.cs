@@ -34,7 +34,7 @@ namespace deMarketService.Common.Model.DataEntityModel
         public String data { get; set; }
 
         /**
-         * 0:有效，1：无效
+         * 
          */
         public int status { get; set; }
 
@@ -56,6 +56,10 @@ namespace deMarketService.Common.Model.DataEntityModel
          * 创建人
          */
         public String creator { get; set; }
+        /// <summary>
+        ///链id
+        /// </summary>
+        public int chain_id { get; set; }
 
     }
 }
