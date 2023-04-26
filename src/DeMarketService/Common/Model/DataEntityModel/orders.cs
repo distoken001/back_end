@@ -85,7 +85,7 @@ namespace deMarketService.Common.Model.DataEntityModel
         /// <summary>
         /// 买家比卖家额外多质押数量
         /// </summary>
-        public int buyer_ex { get; set; }
+        public long buyer_ex { get; set; }
 
         /// <summary>
         /// 订单总价
@@ -100,14 +100,14 @@ namespace deMarketService.Common.Model.DataEntityModel
         }
 
         /// <summary>
-        /// 买家实际质押
+        /// 买家需质押
         /// </summary>
         [NotMapped]
-        public int buyer_pledge_qd
+        public long buyer_pledge_qd
         {
             get
             {
-                return this.buyer_ex + this.seller_pledge;
+                return (this.price*this.amount+this.buyer_ex);
             }
         }
     }
