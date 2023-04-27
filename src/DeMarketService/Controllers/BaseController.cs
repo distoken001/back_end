@@ -26,7 +26,7 @@ namespace deMarketService.Controllers
 
                 try
                 {
-                    var chain_id = User.Claims.FirstOrDefault(x => x.Type == "login_chain")?.Value;
+                    var chain_id = User.Claims.FirstOrDefault(x => x.Type == "chain_id")?.Value;
                     if (!string.IsNullOrEmpty(chain_id))
                     {
                         return int.Parse(chain_id);

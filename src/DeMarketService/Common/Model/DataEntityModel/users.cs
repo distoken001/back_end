@@ -67,6 +67,6 @@ namespace deMarketService.Common.Model.DataEntityModel
          * 用户登录ip
          */
         public String ip { get; set; }
-
+        public int chain_id { get; set; }
     }
 }

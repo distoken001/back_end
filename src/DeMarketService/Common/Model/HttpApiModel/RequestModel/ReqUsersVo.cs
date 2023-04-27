@@ -70,6 +70,10 @@ namespace deMarketService.Common.Model.HttpApiModel.RequestModel
         public int parentId { get; set; }
 
         public String ip { get; set; } //用户登录ip
+        /// <summary>
+        /// 链id
+        /// </summary>
+        public int chain_id { get; set; }
 
     }
 }
