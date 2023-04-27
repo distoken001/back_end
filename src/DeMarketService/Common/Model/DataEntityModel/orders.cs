@@ -126,7 +126,7 @@ namespace deMarketService.Common.Model.DataEntityModel
         [NotMapped]
         public decimal price_actual
         {
-            get { return this.price * this.amount / decimals_long; }
+            get { return this.price / decimals_long; }
         }
         /// <summary>
         /// 订单总价
