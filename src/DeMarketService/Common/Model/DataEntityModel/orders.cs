@@ -139,16 +139,5 @@ namespace deMarketService.Common.Model.DataEntityModel
                 return this.price * this.amount / decimals_long;
             }
         }
-        /// <summary>
-        /// 买家需质押
-        /// </summary>
-        [NotMapped]
-        public decimal buyer_pledge_qd
-        {
-            get
-            {
-                return ((this.price * this.amount + this.buyer_ex) / decimals_long);
-            }
-        }
     }
 }
