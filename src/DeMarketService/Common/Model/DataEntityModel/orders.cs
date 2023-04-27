@@ -40,11 +40,11 @@ namespace deMarketService.Common.Model.DataEntityModel
         /// <summary>
         /// 卖家质押
         /// </summary>
-        public int seller_pledge { get; set; }
+        public long seller_pledge { get; set; }
         /// <summary>
         /// 买家质押
         /// </summary>
-        public int buyer_pledge { get; set; }
+        public long buyer_pledge { get; set; }
         /// <summary>
         /// 卖家联系方式
         /// </summary>
@@ -86,7 +86,48 @@ namespace deMarketService.Common.Model.DataEntityModel
         /// 买家比卖家额外多质押数量
         /// </summary>
         public long buyer_ex { get; set; }
-
+        /// <summary>
+        /// 合约地址
+        /// </summary>
+        public string contract { get; set; }
+        /// <summary>
+        /// 小时点
+        /// </summary>
+        public int decimals { get; set; }
+        /// <summary>
+        /// 算数
+        /// </summary>
+        [NotMapped]
+        public int decimals_long
+        {
+            get
+            {
+                return (int)Math.Pow(10, decimals);
+            }
+        }
+        /// <summary>
+        /// 买家比卖家额外多质押数量
+        /// </summary>
+        [NotMapped]
+        public long buyer_ex_actual { get { return buyer_ex / decimals_long; } }
+        /// <summary>
+        /// 卖家质押
+        /// </summary>
+        [NotMapped]
+        public long seller_pledge_actual { get { return seller_pledge / decimals_long; } }
+        /// <summary>
+        /// 买家质押
+        /// </summary>
+        [NotMapped]
+        public long buyer_pledge_actual { get { return buyer_pledge / decimals_long; } }
+        /// <summary>
+        /// 商品价格
+        /// </summary>
+        [NotMapped]
+        public long price_actual
+        {
+            get { return this.price * this.amount / decimals_long; }
+        }
         /// <summary>
         /// 订单总价
         /// </summary>
@@ -95,10 +136,9 @@ namespace deMarketService.Common.Model.DataEntityModel
         {
             get
             {
-                return this.price * this.amount;
+                return this.price * this.amount / decimals_long;
             }
         }
-
         /// <summary>
         /// 买家需质押
         /// </summary>
@@ -107,7 +147,7 @@ namespace deMarketService.Common.Model.DataEntityModel
         {
             get
             {
-                return (this.price*this.amount+this.buyer_ex);
+                return ((this.price * this.amount + this.buyer_ex) / decimals_long);
             }
         }
     }
