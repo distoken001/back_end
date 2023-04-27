@@ -47,7 +47,7 @@ namespace deMarketService.Controllers
             else { return Json(new WebApiResult(1, "日志列表", new PagedModel<event_logs>(0, new List<event_logs>()))); }
 
             var totalCount = await queryEntities.CountAsync();
-            queryEntities = queryEntities.OrderByDescending(p => p.createTime).Skip((req.pageIndex - 1) * req.pageSize).Take(req.pageSize);
+            queryEntities = queryEntities.OrderByDescending(p => p.create_time).Skip((req.pageIndex - 1) * req.pageSize).Take(req.pageSize);
             var list = await queryEntities.ToListAsync();
             var res = new PagedModel<event_logs>(totalCount, list);
             return Json(new WebApiResult(1, "日志列表", res));

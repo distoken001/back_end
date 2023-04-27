@@ -16,7 +16,7 @@ namespace deMarketService.Common.Model.DataEntityModel
         /**
          * 事件名
          */
-        public String eventName { get; set; }
+        public String event_name { get; set; }
         /**
          * 调用人
          */
@@ -25,7 +25,7 @@ namespace deMarketService.Common.Model.DataEntityModel
         /**
          * 订单编号
          */
-        public String orderId { get; set; }
+        public String order_id { get; set; }
 
         public String hash { get; set; }
         /**
@@ -41,12 +41,12 @@ namespace deMarketService.Common.Model.DataEntityModel
         /**
          * 创建时间
          */
-        public DateTime createTime { get; set; }
+        public DateTime create_time { get; set; }
 
         /**
          * 修改时间
          */
-        public DateTime updateTime { get; set; }
+        public DateTime update_time { get; set; }
 
         /**
          * 修改人
