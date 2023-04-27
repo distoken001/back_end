@@ -40,9 +40,9 @@ namespace deMarketService.Controllers
         public async Task<JsonResult> list([FromBody] ReqLogsVo req)
         {
             var queryEntities = _mySqlMasterDbContext.event_logs.Where(a => a.operater == CurrentLoginAddress).AsNoTracking().AsQueryable();
-            if (req.chain_id != 0)
+            if (CurrentLoginChain != 0)
             {
-                queryEntities = queryEntities.Where(p => p.chain_id == req.chain_id);
+                queryEntities = queryEntities.Where(p => p.chain_id == CurrentLoginChain);
             }
             else { return Json(new WebApiResult(1, "日志列表", new PagedModel<event_logs>(0, new List<event_logs>()))); }
 

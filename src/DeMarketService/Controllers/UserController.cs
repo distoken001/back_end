@@ -78,13 +78,13 @@ namespace deMarketService.Controllers
         {
             if (!string.IsNullOrEmpty(req.buyer))
             {
-                var list = await _mySqlMasterDbContext.orders.AsTracking().Where(p => p.buyer.Equals(req.buyer) && p.chain_id == req.chain_id).ToListAsync();
+                var list = await _mySqlMasterDbContext.orders.AsTracking().Where(p => p.buyer.Equals(req.buyer) && p.chain_id == CurrentLoginChain).ToListAsync();
 
                 return new WebApiResult(1, data: list);
             }
             else if (!string.IsNullOrEmpty(req.seller))
             {
-                var list = await _mySqlMasterDbContext.orders.AsTracking().Where(p => p.seller.Equals(req.seller) && p.chain_id == req.chain_id).ToListAsync();
+                var list = await _mySqlMasterDbContext.orders.AsTracking().Where(p => p.seller.Equals(req.seller) && p.chain_id == CurrentLoginChain).ToListAsync();
 
                 return new WebApiResult(1, data: list);
             }

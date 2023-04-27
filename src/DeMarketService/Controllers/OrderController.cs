@@ -99,10 +99,10 @@ namespace deMarketService.Controllers
                 queryEntities = queryEntities.Where(p => p.description.Contains(req.description));
             }
 
-            if (req.order_id.HasValue)
-                queryEntities = queryEntities.Where(p => p.order_id == req.order_id);
-            if (req.chain_id != 0)
-                queryEntities = queryEntities.Where(p => p.chain_id == req.chain_id);
+            //if (req.order_id.HasValue)
+            //    queryEntities = queryEntities.Where(p => p.order_id == req.order_id);
+            //if (req.chain_id != 0)
+                queryEntities = queryEntities.Where(p => p.chain_id == CurrentLoginChain);
 
             if (req.priceMin.HasValue)
                 queryEntities = queryEntities.Where(p => p.price >= req.priceMin);

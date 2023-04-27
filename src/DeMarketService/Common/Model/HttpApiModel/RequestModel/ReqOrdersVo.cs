@@ -35,10 +35,10 @@ namespace deMarketService.Common.Model.HttpApiModel.RequestModel
         /// </summary>
         public string buyer { get; set; }
 
-        /// <summary>
-        /// 链id
-        /// </summary>
-        public int chain_id { get; set; }
+        ///// <summary>
+        ///// 链id
+        ///// </summary>
+        //public int chain_id { get; set; }
 
         /// <summary>
         /// 最小价格
