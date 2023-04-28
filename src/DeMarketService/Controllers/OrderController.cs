@@ -1,4 +1,5 @@
-﻿using deMarketService.Common.Model.DataEntityModel;
+﻿using deMarketService.Common.Common;
+using deMarketService.Common.Model.DataEntityModel;
 using deMarketService.Common.Model.HttpApiModel.RequestModel;
 using deMarketService.Common.Model.HttpApiModel.ResponseModel;
 using deMarketService.DbContext;
@@ -102,7 +103,7 @@ namespace deMarketService.Controllers
             //if (req.order_id.HasValue)
             //    queryEntities = queryEntities.Where(p => p.order_id == req.order_id);
             //if (req.chain_id != 0)
-                queryEntities = queryEntities.Where(p => p.chain_id == CurrentLoginChain);
+            queryEntities = queryEntities.Where(p => p.chain_id == CurrentLoginChain);
 
             if (req.priceMin.HasValue)
                 queryEntities = queryEntities.Where(p => p.price >= req.priceMin);
@@ -113,8 +114,8 @@ namespace deMarketService.Controllers
             var totalCount = await queryEntities.CountAsync();
             queryEntities = queryEntities.OrderByDescending(p => p.create_time).Skip((req.pageIndex - 1) * req.pageSize).Take(req.pageSize);
             var list = await queryEntities.ToListAsync();
-
-            var res = new PagedModel<orders>(totalCount, list);
+            var viewList = AutoMapperHelper.MapDbEntityToDTO<orders, OrdersResponse>(list);
+            var res = new PagedModel<OrdersResponse>(totalCount, viewList);
             return Json(new WebApiResult(1, "订单列表", res));
         }
 
@@ -129,7 +130,8 @@ namespace deMarketService.Controllers
         public async Task<JsonResult> detail([FromQuery] long order_id, [FromQuery] int chain_id)
         {
             var res = await _mySqlMasterDbContext.orders.FirstOrDefaultAsync(p => p.order_id == order_id && p.chain_id == CurrentLoginChain);
-            return Json(new WebApiResult(1, "CurrentLoginAddress:" + CurrentLoginAddress + ",CurrentLoginChain:"+ CurrentLoginChain, res));
+            var viewRes = AutoMapperHelper.MapDbEntityToDTO<orders, OrdersResponse>(res);
+            return Json(new WebApiResult(1, "CurrentLoginAddress:" + CurrentLoginAddress + ",CurrentLoginChain:" + CurrentLoginChain, viewRes));
         }
 
 

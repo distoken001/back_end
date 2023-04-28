@@ -18,6 +18,7 @@ using Microsoft.IdentityModel.Tokens;
 using Com.Ctrip.Framework.Apollo;
 using deMarketService.Services.Interfaces;
 using deMarketService.Services;
+using AutoMapper;
 
 namespace deMarketService
 {
@@ -77,8 +78,11 @@ namespace deMarketService
                     options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
                     options.JsonSerializerOptions.PropertyNamingPolicy = null;
                 });
-                //.AddJsonOptions(options => options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver())//JSON首字母小写解决
-                //.SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            //.AddJsonOptions(options => options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver())//JSON首字母小写解决
+            //.SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            //automapper
+            services.AddAutoMapper(System.Reflection.Assembly.GetExecutingAssembly());
 
             //Swagger 配置
             services.AddSwaggerGen(options =>
