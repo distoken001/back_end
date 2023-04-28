@@ -36,7 +36,7 @@ namespace deMarketService.Controllers
         /// <param name = "req" ></ param >
         /// < returns ></ returns >
         [HttpPost("list")]
-        [ProducesResponseType(typeof(PagedModel<orders>), 200)]
+        [ProducesResponseType(typeof(PagedModel<EventLogsResponse>), 200)]
         public async Task<JsonResult> list([FromBody] ReqLogsVo req)
         {
             var queryEntities = _mySqlMasterDbContext.event_logs.Where(a => a.operater == CurrentLoginAddress).AsNoTracking().AsQueryable();

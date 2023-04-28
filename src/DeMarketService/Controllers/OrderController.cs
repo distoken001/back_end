@@ -74,7 +74,7 @@ namespace deMarketService.Controllers
         /// <param name = "req" ></ param >
         /// < returns ></ returns >
         [HttpPost("list")]
-        [ProducesResponseType(typeof(PagedModel<orders>), 200)]
+        [ProducesResponseType(typeof(PagedModel<OrdersResponse>), 200)]
         public async Task<JsonResult> list([FromBody] ReqOrdersVo req)
         {
             var queryEntities = _mySqlMasterDbContext.orders.AsNoTracking().AsQueryable();
@@ -125,7 +125,7 @@ namespace deMarketService.Controllers
         /// <param name = "req" ></ param >
         /// < returns ></ returns >
         [HttpGet("detail")]
-        [ProducesResponseType(typeof(orders), 200)]
+        [ProducesResponseType(typeof(OrdersResponse), 200)]
         public async Task<JsonResult> detail([FromQuery] long order_id, [FromQuery] int chain_id)
         {
             var res = await _mySqlMasterDbContext.orders.FirstOrDefaultAsync(p => p.order_id == order_id && p.chain_id == CurrentLoginChain);

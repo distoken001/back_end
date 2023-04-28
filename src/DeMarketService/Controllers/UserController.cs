@@ -32,6 +32,7 @@ namespace deMarketService.Controllers
         /// <param name = "req" ></ param >
         /// < returns ></ returns >
         [HttpPost("login")]
+        [ProducesResponseType(typeof(LoginResponse), 200)]
         public async Task<WebApiResult> login([FromBody] ReqUsersVo req)
         {
             //对签名消息，账号地址三项信息进行认证，判断签名是否有效
@@ -40,7 +41,7 @@ namespace deMarketService.Controllers
                 return new WebApiResult(-1, "signature verification failure");
             }
 
-            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(req.address)&&p.chain_id==req.chain_id);
+            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(req.address) && p.chain_id == req.chain_id);
             if (users == null)
             {
                 users = new Common.Model.DataEntityModel.users
@@ -63,7 +64,7 @@ namespace deMarketService.Controllers
             }
             Claim[] userClaims = ConvertToClaims(users);
             var token = TokenHelper.GenerateToken(StringConstant.secretKey, StringConstant.issuer, StringConstant.audience, 7, userClaims);
-            return new WebApiResult(1, data: new { token = token });
+            return new WebApiResult(1, data: new LoginResponse { token = token });
         }
 
 
@@ -74,7 +75,7 @@ namespace deMarketService.Controllers
         /// <param name = "req" ></ param >
         /// < returns ></ returns >
         [HttpPost("list")]
-        [ProducesResponseType(typeof(orders), 200)]
+        [ProducesResponseType(typeof(OrdersResponse), 200)]
         public async Task<WebApiResult> list([FromBody] ReqOrdersVo req)
         {
             if (!string.IsNullOrEmpty(req.buyer))
@@ -98,10 +99,10 @@ namespace deMarketService.Controllers
         /// <param name = "req" ></ param >
         /// < returns ></ returns >
         [HttpPost("detail")]
-        [ProducesResponseType(typeof(orders), 200)]
+        [ProducesResponseType(typeof(UsersResponse), 200)]
         public async Task<WebApiResult> detail([FromBody] ReqOrdersVo req)
         {
-            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(this.CurrentLoginAddress) );
+            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(this.CurrentLoginAddress) && p.chain_id == this.CurrentLoginChain);
 
             return new WebApiResult(1, data: users);
         }
