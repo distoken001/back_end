@@ -109,24 +109,24 @@ namespace deMarketService.Common.Model.DataEntityModel
         /// 买家比卖家额外多质押数量
         /// </summary>
         [NotMapped]
-        public decimal buyer_ex_actual { get { return this.buyer_ex / decimals_long; } }
+        public decimal buyer_ex_actual { get { return (decimal)buyer_ex / decimals_long; } }
         /// <summary>
         /// 卖家质押
         /// </summary>
         [NotMapped]
-        public decimal seller_pledge_actual { get { return this.seller_pledge / decimals_long; } }
+        public decimal seller_pledge_actual { get { return (decimal)seller_pledge / decimals_long; } }
         /// <summary>
         /// 买家质押
         /// </summary>
         [NotMapped]
-        public decimal buyer_pledge_actual { get { return this.buyer_pledge / decimals_long; } }
+        public decimal buyer_pledge_actual { get { return (decimal)buyer_pledge / decimals_long; } }
         /// <summary>
         /// 商品价格
         /// </summary>
         [NotMapped]
         public decimal price_actual
         {
-            get { return this.price / decimals_long; }
+            get { return (decimal)price / decimals_long; }
         }
         /// <summary>
         /// 订单总价
@@ -136,7 +136,7 @@ namespace deMarketService.Common.Model.DataEntityModel
         {
             get
             {
-                return this.price * this.amount / decimals_long;
+                return (decimal)price * (decimal)amount / decimals_long;
             }
         }
     }
