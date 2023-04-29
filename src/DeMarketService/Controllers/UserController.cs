@@ -4,10 +4,14 @@ using deMarketService.Common.Model.HttpApiModel.RequestModel;
 using deMarketService.Common.Model.HttpApiModel.ResponseModel;
 using deMarketService.DbContext;
 using deMarketService.Model;
+using deMarketService.Services;
+using deMarketService.Services.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security.Claims;
@@ -20,10 +24,12 @@ namespace deMarketService.Controllers
     public class UserController : BaseController
     {
         MySqlMasterDbContext _mySqlMasterDbContext;
+        private readonly ITxCosUploadeService txCosUploadeService;
 
-        public UserController(MySqlMasterDbContext mySqlMasterDbContext)
+        public UserController(MySqlMasterDbContext mySqlMasterDbContext, ITxCosUploadeService txCosUploadeService)
         {
             _mySqlMasterDbContext = mySqlMasterDbContext;
+            this.txCosUploadeService = txCosUploadeService;
         }
 
         /// <summary>
@@ -40,7 +46,7 @@ namespace deMarketService.Controllers
                 return new WebApiResult(-1, "signature verification failure");
             }
 
-            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(req.address)&&p.chain_id==req.chain_id);
+            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(req.address) && p.chain_id == req.chain_id);
             if (users == null)
             {
                 users = new Common.Model.DataEntityModel.users
@@ -101,9 +107,52 @@ namespace deMarketService.Controllers
         [ProducesResponseType(typeof(orders), 200)]
         public async Task<WebApiResult> detail([FromBody] ReqOrdersVo req)
         {
-            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(this.CurrentLoginAddress) );
+            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(this.CurrentLoginAddress));
 
             return new WebApiResult(1, data: users);
+        }
+
+        /// <summary>
+        /// 修改用户
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPost("edit/user")]
+        public async Task<WebApiResult> EditUser([FromForm] EditUserCommand command)
+        {
+            var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(this.CurrentLoginAddress) && p.chain_id == this.CurrentLoginChain);
+            user.nick_name = command.NickName;
+
+            if (command.FormCollection != null && command.FormCollection.Files.Count == 1)
+            {
+                var file = command.FormCollection.Files[0];
+
+                var cosName = string.Format("{0}_{1}_cp{2}", DateTime.Now.ToString("yyyyMMddhhmmss"), new Random().Next(10000), Path.GetExtension(file.FileName));
+
+                using (var stream = file.OpenReadStream())
+                {
+                    var bytes = ToByteArray(stream);
+                    var avatar = await txCosUploadeService.Upload(bytes, cosName);
+                    user.avatar = avatar;
+                }
+            }
+
+            await _mySqlMasterDbContext.SaveChangesAsync();
+            return new WebApiResult(1, "修改用户", true);
+        }
+
+        private byte[] ToByteArray(Stream input)
+        {
+            byte[] buffer = new byte[16 * 1024];
+            using (var ms = new MemoryStream())
+            {
+                int read;
+                while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    ms.Write(buffer, 0, read);
+                }
+                return ms.ToArray();
+            }
         }
 
 
