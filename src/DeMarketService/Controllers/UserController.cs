@@ -118,7 +118,7 @@ namespace deMarketService.Controllers
         /// <param name="command"></param>
         /// <returns></returns>
         [HttpPost("edit/user")]
-        public async Task<WebApiResult> EditUser([FromForm] EditUserCommand command)
+        public async Task<WebApiResult> EditUser([FromBody] EditUserCommand command)
         {
             var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(this.CurrentLoginAddress) && p.chain_id == this.CurrentLoginChain);
             user.nick_name = command.NickName;
