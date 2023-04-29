@@ -8,9 +8,10 @@ namespace deMarketService.Common.Model.HttpApiModel.RequestModel
         /// <summary>
         /// 昵称
         /// </summary>
-        [Required]
         public string NickName { get; set; }
-
+        /// <summary>
+        /// 头像
+        /// </summary>
         public string Avatar { get; set; }
     }
 }
