@@ -122,21 +122,7 @@ namespace deMarketService.Controllers
         {
             var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(this.CurrentLoginAddress) && p.chain_id == this.CurrentLoginChain);
             user.nick_name = command.NickName;
-
-            if (command.FormCollection != null && command.FormCollection.Files.Count == 1)
-            {
-                var file = command.FormCollection.Files[0];
-
-                var cosName = string.Format("{0}_{1}_cp{2}", DateTime.Now.ToString("yyyyMMddhhmmss"), new Random().Next(10000), Path.GetExtension(file.FileName));
-
-                using (var stream = file.OpenReadStream())
-                {
-                    var bytes = ToByteArray(stream);
-                    var avatar = await txCosUploadeService.Upload(bytes, cosName);
-                    user.avatar = avatar;
-                }
-            }
-
+            user.avatar = command.Avatar;
             await _mySqlMasterDbContext.SaveChangesAsync();
             return new WebApiResult(1, "修改用户", true);
         }

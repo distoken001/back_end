@@ -11,6 +11,6 @@ namespace deMarketService.Common.Model.HttpApiModel.RequestModel
         [Required]
         public string NickName { get; set; }
 
-        public IFormCollection FormCollection { get; set; }
+        public string Avatar { get; set; }
     }
 }
