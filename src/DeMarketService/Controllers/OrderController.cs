@@ -97,8 +97,8 @@ namespace deMarketService.Controllers
 
             //if (req.order_id.HasValue)
             //    queryEntities = queryEntities.Where(p => p.order_id == req.order_id);
-            //if (req.chain_id != 0)
-                queryEntities = queryEntities.Where(p => p.chain_id == CurrentLoginChain);
+            if (req.chain_id != 0)
+            queryEntities = queryEntities.Where(p => p.chain_id == req.chain_id);
 
             if (req.priceMin.HasValue)
                 queryEntities = queryEntities.Where(p => p.price >= req.priceMin);
@@ -124,7 +124,7 @@ namespace deMarketService.Controllers
         [ProducesResponseType(typeof(orders), 200)]
         public async Task<JsonResult> detail([FromQuery] long order_id, [FromQuery] int chain_id)
         {
-            var res = await _mySqlMasterDbContext.orders.FirstOrDefaultAsync(p => p.order_id == order_id && p.chain_id == CurrentLoginChain);
+            var res = await _mySqlMasterDbContext.orders.FirstOrDefaultAsync(p => p.order_id == order_id && p.chain_id == chain_id);
             return Json(new WebApiResult(1, "CurrentLoginAddress:" + CurrentLoginAddress + ",CurrentLoginChain:"+ CurrentLoginChain, res));
         }
 
