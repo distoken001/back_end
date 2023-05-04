@@ -170,7 +170,7 @@
     {
         MainNet = 1,
         ArbitrumOne = 42161,
-        optimisticEthereum = 10,
+        OptimisticEthereum = 10,
         Polygon = 137,
         Ropsten = 3,
         Rinkeby = 4,
