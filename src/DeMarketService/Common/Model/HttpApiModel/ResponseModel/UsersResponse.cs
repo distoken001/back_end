@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using deMarketService.Common.Model;
 
 namespace deMarketService.Controllers
 {
@@ -32,7 +33,7 @@ namespace deMarketService.Controllers
         /**
          * 状态，0：有效，1无效
          */
-        public int status { get; set; }
+        public ChainEnum status { get; set; }
 
         /**
          * 创建时间
