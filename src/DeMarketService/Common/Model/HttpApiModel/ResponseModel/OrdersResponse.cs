@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -76,7 +77,7 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         /// <summary>
         /// 链id
         /// </summary>
-        public int chain_id { get; set; }
+        public ChainEnum chain_id { get; set; }
         /// <summary>
         /// 买家比卖家额外多质押数量
         /// </summary>
@@ -90,9 +91,12 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         /// </summary>
         public int decimals { get; set; }
         /// <summary>
+        /// 链名称
+        /// </summary>
+        public string chain_name { get { return chain_id.ToString(); } }
+        /// <summary>
         /// 算数
         /// </summary>
-
         public int decimals_long
         {
             get
@@ -103,30 +107,35 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         /// <summary>
         /// 买家比卖家额外多质押数量
         /// </summary>
-        public decimal buyer_ex_actual { get { return buyer_ex / decimals_long; } }
+        [NotMapped]
+        public decimal buyer_ex_actual { get { return (decimal)buyer_ex / decimals_long; } }
         /// <summary>
         /// 卖家质押
         /// </summary>
-        public decimal seller_pledge_actual { get { return seller_pledge / decimals_long; } }
+        [NotMapped]
+        public decimal seller_pledge_actual { get { return (decimal)seller_pledge / decimals_long; } }
         /// <summary>
         /// 买家质押
         /// </summary>
-        public decimal buyer_pledge_actual { get { return buyer_pledge / decimals_long; } }
+        [NotMapped]
+        public decimal buyer_pledge_actual { get { return (decimal)buyer_pledge / decimals_long; } }
         /// <summary>
         /// 商品价格
         /// </summary>
+        [NotMapped]
         public decimal price_actual
         {
-            get { return this.price / decimals_long; }
+            get { return (decimal)price / decimals_long; }
         }
         /// <summary>
         /// 订单总价
         /// </summary>
+        [NotMapped]
         public decimal total_price
         {
             get
             {
-                return this.price * this.amount / decimals_long;
+                return (decimal)price * (decimal)amount / decimals_long;
             }
         }
     }

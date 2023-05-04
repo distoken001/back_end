@@ -82,10 +82,6 @@ namespace deMarketService.Common.Model.DataEntityModel
         /// </summary>
         public ChainEnum chain_id { get; set; }
         /// <summary>
-        /// 链id
-        /// </summary>
-        public string chain_name { get { return chain_id.ToString(); } }
-        /// <summary>
         /// 买家比卖家额外多质押数量
         /// </summary>
         public long buyer_ex { get; set; }
@@ -97,6 +93,7 @@ namespace deMarketService.Common.Model.DataEntityModel
         /// 小时点
         /// </summary>
         public int decimals { get; set; }
+
         ///// <summary>
         ///// 算数
         ///// </summary>
