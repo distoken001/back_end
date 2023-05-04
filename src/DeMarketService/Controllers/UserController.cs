@@ -4,10 +4,14 @@ using deMarketService.Common.Model.HttpApiModel.RequestModel;
 using deMarketService.Common.Model.HttpApiModel.ResponseModel;
 using deMarketService.DbContext;
 using deMarketService.Model;
+using deMarketService.Services;
+using deMarketService.Services.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security.Claims;
@@ -20,10 +24,12 @@ namespace deMarketService.Controllers
     public class UserController : BaseController
     {
         MySqlMasterDbContext _mySqlMasterDbContext;
+        private readonly ITxCosUploadeService txCosUploadeService;
 
-        public UserController(MySqlMasterDbContext mySqlMasterDbContext)
+        public UserController(MySqlMasterDbContext mySqlMasterDbContext, ITxCosUploadeService txCosUploadeService)
         {
             _mySqlMasterDbContext = mySqlMasterDbContext;
+            this.txCosUploadeService = txCosUploadeService;
         }
 
         /// <summary>
@@ -102,9 +108,38 @@ namespace deMarketService.Controllers
         [ProducesResponseType(typeof(UsersResponse), 200)]
         public async Task<WebApiResult> detail([FromBody] ReqOrdersVo req)
         {
-            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(this.CurrentLoginAddress) && p.chain_id == this.CurrentLoginChain);
-            var viewData = AutoMapperHelper.MapDbEntityToDTO<users, UsersResponse>(users);
-            return new WebApiResult(1, data: viewData);
+            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(this.CurrentLoginAddress) );
+
+            return new WebApiResult(1, data: users);
+        }
+
+        /// <summary>
+        /// 修改用户
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPost("edit/user")]
+        public async Task<WebApiResult> EditUser([FromBody] EditUserCommand command)
+        {
+            var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(this.CurrentLoginAddress) && p.chain_id == this.CurrentLoginChain);
+            user.nick_name = command.NickName;
+            user.avatar = command.Avatar;
+            await _mySqlMasterDbContext.SaveChangesAsync();
+            return new WebApiResult(1, "修改用户", true);
+        }
+
+        private byte[] ToByteArray(Stream input)
+        {
+            byte[] buffer = new byte[16 * 1024];
+            using (var ms = new MemoryStream())
+            {
+                int read;
+                while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    ms.Write(buffer, 0, read);
+                }
+                return ms.ToArray();
+            }
         }
 
 
