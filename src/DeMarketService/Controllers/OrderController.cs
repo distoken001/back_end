@@ -127,7 +127,8 @@ namespace deMarketService.Controllers
         public async Task<JsonResult> detail([FromQuery] long order_id, [FromQuery] ChainEnum chain_id)
         {
             var res = await _mySqlMasterDbContext.orders.FirstOrDefaultAsync(p => p.order_id == order_id && p.chain_id == CurrentLoginChain);
-            return Json(new WebApiResult(1, "CurrentLoginAddress:" + CurrentLoginAddress + ",CurrentLoginChain:"+ CurrentLoginChain, res));
+            var  ress = AutoMapperHelper.MapDbEntityToDTO<orders, OrdersResponse>(res);
+            return Json(new WebApiResult(1, "CurrentLoginAddress:" + CurrentLoginAddress + ",CurrentLoginChain:"+ CurrentLoginChain, ress));
         }
 
 
