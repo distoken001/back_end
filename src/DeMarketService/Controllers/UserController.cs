@@ -73,6 +73,29 @@ namespace deMarketService.Controllers
             return new WebApiResult(1, data: new LoginResponse { token = token });
         }
 
+        /// <summary>
+        /// 刷新token接口
+        /// </summary>
+        /// <param name = "req" ></ param >
+        /// < returns ></ returns >
+        [HttpPost("refresh")]
+        [ProducesResponseType(typeof(LoginResponse), 200)]
+        public async Task<WebApiResult> refresh([FromBody] RefreshRequest req)
+        {
+            //对签名消息，账号地址三项信息进行认证，判断签名是否有效
+
+
+            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(this.CurrentLoginAddress) && p.chain_id == this.CurrentLoginChain);
+            var token = "";
+            if (users != null)
+            {
+                users.chain_id = req.chain_id;
+                Claim[] userClaims = ConvertToClaims(users);
+                token = TokenHelper.GenerateToken(StringConstant.secretKey, StringConstant.issuer, StringConstant.audience, 7, userClaims);
+            }
+            return new WebApiResult(1, data: new LoginResponse { token = token });
+        }
+
 
 
         /// <summary>
