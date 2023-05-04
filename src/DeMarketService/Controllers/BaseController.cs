@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using deMarketService.Common.Model;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
-using static deMarketService.Model.EnumAll;
 
 namespace deMarketService.Controllers
 {

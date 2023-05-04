@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using static deMarketService.Model.EnumAll;
 
 namespace deMarketService.Common.Model.HttpApiModel.RequestModel
 {

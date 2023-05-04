@@ -1,4 +1,5 @@
 ﻿using deMarketService.Common.Common;
+using deMarketService.Common.Model;
 using deMarketService.Common.Model.DataEntityModel;
 using deMarketService.Common.Model.HttpApiModel.RequestModel;
 using deMarketService.Common.Model.HttpApiModel.ResponseModel;
@@ -12,7 +13,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using static deMarketService.Model.EnumAll;
 
 namespace deMarketService.Controllers
 {

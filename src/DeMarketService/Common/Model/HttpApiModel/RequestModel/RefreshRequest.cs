@@ -10,6 +10,6 @@ namespace deMarketService.Common.Model.HttpApiModel.RequestModel
         /// <summary>
         /// 链id
         /// </summary>
-        public int chain_id { get; set; }
+        public ChainEnum chain_id { get; set; }
     }
 }

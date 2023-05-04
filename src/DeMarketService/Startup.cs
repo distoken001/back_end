@@ -81,8 +81,7 @@ namespace deMarketService
             //.AddJsonOptions(options => options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver())//JSON首字母小写解决
             //.SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            //automapper
-            services.AddAutoMapper(System.Reflection.Assembly.GetExecutingAssembly());
+            //automappe            services.AddAutoMapper(System.Reflection.Assembly.GetExecutingAssembly());
 
             //Swagger 配置
             services.AddSwaggerGen(options =>
