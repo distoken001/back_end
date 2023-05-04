@@ -55,7 +55,7 @@ namespace deMarketService.Controllers
                     address = req.address,
                     status = 1,
                     create_time = DateTime.Now,
-                    chain_id = req.chain_id
+                    chain_id =req.chain_id
                 };
 
                 try

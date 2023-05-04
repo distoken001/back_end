@@ -40,7 +40,7 @@ namespace deMarketService.Common.Model.HttpApiModel.RequestModel
         /**
          * 状态，0：有效，1无效
          */
-        public int status { get; set; }
+        public ChainEnum status { get; set; }
 
         /**
          * 创建时间
