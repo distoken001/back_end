@@ -27,10 +27,10 @@ namespace deMarketService.Controllers
 
                 try
                 {
-                    var chain_id = User.Claims.FirstOrDefault(x => x.Type == "chain_id")?.Value;
-                    if (!string.IsNullOrEmpty(chain_id))
+                    var chain_str = User.Claims.FirstOrDefault(x => x.Type == "chain_id")?.Value;
+                    if (!string.IsNullOrEmpty(chain_str))
                     {
-                     return (ChainEnum)Enum.Parse(typeof(ChainEnum), chain_id);
+                     return (ChainEnum)Enum.Parse(typeof(ChainEnum), chain_str);
                     }
                     return 0;
                 }
