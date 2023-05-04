@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static deMarketService.Model.EnumAll;
 
 namespace deMarketService.Common.Model.HttpApiModel.RequestModel
 {
@@ -73,7 +74,7 @@ namespace deMarketService.Common.Model.HttpApiModel.RequestModel
         /// <summary>
         /// 链id
         /// </summary>
-        public int chain_id { get; set; }
+        public ChainEnum chain_id { get; set; }
 
     }
 }

@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using static deMarketService.Model.EnumAll;
 
 namespace deMarketService.Common.Model.DataEntityModel
 {
@@ -67,6 +68,6 @@ namespace deMarketService.Common.Model.DataEntityModel
          * 用户登录ip
          */
         public String ip { get; set; }
-        public int chain_id { get; set; }
+        public ChainEnum chain_id { get; set; }
     }
 }

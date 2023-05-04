@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using static deMarketService.Model.EnumAll;
 
 namespace deMarketService.Controllers
 {
@@ -122,7 +123,7 @@ namespace deMarketService.Controllers
         /// < returns ></ returns >
         [HttpGet("detail")]
         [ProducesResponseType(typeof(orders), 200)]
-        public async Task<JsonResult> detail([FromQuery] long order_id, [FromQuery] int chain_id)
+        public async Task<JsonResult> detail([FromQuery] long order_id, [FromQuery] ChainEnum chain_id)
         {
             var res = await _mySqlMasterDbContext.orders.FirstOrDefaultAsync(p => p.order_id == order_id && p.chain_id == chain_id);
             return Json(new WebApiResult(1, "CurrentLoginAddress:" + CurrentLoginAddress + ",CurrentLoginChain:"+ CurrentLoginChain, res));

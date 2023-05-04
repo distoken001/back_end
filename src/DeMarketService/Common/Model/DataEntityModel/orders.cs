@@ -81,7 +81,11 @@ namespace deMarketService.Common.Model.DataEntityModel
         /// <summary>
         /// 链id
         /// </summary>
-        public int chain_id { get; set; }
+        public ChainEnum chain_id { get; set; }
+        /// <summary>
+        /// 链id
+        /// </summary>
+        public string chain_name { get { return chain_id.ToString(); } }
         /// <summary>
         /// 买家比卖家额外多质押数量
         /// </summary>

@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using static deMarketService.Model.EnumAll;
 
 namespace deMarketService.Common.Model.DataEntityModel
 {
@@ -59,7 +60,7 @@ namespace deMarketService.Common.Model.DataEntityModel
         /// <summary>
         ///链id
         /// </summary>
-        public int chain_id { get; set; }
+        public ChainEnum chain_id { get; set; }
 
     }
 }
