@@ -30,7 +30,7 @@ namespace deMarketService.Controllers
                     var chain_id = User.Claims.FirstOrDefault(x => x.Type == "chain_id")?.Value;
                     if (!string.IsNullOrEmpty(chain_id))
                     {
-                        return (ChainEnum)int.Parse(chain_id);
+                     return (ChainEnum)Enum.Parse(typeof(ChainEnum), chain_id);
                     }
                     return 0;
                 }
