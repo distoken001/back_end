@@ -166,7 +166,7 @@
         BuyerRejectCancel,//买家拒绝取消9
         ConsultCancelCompleted//协商取消完成10
     }
-    public enum ChainEnum
+    public enum ChainEnum : int
     {
         MainNet = 1,
         Arbitrum = 42167,
