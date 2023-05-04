@@ -70,7 +70,7 @@ namespace deMarketService.Controllers
             }
             Claim[] userClaims = ConvertToClaims(users);
             var token = TokenHelper.GenerateToken(StringConstant.secretKey, StringConstant.issuer, StringConstant.audience, 7, userClaims);
-            return new WebApiResult(1, data: new  { token = token, avatar = users.avatar, nick_name = users.nick_name });
+            return new WebApiResult(1, data: new LoginResponse { token = token, avatar = users.avatar, nick_name = users.nick_name });
         }
 
         /// <summary>
@@ -111,7 +111,7 @@ namespace deMarketService.Controllers
                 Claim[] userClaims = ConvertToClaims(users);
                 token = TokenHelper.GenerateToken(StringConstant.secretKey, StringConstant.issuer, StringConstant.audience, 7, userClaims);
             
-            return new WebApiResult(1, data: new  { token = token, avatar = users.avatar, nick_name = users.nick_name });
+            return new WebApiResult(1, data: new LoginResponse { token = token, avatar = users.avatar, nick_name = users.nick_name });
         }
 
 
