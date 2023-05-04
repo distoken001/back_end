@@ -70,7 +70,7 @@ namespace deMarketService.Controllers
             }
             Claim[] userClaims = ConvertToClaims(users);
             var token = TokenHelper.GenerateToken(StringConstant.secretKey, StringConstant.issuer, StringConstant.audience, 7, userClaims);
-            return new WebApiResult(1, data: new LoginResponse { token = token });
+            return new WebApiResult(1, data: new  { token = token, avatar = users.avatar, nick_name = users.nick_name });
         }
 
         /// <summary>
@@ -85,15 +85,33 @@ namespace deMarketService.Controllers
             //对签名消息，账号地址三项信息进行认证，判断签名是否有效
 
 
-            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(this.CurrentLoginAddress) && p.chain_id == this.CurrentLoginChain);
-            var token = "";
-            if (users != null)
+            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(this.CurrentLoginAddress) && p.chain_id == req.chain_id);
+            if (users == null)
             {
+                users = new Common.Model.DataEntityModel.users
+                {
+                    address = this.CurrentLoginAddress,
+                    status = 1,
+                    create_time = DateTime.Now,
+                    chain_id = req.chain_id
+                };
+
+                try
+                {
+                    await _mySqlMasterDbContext.users.AddAsync(users);
+                    await _mySqlMasterDbContext.SaveChangesAsync();
+                }
+                catch (Exception e)
+                {
+                    return new WebApiResult(-1, "database error");
+                }
+            }
+                var token = "";
                 users.chain_id = req.chain_id;
                 Claim[] userClaims = ConvertToClaims(users);
                 token = TokenHelper.GenerateToken(StringConstant.secretKey, StringConstant.issuer, StringConstant.audience, 7, userClaims);
-            }
-            return new WebApiResult(1, data: new LoginResponse { token = token });
+            
+            return new WebApiResult(1, data: new  { token = token, avatar = users.avatar, nick_name = users.nick_name });
         }
 
 
