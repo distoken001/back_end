@@ -65,5 +65,9 @@ namespace deMarketService.Controllers
          */
         public String ip { get; set; }
         public ChainEnum chain_id { get; set; }
+        /// <summary>
+        /// 链名称
+        /// </summary>
+        public string chain_name { get { return chain_id.ToString(); } }
     }
 }
