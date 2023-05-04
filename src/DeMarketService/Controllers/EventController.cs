@@ -36,7 +36,7 @@ namespace deMarketService.Controllers
         /// <param name = "req" ></ param >
         /// < returns ></ returns >
         [HttpPost("list")]
-        [ProducesResponseType(typeof(PagedModel<orders>), 200)]
+        [ProducesResponseType(typeof(PagedModel<EventLogsResponse>), 200)]
         public async Task<JsonResult> list([FromBody] ReqLogsVo req)
         {
             var queryEntities = _mySqlMasterDbContext.event_logs.Where(a => a.operater == CurrentLoginAddress).AsNoTracking().AsQueryable();
@@ -49,7 +49,12 @@ namespace deMarketService.Controllers
             var totalCount = await queryEntities.CountAsync();
             queryEntities = queryEntities.OrderByDescending(p => p.create_time).Skip((req.pageIndex - 1) * req.pageSize).Take(req.pageSize);
             var list = await queryEntities.ToListAsync();
-            var res = new PagedModel<event_logs>(totalCount, list);
+
+            var viewList = AutoMapperHelper.MapDbEntityToDTO<event_logs, EventLogsResponse>(list);
+
+            var res = new PagedModel<EventLogsResponse>(totalCount, viewList);
+
+
             return Json(new WebApiResult(1, "日志列表", res));
         }
 
