@@ -93,5 +93,10 @@ namespace deMarketService.Common.Model.DataEntityModel
         /// 小时点
         /// </summary>
         public int decimals { get; set; }
+        /// <summary>
+        /// 链名称
+        /// </summary>
+        [NotMapped]
+        public string chain_name { get { return chain_id.ToString(); } }
     }
 }
