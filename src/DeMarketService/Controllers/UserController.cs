@@ -38,6 +38,7 @@ namespace deMarketService.Controllers
         /// <param name = "req" ></ param >
         /// < returns ></ returns >
         [HttpPost("login")]
+        [ProducesResponseType(typeof(LoginResponse), 200)]
         public async Task<WebApiResult> login([FromBody] ReqUsersVo req)
         {
             //对签名消息，账号地址三项信息进行认证，判断签名是否有效
@@ -69,7 +70,30 @@ namespace deMarketService.Controllers
             }
             Claim[] userClaims = ConvertToClaims(users);
             var token = TokenHelper.GenerateToken(StringConstant.secretKey, StringConstant.issuer, StringConstant.audience, 7, userClaims);
-            return new WebApiResult(1, data: new { token = token, avatar= users.avatar, nick_name= users.nick_name});
+            return new WebApiResult(1, data: new LoginResponse { token = token });
+        }
+
+        /// <summary>
+        /// 刷新token接口
+        /// </summary>
+        /// <param name = "req" ></ param >
+        /// < returns ></ returns >
+        [HttpPost("refresh")]
+        [ProducesResponseType(typeof(LoginResponse), 200)]
+        public async Task<WebApiResult> refresh([FromBody] RefreshRequest req)
+        {
+            //对签名消息，账号地址三项信息进行认证，判断签名是否有效
+
+
+            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(this.CurrentLoginAddress) && p.chain_id == this.CurrentLoginChain);
+            var token = "";
+            if (users != null)
+            {
+                users.chain_id = req.chain_id;
+                Claim[] userClaims = ConvertToClaims(users);
+                token = TokenHelper.GenerateToken(StringConstant.secretKey, StringConstant.issuer, StringConstant.audience, 7, userClaims);
+            }
+            return new WebApiResult(1, data: new LoginResponse { token = token });
         }
 
 
@@ -80,20 +104,20 @@ namespace deMarketService.Controllers
         /// <param name = "req" ></ param >
         /// < returns ></ returns >
         [HttpPost("list")]
-        [ProducesResponseType(typeof(orders), 200)]
+        [ProducesResponseType(typeof(OrdersResponse), 200)]
         public async Task<WebApiResult> list([FromBody] ReqOrdersVo req)
         {
             if (!string.IsNullOrEmpty(req.buyer))
             {
                 var list = await _mySqlMasterDbContext.orders.AsTracking().Where(p => p.buyer.Equals(req.buyer) && p.chain_id == CurrentLoginChain).ToListAsync();
-
-                return new WebApiResult(1, data: list);
+                var viewList = AutoMapperHelper.MapDbEntityToDTO<orders, OrdersResponse>(list);
+                return new WebApiResult(1, data: viewList);
             }
             else if (!string.IsNullOrEmpty(req.seller))
             {
                 var list = await _mySqlMasterDbContext.orders.AsTracking().Where(p => p.seller.Equals(req.seller) && p.chain_id == CurrentLoginChain).ToListAsync();
-
-                return new WebApiResult(1, data: list);
+                var viewList = AutoMapperHelper.MapDbEntityToDTO<orders, OrdersResponse>(list);
+                return new WebApiResult(1, data: viewList);
             }
             return new WebApiResult(1, "");
         }
@@ -104,10 +128,10 @@ namespace deMarketService.Controllers
         /// <param name = "req" ></ param >
         /// < returns ></ returns >
         [HttpPost("detail")]
-        [ProducesResponseType(typeof(orders), 200)]
+        [ProducesResponseType(typeof(UsersResponse), 200)]
         public async Task<WebApiResult> detail([FromBody] ReqOrdersVo req)
         {
-            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(this.CurrentLoginAddress));
+            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(this.CurrentLoginAddress) );
 
             return new WebApiResult(1, data: users);
         }

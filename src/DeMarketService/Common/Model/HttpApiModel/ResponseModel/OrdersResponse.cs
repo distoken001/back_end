@@ -1,0 +1,134 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using static deMarketService.Model.EnumAll;
+
+namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
+{
+    public class OrdersResponse
+    {
+        public long id { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public long order_id { get; set; }
+        /// <summary>
+        /// 商品名字
+        /// </summary>
+        public string name { get; set; }
+        /// <summary>
+        /// 商品描述
+        /// </summary>
+        public string description { get; set; }
+        /// <summary>
+        /// 商品数量
+        /// </summary>
+        public long amount { get; set; }
+        /// <summary>
+        /// 商品价格
+        /// </summary>
+        public long price { get; set; }
+        /// <summary>
+        /// 图片
+        /// </summary>
+        public string img { get; set; }
+        /// <summary>
+        /// 卖家质押
+        /// </summary>
+        public long seller_pledge { get; set; }
+        /// <summary>
+        /// 买家质押
+        /// </summary>
+        public long buyer_pledge { get; set; }
+        /// <summary>
+        /// 卖家联系方式
+        /// </summary>
+        public string seller_contact { get; set; }
+        /// <summary>
+        /// 买家联系方式
+        /// </summary>
+        public string buyer_contact { get; set; }
+        /// <summary>
+        /// 订单状态
+        /// </summary>
+        public OrderStatus status { get; set; }
+
+
+        public DateTime create_time { get; set; }
+
+        public DateTime update_time { get; set; }
+
+        public string updater { get; set; }
+
+        public string creator { get; set; }
+        /// <summary>
+        /// 卖家地址
+        /// </summary>
+        public string seller { get; set; }
+        /// <summary>
+        /// 买家地址
+        /// </summary>
+        public string buyer { get; set; }
+        /// <summary>
+        /// token地址
+        /// </summary>
+        public string token { get; set; }
+        /// <summary>
+        /// 链id
+        /// </summary>
+        public int chain_id { get; set; }
+        /// <summary>
+        /// 买家比卖家额外多质押数量
+        /// </summary>
+        public long buyer_ex { get; set; }
+        /// <summary>
+        /// 合约地址
+        /// </summary>
+        public string contract { get; set; }
+        /// <summary>
+        /// 小时点
+        /// </summary>
+        public int decimals { get; set; }
+        /// <summary>
+        /// 算数
+        /// </summary>
+
+        public int decimals_long
+        {
+            get
+            {
+                return (int)Math.Pow(10, decimals);
+            }
+        }
+        /// <summary>
+        /// 买家比卖家额外多质押数量
+        /// </summary>
+        public decimal buyer_ex_actual { get { return buyer_ex / decimals_long; } }
+        /// <summary>
+        /// 卖家质押
+        /// </summary>
+        public decimal seller_pledge_actual { get { return seller_pledge / decimals_long; } }
+        /// <summary>
+        /// 买家质押
+        /// </summary>
+        public decimal buyer_pledge_actual { get { return buyer_pledge / decimals_long; } }
+        /// <summary>
+        /// 商品价格
+        /// </summary>
+        public decimal price_actual
+        {
+            get { return this.price / decimals_long; }
+        }
+        /// <summary>
+        /// 订单总价
+        /// </summary>
+        public decimal total_price
+        {
+            get
+            {
+                return this.price * this.amount / decimals_long;
+            }
+        }
+    }
+}

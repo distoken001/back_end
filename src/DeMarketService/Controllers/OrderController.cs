@@ -1,4 +1,5 @@
-﻿using deMarketService.Common.Model.DataEntityModel;
+﻿using deMarketService.Common.Common;
+using deMarketService.Common.Model.DataEntityModel;
 using deMarketService.Common.Model.HttpApiModel.RequestModel;
 using deMarketService.Common.Model.HttpApiModel.ResponseModel;
 using deMarketService.DbContext;
@@ -74,7 +75,7 @@ namespace deMarketService.Controllers
         /// <param name = "req" ></ param >
         /// < returns ></ returns >
         [HttpPost("list")]
-        [ProducesResponseType(typeof(PagedModel<orders>), 200)]
+        [ProducesResponseType(typeof(PagedModel<OrdersResponse>), 200)]
         public async Task<JsonResult> list([FromBody] ReqOrdersVo req)
         {
             var queryEntities = _mySqlMasterDbContext.orders.AsNoTracking().AsQueryable();
@@ -109,8 +110,8 @@ namespace deMarketService.Controllers
             var totalCount = await queryEntities.CountAsync();
             queryEntities = queryEntities.OrderByDescending(p => p.create_time).Skip((req.pageIndex - 1) * req.pageSize).Take(req.pageSize);
             var list = await queryEntities.ToListAsync();
-
-            var res = new PagedModel<orders>(totalCount, list);
+            var viewList = AutoMapperHelper.MapDbEntityToDTO<orders, OrdersResponse>(list);
+            var res = new PagedModel<OrdersResponse>(totalCount, viewList);
             return Json(new WebApiResult(1, "订单列表", res));
         }
 
@@ -121,10 +122,10 @@ namespace deMarketService.Controllers
         /// <param name = "req" ></ param >
         /// < returns ></ returns >
         [HttpGet("detail")]
-        [ProducesResponseType(typeof(orders), 200)]
+        [ProducesResponseType(typeof(OrdersResponse), 200)]
         public async Task<JsonResult> detail([FromQuery] long order_id, [FromQuery] int chain_id)
         {
-            var res = await _mySqlMasterDbContext.orders.FirstOrDefaultAsync(p => p.order_id == order_id && p.chain_id == chain_id);
+            var res = await _mySqlMasterDbContext.orders.FirstOrDefaultAsync(p => p.order_id == order_id && p.chain_id == CurrentLoginChain);
             return Json(new WebApiResult(1, "CurrentLoginAddress:" + CurrentLoginAddress + ",CurrentLoginChain:"+ CurrentLoginChain, res));
         }
 
