@@ -64,6 +64,9 @@ namespace deMarketService.Controllers
          * 用户登录ip
          */
         public String ip { get; set; }
+        /// <summary>
+        /// 链id
+        /// </summary>
         public ChainEnum chain_id { get; set; }
         /// <summary>
         /// 链名称
