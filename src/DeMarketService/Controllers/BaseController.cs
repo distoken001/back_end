@@ -44,19 +44,19 @@ namespace deMarketService.Controllers
         /// <summary>
         /// 链ID
         /// </summary>
-        public int ChainId
-        {
-            get
-            {
-                try
-                {
-                    return int.Parse(HttpContext.Request.Headers["chain_id"].FirstOrDefault());
-                }
-                catch(Exception ex)
-                {
-                    return 0;
-                }
-            }
-        }
+        //public int ChainId
+        //{
+        //    get
+        //    {
+        //        try
+        //        {
+        //            return int.Parse(HttpContext.Request.Headers["chain_id"].FirstOrDefault());
+        //        }
+        //        catch(Exception ex)
+        //        {
+        //            return 0;
+        //        }
+        //    }
+        //}
     }
 }
