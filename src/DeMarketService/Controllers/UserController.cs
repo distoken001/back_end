@@ -81,14 +81,14 @@ namespace deMarketService.Controllers
             if (!string.IsNullOrEmpty(req.buyer))
             {
                 var list = await _mySqlMasterDbContext.orders.AsTracking().Where(p => p.buyer.Equals(req.buyer) && p.chain_id == CurrentLoginChain).ToListAsync();
-
-                return new WebApiResult(1, data: list);
+                var viewList = AutoMapperHelper.MapDbEntityToDTO<orders, OrdersResponse>(list);
+                return new WebApiResult(1, data: viewList);
             }
             else if (!string.IsNullOrEmpty(req.seller))
             {
                 var list = await _mySqlMasterDbContext.orders.AsTracking().Where(p => p.seller.Equals(req.seller) && p.chain_id == CurrentLoginChain).ToListAsync();
-
-                return new WebApiResult(1, data: list);
+                var viewList = AutoMapperHelper.MapDbEntityToDTO<orders, OrdersResponse>(list);
+                return new WebApiResult(1, data: viewList);
             }
             return new WebApiResult(1, "");
         }
@@ -103,8 +103,8 @@ namespace deMarketService.Controllers
         public async Task<WebApiResult> detail([FromBody] ReqOrdersVo req)
         {
             var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(this.CurrentLoginAddress) && p.chain_id == this.CurrentLoginChain);
-
-            return new WebApiResult(1, data: users);
+            var viewData = AutoMapperHelper.MapDbEntityToDTO<users, UsersResponse>(users);
+            return new WebApiResult(1, data: viewData);
         }
 
 
