@@ -44,7 +44,7 @@ namespace deMarketService.Controllers
             //{
             //    queryEntities = queryEntities.Where(p => p.chain_id == CurrentLoginChain);
             //}
-            else { return Json(new WebApiResult(1, "日志列表", new PagedModel<event_logs>(0, new List<event_logs>()))); }
+            //else { return Json(new WebApiResult(1, "日志列表", new PagedModel<event_logs>(0, new List<event_logs>()))); }
 
             var totalCount = await queryEntities.CountAsync();
             queryEntities = queryEntities.OrderByDescending(p => p.create_time).Skip((req.pageIndex - 1) * req.pageSize).Take(req.pageSize);
