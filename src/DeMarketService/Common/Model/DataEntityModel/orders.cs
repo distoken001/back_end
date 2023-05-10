@@ -31,7 +31,7 @@ namespace deMarketService.Common.Model.DataEntityModel
         /// <summary>
         /// 商品价格
         /// </summary>
-        public long price { get; set; }
+        public decimal price { get; set; }
         /// <summary>
         /// 图片
         /// </summary>

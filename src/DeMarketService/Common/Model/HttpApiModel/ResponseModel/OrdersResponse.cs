@@ -28,7 +28,7 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         /// <summary>
         /// 商品价格
         /// </summary>
-        public long price { get; set; }
+        public decimal price { get; set; }
         /// <summary>
         /// 图片
         /// </summary>
@@ -125,7 +125,7 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         [NotMapped]
         public decimal price_actual
         {
-            get { return (decimal)price / decimals_long; }
+            get { return price / decimals_long; }
         }
         /// <summary>
         /// 订单总价
@@ -135,7 +135,7 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         {
             get
             {
-                return (decimal)price * (decimal)amount / decimals_long;
+                return price * (decimal)amount / decimals_long;
             }
         }
     }
