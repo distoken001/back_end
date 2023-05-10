@@ -39,7 +39,7 @@ namespace deMarketService.Controllers
         [ProducesResponseType(typeof(PagedModel<EventLogsResponse>), 200)]
         public async Task<JsonResult> list([FromBody] ReqLogsVo req)
         {
-            var queryEntities = _mySqlMasterDbContext.event_logs.Where(a => a.operater == CurrentLoginAddress).AsNoTracking().AsQueryable();
+            var queryEntities = _mySqlMasterDbContext.event_logs.Where(a => a.seller == CurrentLoginAddress||a.buyer==CurrentLoginAddress).AsNoTracking().AsQueryable();
             //if (CurrentLoginChain != 0)
             //{
             //    queryEntities = queryEntities.Where(p => p.chain_id == CurrentLoginChain);

@@ -60,5 +60,17 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         /// 链名称
         /// </summary>
         public string chain_name { get { return chain_id.ToString(); } }
+        /// <summary>
+        /// 卖方
+        /// </summary>
+        public string seller { get; set; }
+        /// <summary>
+        /// 买方
+        /// </summary>
+        public string buyer { get; set; }
+        /// <summary>
+        /// 合约
+        /// </summary>
+        public string contract { get; set; }
     }
 }

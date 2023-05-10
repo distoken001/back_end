@@ -60,6 +60,18 @@ namespace deMarketService.Common.Model.DataEntityModel
         ///链id
         /// </summary>
         public ChainEnum chain_id { get; set; }
+        /// <summary>
+        /// 卖方
+        /// </summary>
+        public string seller { get; set; }
+        /// <summary>
+        /// 买方
+        /// </summary>
+        public string buyer { get; set; }
+        /// <summary>
+        /// 合约
+        /// </summary>
+        public string contract { get; set; }
 
     }
 }
