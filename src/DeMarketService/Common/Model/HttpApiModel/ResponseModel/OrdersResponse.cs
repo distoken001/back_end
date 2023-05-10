@@ -24,7 +24,7 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         /// <summary>
         /// 商品数量
         /// </summary>
-        public long amount { get; set; }
+        public decimal amount { get; set; }
         /// <summary>
         /// 商品价格
         /// </summary>
@@ -36,11 +36,11 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         /// <summary>
         /// 卖家质押
         /// </summary>
-        public long seller_pledge { get; set; }
+        public decimal seller_pledge { get; set; }
         /// <summary>
         /// 买家质押
         /// </summary>
-        public long buyer_pledge { get; set; }
+        public decimal buyer_pledge { get; set; }
         /// <summary>
         /// 卖家联系方式
         /// </summary>
@@ -81,7 +81,7 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         /// <summary>
         /// 买家比卖家额外多质押数量
         /// </summary>
-        public long buyer_ex { get; set; }
+        public decimal buyer_ex { get; set; }
         /// <summary>
         /// 合约地址
         /// </summary>
@@ -108,17 +108,17 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         /// 买家比卖家额外多质押数量
         /// </summary>
         [NotMapped]
-        public decimal buyer_ex_actual { get { return (decimal)buyer_ex / decimals_long; } }
+        public decimal buyer_ex_actual { get { return buyer_ex / decimals_long; } }
         /// <summary>
         /// 卖家质押
         /// </summary>
         [NotMapped]
-        public decimal seller_pledge_actual { get { return (decimal)seller_pledge / decimals_long; } }
+        public decimal seller_pledge_actual { get { return seller_pledge / decimals_long; } }
         /// <summary>
         /// 买家质押
         /// </summary>
         [NotMapped]
-        public decimal buyer_pledge_actual { get { return (decimal)buyer_pledge / decimals_long; } }
+        public decimal buyer_pledge_actual { get { return buyer_pledge / decimals_long; } }
         /// <summary>
         /// 商品价格
         /// </summary>
@@ -135,7 +135,7 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         {
             get
             {
-                return price * (decimal)amount / decimals_long;
+                return price * amount / decimals_long;
             }
         }
     }

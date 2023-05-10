@@ -27,7 +27,7 @@ namespace deMarketService.Common.Model.DataEntityModel
         /// <summary>
         /// 商品数量
         /// </summary>
-        public long amount { get; set; }
+        public decimal amount { get; set; }
         /// <summary>
         /// 商品价格
         /// </summary>
@@ -39,11 +39,11 @@ namespace deMarketService.Common.Model.DataEntityModel
         /// <summary>
         /// 卖家质押
         /// </summary>
-        public long seller_pledge { get; set; }
+        public decimal seller_pledge { get; set; }
         /// <summary>
         /// 买家质押
         /// </summary>
-        public long buyer_pledge { get; set; }
+        public decimal buyer_pledge { get; set; }
         /// <summary>
         /// 卖家联系方式
         /// </summary>
@@ -84,7 +84,7 @@ namespace deMarketService.Common.Model.DataEntityModel
         /// <summary>
         /// 买家比卖家额外多质押数量
         /// </summary>
-        public long buyer_ex { get; set; }
+        public decimal buyer_ex { get; set; }
         /// <summary>
         /// 合约地址
         /// </summary>
