@@ -107,22 +107,18 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         /// <summary>
         /// 买家比卖家额外多质押数量
         /// </summary>
-        [NotMapped]
         public decimal buyer_ex_actual { get { return buyer_ex / decimals_long; } }
         /// <summary>
         /// 卖家质押
         /// </summary>
-        [NotMapped]
         public decimal seller_pledge_actual { get { return seller_pledge / decimals_long; } }
         /// <summary>
         /// 买家质押
         /// </summary>
-        [NotMapped]
         public decimal buyer_pledge_actual { get { return buyer_pledge / decimals_long; } }
         /// <summary>
         /// 商品价格
         /// </summary>
-        [NotMapped]
         public decimal price_actual
         {
             get { return price / decimals_long; }
@@ -130,7 +126,6 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         /// <summary>
         /// 订单总价
         /// </summary>
-        [NotMapped]
         public decimal total_price
         {
             get
