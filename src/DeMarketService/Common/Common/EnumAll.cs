@@ -171,7 +171,7 @@
         MainNet = 1,
         ArbitrumOne = 42161,
         Optimism = 10,
-        Polygon_Matic = 137,
+        Polygon = 137,
         Ropsten = 3,
         Rinkeby = 4,
         Goerli = 5,
