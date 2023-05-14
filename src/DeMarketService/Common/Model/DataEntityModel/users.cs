@@ -70,7 +70,7 @@ namespace deMarketService.Common.Model.DataEntityModel
         /// <summary>
         /// 链id
         /// </summary>
-        public ChainEnum chain_id { get; set; }
+        //public ChainEnum chain_id { get; set; }
 
     }
 }

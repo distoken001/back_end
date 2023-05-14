@@ -20,26 +20,26 @@ namespace deMarketService.Controllers
             }
         }
 
-        public ChainEnum CurrentLoginChain
-        {
-            get
-            {
+        //public ChainEnum CurrentLoginChain
+        //{
+        //    get
+        //    {
 
-                try
-                {
-                    var chain_str = User.Claims.FirstOrDefault(x => x.Type == "chain_id")?.Value;
-                    if (!string.IsNullOrEmpty(chain_str))
-                    {
-                     return (ChainEnum)Enum.Parse(typeof(ChainEnum), chain_str);
-                    }
-                    return 0;
-                }
-                catch (Exception ex)
-                {
-                    return 0;
-                }
-            }
-        }
+        //        try
+        //        {
+        //            var chain_str = User.Claims.FirstOrDefault(x => x.Type == "chain_id")?.Value;
+        //            if (!string.IsNullOrEmpty(chain_str))
+        //            {
+        //             return (ChainEnum)Enum.Parse(typeof(ChainEnum), chain_str);
+        //            }
+        //            return 0;
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            return 0;
+        //        }
+        //    }
+        //}
 
         /// <summary>
         /// 链ID

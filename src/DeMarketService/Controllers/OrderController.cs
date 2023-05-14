@@ -128,7 +128,8 @@ namespace deMarketService.Controllers
         {
             var res = await _mySqlMasterDbContext.orders.FirstOrDefaultAsync(p => p.order_id == order_id && p.chain_id == chain_id);
             var  ress = AutoMapperHelper.MapDbEntityToDTO<orders, OrdersResponse>(res);
-            return Json(new WebApiResult(1, "CurrentLoginAddress:" + CurrentLoginAddress + ",CurrentLoginChain:"+ CurrentLoginChain, ress));
+            //return Json(new WebApiResult(1, "CurrentLoginAddress:" + CurrentLoginAddress + ",CurrentLoginChain:"+ CurrentLoginChain, ress));
+            return Json(new WebApiResult(1, "查询成功" , ress));
         }
 
 
