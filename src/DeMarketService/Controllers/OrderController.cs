@@ -85,16 +85,16 @@ namespace deMarketService.Controllers
             var currentLoginAddress = this.CurrentLoginAddress;
             if (req.searchType == 1)
             {
-                queryEntities = queryEntities.Where(p => p.buyer.Equals(currentLoginAddress) || p.seller.Equals(currentLoginAddress));
+                queryEntities = queryEntities.Where(p => p.buyer.ToLower().Equals(currentLoginAddress.ToLower()) || p.seller.ToLower().Equals(currentLoginAddress).ToLower());
             }
 
             if (!string.IsNullOrEmpty(req.name) )
             {
-                queryEntities = queryEntities.Where(p => p.name.Contains(req.name));
+                queryEntities = queryEntities.Where(p => p.name.ToLower().Contains(req.name.ToLower()));
             }
             if (!string.IsNullOrEmpty(req.description) )
             {
-                queryEntities = queryEntities.Where(p => p.description.Contains(req.description));
+                queryEntities = queryEntities.Where(p => p.description.ToLower().Contains(req.description.ToLower()));
             }
 
             //if (req.order_id.HasValue)
