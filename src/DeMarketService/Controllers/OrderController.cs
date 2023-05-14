@@ -85,7 +85,7 @@ namespace deMarketService.Controllers
             var currentLoginAddress = this.CurrentLoginAddress;
             if (req.searchType == 1)
             {
-                queryEntities = queryEntities.Where(p => p.buyer.ToLower().Equals(currentLoginAddress.ToLower()) || p.seller.ToLower().Equals(currentLoginAddress).ToLower());
+                queryEntities = queryEntities.Where(p => p.buyer.ToLower().Equals(currentLoginAddress.ToLower()) || p.seller.ToLower().Equals(currentLoginAddress.ToLower()));
             }
 
             if (!string.IsNullOrEmpty(req.name) )
