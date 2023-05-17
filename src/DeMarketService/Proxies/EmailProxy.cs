@@ -25,7 +25,7 @@ namespace deMarketService.Proxies
         {
             if (string.IsNullOrEmpty(config["Email:Host"]))
             {
-                Host = "smtp.exmail.qq.com";
+                Host = "smtp.qq.com";
             }
             else
             {
@@ -74,8 +74,9 @@ namespace deMarketService.Proxies
             smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;//指定电子邮件发送方式
             smtpClient.Host = Host;//指定SMTP服务器
             smtpClient.Port = Port;
-            smtpClient.Credentials = new NetworkCredential(UserName, PassWord);//用户名和密码
             smtpClient.EnableSsl = true;
+            //smtpClient.UseDefaultCredentials = false;
+            smtpClient.Credentials = new NetworkCredential(UserName, PassWord);//用户名和密码
             MailAddress fromAddress = new MailAddress(UserName);//用户名和密码
             MailMessage mailMessage = new MailMessage();
             mailMessage.From = fromAddress;

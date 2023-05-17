@@ -64,7 +64,7 @@ namespace deMarketService.Controllers
                     ls.Add(buyer.email);
                 }
 
-                string Subject = "德玛De-Market通知";
+                string subject = "德玛De-Market通知";
                 string mailMessage = "";
                 if (status == OrderStatus.Initial)
                 {
@@ -74,7 +74,7 @@ namespace deMarketService.Controllers
                 {
                     mailMessage = $"您的商品（订单id={request.order_id}）有新动态，请注意查看！------此封邮件收件人为买卖双方预留的邮箱联系方式，当然您也可以在商品详情页查看对方的联系方式！";
                 }
-                var a= _mailKitEmail.SendMailAsync(Subject, mailMessage, ls).Result;
+                var a= _mailKitEmail.SendMailAsync(subject, mailMessage, ls).Result;
             }
             catch (Exception ex)
             {
