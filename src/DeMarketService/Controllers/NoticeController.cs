@@ -72,7 +72,7 @@ namespace deMarketService.Controllers
                 }
                 if (status != OrderStatus.Initial)
                 {
-                    mailMessage = $"您的商品（订单id={request.order_id}）有新动态，请注意查看！------此邮件收件人为买卖双方预留的邮箱联系方式，您也可以在商品详情页查看对方的其他联系方式！";
+                    mailMessage = $"您的商品（订单id={request.order_id}）有新动态，请注意查看！<br/>------此邮件收件人为买卖双方预留的邮箱联系方式，您也可以在商品详情页查看对方的其他联系方式！";
                 }
                 var a= _mailKitEmail.SendMailAsync(subject, mailMessage, ls).Result;
             }
