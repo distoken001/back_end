@@ -47,7 +47,7 @@ namespace deMarketService.Controllers
                 return new WebApiResult(-1, "signature verification failure");
             }
            // var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(req.address) && p.chain_id == req.chain_id);
-            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(req.address) );
+            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.ToLower().Equals(req.address.ToLower()) );
             if (users == null)
             {
                 users = new Common.Model.DataEntityModel.users
@@ -73,72 +73,6 @@ namespace deMarketService.Controllers
             return new WebApiResult(1, data: new LoginResponse { token = token, avatar = users.avatar, nick_name = users.nick_name,email=users.email });
         }
 
-        /// <summary>
-        /// 刷新token接口
-        /// </summary>
-        /// <param name = "req" ></ param >
-        /// < returns ></ returns >
-        //[HttpPost("refresh")]
-        //[ProducesResponseType(typeof(LoginResponse), 200)]
-        //public async Task<WebApiResult> refresh([FromBody] RefreshRequest req)
-        //{
-        //    //对签名消息，账号地址三项信息进行认证，判断签名是否有效
-
-
-        //    var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(this.CurrentLoginAddress) && p.chain_id == req.chain_id);
-        //    if (users == null)
-        //    {
-        //        users = new Common.Model.DataEntityModel.users
-        //        {
-        //            address = this.CurrentLoginAddress,
-        //            status = 1,
-        //            create_time = DateTime.Now,
-        //            //chain_id = req.chain_id
-        //        };
-
-        //        try
-        //        {
-        //            await _mySqlMasterDbContext.users.AddAsync(users);
-        //            await _mySqlMasterDbContext.SaveChangesAsync();
-        //        }
-        //        catch (Exception e)
-        //        {
-        //            return new WebApiResult(-1, "database error");
-        //        }
-        //    }
-        //        var token = "";
-        //        users.chain_id = req.chain_id;
-        //        Claim[] userClaims = ConvertToClaims(users);
-        //        token = TokenHelper.GenerateToken(StringConstant.secretKey, StringConstant.issuer, StringConstant.audience, 7, userClaims);
-            
-        //    return new WebApiResult(1, data: new LoginResponse { token = token, avatar = users.avatar, nick_name = users.nick_name });
-        //}
-
-
-
-        /// <summary>
-        /// 看名称好形势-我的订单列表
-        /// </summary>
-        /// <param name = "req" ></ param >
-        /// < returns ></ returns >
-        //[HttpPost("list")]
-        //[ProducesResponseType(typeof(OrdersResponse), 200)]
-        //public async Task<WebApiResult> list([FromBody] ReqOrdersVo req)
-        //{
-        //    if (!string.IsNullOrEmpty(req.buyer))
-        //    {
-        //        var list = await _mySqlMasterDbContext.orders.AsTracking().Where(p => p.buyer.Equals(req.buyer) && p.chain_id == CurrentLoginChain).ToListAsync();
-        //        var viewList = AutoMapperHelper.MapDbEntityToDTO<orders, OrdersResponse>(list);
-        //        return new WebApiResult(1, data: viewList);
-        //    }
-        //    else if (!string.IsNullOrEmpty(req.seller))
-        //    {
-        //        var list = await _mySqlMasterDbContext.orders.AsTracking().Where(p => p.seller.Equals(req.seller) && p.chain_id == CurrentLoginChain).ToListAsync();
-        //        var viewList = AutoMapperHelper.MapDbEntityToDTO<orders, OrdersResponse>(list);
-        //        return new WebApiResult(1, data: viewList);
-        //    }
-        //    return new WebApiResult(1, "");
-        //}
 
         /// <summary>
         /// 我的详情
@@ -149,7 +83,7 @@ namespace deMarketService.Controllers
         [ProducesResponseType(typeof(UsersResponse), 200)]
         public async Task<WebApiResult> detail([FromBody] ReqOrdersVo req)
         {
-            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(this.CurrentLoginAddress) );
+            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.ToLower().Equals(this.CurrentLoginAddress.ToLower()) );
 
             return new WebApiResult(1, data: users);
         }
@@ -162,7 +96,7 @@ namespace deMarketService.Controllers
         [HttpPost("edit/user")]
         public async Task<WebApiResult> EditUser([FromBody] EditUserCommand command)
         {
-            var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(this.CurrentLoginAddress) );
+            var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.ToLower().Equals(this.CurrentLoginAddress.ToLower()) );
             user.avatar = command.Avatar;
             await _mySqlMasterDbContext.SaveChangesAsync();
             return new WebApiResult(1, "修改用户", true);
@@ -175,12 +109,12 @@ namespace deMarketService.Controllers
         [HttpPost("edit/usernick")]
         public async Task<WebApiResult> EditUserNick([FromBody] EditUserNickCommand command)
         {
-            var userNick= _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.nick_name.ToLower().Trim().Equals(command.NickName));
+            var userNick= _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.nick_name.ToLower().Trim().Equals(command.NickName.ToLower().Trim()));
             if (userNick != null)
             {
                 return new WebApiResult(-1, "修改店铺名称失败", true);
             }
-            var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(this.CurrentLoginAddress));
+            var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.ToLower().Equals(this.CurrentLoginAddress.ToLower()));
             user.nick_name = command.NickName;
             await _mySqlMasterDbContext.SaveChangesAsync();
             return new WebApiResult(1, "修改店铺名称成功", true);
@@ -193,7 +127,7 @@ namespace deMarketService.Controllers
         [HttpPost("edit/useremail")]
         public async Task<WebApiResult> EditUserEmail([FromBody] EditUserEmaiCommand command)
         {
-            var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(this.CurrentLoginAddress));
+            var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.ToLower().Equals(this.CurrentLoginAddress.ToLower()));
             user.email = command.Email;
             await _mySqlMasterDbContext.SaveChangesAsync();
             return new WebApiResult(1, "修改用户", true);
