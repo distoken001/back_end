@@ -10,5 +10,7 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         public string token { get; set; }
         public string avatar { get; set; }
         public string nick_name { get; set; }
+        public string email { get; set; }
+        
     }
 }
