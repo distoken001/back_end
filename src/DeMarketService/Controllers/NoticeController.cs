@@ -68,23 +68,23 @@ namespace deMarketService.Controllers
                 string mailMessage = "";
                 if (status == OrderStatus.Initial)
                 {
-                    mailMessage = $"您在{order.chain_id.ToString()}发布的商品({order.name})已成功上架，如果您的商品有新动态，我们将邮件通知您！";
+                    mailMessage = $"您在{order.chain_id.ToString()}网络发布的商品({order.name})已成功上架，如果您的商品有新动态，我们将邮件通知您！";
                 }
                 else if(status == OrderStatus.SellerCancelWithoutDuty)
                 {
-                    mailMessage = $"您在{order.chain_id.ToString()}发布的商品({order.name})已取消，特此通知！";
+                    mailMessage = $"您在{order.chain_id.ToString()}网络发布的商品({order.name})已取消，特此通知！";
                 }
                 else if (status == OrderStatus.Completed)
                 {
-                    mailMessage = $"您在{order.chain_id.ToString()}的商品({order.name})交易已完成，特此通知！";
+                    mailMessage = $"您在{order.chain_id.ToString()}网络的商品({order.name})交易已完成，特此通知！";
                 }
                 else if (status == OrderStatus.ConsultCancelCompleted)
                 {
-                    mailMessage = $"您在{order.chain_id.ToString()}的商品({order.name})已经与对方协商取消交易，特此通知！";
+                    mailMessage = $"您在{order.chain_id.ToString()}网络的商品({order.name})已经与对方协商取消交易，特此通知！";
                 }
                 else 
                 {
-                    mailMessage = $"您在{order.chain_id.ToString()}的商品（{order.name}）有新动态，请注意查看！<br/><br/><br/>---此邮件收件人为买卖双方预留的邮箱联系方式<br/><br/><br/>---您也可以在商品详情页查看对方的其他联系方式！";
+                    mailMessage = $"您在{order.chain_id.ToString()}网络的商品（{order.name}）有新动态，请注意查看！<br/><br/><br/>---此邮件收件人为买卖双方预留的邮箱联系方式<br/><br/><br/>---您也可以在商品详情页查看对方的其他联系方式！";
                 }
                 var a= _mailKitEmail.SendMailAsync(subject, mailMessage, ls).Result;
             }
