@@ -64,7 +64,7 @@ namespace deMarketService.Controllers
                     ls.Add(buyer.email);
                 }
 
-                string subject = "<div class=\"container\">\n  <div class=\"centered-content\">\n  德玛商城通知\n  </div>\n</div>";
+                string subject = "德玛商城通知";
                 string mailMessage = "";
                 if (status == OrderStatus.Initial)
                 {
