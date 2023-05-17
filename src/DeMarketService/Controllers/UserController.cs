@@ -163,13 +163,41 @@ namespace deMarketService.Controllers
         public async Task<WebApiResult> EditUser([FromBody] EditUserCommand command)
         {
             var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(this.CurrentLoginAddress) );
-            user.nick_name = command.NickName;
             user.avatar = command.Avatar;
+            await _mySqlMasterDbContext.SaveChangesAsync();
+            return new WebApiResult(1, "修改用户", true);
+        }
+        /// <summary>
+        /// 修改店铺名
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPost("edit/usernick")]
+        public async Task<WebApiResult> EditUserNick([FromBody] EditUserNickCommand command)
+        {
+            var userNick= _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.nick_name.ToLower().Trim().Equals(command.NickName));
+            if (userNick != null)
+            {
+                return new WebApiResult(-1, "修改店铺名称失败", true);
+            }
+            var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(this.CurrentLoginAddress));
+            user.nick_name = command.NickName;
+            await _mySqlMasterDbContext.SaveChangesAsync();
+            return new WebApiResult(1, "修改店铺名称成功", true);
+        }
+        /// <summary>
+        /// 修改用户邮箱
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPost("edit/useremail")]
+        public async Task<WebApiResult> EditUserEmail([FromBody] EditUserEmaiCommand command)
+        {
+            var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(this.CurrentLoginAddress));
             user.email = command.Email;
             await _mySqlMasterDbContext.SaveChangesAsync();
             return new WebApiResult(1, "修改用户", true);
         }
-
         private byte[] ToByteArray(Stream input)
         {
             byte[] buffer = new byte[16 * 1024];
