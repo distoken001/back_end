@@ -70,7 +70,7 @@ namespace deMarketService.Controllers
             }
             Claim[] userClaims = ConvertToClaims(users);
             var token = TokenHelper.GenerateToken(StringConstant.secretKey, StringConstant.issuer, StringConstant.audience, 365, userClaims);
-            return new WebApiResult(1, data: new LoginResponse { token = token, avatar = users.avatar, nick_name = users.nick_name,email=users.email });
+            return new WebApiResult(1, "登录成功", new LoginResponse { token = token, avatar = users.avatar, nick_name = users.nick_name,email=users.email });
         }
 
 
