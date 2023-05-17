@@ -51,6 +51,7 @@ namespace deMarketService
             services.AddScoped<ExLogFilter>();
             services.AddScoped<TokenFilter>();
             services.AddSingleton<ITxCosUploadeService, TxCosUploadeService>();
+            services.AddScoped<EmailProxy>();
             services
                 .AddHttpClient()
                 //.AddSingleton(Configuration)
