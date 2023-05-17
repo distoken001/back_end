@@ -13,5 +13,9 @@ namespace deMarketService.Common.Model.HttpApiModel.RequestModel
         /// 头像
         /// </summary>
         public string Avatar { get; set; }
+        /// <summary>
+        /// 邮件
+        /// </summary>
+        public string Email { get; set; }
     }
 }

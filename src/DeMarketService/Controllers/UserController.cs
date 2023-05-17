@@ -165,6 +165,7 @@ namespace deMarketService.Controllers
             var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(this.CurrentLoginAddress) );
             user.nick_name = command.NickName;
             user.avatar = command.Avatar;
+            user.email = command.Email;
             await _mySqlMasterDbContext.SaveChangesAsync();
             return new WebApiResult(1, "修改用户", true);
         }
