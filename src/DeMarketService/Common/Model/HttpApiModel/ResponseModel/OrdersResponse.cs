@@ -133,5 +133,14 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
                 return price * amount / decimals_long;
             }
         }
+        public string seller_ratio
+        {
+            get
+            {
+                decimal ratio = seller_pledge_actual / total_price * 100; // 计算比例并转化为百分比
+                string percentage = string.Format("{0:0.00}%", ratio); // 转化为字符串，并保留两位小数
+                return percentage;
+            }
+        }
     }
 }
