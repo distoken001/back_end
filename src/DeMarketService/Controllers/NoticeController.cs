@@ -64,13 +64,13 @@ namespace deMarketService.Controllers
                     ls.Add(buyer.email);
                 }
 
-                string subject = "德玛De-Market通知";
+                string subject = "德玛商城通知";
                 string mailMessage = "";
                 if (status == OrderStatus.Initial)
                 {
                     mailMessage = $"您发布的商品（订单id={request.order_id}）已经上架，如果您的商品有新动态，我们将邮件通知您！";
                 }
-                if (status != OrderStatus.Ordered)
+                if (status != OrderStatus.Initial)
                 {
                     mailMessage = $"您的商品（订单id={request.order_id}）有新动态，请注意查看！------此封邮件收件人为买卖双方预留的邮箱联系方式，当然您也可以在商品详情页查看对方的联系方式！";
                 }
