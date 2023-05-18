@@ -8,6 +8,7 @@ using deMarketService.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,6 +28,19 @@ namespace deMarketService.Controllers
         {
             _mySqlMasterDbContext = mySqlMasterDbContext;
             this.txCosUploadeService = txCosUploadeService;
+        }
+
+        /// <summary>
+        /// 获取腾讯COS相关参数
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("get/cosParms")]
+        [ProducesResponseType(typeof(GetCredentialResponse), 200)]
+        public JsonResult GetCosParms()
+        {
+            var parms = txCosUploadeService.GetCredential();
+            var res = JsonConvert.DeserializeObject<GetCredentialResponse>(parms);
+            return Json(new WebApiResult(1, "", res));
         }
 
         /// <summary>
@@ -88,11 +102,11 @@ namespace deMarketService.Controllers
                 queryEntities = queryEntities.Where(p => p.buyer.ToLower().Equals(currentLoginAddress.ToLower()) || p.seller.ToLower().Equals(currentLoginAddress.ToLower()));
             }
 
-            if (!string.IsNullOrEmpty(req.name) )
+            if (!string.IsNullOrEmpty(req.name))
             {
                 queryEntities = queryEntities.Where(p => p.name.ToLower().Contains(req.name.ToLower()));
             }
-            if (!string.IsNullOrEmpty(req.description) )
+            if (!string.IsNullOrEmpty(req.description))
             {
                 queryEntities = queryEntities.Where(p => p.description.ToLower().Contains(req.description.ToLower()));
             }
@@ -100,7 +114,7 @@ namespace deMarketService.Controllers
             //if (req.order_id.HasValue)
             //    queryEntities = queryEntities.Where(p => p.order_id == req.order_id);
             if (req.chain_id != 0)
-            queryEntities = queryEntities.Where(p => p.chain_id == req.chain_id);
+                queryEntities = queryEntities.Where(p => p.chain_id == req.chain_id);
 
             if (req.priceMin.HasValue)
                 queryEntities = queryEntities.Where(p => p.price >= req.priceMin);
@@ -127,9 +141,9 @@ namespace deMarketService.Controllers
         public async Task<JsonResult> detail([FromQuery] long order_id, [FromQuery] ChainEnum chain_id)
         {
             var res = await _mySqlMasterDbContext.orders.FirstOrDefaultAsync(p => p.order_id == order_id && p.chain_id == chain_id);
-            var  ress = AutoMapperHelper.MapDbEntityToDTO<orders, OrdersResponse>(res);
+            var ress = AutoMapperHelper.MapDbEntityToDTO<orders, OrdersResponse>(res);
             //return Json(new WebApiResult(1, "CurrentLoginAddress:" + CurrentLoginAddress + ",CurrentLoginChain:"+ CurrentLoginChain, ress));
-            return Json(new WebApiResult(1, "查询成功" , ress));
+            return Json(new WebApiResult(1, "查询成功", ress));
         }
 
 

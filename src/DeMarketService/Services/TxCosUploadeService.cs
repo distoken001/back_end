@@ -10,6 +10,9 @@ using System;
 using System.Threading.Tasks;
 using static COSXML.Model.Tag.ListAllMyBuckets;
 using TencentCloud.Mvj.V20190926.Models;
+using deMarketService.Common.Model.HttpApiModel.RequestModel;
+using deMarketService.Model;
+using System.Collections.Generic;
 
 namespace deMarketService.Services
 {
@@ -68,6 +71,41 @@ namespace deMarketService.Services
                 throw new Exception("CosServerException: " + serverEx.GetInfo());
                 //请求失败
             }
+        }
+
+        public string GetCredential()
+        {
+            string region = "ap-beijing";//"ap-guangzhou";  // bucket 所在区域
+            string allowPrefix = "*"; // 这里改成允许的路径前缀，可以根据自己网站的用户登录态判断允许上传的具体路径，例子： a.jpg 或者 a/* 或者 * (使用通配符*存在重大安全风险, 请谨慎评估使用)
+            string[] allowActions = new string[] {  // 允许的操作范围，这里以上传操作为例
+                "name/cos:PutObject",
+                "name/cos:PostObject",
+                "name/cos:InitiateMultipartUpload",
+                "name/cos:ListMultipartUploads",
+                "name/cos:ListParts",
+                "name/cos:UploadPart",
+                "name/cos:CompleteMultipartUpload"
+            };
+            string secretId = configuration["Cos:SecretId"];//"COS_KEY"; // 云 API 密钥 Id
+            string secretKey = configuration["Cos:SecretKey"];//"COS_SECRET"; // 云 API 密钥 Key
+
+            Dictionary<string, object> values = new Dictionary<string, object>();
+            values.Add("bucket", "demarket-1303108648");
+            values.Add("region", region);
+            values.Add("allowPrefix", allowPrefix);
+            // 也可以通过 allowPrefixes 指定路径前缀的集合
+            // values.Add("allowPrefixes", new string[] {
+            //     "path/to/dir1/*",
+            //     "path/to/dir2/*",
+            // });
+            values.Add("allowActions", allowActions);
+            values.Add("durationSeconds", 1800);
+
+            values.Add("secretId", secretId);
+            values.Add("secretKey", secretKey);
+
+            var dic = COSSTS.STSClient.genCredential(values);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(dic);
         }
     }
 }
