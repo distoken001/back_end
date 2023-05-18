@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace deMarketService.Common.Model.DataEntityModel
 {
-    [Table("orders", Schema = "ebay")]
+    [Table("orders")]
     public class orders
     {
         [Key]
