@@ -39,7 +39,6 @@ namespace deMarketService.Controllers
         public async Task<JsonResult> list([FromBody] ReqOrdersVo req)
         {
             var queryEntities = _mySqlMasterDbContext.orders.AsNoTracking().AsQueryable();
-                queryEntities = queryEntities.Where(p => p.status == 0);
             var currentLoginAddress = this.CurrentLoginAddress;
 
             queryEntities = queryEntities.Where(p => p.buyer.ToLower().Equals(currentLoginAddress.ToLower()) || p.seller.ToLower().Equals(currentLoginAddress.ToLower()));
