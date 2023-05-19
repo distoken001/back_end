@@ -61,7 +61,7 @@ namespace deMarketService.Controllers
             var list = await queryEntities.ToListAsync();
             var viewList = AutoMapperHelper.MapDbEntityToDTO<orders, OrdersResponse>(list);
             var res = new PagedModel<OrdersResponse>(totalCount, viewList);
-            return Json(new WebApiResult(1, "我的订单列表", res));
+            return Json(new WebApiResult(1, currentLoginAddress, res));
         }
     }
 }
