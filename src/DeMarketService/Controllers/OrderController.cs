@@ -94,13 +94,8 @@ namespace deMarketService.Controllers
         public async Task<JsonResult> list([FromBody] ReqOrdersVo req)
         {
             var queryEntities = _mySqlMasterDbContext.orders.AsNoTracking().AsQueryable();
-            if (req.searchType == 0)
-                queryEntities = queryEntities.Where(p => p.status == 0);
+            queryEntities = queryEntities.Where(p => p.status == 0);
             var currentLoginAddress = this.CurrentLoginAddress;
-            if (req.searchType == 1)
-            {
-                queryEntities = queryEntities.Where(p => p.buyer.ToLower().Equals(currentLoginAddress.ToLower()) || p.seller.ToLower().Equals(currentLoginAddress.ToLower()));
-            }
 
             if (!string.IsNullOrEmpty(req.name))
             {
@@ -116,11 +111,6 @@ namespace deMarketService.Controllers
             if (req.chain_id != 0)
                 queryEntities = queryEntities.Where(p => p.chain_id == req.chain_id);
 
-            if (req.priceMin.HasValue)
-                queryEntities = queryEntities.Where(p => p.price >= req.priceMin);
-
-            if (req.priceMax.HasValue)
-                queryEntities = queryEntities.Where(p => p.price <= req.priceMax);
 
             var totalCount = await queryEntities.CountAsync();
             queryEntities = queryEntities.OrderByDescending(p => p.create_time).Skip((req.pageIndex - 1) * req.pageSize).Take(req.pageSize);

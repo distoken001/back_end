@@ -10,10 +10,6 @@ namespace deMarketService.Common.Model.HttpApiModel.RequestModel
         public int pageSize { get; set; } = 10;
         public int pageIndex { get; set; } = 1;
         /// <summary>
-        /// // 0 所有未购买交易(商品)， 1查询当前登录人所有交易
-        /// </summary>
-        public int searchType { get; set; }
-        /// <summary>
         /// 商品id
         /// </summary>
         public int? order_id { get; set; }
@@ -38,16 +34,6 @@ namespace deMarketService.Common.Model.HttpApiModel.RequestModel
         ///// 链id
         ///// </summary>
         public ChainEnum chain_id { get; set; }
-
-        /// <summary>
-        /// 最小价格
-        /// </summary>
-        public long? priceMin { get; set; }
-
-        // <summary>
-        /// 最大价格
-        /// </summary>
-        public long? priceMax { get; set; }
 
     }
 }
