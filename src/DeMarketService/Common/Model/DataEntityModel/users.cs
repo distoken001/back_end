@@ -46,7 +46,7 @@ namespace deMarketService.Common.Model.DataEntityModel
         /**
          * 修改时间
          */
-        public DateTime update_time { get; set; }
+        public DateTime? update_time { get; set; }
 
         /**
          * 修改人
