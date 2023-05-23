@@ -97,11 +97,11 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         /// <summary>
         /// 算数
         /// </summary>
-        public int decimals_long
+        public decimal decimals_long
         {
             get
             {
-                return (int)Math.Pow(10, decimals);
+                return (decimal)Math.Pow(10, decimals);
             }
         }
         /// <summary>
