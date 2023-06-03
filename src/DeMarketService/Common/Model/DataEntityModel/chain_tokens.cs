@@ -16,5 +16,6 @@ namespace deMarketService.Common.Model.DataEntityModel
         public string icon  { get; set;}
 
         public DateTime create_time { get; set;}
+        public int weight { get; set; }
     }
 }

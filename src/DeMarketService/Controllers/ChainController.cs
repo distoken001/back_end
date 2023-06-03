@@ -32,7 +32,7 @@ namespace deMarketService.Controllers
         {
             var queryEntities = _mySqlMasterDbContext.chain_tokens.Where(p => p.chain_id == req.chainId).AsNoTracking().AsQueryable();
             var totalCount = await queryEntities.CountAsync();
-            queryEntities = queryEntities.Skip((req.pageIndex - 1) * req.pageSize).Take(req.pageSize);
+            queryEntities = queryEntities.OrderBy(a=>a.weight).Skip((req.pageIndex - 1) * req.pageSize).Take(req.pageSize);
             var list = await queryEntities.ToListAsync();
             var viewList = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(list);
             var res = new PagedModel<ChainTokenViewModel>(totalCount, viewList);
