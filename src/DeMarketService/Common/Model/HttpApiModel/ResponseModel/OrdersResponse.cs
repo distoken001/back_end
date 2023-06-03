@@ -142,5 +142,6 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
                 return percentage;
             }
         }
+        public ChainTokenViewModel token_des { get; set; }
     }
 }

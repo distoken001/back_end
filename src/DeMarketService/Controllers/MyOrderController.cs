@@ -39,6 +39,7 @@ namespace deMarketService.Controllers
         public async Task<JsonResult> list([FromBody] ReqOrdersVo req)
         {
             var queryEntities = _mySqlMasterDbContext.orders.AsNoTracking().AsQueryable();
+            var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking().ToList();
             var currentLoginAddress = this.CurrentLoginAddress;
 
             queryEntities = queryEntities.Where(p => p.buyer.ToLower().Equals(currentLoginAddress.ToLower()) || p.seller.ToLower().Equals(currentLoginAddress.ToLower()));
@@ -59,6 +60,12 @@ namespace deMarketService.Controllers
             queryEntities = queryEntities.OrderByDescending(p => p.create_time).Skip((req.pageIndex - 1) * req.pageSize).Take(req.pageSize);
             var list = await queryEntities.ToListAsync();
             var viewList = AutoMapperHelper.MapDbEntityToDTO<orders, OrdersResponse>(list);
+            foreach (var a in viewList)
+            {
+                var token = chainTokens.FirstOrDefault(c => c.chain_id == a.chain_id && c.token_address == a.token);
+                var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
+                a.token_des = tokenView;
+            }
             var res = new PagedModel<OrdersResponse>(totalCount, viewList);
             return Json(new WebApiResult(1, currentLoginAddress, res));
         }

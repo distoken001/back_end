@@ -4,6 +4,6 @@
     {
         public int pageSize { get; set; } = 10;
         public int pageIndex { get; set; } = 1;
-        public int chainId { get; set; }
+        public ChainEnum chainId { get; set; }
     }
 }

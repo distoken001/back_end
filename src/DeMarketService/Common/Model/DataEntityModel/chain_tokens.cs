@@ -7,7 +7,7 @@ namespace deMarketService.Common.Model.DataEntityModel
     {
         [Key]
         public long id { get; set; }
-        public int chain_id { get; set; }
+        public ChainEnum chain_id { get; set; }
 
         public string token_name { get; set; }
 
