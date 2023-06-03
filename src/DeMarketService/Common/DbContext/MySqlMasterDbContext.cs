@@ -12,7 +12,6 @@ namespace deMarketService.DbContext
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            builder.Entity<orders>().HasOne(i => i.chain_token).WithMany().HasForeignKey(i => i.token);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

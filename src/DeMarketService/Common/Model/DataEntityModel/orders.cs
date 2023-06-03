@@ -93,9 +93,5 @@ namespace deMarketService.Common.Model.DataEntityModel
         /// 小时点
         /// </summary>
         public int decimals { get; set; }
-        /// <summary>
-        /// 导航属性
-        /// </summary>
-        public virtual chain_tokens chain_token { get; set; }
     }
 }
