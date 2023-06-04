@@ -62,7 +62,7 @@ namespace deMarketService.Controllers
             var viewList = AutoMapperHelper.MapDbEntityToDTO<orders, OrdersResponse>(list);
             foreach (var a in viewList)
             {
-                var token = chainTokens.FirstOrDefault(c => c.chain_id == a.chain_id && c.token_address == a.token);
+                var token = chainTokens.FirstOrDefault(c => c.chain_id == a.chain_id && c.token_address.ToLower() == a.token.ToLower());
                 var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
                 a.token_des = tokenView;
             }
