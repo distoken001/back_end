@@ -99,9 +99,11 @@ namespace deMarketService.Controllers
         [HttpGet("invite/list")]
         public WebApiResult invitelist([FromQuery] int pageSize, [FromQuery] int pageIndex)
         {
-            var users = _mySqlMasterDbContext.users.AsNoTracking().Where(p => p.parent_address.Equals(this.CurrentLoginAddress, StringComparison.OrdinalIgnoreCase)).OrderByDescending(p => p.create_time).Skip((pageIndex - 1) *pageSize).Take(pageSize).Select(a => a.address).ToList();
-
-            return new WebApiResult(1, "获取成功", users);
+            var usersAll = _mySqlMasterDbContext.users.AsNoTracking().Where(p => p.parent_address.Equals(this.CurrentLoginAddress, StringComparison.OrdinalIgnoreCase));
+            var totalCount = usersAll.Count();
+            var list= usersAll.OrderByDescending(p => p.create_time).Skip((pageIndex - 1) * pageSize).Take(pageSize).Select(a=>a.address).ToList();
+            var res = new PagedModel<string>(totalCount, list);
+            return new WebApiResult(1, "获取成功", res);
         }
 
         /// <summary>
