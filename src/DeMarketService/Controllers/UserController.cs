@@ -55,7 +55,8 @@ namespace deMarketService.Controllers
                     address = req.address,
                     status = 1,
                     create_time = DateTime.Now,
-                    update_time = DateTime.Now
+                    update_time = DateTime.Now,
+                    parent_address=req.parentAddress
                 };
 
                 try

@@ -68,9 +68,9 @@ namespace deMarketService.Common.Model.DataEntityModel
          */
         public String ip { get; set; }
         /// <summary>
-        /// 链id
+        /// 父地址
         /// </summary>
-        //public ChainEnum chain_id { get; set; }
+        public string parent_address { get; set; }
 
     }
 }
