@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Org.BouncyCastle.Ocsp;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -124,6 +125,11 @@ namespace deMarketService.Controllers
         [HttpPost("edit/usernick")]
         public async Task<WebApiResult> EditUserNick([FromBody] EditUserNickCommand command)
         {
+            var length= new StringInfo(command.NickName).LengthInTextElements;
+            if (length > 15)
+            {
+                return new WebApiResult(-1, "您输入的昵称过长");
+            }
             var userNick= await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.nick_name.ToLower().Trim().Equals(command.NickName.ToLower().Trim()));
             if (userNick != null)
             {
