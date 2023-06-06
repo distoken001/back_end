@@ -101,7 +101,7 @@ namespace deMarketService.Controllers
         {
             var usersAll = _mySqlMasterDbContext.users.AsNoTracking().Where(p => p.parent_address.Equals(this.CurrentLoginAddress, StringComparison.OrdinalIgnoreCase));
             var totalCount = usersAll.Count();
-            var list= usersAll.OrderByDescending(p => p.create_time).Skip((pageIndex - 1) * pageSize).Take(pageSize).Select(a=>a.ad).ToList();
+            var list= usersAll.OrderByDescending(p => p.create_time).Skip((pageIndex - 1) * pageSize).Take(pageSize).Select(a=>a.address).ToList();
             var res = new PagedModel<string>(totalCount, list);
             return new WebApiResult(1, "获取成功", res);
         }
