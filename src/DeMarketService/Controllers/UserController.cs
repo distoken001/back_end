@@ -97,6 +97,7 @@ namespace deMarketService.Controllers
         /// <param name = "req" ></ param >
         /// < returns ></ returns >
         [HttpGet("invite/list")]
+        [ProducesResponseType(typeof(string), 200)]
         public WebApiResult invitelist([FromQuery] int pageSize, [FromQuery] int pageIndex)
         {
             var usersAll = _mySqlMasterDbContext.users.AsNoTracking().Where(p => p.parent_address.Equals(this.CurrentLoginAddress, StringComparison.OrdinalIgnoreCase));
