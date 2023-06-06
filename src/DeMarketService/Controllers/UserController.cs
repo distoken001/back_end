@@ -113,7 +113,7 @@ namespace deMarketService.Controllers
             var userNick= _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.nick_name.ToLower().Trim().Equals(command.NickName.ToLower().Trim()));
             if (userNick != null)
             {
-                return new WebApiResult(-1, "修改店铺名称失败", true);
+                return new WebApiResult(1, "该店铺名字已经被占用", true);
             }
             var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.ToLower().Equals(this.CurrentLoginAddress.ToLower()));
             user.nick_name = command.NickName;
