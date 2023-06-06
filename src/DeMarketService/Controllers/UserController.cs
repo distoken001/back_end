@@ -133,10 +133,14 @@ namespace deMarketService.Controllers
             {
                 return new WebApiResult(-1, "您输入的昵称过长");
             }
-            var userNick= await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.nick_name.ToLower().Trim().Equals(command.NickName.ToLower().Trim()));
-            if (userNick != null)
+            command.NickName = string.IsNullOrEmpty(command.NickName) ? null : command.NickName;
+            if (command.NickName != null)
             {
-                return new WebApiResult(-1, "该昵称已经被占用");
+                var userNick = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.nick_name.ToLower().Trim().Equals(command.NickName.ToLower().Trim()));
+                if (userNick != null)
+                {
+                    return new WebApiResult(-1, "该昵称已经被占用");
+                }
             }
             var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.ToLower().Equals(this.CurrentLoginAddress.ToLower()));
             user.nick_name = command.NickName;
