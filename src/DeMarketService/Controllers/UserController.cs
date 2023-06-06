@@ -1,4 +1,5 @@
 ﻿using deMarketService.Common.Common;
+using deMarketService.Common.Model;
 using deMarketService.Common.Model.DataEntityModel;
 using deMarketService.Common.Model.HttpApiModel.RequestModel;
 using deMarketService.Common.Model.HttpApiModel.ResponseModel;
@@ -9,6 +10,7 @@ using deMarketService.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Ocsp;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -87,6 +89,18 @@ namespace deMarketService.Controllers
             var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.ToLower().Equals(this.CurrentLoginAddress.ToLower()) );
 
             return new WebApiResult(1, data: users);
+        }
+        /// <summary>
+        /// 被邀请人列表
+        /// </summary>
+        /// <param name = "req" ></ param >
+        /// < returns ></ returns >
+        [HttpGet("invite/list")]
+        public WebApiResult invitelist([FromQuery] int pageSize, [FromQuery] int pageIndex)
+        {
+            var users = _mySqlMasterDbContext.users.AsNoTracking().Where(p => p.parent_address.Equals(this.CurrentLoginAddress)).OrderByDescending(p => p.create_time).Skip((pageIndex - 1) *pageSize).Take(pageSize).Select(a => a.address).ToList();
+
+            return new WebApiResult(1, "获取成功", users);
         }
 
         /// <summary>
