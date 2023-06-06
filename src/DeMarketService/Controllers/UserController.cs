@@ -101,7 +101,7 @@ namespace deMarketService.Controllers
         {
             var usersAll = _mySqlMasterDbContext.users.AsNoTracking().Where(p => p.parent_address.Equals(this.CurrentLoginAddress, StringComparison.OrdinalIgnoreCase));
             var totalCount = usersAll.Count();
-            var list= usersAll.OrderByDescending(p => p.create_time).Skip((pageIndex - 1) * pageSize).Take(pageSize).Select(a=>a.address).ToList();
+            var list= usersAll.OrderByDescending(p => p.create_time).Skip((pageIndex - 1) * pageSize).Take(pageSize).Select(a=>a.ad).ToList();
             var res = new PagedModel<string>(totalCount, list);
             return new WebApiResult(1, "获取成功", res);
         }
@@ -120,7 +120,7 @@ namespace deMarketService.Controllers
             return new WebApiResult(1, "修改用户", true);
         }
         /// <summary>
-        /// 修改店铺名
+        /// 修改昵称
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
@@ -135,12 +135,12 @@ namespace deMarketService.Controllers
             var userNick= await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.nick_name.ToLower().Trim().Equals(command.NickName.ToLower().Trim()));
             if (userNick != null)
             {
-                return new WebApiResult(-1, "该店铺名字已经被占用");
+                return new WebApiResult(-1, "该昵称已经被占用");
             }
             var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.ToLower().Equals(this.CurrentLoginAddress.ToLower()));
             user.nick_name = command.NickName;
             await _mySqlMasterDbContext.SaveChangesAsync();
-            return new WebApiResult(1, "修改店铺名称成功");
+            return new WebApiResult(1, "修改昵称成功");
         }
         /// <summary>
         /// 修改用户邮箱
