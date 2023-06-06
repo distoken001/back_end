@@ -110,7 +110,7 @@ namespace deMarketService.Controllers
         [HttpPost("edit/usernick")]
         public async Task<WebApiResult> EditUserNick([FromBody] EditUserNickCommand command)
         {
-            var userNick= _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.nick_name.ToLower().Trim().Equals(command.NickName.ToLower().Trim()));
+            var userNick= await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.nick_name.ToLower().Trim().Equals(command.NickName.ToLower().Trim()));
             if (userNick != null)
             {
                 return new WebApiResult(-1, "该店铺名字已经被占用");
