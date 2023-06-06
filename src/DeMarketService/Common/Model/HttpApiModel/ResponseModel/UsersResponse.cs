@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using deMarketService.Common.Model;
 
-namespace deMarketService.Controllers
+namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
 {
     public class UsersResponse
     {
