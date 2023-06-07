@@ -41,7 +41,7 @@ namespace deMarketService.Controllers
             // 如果 X-Forwarded-For 头部不存在，则使用 RemoteIpAddress
             if (string.IsNullOrEmpty(clientIP))
             {
-                clientIP = HttpContext.Connection.RemoteIpAddress.ToString();
+                clientIP  = HttpContext.Request.Headers["X-Real-IP"];
             }
 
             return clientIP;
