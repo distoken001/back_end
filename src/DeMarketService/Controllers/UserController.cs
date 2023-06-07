@@ -128,8 +128,8 @@ namespace deMarketService.Controllers
         [HttpPost("edit/usernick")]
         public async Task<WebApiResult> EditUserNick([FromBody] EditUserNickCommand command)
         {
-            var length= new StringInfo(command.NickName).LengthInTextElements;
-            if (length > 16)
+            var length = command.NickName.Length;
+            if (length > 15)
             {
                 return new WebApiResult(-1, "您输入的昵称过长");
             }
