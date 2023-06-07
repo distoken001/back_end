@@ -36,8 +36,14 @@ namespace deMarketService.Controllers
         }
         public string GetClientIP()
         {
-            var remoteIpAddress = HttpContext.Connection.RemoteIpAddress;
-            string clientIP = remoteIpAddress.ToString();
+            string clientIP = HttpContext.Request.Headers["X-Forwarded-For"];
+
+            // 如果 X-Forwarded-For 头部不存在，则使用 RemoteIpAddress
+            if (string.IsNullOrEmpty(clientIP))
+            {
+                clientIP = HttpContext.Connection.RemoteIpAddress.ToString();
+            }
+
             return clientIP;
         }
         /// <summary>
