@@ -44,6 +44,10 @@ namespace deMarketService.Controllers
         [ProducesResponseType(typeof(LoginResponse), 200)]
         public async Task<WebApiResult> login([FromBody] ReqUsersVo req)
         {
+            if (string.IsNullOrEmpty(req.parentAddress))
+            {
+                req.parentAddress = null;
+            }
             //对签名消息，账号地址三项信息进行认证，判断签名是否有效
             if (!EthereumSignatureVerifier.Verify(req.signature, req.address))
             {
