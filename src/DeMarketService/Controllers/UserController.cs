@@ -34,7 +34,12 @@ namespace deMarketService.Controllers
             _mySqlMasterDbContext = mySqlMasterDbContext;
             this.txCosUploadeService = txCosUploadeService;
         }
-
+        public string GetClientIP()
+        {
+            var remoteIpAddress = HttpContext.Connection.RemoteIpAddress;
+            string clientIP = remoteIpAddress.ToString();
+            return clientIP;
+        }
         /// <summary>
         /// 登录接口
         /// </summary>
@@ -63,7 +68,8 @@ namespace deMarketService.Controllers
                     status = 1,
                     create_time = DateTime.Now,
                     update_time = DateTime.Now,
-                    parent_address=req.parentAddress
+                    parent_address=req.parentAddress,
+                    ip= GetClientIP()
                 };
 
                 try
