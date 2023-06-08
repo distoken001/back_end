@@ -37,11 +37,13 @@ namespace deMarketService.Controllers
         public string GetClientIP()
         {
             string clientIP = HttpContext.Request.Headers["X-Forwarded-For"];
-
+            Console.WriteLine("X-Forwarded-For: " + clientIP);
+          
             // 如果 X-Forwarded-For 头部不存在，则使用 RemoteIpAddress
             if (string.IsNullOrEmpty(clientIP))
             {
                 clientIP  = HttpContext.Request.Headers["X-Real-IP"];
+                Console.WriteLine("X-Real-IP: " + clientIP);
             }
 
             return clientIP;
