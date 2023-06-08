@@ -36,15 +36,15 @@ namespace deMarketService.Controllers
         }
         public string GetClientIP()
         {
-            string clientIP = HttpContext.Request.Headers["X-Forwarded-For"];
-            Console.WriteLine("X-Forwarded-For: " + clientIP);
-          
-            // 如果 X-Forwarded-For 头部不存在，则使用 RemoteIpAddress
-            if (string.IsNullOrEmpty(clientIP))
-            {
-                clientIP  = HttpContext.Request.Headers["X-Real-IP"];
-                Console.WriteLine("X-Real-IP: " + clientIP);
-            }
+            //string clientIP = HttpContext.Request.Headers["X-Forwarded-For"];
+            //Console.WriteLine("X-Forwarded-For: " + clientIP);ü
+
+            //// 如果 X-Forwarded-For 头部不存在，则使用 RemoteIpAddress
+            //if (string.IsNullOrEmpty(clientIP))
+            //{
+            string clientIP = HttpContext.Request.Headers["X-Real-IP"];
+            Console.WriteLine("X-Real-IP: " + clientIP);
+            //}
 
             return clientIP;
         }
@@ -66,8 +66,8 @@ namespace deMarketService.Controllers
             {
                 return new WebApiResult(-1, "signature verification failure");
             }
-           // var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(req.address) && p.chain_id == req.chain_id);
-            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.ToLower().Equals(req.address.ToLower()) );
+            // var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(req.address) && p.chain_id == req.chain_id);
+            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.ToLower().Equals(req.address.ToLower()));
             if (users == null)
             {
                 users = new Common.Model.DataEntityModel.users
@@ -76,8 +76,8 @@ namespace deMarketService.Controllers
                     status = 1,
                     create_time = DateTime.Now,
                     update_time = DateTime.Now,
-                    parent_address=req.parentAddress,
-                    ip= GetClientIP()
+                    parent_address = req.parentAddress,
+                    ip = GetClientIP()
                 };
 
                 try
@@ -92,7 +92,7 @@ namespace deMarketService.Controllers
             }
             Claim[] userClaims = ConvertToClaims(users);
             var token = TokenHelper.GenerateToken(StringConstant.secretKey, StringConstant.issuer, StringConstant.audience, 365, userClaims);
-            return new WebApiResult(1, "登录成功", new LoginResponse { token = token, avatar = users.avatar, nick_name = users.nick_name,email=users.email });
+            return new WebApiResult(1, "登录成功", new LoginResponse { token = token, avatar = users.avatar, nick_name = users.nick_name, email = users.email });
         }
 
 
@@ -105,7 +105,7 @@ namespace deMarketService.Controllers
         [ProducesResponseType(typeof(UsersResponse), 200)]
         public async Task<WebApiResult> detail([FromBody] ReqOrdersVo req)
         {
-            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.ToLower().Equals(this.CurrentLoginAddress.ToLower()) );
+            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.ToLower().Equals(this.CurrentLoginAddress.ToLower()));
 
             return new WebApiResult(1, data: users);
         }
@@ -120,7 +120,7 @@ namespace deMarketService.Controllers
         {
             var usersAll = _mySqlMasterDbContext.users.AsNoTracking().Where(p => p.parent_address.Equals(this.CurrentLoginAddress, StringComparison.OrdinalIgnoreCase));
             var totalCount = usersAll.Count();
-            var list= usersAll.OrderByDescending(p => p.create_time).Skip((pageIndex - 1) * pageSize).Take(pageSize).Select(a=>a.address).ToList();
+            var list = usersAll.OrderByDescending(p => p.create_time).Skip((pageIndex - 1) * pageSize).Take(pageSize).Select(a => a.address).ToList();
             var res = new PagedModel<string>(totalCount, list);
             return new WebApiResult(1, "获取成功", res);
         }
@@ -133,7 +133,7 @@ namespace deMarketService.Controllers
         [HttpPost("edit/user")]
         public async Task<WebApiResult> EditUser([FromBody] EditUserCommand command)
         {
-            var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.ToLower().Equals(this.CurrentLoginAddress.ToLower()) );
+            var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.ToLower().Equals(this.CurrentLoginAddress.ToLower()));
             user.avatar = command.Avatar;
             await _mySqlMasterDbContext.SaveChangesAsync();
             return new WebApiResult(1, "修改用户", true);
