@@ -12,7 +12,7 @@ namespace deMarketService.Common.Common
 
     public class EthereumSignatureVerifier
     {
-        private static String message = "DeMarket is a fully decentralized e-commerce platform.";
+        private static String message = "德玛商城是一个完全去中心化的电商平台！";
         /**
         * 对签名消息，原始消息，账号地址三项信息进行认证，判断签名是否有效
         * @param signature
