@@ -130,7 +130,7 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         {
             get
             {
-                return price * amount / decimals_long;
+                return price_actual * amount ;
             }
         }
         public string seller_ratio
