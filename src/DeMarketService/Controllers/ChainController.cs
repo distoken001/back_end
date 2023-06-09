@@ -30,7 +30,7 @@ namespace deMarketService.Controllers
         [ProducesResponseType(typeof(PagedModel<ChainTokenViewModel>), 200)]
         public async Task<JsonResult> list([FromBody] ChainTokenQueryModel req)
         {
-            var queryEntities = _mySqlMasterDbContext.chain_tokens.Where(p => p.chain_id == req.chainId).AsNoTracking().AsQueryable();
+            var queryEntities = _mySqlMasterDbContext.chain_tokens.Where(p => p.chain_id == req.chainId&&p.status==1).AsNoTracking().AsQueryable();
             var totalCount = await queryEntities.CountAsync();
             queryEntities = queryEntities.OrderBy(a=>a.weight).Skip((req.pageIndex - 1) * req.pageSize).Take(req.pageSize);
             var list = await queryEntities.ToListAsync();
