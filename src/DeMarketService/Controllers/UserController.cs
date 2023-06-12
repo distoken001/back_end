@@ -34,14 +34,6 @@ namespace deMarketService.Controllers
             _mySqlMasterDbContext = mySqlMasterDbContext;
             this.txCosUploadeService = txCosUploadeService;
         }
-        public string GetClientIP()
-        {
-            string XForwardedFor = HttpContext.Request.Headers["X-Forwarded-For"];
-            string XRealIP = HttpContext.Request.Headers["X-Real-IP"];
-            Console.WriteLine("X-Forwarded-For: " + XForwardedFor);
-            Console.WriteLine("X-Real-IP: " + XRealIP);
-            return XForwardedFor+"  "+XRealIP;
-        }
         /// <summary>
         /// 登录接口
         /// </summary>

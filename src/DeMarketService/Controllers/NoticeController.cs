@@ -110,7 +110,8 @@ namespace deMarketService.Controllers
                     creator = "system",
                     updater = null,
                     contact = request.contact,
-                    name = request.name
+                    name = request.name,
+                    ip= GetClientIP()
                 };
                 await _mySqlMasterDbContext.cooperator.AddAsync(cooperator);
                 await _mySqlMasterDbContext.SaveChangesAsync();

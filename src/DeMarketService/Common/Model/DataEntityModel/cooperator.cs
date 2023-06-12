@@ -37,6 +37,10 @@ namespace deMarketService.Common.Model.DataEntityModel
         /// </summary>
         public string name { get; set; }
         /// <summary>
+        /// ip
+        /// </summary>
+        public string ip { get; set; }
+        /// <summary>
         /// 状态
         /// </summary>
         public int status { get; set; }
