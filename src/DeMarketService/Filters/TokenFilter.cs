@@ -1,4 +1,5 @@
-﻿using deMarketService.Model;
+﻿using deMarketService.Common.Model.DataEntityModel;
+using deMarketService.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
@@ -27,7 +28,7 @@ namespace deMarketService.Proxies
         public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
         {
             var path = context.HttpContext.Request.Path.Value.ToLower();
-            if (!path.Equals("/api/user/login")&&!path.Equals("/api/notice/sendemail") && !path.Equals("/api/order/list"))
+            if (!path.Equals("/api/user/login")&& !path.Equals("/api/notice/sendemail") && !path.Equals("/api/order/list")&&!path.Equals("/api/notice/cooperate") )
             {
                 var token = context.HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
                 //var chainId = context.HttpContext.Request.Headers["chain_id"].FirstOrDefault();
