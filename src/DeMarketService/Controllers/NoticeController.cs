@@ -69,11 +69,35 @@ namespace deMarketService.Controllers
                 string mailMessage = "";
                 if (status == OrderStatus.Initial)
                 {
-                    mailMessage = $"您在{order.chain_id.ToString()}网络发布的商品({order.name})已成功上架，如果您的商品有新动态，我们将邮件通知您！";
+                    if (ls.Count == 2)
+                    {
+                        mailMessage = $"指定交易商品({order.name})在{order.chain_id.ToString()}已成功上架，特此通知！";
+                    }
+                    else if (ls.Contains(seller.email))
+                    {
+                        mailMessage = $"您在{order.chain_id.ToString()}网络发布的商品({order.name})已成功上架，如果您的商品有新动态，我们将邮件通知您！";
+                    }
+                    else if (ls.Contains(buyer.email))
+                    {
+                        mailMessage = $"一位商家在{order.chain_id.ToString()}网络发布的商品({order.name})指定您为唯一购买人！";
+                    }
                 }
                 else if (status == OrderStatus.SellerCancelWithoutDuty)
                 {
-                    mailMessage = $"您在{order.chain_id.ToString()}网络发布的商品({order.name})已取消，特此通知！";
+                    if (ls.Count == 2)
+                    {
+                        mailMessage = $"指定交易商品({order.name})在{order.chain_id.ToString()}已取消，特此通知！";
+                    }
+                    else if (ls.Contains(seller.email))
+                    {
+                        mailMessage = $"您在{order.chain_id.ToString()}网络发布的商品({order.name})已取消，特此通知！";
+                    }
+                    else if (ls.Contains(buyer.email))
+                    {
+                        mailMessage = $"商家在{order.chain_id.ToString()}网络发布的商品({order.name})已取消，该商品曾指定您为唯一购买人。";
+                    }
+
+                   
                 }
                 else if (status == OrderStatus.Completed)
                 {
