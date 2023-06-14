@@ -95,7 +95,7 @@ namespace deMarketService.Controllers
         {
             var queryEntities = _mySqlMasterDbContext.orders.AsNoTracking().AsQueryable();
             var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking().ToList();
-            queryEntities = queryEntities.Where(p => p.status == 0);
+            queryEntities = queryEntities.Where(p => p.status == 0&&p.buyer== "0x0000000000000000000000000000000000000000");
             var currentLoginAddress = this.CurrentLoginAddress;
 
             if (!string.IsNullOrEmpty(req.name))
