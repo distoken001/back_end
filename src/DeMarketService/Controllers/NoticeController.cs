@@ -71,7 +71,7 @@ namespace deMarketService.Controllers
                 {
                     if (ls.Count == 2)
                     {
-                        mailMessage = $"指定交易商品({order.name})在{order.chain_id.ToString()}已成功上架，特此通知！";
+                        mailMessage = $"指定交易商品({order.name})在{order.chain_id.ToString()}网络已成功上架，特此通知！";
                     }
                     else if (ls.Contains(seller.email))
                     {
@@ -86,7 +86,7 @@ namespace deMarketService.Controllers
                 {
                     if (ls.Count == 2)
                     {
-                        mailMessage = $"指定交易商品({order.name})在{order.chain_id.ToString()}已取消，特此通知！";
+                        mailMessage = $"指定交易商品({order.name})在{order.chain_id.ToString()}网络已取消，特此通知！";
                     }
                     else if (ls.Contains(seller.email))
                     {
