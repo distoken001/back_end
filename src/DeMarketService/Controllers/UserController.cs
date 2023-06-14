@@ -132,6 +132,10 @@ namespace deMarketService.Controllers
         [HttpPost("edit/usernick")]
         public async Task<WebApiResult> EditUserNick([FromBody] EditUserNickCommand command)
         {
+            if (command.NickName.Contains("DeMarket",StringComparison.OrdinalIgnoreCase)|| command.NickName.Contains("德玛", StringComparison.OrdinalIgnoreCase))
+            {
+                return new WebApiResult(-1, "不能包含官方敏感词汇");
+            }
             var length = command.NickName.Length;
             if (length > 15)
             {
