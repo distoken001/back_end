@@ -152,7 +152,7 @@ namespace deMarketService.Controllers
         [HttpPost("edit/usernick")]
         public async Task<WebApiResult> EditUserNick([FromBody] EditUserNickCommand command)
         {
-            if (command.NickName.Contains("DeMarket", StringComparison.OrdinalIgnoreCase) || command.NickName.Contains("德玛", StringComparison.OrdinalIgnoreCase))
+            if (command.NickName.Contains("DeMarket", StringComparison.OrdinalIgnoreCase) || command.NickName.Contains("德玛", StringComparison.OrdinalIgnoreCase) || command.NickName.Contains("黑名单", StringComparison.OrdinalIgnoreCase))
             {
                 return new WebApiResult(-1, "不能包含官方敏感词汇");
             }
@@ -171,13 +171,16 @@ namespace deMarketService.Controllers
                 }
             }
             var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.ToLower().Equals(this.CurrentLoginAddress.ToLower()));
-            if (user.nick_name.Equals("高危商家", StringComparison.OrdinalIgnoreCase));
+            if (user.nick_name.Contains("黑名单用户", StringComparison.OrdinalIgnoreCase)) 
             {
                 return new WebApiResult(-1, "您已经被拉入黑名单");
             }
-            user.nick_name = command.NickName;
-            await _mySqlMasterDbContext.SaveChangesAsync();
-            return new WebApiResult(1, "修改昵称成功");
+            else
+            {
+                user.nick_name = command.NickName;
+                await _mySqlMasterDbContext.SaveChangesAsync();
+                return new WebApiResult(1, "修改昵称成功");
+            }
         }
         /// <summary>
         /// 修改用户邮箱
