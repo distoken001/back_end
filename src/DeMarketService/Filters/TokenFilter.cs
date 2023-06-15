@@ -27,20 +27,23 @@ namespace deMarketService.Proxies
 
         public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
         {
-            var path = context.HttpContext.Request.Path.Value.ToLower();
-            if (!path.Equals("/api/user/login")&& !path.Equals("/api/notice/sendemail") && !path.Equals("/api/order/list")&&!path.Equals("/api/notice/cooperate") )
-            {
-                var token = context.HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
-                //var chainId = context.HttpContext.Request.Headers["chain_id"].FirstOrDefault();
-                if (token == null)
-                {
-                    if (_requireAuth)
-                    {
-                        context.Result = new JsonResult(new { message = "Authorization header not found" }) { StatusCode = 401 };
-                    }
-                    return;
-                }
 
+            if (!_requireAuth)
+            {
+                return;
+            }
+          
+            var token = context.HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+            if (token == null)
+            {
+                var path = context.HttpContext.Request.Path.Value;
+                if (!path.Equals("/api/user/login", StringComparison.OrdinalIgnoreCase) && !path.Equals("/api/notice/sendemail", StringComparison.OrdinalIgnoreCase) && !path.Equals("/api/order/list", StringComparison.OrdinalIgnoreCase) && !path.Equals("/api/notice/cooperate", StringComparison.OrdinalIgnoreCase))
+                {
+                    context.Result = new JsonResult(new { message = "Authorization header not found" }) { StatusCode = 401 };
+                }
+            }
+            else
+            {
                 try
                 {
                     var tokenHandler = new JwtSecurityTokenHandler();
@@ -70,6 +73,7 @@ namespace deMarketService.Proxies
                 }
             }
         }
+
     }
 }
 
