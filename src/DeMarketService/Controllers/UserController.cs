@@ -63,7 +63,7 @@ namespace deMarketService.Controllers
                     create_time = DateTime.Now,
                     update_time = DateTime.Now,
                     parent_address = req.parentAddress,
-                    ip = req.ipAddress
+                    ip = GetClientIP()
                 };
 
                 try
