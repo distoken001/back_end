@@ -95,8 +95,7 @@ namespace deMarketService.Controllers
         {
             var queryEntities = _mySqlMasterDbContext.orders.AsNoTracking().AsQueryable();
             var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking().ToList();
-            var currentLoginAddress = this.CurrentLoginAddress;
-            queryEntities = queryEntities.Where(p => p.status == OrderStatus.Initial && (p.buyer.Equals("0x0000000000000000000000000000000000000000", StringComparison.OrdinalIgnoreCase) || p.buyer.Equals(currentLoginAddress, StringComparison.OrdinalIgnoreCase) || p.seller.Equals(currentLoginAddress, StringComparison.OrdinalIgnoreCase)));
+            queryEntities = queryEntities.Where(p => p.status == OrderStatus.Initial && (p.buyer.Equals("0x0000000000000000000000000000000000000000", StringComparison.OrdinalIgnoreCase) || p.buyer.Equals(CurrentLoginAddress, StringComparison.OrdinalIgnoreCase) || p.seller.Equals(CurrentLoginAddress, StringComparison.OrdinalIgnoreCase)));
 
             if (!string.IsNullOrEmpty(req.name))
             {
@@ -127,7 +126,7 @@ namespace deMarketService.Controllers
                a.seller_nick = users.FirstOrDefault(c => c.address.Equals( a.seller, StringComparison.OrdinalIgnoreCase))?.nick_name??"匿名商家";
             }
             var res = new PagedModel<OrdersResponse>(totalCount, viewList);
-            return Json(new WebApiResult(1, "订单列表"+ currentLoginAddress, res));
+            return Json(new WebApiResult(1, "订单列表"+ CurrentLoginAddress, res));
         }
         /// <summary>
         /// 猜您喜欢
@@ -140,8 +139,7 @@ namespace deMarketService.Controllers
         {
             var queryEntities = _mySqlMasterDbContext.orders.AsNoTracking().AsQueryable();
             var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking().ToList();
-            var currentLoginAddress = this.CurrentLoginAddress;
-            queryEntities = queryEntities.Where(p => p.status == OrderStatus.Initial && (p.buyer.Equals("0x0000000000000000000000000000000000000000", StringComparison.OrdinalIgnoreCase) || p.buyer.Equals(currentLoginAddress, StringComparison.OrdinalIgnoreCase) || p.seller.Equals(currentLoginAddress, StringComparison.OrdinalIgnoreCase)));
+            queryEntities = queryEntities.Where(p => p.status == OrderStatus.Initial && (p.buyer.Equals("0x0000000000000000000000000000000000000000", StringComparison.OrdinalIgnoreCase) || p.buyer.Equals(CurrentLoginAddress, StringComparison.OrdinalIgnoreCase) || p.seller.Equals(CurrentLoginAddress, StringComparison.OrdinalIgnoreCase)));
 
             if (!string.IsNullOrEmpty(req.name))
             {
