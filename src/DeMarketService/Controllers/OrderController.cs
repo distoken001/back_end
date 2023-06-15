@@ -95,7 +95,7 @@ namespace deMarketService.Controllers
         {
             var queryEntities = _mySqlMasterDbContext.orders.AsNoTracking().AsQueryable();
             var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking().ToList();
-            queryEntities = queryEntities.Where(p => p.status == 0&&p.buyer== "0x0000000000000000000000000000000000000000");
+            queryEntities = queryEntities.Where(p => p.status == OrderStatus.Initial && (p.buyer.Equals("0x0000000000000000000000000000000000000000", StringComparison.OrdinalIgnoreCase) || p.buyer.Equals(this.CurrentLoginAddress, StringComparison.OrdinalIgnoreCase)));
             var currentLoginAddress = this.CurrentLoginAddress;
 
             if (!string.IsNullOrEmpty(req.name))
@@ -107,8 +107,6 @@ namespace deMarketService.Controllers
                 queryEntities = queryEntities.Where(p => p.description.ToLower().Contains(req.description.ToLower()));
             }
 
-            //if (req.order_id.HasValue)
-            //    queryEntities = queryEntities.Where(p => p.order_id == req.order_id);
             if (req.chain_id != 0)
                 queryEntities = queryEntities.Where(p => p.chain_id == req.chain_id);
 
@@ -126,6 +124,50 @@ namespace deMarketService.Controllers
                var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
                a.token_des = tokenView;
                a.seller_nick = users.FirstOrDefault(c => c.address.Equals( a.seller, StringComparison.OrdinalIgnoreCase))?.nick_name??"匿名商家";
+            }
+            var res = new PagedModel<OrdersResponse>(totalCount, viewList);
+            return Json(new WebApiResult(1, "订单列表", res));
+        }
+        /// <summary>
+        /// 猜您喜欢
+        /// </summary>
+        /// <param name = "req" ></ param >
+        /// < returns ></ returns >
+        [HttpPost("like")]
+        [ProducesResponseType(typeof(PagedModel<OrdersResponse>), 200)]
+        public async Task<JsonResult> like([FromBody] ReqOrdersVo req)
+        {
+            var queryEntities = _mySqlMasterDbContext.orders.AsNoTracking().AsQueryable();
+            var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking().ToList();
+            queryEntities = queryEntities.Where(p => p.status == OrderStatus.Initial && (p.buyer.Equals("0x0000000000000000000000000000000000000000", StringComparison.OrdinalIgnoreCase) || p.buyer.Equals(this.CurrentLoginAddress, StringComparison.OrdinalIgnoreCase)));
+
+            if (!string.IsNullOrEmpty(req.name))
+            {
+                queryEntities = queryEntities.Where(p => p.name.ToLower().Contains(req.name.ToLower()));
+            }
+            if (!string.IsNullOrEmpty(req.description))
+            {
+                queryEntities = queryEntities.Where(p => p.description.ToLower().Contains(req.description.ToLower()));
+            }
+
+            if (req.chain_id != 0)
+                queryEntities = queryEntities.Where(p => p.chain_id == req.chain_id);
+
+            var totalCount = await queryEntities.CountAsync();
+            Random random = new Random();
+            int randomNumber = random.Next(0, totalCount-req.pageSize);
+            queryEntities = queryEntities.OrderByDescending(p => p.create_time).Skip(randomNumber).Take(req.pageSize);
+            var list = await queryEntities.ToListAsync();
+            var viewList = AutoMapperHelper.MapDbEntityToDTO<orders, OrdersResponse>(list);
+            var sellers = viewList.Select(a => a.seller).ToList();
+            var users = _mySqlMasterDbContext.users.AsNoTracking().Where(a => sellers.Contains(a.address)).ToList();
+
+            foreach (var a in viewList)
+            {
+                var token = chainTokens.FirstOrDefault(c => c.chain_id == a.chain_id && c.token_address.Equals(a.token, StringComparison.OrdinalIgnoreCase));
+                var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
+                a.token_des = tokenView;
+                a.seller_nick = users.FirstOrDefault(c => c.address.Equals(a.seller, StringComparison.OrdinalIgnoreCase))?.nick_name ?? "匿名商家";
             }
             var res = new PagedModel<OrdersResponse>(totalCount, viewList);
             return Json(new WebApiResult(1, "订单列表", res));
