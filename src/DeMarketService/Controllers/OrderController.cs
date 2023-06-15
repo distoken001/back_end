@@ -127,7 +127,7 @@ namespace deMarketService.Controllers
                a.seller_nick = users.FirstOrDefault(c => c.address.Equals( a.seller, StringComparison.OrdinalIgnoreCase))?.nick_name??"匿名商家";
             }
             var res = new PagedModel<OrdersResponse>(totalCount, viewList);
-            return Json(new WebApiResult(1, "订单列表", res));
+            return Json(new WebApiResult(1, "订单列表"+ currentLoginAddress, res));
         }
         /// <summary>
         /// 猜您喜欢
