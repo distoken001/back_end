@@ -108,8 +108,9 @@ namespace deMarketService.Controllers
             }
 
             if (req.chain_id != 0)
+            {
                 queryEntities = queryEntities.Where(p => p.chain_id == req.chain_id);
-
+            }
 
             var totalCount = await queryEntities.CountAsync();
             queryEntities = queryEntities.OrderByDescending(p => p.create_time).Skip((req.pageIndex - 1) * req.pageSize).Take(req.pageSize);
@@ -150,9 +151,11 @@ namespace deMarketService.Controllers
                 queryEntities = queryEntities.Where(p => p.description.ToLower().Contains(req.description.ToLower()));
             }
 
-            if (req.chain_id != 0)
-                queryEntities = queryEntities.Where(p => p.chain_id == req.chain_id);
 
+            if (req.chain_id != 0)
+            {
+                queryEntities = queryEntities.Where(p => p.chain_id == req.chain_id);
+            }
             var totalCount = await queryEntities.CountAsync();
             Random random = new Random();
             int randomNumber = random.Next(0, totalCount-req.pageSize);
