@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Org.BouncyCastle.Ocsp;
+using Org.BouncyCastle.Utilities.Encoders;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -63,7 +64,6 @@ namespace deMarketService.Controllers
                     create_time = DateTime.Now,
                     update_time = DateTime.Now,
                     parent_address = req.parentAddress,
-                    ip = GetClientIP()
                 };
 
                 try
@@ -71,9 +71,9 @@ namespace deMarketService.Controllers
                     await _mySqlMasterDbContext.users.AddAsync(users);
                     await _mySqlMasterDbContext.SaveChangesAsync();
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    return new WebApiResult(-1, "database error");
+                    return new WebApiResult(-1, "database error"+ex);
                 }
             }
             Claim[] userClaims = ConvertToClaims(users);
