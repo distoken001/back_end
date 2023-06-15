@@ -95,7 +95,7 @@ namespace deMarketService.Controllers
         {
             var queryEntities = _mySqlMasterDbContext.orders.AsNoTracking().AsQueryable();
             var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking().ToList();
-            queryEntities = queryEntities.Where(p => p.status == OrderStatus.Initial && (p.buyer.Equals("0x0000000000000000000000000000000000000000", StringComparison.OrdinalIgnoreCase) || p.buyer.Equals(this.CurrentLoginAddress, StringComparison.OrdinalIgnoreCase)));
+            queryEntities = queryEntities.Where(p => p.status == OrderStatus.Initial && (p.buyer.Equals("0x0000000000000000000000000000000000000000", StringComparison.OrdinalIgnoreCase) || p.buyer.Equals(this.CurrentLoginAddress, StringComparison.OrdinalIgnoreCase) || p.seller.Equals(this.CurrentLoginAddress, StringComparison.OrdinalIgnoreCase)));
             var currentLoginAddress = this.CurrentLoginAddress;
 
             if (!string.IsNullOrEmpty(req.name))
@@ -139,7 +139,7 @@ namespace deMarketService.Controllers
         {
             var queryEntities = _mySqlMasterDbContext.orders.AsNoTracking().AsQueryable();
             var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking().ToList();
-            queryEntities = queryEntities.Where(p => p.status == OrderStatus.Initial && (p.buyer.Equals("0x0000000000000000000000000000000000000000", StringComparison.OrdinalIgnoreCase) || p.buyer.Equals(this.CurrentLoginAddress, StringComparison.OrdinalIgnoreCase)));
+            queryEntities = queryEntities.Where(p => p.status == OrderStatus.Initial && (p.buyer.Equals("0x0000000000000000000000000000000000000000", StringComparison.OrdinalIgnoreCase) || p.buyer.Equals(this.CurrentLoginAddress, StringComparison.OrdinalIgnoreCase) || p.seller.Equals(this.CurrentLoginAddress, StringComparison.OrdinalIgnoreCase)));
 
             if (!string.IsNullOrEmpty(req.name))
             {
