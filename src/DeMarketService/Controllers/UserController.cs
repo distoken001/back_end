@@ -80,6 +80,26 @@ namespace deMarketService.Controllers
             var token = TokenHelper.GenerateToken(StringConstant.secretKey, StringConstant.issuer, StringConstant.audience, 365, userClaims);
             return new WebApiResult(1, "登录成功", new LoginResponse { token = token, avatar = users.avatar, nick_name = users.nick_name, email = users.email });
         }
+        /// <summary>
+        /// 重置ip
+        /// </summary>
+        /// <param name = "req" ></ param >
+        /// < returns ></ returns >
+        [HttpPost("reset")]
+        [ProducesResponseType(typeof(LoginResponse), 200)]
+        public async Task<WebApiResult> reset()
+        {
+            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(CurrentLoginAddress, StringComparison.OrdinalIgnoreCase));
+            if (users == null)
+            {
+
+            }
+            else
+            {
+                users.ip = GetClientIP();
+            }
+            return new WebApiResult(1, "成功");
+        }
 
 
         /// <summary>
@@ -132,7 +152,7 @@ namespace deMarketService.Controllers
         [HttpPost("edit/usernick")]
         public async Task<WebApiResult> EditUserNick([FromBody] EditUserNickCommand command)
         {
-            if (command.NickName.Contains("DeMarket",StringComparison.OrdinalIgnoreCase)|| command.NickName.Contains("德玛", StringComparison.OrdinalIgnoreCase))
+            if (command.NickName.Contains("DeMarket", StringComparison.OrdinalIgnoreCase) || command.NickName.Contains("德玛", StringComparison.OrdinalIgnoreCase))
             {
                 return new WebApiResult(-1, "不能包含官方敏感词汇");
             }
