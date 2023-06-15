@@ -157,7 +157,7 @@ namespace deMarketService.Controllers
             }
             var totalCount = await queryEntities.CountAsync();
             Random random = new Random();
-            int randomNumber = random.Next(0, totalCount-req.pageSize);
+            int randomNumber = random.Next(0, totalCount-req.pageSize+1);
             queryEntities = queryEntities.OrderByDescending(p => p.create_time).Skip(randomNumber).Take(req.pageSize);
             var list = await queryEntities.ToListAsync();
             var viewList = AutoMapperHelper.MapDbEntityToDTO<orders, OrdersResponse>(list);
