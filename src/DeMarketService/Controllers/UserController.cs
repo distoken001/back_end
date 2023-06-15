@@ -64,9 +64,7 @@ namespace deMarketService.Controllers
                     create_time = DateTime.Now,
                     update_time = DateTime.Now,
                     parent_address = req.parentAddress,
-                    ip = GetClientIP()
                 };
-                Console.WriteLine("login:" + CurrentLoginAddress + users.ip);
                 try
                 {
                     await _mySqlMasterDbContext.users.AddAsync(users);
@@ -74,7 +72,7 @@ namespace deMarketService.Controllers
                 }
                 catch (Exception ex)
                 {
-                    return new WebApiResult(-1, "database error"+ex);
+                    return new WebApiResult(-1, "database error" + ex);
                 }
             }
             Claim[] userClaims = ConvertToClaims(users);
@@ -98,8 +96,8 @@ namespace deMarketService.Controllers
             else
             {
                 users.ip = GetClientIP();
-                Console.WriteLine("reset:" + CurrentLoginAddress + users.ip)
-;            }
+                await _mySqlMasterDbContext.SaveChangesAsync();
+            }
             return new WebApiResult(1, "成功");
         }
 
