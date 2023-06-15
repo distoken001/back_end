@@ -21,11 +21,14 @@ namespace deMarketService.Controllers
         }
         public string GetClientIP()
         {
-            string XForwardedFor = HttpContext.Request.Headers["X-Forwarded-For"];
-            string XRealIP = HttpContext.Request.Headers["X-Real-IP"];
-            Console.WriteLine("X-Forwarded-For: " + XForwardedFor);
-            Console.WriteLine("X-Real-IP: " + XRealIP);
-            return XForwardedFor + "  " + XRealIP;
+            string clientIP = HttpContext.Request.Headers["X-Forwarded-For"];
+            Console.WriteLine("X-Forwarded-For: " + clientIP);
+            if (string.IsNullOrEmpty(clientIP))
+            {
+                clientIP = HttpContext.Request.Headers["X-Real-IP"];
+                Console.WriteLine("X-Real-IP: " + clientIP);
+            }
+            return clientIP;
         }
 
         //public ChainEnum CurrentLoginChain
