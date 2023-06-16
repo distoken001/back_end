@@ -198,6 +198,7 @@
         Aurora = 1313161554,
         AuroraTestnet = 1313161555,
         Harmony = 1666600000,
-        HarmonyTest = 1666700000
+        HarmonyTest = 1666700000,
+        Conflux =1030
     }
 }
