@@ -99,11 +99,11 @@ namespace deMarketService.Controllers
 
             if (!string.IsNullOrEmpty(req.name))
             {
-                queryEntities = queryEntities.Where(p => p.name.ToLower().Contains(req.name.ToLower()));
+                queryEntities = queryEntities.Where(p => p.name.Contains(req.name,StringComparison.OrdinalIgnoreCase));
             }
             if (!string.IsNullOrEmpty(req.description))
             {
-                queryEntities = queryEntities.Where(p => p.description.ToLower().Contains(req.description.ToLower()));
+                queryEntities = queryEntities.Where(p => p.description.Contains(req.description,StringComparison.OrdinalIgnoreCase));
             }
 
             if (req.chain_id != 0)
@@ -143,11 +143,11 @@ namespace deMarketService.Controllers
 
             if (!string.IsNullOrEmpty(req.name))
             {
-                queryEntities = queryEntities.Where(p => p.name.ToLower().Contains(req.name.ToLower()));
+                queryEntities = queryEntities.Where(p => p.name.Contains(req.name,StringComparison.OrdinalIgnoreCase));
             }
             if (!string.IsNullOrEmpty(req.description))
             {
-                queryEntities = queryEntities.Where(p => p.description.ToLower().Contains(req.description.ToLower()));
+                queryEntities = queryEntities.Where(p => p.description.Contains(req.description,StringComparison.OrdinalIgnoreCase));
             }
 
 
@@ -188,7 +188,7 @@ namespace deMarketService.Controllers
             var res = await _mySqlMasterDbContext.orders.FirstOrDefaultAsync(p => p.order_id == order_id && p.chain_id == chain_id);
             var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking().ToList();
             var ress = AutoMapperHelper.MapDbEntityToDTO<orders, OrdersResponse>(res);
-            var token = chainTokens.FirstOrDefault(c => c.chain_id == ress.chain_id && c.token_address.ToLower() == ress.token.ToLower());
+            var token = chainTokens.FirstOrDefault(c => c.chain_id == ress.chain_id && c.token_address.Equals(ress.token));
             var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
             ress.token_des = tokenView;
             //return Json(new WebApiResult(1, "CurrentLoginAddress:" + CurrentLoginAddress + ",CurrentLoginChain:"+ CurrentLoginChain, ress));

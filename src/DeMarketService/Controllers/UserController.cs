@@ -54,7 +54,7 @@ namespace deMarketService.Controllers
                 return new WebApiResult(-1, "signature verification failure");
             }
             // var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(req.address) && p.chain_id == req.chain_id);
-            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.ToLower().Equals(req.address.ToLower()));
+            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(req.address,StringComparison.OrdinalIgnoreCase));
             if (users == null)
             {
                 users = new Common.Model.DataEntityModel.users
@@ -111,7 +111,7 @@ namespace deMarketService.Controllers
         [ProducesResponseType(typeof(UsersResponse), 200)]
         public async Task<WebApiResult> detail([FromBody] ReqOrdersVo req)
         {
-            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.ToLower().Equals(this.CurrentLoginAddress.ToLower()));
+            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(CurrentLoginAddress,StringComparison.OrdinalIgnoreCase));
 
             return new WebApiResult(1, data: users);
         }
@@ -124,7 +124,7 @@ namespace deMarketService.Controllers
         [ProducesResponseType(typeof(string), 200)]
         public WebApiResult invitelist([FromQuery] int pageSize, [FromQuery] int pageIndex)
         {
-            var usersAll = _mySqlMasterDbContext.users.AsNoTracking().Where(p => p.parent_address.Equals(this.CurrentLoginAddress, StringComparison.OrdinalIgnoreCase));
+            var usersAll = _mySqlMasterDbContext.users.AsNoTracking().Where(p => p.parent_address.Equals(CurrentLoginAddress, StringComparison.OrdinalIgnoreCase));
             var totalCount = usersAll.Count();
             var list = usersAll.OrderByDescending(p => p.create_time).Skip((pageIndex - 1) * pageSize).Take(pageSize).Select(a => a.address).ToList();
             var res = new PagedModel<string>(totalCount, list);
@@ -139,7 +139,7 @@ namespace deMarketService.Controllers
         [HttpPost("edit/user")]
         public async Task<WebApiResult> EditUser([FromBody] EditUserCommand command)
         {
-            var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.ToLower().Equals(this.CurrentLoginAddress.ToLower()));
+            var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(this.CurrentLoginAddress,StringComparison.OrdinalIgnoreCase));
             user.avatar = command.Avatar;
             await _mySqlMasterDbContext.SaveChangesAsync();
             return new WebApiResult(1, "修改用户", true);
@@ -164,13 +164,13 @@ namespace deMarketService.Controllers
             command.NickName = string.IsNullOrEmpty(command.NickName) ? null : command.NickName;
             if (command.NickName != null)
             {
-                var userNick = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.nick_name.ToLower().Trim().Equals(command.NickName.ToLower().Trim()));
+                var userNick = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.nick_name.Equals(command.NickName,StringComparison.OrdinalIgnoreCase));
                 if (userNick != null)
                 {
                     return new WebApiResult(-1, "该昵称已经被占用");
                 }
             }
-            var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.ToLower().Equals(this.CurrentLoginAddress.ToLower()));
+            var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(CurrentLoginAddress,StringComparison.OrdinalIgnoreCase));
             if (user.nick_name.Contains("黑名单用户", StringComparison.OrdinalIgnoreCase)) 
             {
                 return new WebApiResult(-1, "您已经被拉入黑名单");
@@ -190,7 +190,7 @@ namespace deMarketService.Controllers
         [HttpPost("edit/useremail")]
         public async Task<WebApiResult> EditUserEmail([FromBody] EditUserEmaiCommand command)
         {
-            var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.ToLower().Equals(this.CurrentLoginAddress.ToLower()));
+            var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(this.CurrentLoginAddress,StringComparison.OrdinalIgnoreCase));
             user.email = command.Email;
             await _mySqlMasterDbContext.SaveChangesAsync();
             return new WebApiResult(1, "修改用户", true);

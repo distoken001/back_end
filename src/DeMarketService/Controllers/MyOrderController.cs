@@ -42,15 +42,15 @@ namespace deMarketService.Controllers
             var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking().ToList();
             var currentLoginAddress = this.CurrentLoginAddress;
 
-            queryEntities = queryEntities.Where(p => p.buyer.ToLower().Equals(currentLoginAddress.ToLower()) || p.seller.ToLower().Equals(currentLoginAddress.ToLower()));
+            queryEntities = queryEntities.Where(p => p.buyer.Equals(currentLoginAddress,StringComparison.OrdinalIgnoreCase) || p.seller.Equals(currentLoginAddress,StringComparison.OrdinalIgnoreCase));
 
             if (!string.IsNullOrEmpty(req.name))
             {
-                queryEntities = queryEntities.Where(p => p.name.ToLower().Contains(req.name.ToLower()));
+                queryEntities = queryEntities.Where(p => p.name.Contains(req.name,StringComparison.OrdinalIgnoreCase));
             }
             if (!string.IsNullOrEmpty(req.description))
             {
-                queryEntities = queryEntities.Where(p => p.description.ToLower().Contains(req.description.ToLower()));
+                queryEntities = queryEntities.Where(p => p.description.Contains(req.description,StringComparison.OrdinalIgnoreCase));
             }
 
             if (req.chain_id != 0)
@@ -62,7 +62,7 @@ namespace deMarketService.Controllers
             var viewList = AutoMapperHelper.MapDbEntityToDTO<orders, OrdersResponse>(list);
             foreach (var a in viewList)
             {
-                var token = chainTokens.FirstOrDefault(c => c.chain_id == a.chain_id && c.token_address.ToLower() == a.token.ToLower());
+                var token = chainTokens.FirstOrDefault(c => c.chain_id == a.chain_id && c.token_address.Equals(a.token,StringComparison.OrdinalIgnoreCase));
                 var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
                 a.token_des = tokenView;
             }
