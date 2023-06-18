@@ -175,7 +175,7 @@ namespace deMarketService.Controllers
             {
                 return new WebApiResult(-1, "未找到该用户" + CurrentLoginAddress);
             }
-            if (user.nick_name.Contains("黑名单用户", StringComparison.OrdinalIgnoreCase)) 
+            else if (user.nick_name!=null&&user.nick_name.Contains("黑名单用户", StringComparison.OrdinalIgnoreCase)) 
             {
                 return new WebApiResult(-1, "您已经被拉入黑名单");
             }
