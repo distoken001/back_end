@@ -171,6 +171,10 @@ namespace deMarketService.Controllers
                 }
             }
             var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(CurrentLoginAddress,StringComparison.OrdinalIgnoreCase));
+            if (user == null)
+            {
+                return new WebApiResult(-1, "未找到该用户" + CurrentLoginAddress);
+            }
             if (user.nick_name.Contains("黑名单用户", StringComparison.OrdinalIgnoreCase)) 
             {
                 return new WebApiResult(-1, "您已经被拉入黑名单");
