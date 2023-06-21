@@ -73,7 +73,7 @@ namespace deMarketService
                 .AddMvc(
                 options => {
                     options.Filters.Add<ExLogFilter>();
-                    //options.Filters.Add<TokenFilter>();
+                    options.Filters.Add<TokenFilter>();
                     }
                 )
                 .AddJsonOptions(options =>

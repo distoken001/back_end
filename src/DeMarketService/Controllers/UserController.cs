@@ -20,6 +20,7 @@ using System.Linq;
 using System.Reflection;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using TencentCloud.Ckafka.V20190819.Models;
 
 namespace deMarketService.Controllers
 {
@@ -146,6 +147,26 @@ namespace deMarketService.Controllers
             var viewList = AutoMapperHelper.MapDbEntityToDTO<inviter_rebates, InviterRebatesItemReponse>(list);
 
             var res = new PagedModel<InviterRebatesItemReponse>(totalCount, viewList);
+            return new WebApiResult(1, "获取成功", res);
+        }
+
+        /// <summary>
+        /// 当前登录人佣金汇总列表
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("inviteBates/collect")]
+        public WebApiResult GetInviteRebateTotalList()
+        {
+            var res = new List<string>();
+            var bates = _mySqlMasterDbContext.inviter_rebates.AsNoTracking().Where(p => p.inviter_address.Equals(CurrentLoginAddress, StringComparison.OrdinalIgnoreCase));
+            if (bates.Count() <= 0)
+                return new WebApiResult(1, "暂无数据", res);
+
+            var group = bates.ToList().GroupBy(p => p.token_name);
+            foreach (var item in group)
+            {
+                res.Add($"{item.Key}:{item.Sum(p => p.amount)}");
+            }
             return new WebApiResult(1, "获取成功", res);
         }
 
