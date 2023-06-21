@@ -93,7 +93,7 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         /// <summary>
         /// 链名称
         /// </summary>
-        public string chain_name { get { if (chain_id == ChainEnum.Avalanche) { return "Avalanche C-Chain"; } else if (chain_id == ChainEnum.Polygon) { return "Polygon(Matic)"; }else return chain_id.ToString(); } }
+        public string chain_name { get { if (chain_id == ChainEnum.Avalanche) { return "Avalanche"; } else if (chain_id == ChainEnum.Polygon) { return "Polygon(Matic)"; }else return chain_id.ToString(); } }
         /// <summary>
         /// 算数
         /// </summary>
@@ -130,7 +130,7 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         {
             get
             {
-                return price * amount / decimals_long;
+                return price_actual * amount ;
             }
         }
         public string seller_ratio
@@ -142,5 +142,7 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
                 return percentage;
             }
         }
+        public ChainTokenViewModel token_des { get; set; }
+        public  string seller_nick { get; set; }
     }
 }

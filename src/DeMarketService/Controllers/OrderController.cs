@@ -94,28 +94,83 @@ namespace deMarketService.Controllers
         public async Task<JsonResult> list([FromBody] ReqOrdersVo req)
         {
             var queryEntities = _mySqlMasterDbContext.orders.AsNoTracking().AsQueryable();
-            queryEntities = queryEntities.Where(p => p.status == 0);
-            var currentLoginAddress = this.CurrentLoginAddress;
+            var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking().ToList();
+            queryEntities = queryEntities.Where(p => p.status == OrderStatus.Initial && (p.buyer.Equals("0x0000000000000000000000000000000000000000", StringComparison.OrdinalIgnoreCase) || p.buyer.Equals(CurrentLoginAddress, StringComparison.OrdinalIgnoreCase) || p.seller.Equals(CurrentLoginAddress, StringComparison.OrdinalIgnoreCase)));
 
             if (!string.IsNullOrEmpty(req.name))
             {
-                queryEntities = queryEntities.Where(p => p.name.ToLower().Contains(req.name.ToLower()));
+                queryEntities = queryEntities.Where(p => p.name.Contains(req.name,StringComparison.OrdinalIgnoreCase));
             }
             if (!string.IsNullOrEmpty(req.description))
             {
-                queryEntities = queryEntities.Where(p => p.description.ToLower().Contains(req.description.ToLower()));
+                queryEntities = queryEntities.Where(p => p.description.Contains(req.description,StringComparison.OrdinalIgnoreCase));
             }
 
-            //if (req.order_id.HasValue)
-            //    queryEntities = queryEntities.Where(p => p.order_id == req.order_id);
             if (req.chain_id != 0)
+            {
                 queryEntities = queryEntities.Where(p => p.chain_id == req.chain_id);
-
+            }
 
             var totalCount = await queryEntities.CountAsync();
             queryEntities = queryEntities.OrderByDescending(p => p.create_time).Skip((req.pageIndex - 1) * req.pageSize).Take(req.pageSize);
             var list = await queryEntities.ToListAsync();
             var viewList = AutoMapperHelper.MapDbEntityToDTO<orders, OrdersResponse>(list);
+            var sellers=viewList.Select(a => a.seller).ToList();
+            var users = _mySqlMasterDbContext.users.AsNoTracking().Where(a => sellers.Contains(a.address)).ToList();
+
+            foreach (var a in viewList)
+            {
+               var token= chainTokens.FirstOrDefault(c => c.chain_id == a.chain_id && c.token_address.Equals(a.token, StringComparison.OrdinalIgnoreCase));
+               var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
+               a.token_des = tokenView;
+               a.seller_nick = users.FirstOrDefault(c => c.address.Equals( a.seller, StringComparison.OrdinalIgnoreCase))?.nick_name??"匿名商家";
+            }
+            var res = new PagedModel<OrdersResponse>(totalCount, viewList);
+            return Json(new WebApiResult(1, "订单列表"+ CurrentLoginAddress, res));
+        }
+        /// <summary>
+        /// 猜您喜欢
+        /// </summary>
+        /// <param name = "req" ></ param >
+        /// < returns ></ returns >
+        [HttpPost("like")]
+        [ProducesResponseType(typeof(PagedModel<OrdersResponse>), 200)]
+        public async Task<JsonResult> like([FromBody] ReqOrdersVo req)
+        {
+            var queryEntities = _mySqlMasterDbContext.orders.AsNoTracking().AsQueryable();
+            var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking().ToList();
+            queryEntities = queryEntities.Where(p => p.status == OrderStatus.Initial && (p.buyer.Equals("0x0000000000000000000000000000000000000000", StringComparison.OrdinalIgnoreCase) || p.buyer.Equals(CurrentLoginAddress, StringComparison.OrdinalIgnoreCase) || p.seller.Equals(CurrentLoginAddress, StringComparison.OrdinalIgnoreCase)));
+
+            if (!string.IsNullOrEmpty(req.name))
+            {
+                queryEntities = queryEntities.Where(p => p.name.Contains(req.name,StringComparison.OrdinalIgnoreCase));
+            }
+            if (!string.IsNullOrEmpty(req.description))
+            {
+                queryEntities = queryEntities.Where(p => p.description.Contains(req.description,StringComparison.OrdinalIgnoreCase));
+            }
+
+
+            if (req.chain_id != 0)
+            {
+                queryEntities = queryEntities.Where(p => p.chain_id == req.chain_id);
+            }
+            var totalCount = await queryEntities.CountAsync();
+            Random random = new Random();
+            int randomNumber = random.Next(0, totalCount-req.pageSize+1);
+            queryEntities = queryEntities.OrderByDescending(p => p.create_time).Skip(randomNumber).Take(req.pageSize);
+            var list = await queryEntities.ToListAsync();
+            var viewList = AutoMapperHelper.MapDbEntityToDTO<orders, OrdersResponse>(list);
+            var sellers = viewList.Select(a => a.seller).ToList();
+            var users = _mySqlMasterDbContext.users.AsNoTracking().Where(a => sellers.Contains(a.address)).ToList();
+
+            foreach (var a in viewList)
+            {
+                var token = chainTokens.FirstOrDefault(c => c.chain_id == a.chain_id && c.token_address.Equals(a.token, StringComparison.OrdinalIgnoreCase));
+                var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
+                a.token_des = tokenView;
+                a.seller_nick = users.FirstOrDefault(c => c.address.Equals(a.seller, StringComparison.OrdinalIgnoreCase))?.nick_name ?? "匿名商家";
+            }
             var res = new PagedModel<OrdersResponse>(totalCount, viewList);
             return Json(new WebApiResult(1, "订单列表", res));
         }
@@ -131,7 +186,11 @@ namespace deMarketService.Controllers
         public async Task<JsonResult> detail([FromQuery] long order_id, [FromQuery] ChainEnum chain_id)
         {
             var res = await _mySqlMasterDbContext.orders.FirstOrDefaultAsync(p => p.order_id == order_id && p.chain_id == chain_id);
+            var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking().ToList();
             var ress = AutoMapperHelper.MapDbEntityToDTO<orders, OrdersResponse>(res);
+            var token = chainTokens.FirstOrDefault(c => c.chain_id == ress.chain_id && c.token_address.Equals(ress.token,StringComparison.OrdinalIgnoreCase));
+            var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
+            ress.token_des = tokenView;
             //return Json(new WebApiResult(1, "CurrentLoginAddress:" + CurrentLoginAddress + ",CurrentLoginChain:"+ CurrentLoginChain, ress));
             return Json(new WebApiResult(1, "查询成功", ress));
         }
