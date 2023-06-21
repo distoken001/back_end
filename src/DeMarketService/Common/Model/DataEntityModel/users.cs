@@ -71,6 +71,10 @@ namespace deMarketService.Common.Model.DataEntityModel
         /// 父地址
         /// </summary>
         public string parent_address { get; set; }
+        /// <summary>
+        /// 费率
+        /// </summary>
+        public decimal rate { get; set; }
 
     }
 }

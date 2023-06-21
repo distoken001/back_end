@@ -19,6 +19,7 @@ using Com.Ctrip.Framework.Apollo;
 using deMarketService.Services.Interfaces;
 using deMarketService.Services;
 using AutoMapper;
+using deMarketService.jobs;
 
 namespace deMarketService
 {
@@ -36,7 +37,7 @@ namespace deMarketService
                 .AddDefault();
             Configuration = builder.Build();
         }
-
+        public static ServiceProvider privider;
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -52,6 +53,7 @@ namespace deMarketService
             services.AddScoped<TokenFilter>();
             services.AddSingleton<ITxCosUploadeService, TxCosUploadeService>();
             services.AddScoped<EmailProxy>();
+            services.AddScoped<CustomerRebateService>();
             services
                 .AddHttpClient()
                 //.AddSingleton(Configuration)
@@ -98,6 +100,7 @@ namespace deMarketService
                  options.IncludeXmlComments(System.IO.Path.Combine(Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application.ApplicationBasePath, "deMarketService.xml"));
              });
 
+            privider = services.BuildServiceProvider();
             //services.AddAuthentication(options =>
             //{
             //    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -120,6 +123,8 @@ namespace deMarketService
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, Microsoft.AspNetCore.Hosting.IApplicationLifetime lifetime)
         {
+            //定时任务
+            QuartzStartup.Run().Wait();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

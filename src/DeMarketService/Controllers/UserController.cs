@@ -54,7 +54,7 @@ namespace deMarketService.Controllers
                 return new WebApiResult(-1, "signature verification failure");
             }
             // var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(req.address) && p.chain_id == req.chain_id);
-            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(req.address,StringComparison.OrdinalIgnoreCase));
+            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(req.address, StringComparison.OrdinalIgnoreCase));
             if (users == null)
             {
                 users = new Common.Model.DataEntityModel.users
@@ -111,7 +111,7 @@ namespace deMarketService.Controllers
         [ProducesResponseType(typeof(UsersResponse), 200)]
         public async Task<WebApiResult> detail([FromBody] ReqOrdersVo req)
         {
-            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(CurrentLoginAddress,StringComparison.OrdinalIgnoreCase));
+            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(CurrentLoginAddress, StringComparison.OrdinalIgnoreCase));
 
             return new WebApiResult(1, data: users);
         }
@@ -132,6 +132,24 @@ namespace deMarketService.Controllers
         }
 
         /// <summary>
+        /// 当前登录人的佣金明细
+        /// </summary>
+        /// <param name = "req" ></ param >
+        /// < returns ></ returns >
+        [HttpGet("inviteBates/list")]
+        [ProducesResponseType(typeof(List<InviterRebatesItemReponse>), 200)]
+        public WebApiResult GetinviteRebateList([FromQuery] int pageSize, [FromQuery] int pageIndex)
+        {
+            var bates = _mySqlMasterDbContext.inviter_rebates.AsNoTracking().Where(p => p.inviter_address.Equals(CurrentLoginAddress, StringComparison.OrdinalIgnoreCase));
+            var totalCount = bates.Count();
+            var list = bates.OrderByDescending(p => p.create_time).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+            var viewList = AutoMapperHelper.MapDbEntityToDTO<inviter_rebates, InviterRebatesItemReponse>(list);
+
+            var res = new PagedModel<InviterRebatesItemReponse>(totalCount, viewList);
+            return new WebApiResult(1, "获取成功", res);
+        }
+
+        /// <summary>
         /// 修改用户
         /// </summary>
         /// <param name="command"></param>
@@ -139,7 +157,7 @@ namespace deMarketService.Controllers
         [HttpPost("edit/user")]
         public async Task<WebApiResult> EditUser([FromBody] EditUserCommand command)
         {
-            var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(this.CurrentLoginAddress,StringComparison.OrdinalIgnoreCase));
+            var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(this.CurrentLoginAddress, StringComparison.OrdinalIgnoreCase));
             user.avatar = command.Avatar;
             await _mySqlMasterDbContext.SaveChangesAsync();
             return new WebApiResult(1, "修改用户", true);
@@ -164,18 +182,18 @@ namespace deMarketService.Controllers
             command.NickName = string.IsNullOrEmpty(command.NickName) ? null : command.NickName;
             if (command.NickName != null)
             {
-                var userNick = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.nick_name.Equals(command.NickName,StringComparison.OrdinalIgnoreCase));
+                var userNick = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.nick_name.Equals(command.NickName, StringComparison.OrdinalIgnoreCase));
                 if (userNick != null)
                 {
                     return new WebApiResult(-1, "该昵称已经被占用");
                 }
             }
-            var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(CurrentLoginAddress,StringComparison.OrdinalIgnoreCase));
+            var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(CurrentLoginAddress, StringComparison.OrdinalIgnoreCase));
             if (user == null)
             {
                 return new WebApiResult(-1, "未找到该用户" + CurrentLoginAddress);
             }
-            else if (user.nick_name!=null&&user.nick_name.Contains("黑名单用户", StringComparison.OrdinalIgnoreCase)) 
+            else if (user.nick_name != null && user.nick_name.Contains("黑名单用户", StringComparison.OrdinalIgnoreCase))
             {
                 return new WebApiResult(-1, "您已经被拉入黑名单");
             }
@@ -194,7 +212,7 @@ namespace deMarketService.Controllers
         [HttpPost("edit/useremail")]
         public async Task<WebApiResult> EditUserEmail([FromBody] EditUserEmaiCommand command)
         {
-            var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(this.CurrentLoginAddress,StringComparison.OrdinalIgnoreCase));
+            var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(this.CurrentLoginAddress, StringComparison.OrdinalIgnoreCase));
             user.email = command.Email;
             await _mySqlMasterDbContext.SaveChangesAsync();
             return new WebApiResult(1, "修改用户", true);

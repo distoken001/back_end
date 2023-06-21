@@ -25,5 +25,6 @@ namespace deMarketService.DbContext
         public virtual DbSet<cooperator> cooperator { get; set; }
         public virtual DbSet<contacts> contacts { get; set; }
         public virtual DbSet<chain_tokens> chain_tokens { get; set; }
+        public virtual DbSet<inviter_rebates> inviter_rebates { get; set; }
     }
 }
