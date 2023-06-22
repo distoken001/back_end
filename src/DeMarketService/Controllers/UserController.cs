@@ -10,6 +10,7 @@ using deMarketService.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Org.BouncyCastle.Ocsp;
 using Org.BouncyCastle.Utilities.Encoders;
 using System;
@@ -30,11 +31,13 @@ namespace deMarketService.Controllers
     {
         MySqlMasterDbContext _mySqlMasterDbContext;
         private readonly ITxCosUploadeService txCosUploadeService;
+        private readonly IConfiguration _configuration;
 
-        public UserController(MySqlMasterDbContext mySqlMasterDbContext, ITxCosUploadeService txCosUploadeService)
+        public UserController(MySqlMasterDbContext mySqlMasterDbContext, ITxCosUploadeService txCosUploadeService, IConfiguration configuration)
         {
             _mySqlMasterDbContext = mySqlMasterDbContext;
             this.txCosUploadeService = txCosUploadeService;
+            _configuration = configuration;
         }
         /// <summary>
         /// 登录接口
@@ -66,6 +69,10 @@ namespace deMarketService.Controllers
                     update_time = DateTime.Now,
                     parent_address = req.parentAddress,
                 };
+                if (!string.IsNullOrEmpty(users.parent_address))
+                {
+                    users.rate = string.IsNullOrEmpty(_configuration["rate"])?0.002M:  decimal.Parse(_configuration["rate"]);
+                }
                 try
                 {
                     await _mySqlMasterDbContext.users.AddAsync(users);
