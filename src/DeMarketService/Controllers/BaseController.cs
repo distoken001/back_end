@@ -19,16 +19,19 @@ namespace deMarketService.Controllers
                 return u;
             }
         }
-        public string GetClientIP()
+        public string ClientIP
         {
-            string clientIP = HttpContext.Request.Headers["X-Forwarded-For"];
-            Console.WriteLine("X-Forwarded-For: " + clientIP);
-            if (string.IsNullOrEmpty(clientIP))
+            get
             {
-                clientIP = HttpContext.Request.Headers["X-Real-IP"];
-                Console.WriteLine("X-Real-IP: " + clientIP);
+                string clientIP = HttpContext.Request.Headers["X-Forwarded-For"];
+                Console.WriteLine("X-Forwarded-For: " + clientIP);
+                if (string.IsNullOrEmpty(clientIP))
+                {
+                    clientIP = HttpContext.Request.Headers["X-Real-IP"];
+                    Console.WriteLine("X-Real-IP: " + clientIP);
+                }
+                return clientIP;
             }
-            return clientIP;
         }
 
         //public ChainEnum CurrentLoginChain

@@ -96,7 +96,7 @@ namespace deMarketService.Controllers
             }
             else
             {
-                users.ip = GetClientIP();
+                users.ip = ClientIP;
                 await _mySqlMasterDbContext.SaveChangesAsync();
             }
             return new WebApiResult(1, "成功");
