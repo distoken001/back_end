@@ -155,6 +155,7 @@ namespace deMarketService.Controllers
             var viewList = AutoMapperHelper.MapDbEntityToDTO<inviter_rebates, InviterRebatesItemReponse>(list);
             Console.WriteLine("viewList:" + JsonTools.Serialize(viewList));
             var res = new PagedModel<InviterRebatesItemReponse>(totalCount, viewList);
+            Console.WriteLine("res:" + JsonTools.Serialize(res));
             return new WebApiResult(1, "获取成功", res);
         }
 
