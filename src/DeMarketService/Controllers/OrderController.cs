@@ -185,14 +185,19 @@ namespace deMarketService.Controllers
         [ProducesResponseType(typeof(orders), 200)]
         public async Task<JsonResult> detail([FromQuery] long order_id, [FromQuery] ChainEnum chain_id, [FromQuery] string contract)
         {
-            var res = await _mySqlMasterDbContext.orders.FirstOrDefaultAsync(p => p.order_id == order_id && p.chain_id == chain_id&&p.contract.Equals(contract,StringComparison.OrdinalIgnoreCase));
+            var resList =  _mySqlMasterDbContext.orders.Where(p => p.order_id == order_id && p.chain_id == chain_id);
+            if (!string.IsNullOrEmpty(contract))
+            {
+                resList = resList.Where(p=>p.contract.Equals(contract, StringComparison.OrdinalIgnoreCase));
+            }
+            var res = await resList.FirstOrDefaultAsync();
             var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking().ToList();
-            var ress = AutoMapperHelper.MapDbEntityToDTO<orders, OrdersResponse>(res);
-            var token = chainTokens.FirstOrDefault(c => c.chain_id == ress.chain_id && c.token_address.Equals(ress.token,StringComparison.OrdinalIgnoreCase));
+            var re = AutoMapperHelper.MapDbEntityToDTO<orders, OrdersResponse>(res);
+            var token = chainTokens.FirstOrDefault(c => c.chain_id == re.chain_id && c.token_address.Equals(re.token,StringComparison.OrdinalIgnoreCase));
             var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
-            ress.token_des = tokenView;
+            re.token_des = tokenView;
             //return Json(new WebApiResult(1, "CurrentLoginAddress:" + CurrentLoginAddress + ",CurrentLoginChain:"+ CurrentLoginChain, ress));
-            return Json(new WebApiResult(1, "查询成功", ress));
+            return Json(new WebApiResult(1, "查询成功", re));
         }
 
 
