@@ -22,6 +22,10 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         /// </summary>
         public decimal amount { get; set; }
         /// <summary>
+        /// 佣金
+        /// </summary>
+        public string amount_str { get {return amount.ToString(); } }
+        /// <summary>
         /// 被邀请人
         /// </summary>
         public string be_inviter_address { get; set; }
