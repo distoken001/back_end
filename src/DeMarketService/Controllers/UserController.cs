@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using Org.BouncyCastle.Ocsp;
 using Org.BouncyCastle.Utilities.Encoders;
 using System;
@@ -151,7 +152,7 @@ namespace deMarketService.Controllers
             var bates = _mySqlMasterDbContext.inviter_rebates.AsNoTracking().Where(p => p.inviter_address.Equals(CurrentLoginAddress, StringComparison.OrdinalIgnoreCase));
             var totalCount = bates.Count();
             var list = bates.OrderByDescending(p => p.create_time).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
-            Console.WriteLine("list:" +  list);
+            Console.WriteLine("list:" + JsonTools.Serialize(list));
             var viewList = AutoMapperHelper.MapDbEntityToDTO<inviter_rebates, InviterRebatesItemReponse>(list);
 
             var res = new PagedModel<InviterRebatesItemReponse>(totalCount, viewList);
