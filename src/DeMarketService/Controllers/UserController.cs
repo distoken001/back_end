@@ -153,7 +153,7 @@ namespace deMarketService.Controllers
             var totalCount = bates.Count();
             var list = bates.OrderByDescending(p => p.create_time).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
             var viewList = AutoMapperHelper.MapDbEntityToDTO<inviter_rebates, InviterRebatesItemReponse>(list);
-            Console.WriteLine("list:" + JsonTools.Serialize(viewList));
+            Console.WriteLine("viewList:" + JsonTools.Serialize(viewList));
             var res = new PagedModel<InviterRebatesItemReponse>(totalCount, viewList);
             return new WebApiResult(1, "获取成功", res);
         }
