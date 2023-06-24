@@ -151,6 +151,7 @@ namespace deMarketService.Controllers
             var bates = _mySqlMasterDbContext.inviter_rebates.AsNoTracking().Where(p => p.inviter_address.Equals(CurrentLoginAddress, StringComparison.OrdinalIgnoreCase));
             var totalCount = bates.Count();
             var list = bates.OrderByDescending(p => p.create_time).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+            Console.WriteLine("list:" +  list);
             var viewList = AutoMapperHelper.MapDbEntityToDTO<inviter_rebates, InviterRebatesItemReponse>(list);
 
             var res = new PagedModel<InviterRebatesItemReponse>(totalCount, viewList);
