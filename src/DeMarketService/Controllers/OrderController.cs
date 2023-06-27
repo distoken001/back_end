@@ -169,7 +169,12 @@ namespace deMarketService.Controllers
                 var token = chainTokens.FirstOrDefault(c => c.chain_id == a.chain_id && c.token_address.Equals(a.token, StringComparison.OrdinalIgnoreCase));
                 var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
                 a.token_des = tokenView;
-                a.seller_nick = users.FirstOrDefault(c => c.address.Equals(a.seller, StringComparison.OrdinalIgnoreCase))?.nick_name ?? "匿名商家";
+                var user = users.FirstOrDefault(c => c.address.Equals(a.seller, StringComparison.OrdinalIgnoreCase));
+                if (user != null)
+                {
+                    a.seller_nick = user.nick_name ?? "匿名商家";
+                    a.seller_contact = user.email ?? "无联系方式";
+                }
             }
             var res = new PagedModel<OrdersResponse>(totalCount, viewList);
             return Json(new WebApiResult(1, "订单列表", res));
