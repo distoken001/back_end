@@ -21,6 +21,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TencentCloud.Ckafka.V20190819.Models;
 
@@ -240,6 +241,19 @@ namespace deMarketService.Controllers
         [HttpPost("edit/useremail")]
         public async Task<WebApiResult> EditUserEmail([FromBody] EditUserEmaiCommand command)
         {
+            string pattern = @"^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$";
+
+            Regex regex = new Regex(pattern);
+            bool isValid = regex.IsMatch(command.Email);
+            if (isValid == false)
+            {
+                return new WebApiResult(-1, "不合法的邮箱");
+            }
+            var length = command.Email.Length;
+            if (length > 40)
+            {
+                return new WebApiResult(-1, "您输入的邮箱过长");
+            }
             var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(this.CurrentLoginAddress, StringComparison.OrdinalIgnoreCase));
             user.email = command.Email;
             await _mySqlMasterDbContext.SaveChangesAsync();
