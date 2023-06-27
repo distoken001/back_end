@@ -173,7 +173,7 @@ namespace deMarketService.Controllers
                 if (user != null)
                 {
                     a.seller_nick = user.nick_name ?? "匿名商家";
-                    a.seller_email = user.email ?? "无联系方式";
+                    a.seller_email = user.email ?? "未预留邮箱";
                 }
             }
             var res = new PagedModel<OrdersResponse>(totalCount, viewList);
