@@ -33,7 +33,7 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         /**
          * 状态，0：有效，1无效
          */
-        public ChainEnum status { get; set; }
+        public int status { get; set; }
 
         /**
          * 创建时间
@@ -44,33 +44,22 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
          * 修改时间
          */
         public DateTime update_time { get; set; }
-
-        /**
-         * 修改人
-         */
-        public String updater { get; set; }
-
-        /**
-         * 创建人
-         */
-        public String creator { get; set; }
-
-        /**
-         * 上级id
-         */
-        public int parent_id;
-
-        /*
-         * 用户登录ip
-         */
-        public String ip { get; set; }
         /// <summary>
-        /// 链id
+        /// 费率
         /// </summary>
-        public ChainEnum chain_id { get; set; }
+        public decimal rate { get; set; }
         /// <summary>
-        /// 链名称
+        /// 店铺名称
         /// </summary>
-        public string chain_name { get { if (chain_id == ChainEnum.Avalanche) { return "Avalanche"; } else if (chain_id == ChainEnum.Polygon) { return "Polygon(Matic)"; } else return chain_id.ToString(); } }
+        public string store_name { get; set; }
+        /// <summary>
+        /// 社区名称
+        /// </summary>
+        public string club_name { get; set; }
+        /// <summary>
+        /// 支持哪几种发布商品的方式1:个人 2:店铺 4:社区 注：相加为权限
+        /// </summary>
+        public int type { get; set; }
+
     }
 }
