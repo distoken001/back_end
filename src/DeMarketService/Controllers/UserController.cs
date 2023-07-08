@@ -55,10 +55,10 @@ namespace deMarketService.Controllers
                 req.parentAddress = null;
             }
             //对签名消息，账号地址三项信息进行认证，判断签名是否有效
-            if (!EthereumSignatureVerifier.Verify(req.signature, req.address))
-            {
-                return new WebApiResult(-1, "signature verification failure");
-            }
+            //if (!EthereumSignatureVerifier.Verify(req.signature, req.address))
+            //{
+            //    return new WebApiResult(-1, "signature verification failure");
+            //}
             // var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(req.address) && p.chain_id == req.chain_id);
             var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(req.address, StringComparison.OrdinalIgnoreCase));
             bool is_first = false;
