@@ -50,7 +50,11 @@ namespace deMarketService.Controllers
         [ProducesResponseType(typeof(LoginResponse), 200)]
         public async Task<WebApiResult> login([FromBody] ReqUsersVo req)
         {
-            if (string.IsNullOrEmpty(req.parentAddress))
+            if (req.address.Length != 42 || !req.address.StartsWith("0x"))
+            {
+                return new WebApiResult(-1, "登录请求地址不规范");
+            }
+            if (string.IsNullOrEmpty(req.parentAddress)||req.parentAddress.Length!=42 || !req.parentAddress.StartsWith("0x"))
             {
                 req.parentAddress = null;
             }

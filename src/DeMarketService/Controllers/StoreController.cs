@@ -41,13 +41,20 @@ namespace deMarketService.Controllers
                 return Json(new WebApiResult(-1, "获取失败"));
             }
             var queryEntities = _mySqlMasterDbContext.users.AsNoTracking().Where(a=>(a.type&req.type)>0).AsQueryable();
-            if(!string.IsNullOrEmpty(req.address))
+            if(!string.IsNullOrEmpty(req.address.Trim()))
             {
-                queryEntities = queryEntities.Where(a => a.address.Equals(req.address));
+                queryEntities = queryEntities.Where(a => a.address.Equals(req.address.Trim()));
             }
-            if (!string.IsNullOrEmpty(req.name))
+            if (!string.IsNullOrEmpty(req.name.Trim()))
             {
-                queryEntities = queryEntities.Where(a => a.Equals(req.address));
+                if (req.type == 2)
+                {
+                    queryEntities = queryEntities.Where(a => a.store_name.Contains(req.name.Trim()));
+                }
+                else if (req.type == 4)
+                {
+                    queryEntities = queryEntities.Where(a => a.club_name.Contains(req.name.Trim()));
+                }
             }
             var totalCount = await queryEntities.CountAsync();
             queryEntities = queryEntities.OrderByDescending(p => p.create_time).Skip((req.pageIndex - 1) * req.pageSize).Take(req.pageSize);
