@@ -93,7 +93,7 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         /// <summary>
         /// 链名称
         /// </summary>
-        public string chain_name { get { if (chain_id == ChainEnum.Avalanche) { return "Avalanche"; } else if (chain_id == ChainEnum.Polygon) { return "Polygon(Matic)"; }else return chain_id.ToString(); } }
+        public string chain_name { get { if (chain_id == ChainEnum.Avalanche) { return "Avalanche"; } else if (chain_id == ChainEnum.Polygon) { return "Polygon(Matic)"; } else return chain_id.ToString(); } }
         /// <summary>
         /// 算数
         /// </summary>
@@ -130,7 +130,7 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         {
             get
             {
-                return price_actual * amount ;
+                return price_actual * amount;
             }
         }
         public string seller_ratio
@@ -143,7 +143,7 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
             }
         }
         public ChainTokenViewModel token_des { get; set; }
-        public  string seller_nick { get; set; }
+        public string seller_nick { get; set; }
         public string seller_email { get; set; }
         /// <summary>
         /// 开始时间（时间戳）
@@ -153,5 +153,25 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         /// 结束时间（时间戳）
         /// </summary>
         public long end_time { get; set; }
+        public string start_time_str
+        {
+            get
+            {
+                DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+            .AddSeconds(start_time);
+                DateTime localDateTime = dateTime.ToLocalTime();
+                return localDateTime.ToString();
+            }
+        }
+        public string end_time_str
+        {
+            get
+            {
+                DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+            .AddSeconds(end_time);
+                DateTime localDateTime = dateTime.ToLocalTime();
+                return localDateTime.ToString();
+            }
+        }
     }
 }
