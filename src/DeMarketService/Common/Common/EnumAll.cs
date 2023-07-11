@@ -166,6 +166,18 @@
         BuyerRejectCancel,//买家拒绝取消9
         ConsultCancelCompleted//协商取消完成10
     }
+    public enum OrderAuctionStatus
+    {
+        Initial, //初始化
+        Bid, //已经有拍的
+        End, //已经结束
+        Completed, //已完成
+        ConfirmShip, //卖家发货
+        SellerBreak, //卖家毁约
+        SellerCancelWithoutDuty, //卖家无责取消
+        ConsultCancelCompleted, //协商取消完成
+        RefundDeposit //给上一个拍的人退押金，只是记录一下日志用
+    }
     public enum ChainEnum : int
     {
         MainNet = 1,
@@ -199,6 +211,6 @@
         AuroraTestnet = 1313161555,
         Harmony = 1666600000,
         HarmonyTest = 1666700000,
-        Conflux =1030
+        Conflux = 1030
     }
 }

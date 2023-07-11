@@ -35,8 +35,8 @@ namespace deMarketService.Controllers
         /// <param name = "req" ></ param >
         /// < returns ></ returns >
         [HttpPost("list")]
-        [ProducesResponseType(typeof(PagedModel<OrdersResponse>), 200)]
-        public async Task<JsonResult> list([FromBody] ReqOrdersVo req)
+        [ProducesResponseType(typeof(PagedModel<OrderResponse>), 200)]
+        public async Task<JsonResult> list([FromBody] ReqOrderVo req)
         {
             var queryEntities = _mySqlMasterDbContext.orders.AsNoTracking().AsQueryable();
             var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking().ToList();
@@ -59,14 +59,14 @@ namespace deMarketService.Controllers
             var totalCount = await queryEntities.CountAsync();
             queryEntities = queryEntities.OrderByDescending(p => p.create_time).Skip((req.pageIndex - 1) * req.pageSize).Take(req.pageSize);
             var list = await queryEntities.ToListAsync();
-            var viewList = AutoMapperHelper.MapDbEntityToDTO<orders, OrdersResponse>(list);
+            var viewList = AutoMapperHelper.MapDbEntityToDTO<orders, OrderResponse>(list);
             foreach (var a in viewList)
             {
                 var token = chainTokens.FirstOrDefault(c => c.chain_id == a.chain_id && c.token_address.Equals(a.token,StringComparison.OrdinalIgnoreCase));
                 var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
                 a.token_des = tokenView;
             }
-            var res = new PagedModel<OrdersResponse>(totalCount, viewList);
+            var res = new PagedModel<OrderResponse>(totalCount, viewList);
             return Json(new WebApiResult(1, currentLoginAddress, res));
         }
     }

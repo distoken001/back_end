@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
 {
-    public class OrdersResponse
+    public class OrderAuctionResponse
     {
         public long id { get; set; }
         /// <summary>
@@ -145,5 +145,13 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         public ChainTokenViewModel token_des { get; set; }
         public  string seller_nick { get; set; }
         public string seller_email { get; set; }
+        /// <summary>
+        /// 开始时间（时间戳）
+        /// </summary>
+        public long start_time { get; set; }
+        /// <summary>
+        /// 结束时间（时间戳）
+        /// </summary>
+        public long end_time { get; set; }
     }
 }

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace deMarketService.Common.Model.HttpApiModel.RequestModel
 {
-    public class ReqUsersVo
+    public class ReqUserVo
     {
         public String signature { get; set; }
         public String token;

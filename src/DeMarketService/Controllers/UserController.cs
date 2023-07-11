@@ -48,7 +48,7 @@ namespace deMarketService.Controllers
         /// < returns ></ returns >
         [HttpPost("login")]
         [ProducesResponseType(typeof(LoginResponse), 200)]
-        public async Task<WebApiResult> login([FromBody] ReqUsersVo req)
+        public async Task<WebApiResult> login([FromBody] ReqUserVo req)
         {
             if (req.address.Length != 42 || !req.address.StartsWith("0x"))
             {
@@ -125,7 +125,7 @@ namespace deMarketService.Controllers
         /// < returns ></ returns >
         [HttpPost("detail")]
         [ProducesResponseType(typeof(UsersResponse), 200)]
-        public async Task<WebApiResult> detail([FromBody] ReqOrdersVo req)
+        public async Task<WebApiResult> detail([FromBody] ReqOrderVo req)
         {
             var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(CurrentLoginAddress, StringComparison.OrdinalIgnoreCase));
 
