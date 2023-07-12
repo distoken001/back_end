@@ -54,16 +54,16 @@ namespace deMarketService.Controllers
             {
                 return new WebApiResult(-1, "登录请求地址不规范");
             }
-            if (string.IsNullOrEmpty(req.parentAddress)||req.parentAddress.Length!=42 || !req.parentAddress.StartsWith("0x"))
+            if (string.IsNullOrEmpty(req.parentAddress) || req.parentAddress.Length != 42 || !req.parentAddress.StartsWith("0x"))
             {
                 req.parentAddress = null;
             }
             //对签名消息，账号地址三项信息进行认证，判断签名是否有效
-            //if (!EthereumSignatureVerifier.Verify(req.signature, req.address))
-            //{
-            //    return new WebApiResult(-1, "signature verification failure");
-            //}
-            // var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(req.address) && p.chain_id == req.chain_id);
+            if (!EthereumSignatureVerifier.Verify(req.signature, req.address))
+            {
+                return new WebApiResult(-1, "signature verification failure");
+            }
+            //var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(req.address) && p.chain_id == req.chain_id);
             var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(req.address, StringComparison.OrdinalIgnoreCase));
             bool is_first = false;
             if (users == null)
@@ -79,7 +79,7 @@ namespace deMarketService.Controllers
                 };
                 if (!string.IsNullOrEmpty(users.parent_address))
                 {
-                    users.rate = string.IsNullOrEmpty(_configuration["rate"])?0.002M:  decimal.Parse(_configuration["rate"]);
+                    users.rate = string.IsNullOrEmpty(_configuration["rate"]) ? 0.002M : decimal.Parse(_configuration["rate"]);
                 }
                 try
                 {
