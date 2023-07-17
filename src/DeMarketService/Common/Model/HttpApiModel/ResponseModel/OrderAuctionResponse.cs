@@ -52,8 +52,7 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         /// <summary>
         /// 订单状态
         /// </summary>
-        public OrderStatus status { get; set; }
-
+        public OrderAuctionStatus status { get; set; }
 
         public DateTime create_time { get; set; }
 
@@ -153,24 +152,22 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         /// 结束时间（时间戳）
         /// </summary>
         public long end_time { get; set; }
-        public string start_time_str
+        public DateTime start_time_actual
         {
             get
             {
                 DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
             .AddSeconds(start_time);
-                DateTime localDateTime = dateTime.ToLocalTime();
-                return localDateTime.ToString();
+                return dateTime.ToLocalTime();
             }
         }
-        public string end_time_str
+        public DateTime end_time_time_actual
         {
             get
             {
                 DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
             .AddSeconds(end_time);
-                DateTime localDateTime = dateTime.ToLocalTime();
-                return localDateTime.ToString();
+                return dateTime.ToLocalTime();
             }
         }
     }
