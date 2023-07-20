@@ -169,15 +169,13 @@
     public enum OrderAuctionStatus
     {
         Initial, //初始化
-        Bid, //已经有拍的
-        End, //已经结束
-        Completed, //已完成
+        Bid, //被拍
+        End, //拍卖结束
+        Completed, //已完成交易
         ConfirmShip, //卖家发货
         SellerBreak, //卖家毁约
         SellerCancelWithoutDuty, //卖家无责取消
-        ConsultCancelCompleted, //协商取消完成
-        RefundDeposit, //给上一个拍的人退押金，只是记录一下日志用
-        UpdateEndTime //修改结束时间，只是记录一下日志用
+        ConsultCancelCompleted //协商取消完成
     }
     public enum OrderAuctionStatusActual
     {
