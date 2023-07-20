@@ -101,5 +101,9 @@ namespace deMarketService.Common.Model.DataEntityModel
         /// 结束时间（时间戳）
         /// </summary>
         public long end_time { get; set; }
+        /// <summary>
+        /// 次数
+        /// </summary>
+        public int count { get; set; }
     }
 }

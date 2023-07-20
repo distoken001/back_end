@@ -40,8 +40,6 @@ namespace deMarketService.Controllers
         {
             var queryEntities = _mySqlMasterDbContext.orders_auction.AsNoTracking().AsQueryable();
             var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking().ToList();
-            queryEntities = queryEntities.Where(p => p.status == OrderAuctionStatus.Initial && (p.buyer.Equals("0x0000000000000000000000000000000000000000", StringComparison.OrdinalIgnoreCase) || p.buyer.Equals(CurrentLoginAddress, StringComparison.OrdinalIgnoreCase) || p.seller.Equals(CurrentLoginAddress, StringComparison.OrdinalIgnoreCase)));
-
             if (!string.IsNullOrEmpty(req.name))
             {
                 queryEntities = queryEntities.Where(p => p.name.Contains(req.name, StringComparison.OrdinalIgnoreCase));

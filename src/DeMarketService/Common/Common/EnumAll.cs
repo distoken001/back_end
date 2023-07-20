@@ -179,6 +179,12 @@
         RefundDeposit, //给上一个拍的人退押金，只是记录一下日志用
         UpdateEndTime //修改结束时间，只是记录一下日志用
     }
+    public enum OrderAuctionStatusActual
+    {
+       即将开始=1,
+       进行中=2,
+       已结束=3
+    }
     public enum ChainEnum : int
     {
         MainNet = 1,

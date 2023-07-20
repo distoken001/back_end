@@ -26,7 +26,7 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         /// </summary>
         public decimal amount { get; set; }
         /// <summary>
-        /// 商品价格
+        /// 商品价格（包含decimals的，一般不用）
         /// </summary>
         public decimal price { get; set; }
         /// <summary>
@@ -34,11 +34,11 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         /// </summary>
         public string img { get; set; }
         /// <summary>
-        /// 卖家质押
+        /// 卖家质押（包含decimals的，一般不用）
         /// </summary>
         public decimal seller_pledge { get; set; }
         /// <summary>
-        /// 买家质押
+        /// 买家质押（包含decimals的，一般不用）
         /// </summary>
         public decimal buyer_pledge { get; set; }
         /// <summary>
@@ -50,10 +50,9 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         /// </summary>
         public string buyer_contact { get; set; }
         /// <summary>
-        /// 订单状态
+        /// 订单状态（逻辑状态，不常用）
         /// </summary>
         public OrderAuctionStatus status { get; set; }
-
         public DateTime create_time { get; set; }
 
         public DateTime update_time { get; set; }
@@ -78,7 +77,7 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         /// </summary>
         public ChainEnum chain_id { get; set; }
         /// <summary>
-        /// 买家比卖家额外多质押数量
+        /// 买家比卖家额外多质押数量（包含decimals的，一般不用）
         /// </summary>
         public decimal buyer_ex { get; set; }
         /// <summary>
@@ -86,7 +85,7 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         /// </summary>
         public string contract { get; set; }
         /// <summary>
-        /// 小时点
+        /// 小输点个数
         /// </summary>
         public int decimals { get; set; }
         /// <summary>
@@ -161,7 +160,7 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
                 return dateTime.ToLocalTime();
             }
         }
-        public DateTime end_time_time_actual
+        public DateTime end_time_actual
         {
             get
             {
@@ -169,6 +168,13 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
             .AddSeconds(end_time);
                 return dateTime.ToLocalTime();
             }
+        }
+        /// <summary>
+        /// 订单状态
+        /// </summary>
+        public OrderAuctionStatusActual status_actual
+        {
+            get { if (DateTime.Now < start_time_actual) { return OrderAuctionStatusActual.即将开始; } else if (DateTime.Now >= end_time_actual) { return OrderAuctionStatusActual.已结束; } else { return OrderAuctionStatusActual.进行中; } }
         }
     }
 }
