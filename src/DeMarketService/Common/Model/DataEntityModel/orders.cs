@@ -93,5 +93,9 @@ namespace deMarketService.Common.Model.DataEntityModel
         /// 小时点
         /// </summary>
         public int decimals { get; set; }
+        /// <summary>
+        /// 权重
+        /// </summary>
+        public int weight { get; set; }
     }
 }
