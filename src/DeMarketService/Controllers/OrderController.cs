@@ -112,7 +112,7 @@ namespace deMarketService.Controllers
             }
 
             var totalCount = await queryEntities.CountAsync();
-            queryEntities = queryEntities.OrderByDescending(p => p.create_time).Skip((req.pageIndex - 1) * req.pageSize).Take(req.pageSize);
+            queryEntities = queryEntities.OrderBy(p => p.weight).ThenByDescending(p => p.create_time).Skip((req.pageIndex - 1) * req.pageSize).Take(req.pageSize);
             var list = await queryEntities.ToListAsync();
             var viewList = AutoMapperHelper.MapDbEntityToDTO<orders, OrdersResponse>(list);
             var sellers = viewList.Select(a => a.seller).ToList();
