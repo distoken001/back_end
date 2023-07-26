@@ -19,7 +19,7 @@
       },
       "nativeDebugging": true
     },
-    "WnsWeappApis": {
+    "deMarketService": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "api/values",

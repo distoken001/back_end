@@ -138,11 +138,15 @@ namespace deMarketService
             app.UseStaticFiles();
 
             //Swagger 配置
-            app.UseSwagger()
-            .UseSwaggerUI(c =>
+            if (Configuration["Env"] == "dev" || Configuration["Env"] == "test")
             {
-                c.SwaggerEndpoint($"/swagger/v1/swagger.json", "deMarketService");
-            });
+                //Swagger 配置 
+                app.UseSwagger()
+              .UseSwaggerUI(c =>
+              {
+                  c.SwaggerEndpoint($"/swagger/v1/swagger.json", "deMarketService");
+              });
+            }
 
             //Swagger 配置
             app.UseRouting();
