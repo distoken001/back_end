@@ -176,5 +176,9 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         {
             get { if (DateTime.Now < start_time_actual) { return OrderAuctionStatusActual.即将开始; } else if (DateTime.Now >= end_time_actual) { return OrderAuctionStatusActual.已结束; } else { return OrderAuctionStatusActual.进行中; } }
         }
+        /// <summary>
+        /// 次数
+        /// </summary>
+        public int count { get; set; }
     }
 }
