@@ -170,9 +170,8 @@
     {
         Initial, //初始化
         Bid, //被拍
-        End, //拍卖结束
-        Completed, //已完成交易
         ConfirmShip, //卖家发货
+        Completed, //已完成交易
         SellerBreak, //卖家毁约
         SellerCancelWithoutDuty, //卖家无责取消
         ConsultCancelCompleted //协商取消完成
