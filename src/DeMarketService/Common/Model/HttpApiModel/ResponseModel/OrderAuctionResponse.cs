@@ -156,7 +156,7 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
             get
             {
                 DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-            .AddSeconds(start_time);
+              .AddTicks(start_time * TimeSpan.TicksPerSecond);
                 return dateTime.ToLocalTime();
             }
         }
@@ -165,7 +165,7 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
             get
             {
                 DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-            .AddSeconds(end_time);
+              .AddTicks(end_time * TimeSpan.TicksPerSecond);
                 return dateTime.ToLocalTime();
             }
         }
