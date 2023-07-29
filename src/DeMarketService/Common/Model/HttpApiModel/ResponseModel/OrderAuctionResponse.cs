@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using Google.Protobuf.WellKnownTypes;
 
 namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
 {
@@ -155,20 +156,16 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         {
             get
             {
-                TimeSpan timeSpan = TimeSpan.FromSeconds((double)start_time);
-                DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-            .Add(timeSpan);
-                return dateTime.ToLocalTime();
+                DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(start_time);
+                return dateTimeOffset.LocalDateTime; 
             }
         }
         public DateTime end_time_actual
         {
             get
             {
-                TimeSpan timeSpan = TimeSpan.FromSeconds((double)end_time);
-                DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-            .Add(timeSpan);
-                return dateTime.ToLocalTime();
+                DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(end_time);
+                return dateTimeOffset.LocalDateTime;
             }
         }
         /// <summary>
