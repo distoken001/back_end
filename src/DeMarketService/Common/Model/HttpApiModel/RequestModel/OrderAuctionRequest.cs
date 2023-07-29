@@ -10,10 +10,6 @@ namespace deMarketService.Common.Model.HttpApiModel.RequestModel
         public int pageSize { get; set; } = 10;
         public int pageIndex { get; set; } = 1;
         /// <summary>
-        /// 商品id
-        /// </summary>
-        public int? order_id { get; set; }
-        /// <summary>
         /// 商品名称
         /// </summary>
         public string name { get; set; }
@@ -21,15 +17,6 @@ namespace deMarketService.Common.Model.HttpApiModel.RequestModel
         /// 商品描述
         /// </summary>
         public string description { get; set; }
-        /// <summary>
-        /// 卖家地址
-        /// </summary>
-        public string seller { get; set; }
-        /// <summary>
-        /// 买家地址
-        /// </summary>
-        public string buyer { get; set; }
-
         ///// <summary>
         ///// 链id
         ///// </summary>
