@@ -189,8 +189,10 @@ namespace deMarketService.Controllers
         /// <summary>
         /// 订单详情
         /// </summary>
-        /// <param name = "req" ></ param >
-        /// < returns ></ returns >
+        /// <param name="order_id"></param>
+        /// <param name="chain_id"></param>
+        /// <param name="contract"></param>
+        /// <returns></returns>
         [HttpGet("detail")]
         [ProducesResponseType(typeof(orders), 200)]
         public async Task<JsonResult> detail([FromQuery] long order_id, [FromQuery] ChainEnum chain_id, [FromQuery] string contract)
