@@ -155,8 +155,9 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         {
             get
             {
+                TimeSpan timeSpan = TimeSpan.FromSeconds((double)start_time);
                 DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-            .AddSeconds((double)start_time);
+            .Add(timeSpan);
                 return dateTime.ToLocalTime();
             }
         }
@@ -164,8 +165,9 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         {
             get
             {
+                TimeSpan timeSpan = TimeSpan.FromSeconds((double)end_time);
                 DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-            .AddSeconds((double)end_time);
+            .Add(timeSpan);
                 return dateTime.ToLocalTime();
             }
         }
