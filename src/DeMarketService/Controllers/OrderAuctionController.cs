@@ -142,17 +142,17 @@ namespace deMarketService.Controllers
         /// <param name = "req" ></ param >
         /// < returns ></ returns >
         [HttpGet("detail")]
-        [ProducesResponseType(typeof(orders), 200)]
+        [ProducesResponseType(typeof(OrderAuctionResponse), 200)]
         public async Task<JsonResult> detail([FromQuery] long order_id, [FromQuery] ChainEnum chain_id, [FromQuery] string contract)
         {
-            var resList = _mySqlMasterDbContext.orders.Where(p => p.order_id == order_id && p.chain_id == chain_id);
+            var resList = _mySqlMasterDbContext.orders_auction.Where(p => p.order_id == order_id && p.chain_id == chain_id);
             if (!string.IsNullOrEmpty(contract))
             {
                 resList = resList.Where(p => p.contract.Equals(contract, StringComparison.OrdinalIgnoreCase));
             }
             var res = await resList.FirstOrDefaultAsync();
             var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking().ToList();
-            var re = AutoMapperHelper.MapDbEntityToDTO<orders, OrderAuctionResponse>(res);
+            var re = AutoMapperHelper.MapDbEntityToDTO<orders_auction, OrderAuctionResponse>(res);
             var token = chainTokens.FirstOrDefault(c => c.chain_id == re.chain_id && c.token_address.Equals(re.token, StringComparison.OrdinalIgnoreCase));
             var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
             re.token_des = tokenView;
