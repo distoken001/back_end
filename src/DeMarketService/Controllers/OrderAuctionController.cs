@@ -145,19 +145,26 @@ namespace deMarketService.Controllers
         [ProducesResponseType(typeof(OrderAuctionResponse), 200)]
         public async Task<JsonResult> detail([FromQuery] long order_id, [FromQuery] ChainEnum chain_id, [FromQuery] string contract)
         {
-            var resList = _mySqlMasterDbContext.orders_auction.Where(p => p.order_id == order_id && p.chain_id == chain_id);
-            if (!string.IsNullOrEmpty(contract))
+            try
             {
-                resList = resList.Where(p => p.contract.Equals(contract, StringComparison.OrdinalIgnoreCase));
+                var resList = _mySqlMasterDbContext.orders_auction.Where(p => p.order_id == order_id && p.chain_id == chain_id);
+                if (!string.IsNullOrEmpty(contract))
+                {
+                    resList = resList.Where(p => p.contract.Equals(contract, StringComparison.OrdinalIgnoreCase));
+                }
+                var res = await resList.FirstOrDefaultAsync();
+                var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking().ToList();
+                var re = AutoMapperHelper.MapDbEntityToDTO<orders_auction, OrderAuctionResponse>(res);
+                var token = chainTokens.FirstOrDefault(c => c.chain_id == re.chain_id && c.token_address.Equals(re.token, StringComparison.OrdinalIgnoreCase));
+                var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
+                re.token_des = tokenView;
+                //return Json(new WebApiResult(1, "CurrentLoginAddress:" + CurrentLoginAddress + ",CurrentLoginChain:"+ CurrentLoginChain, ress));
+                return Json(new WebApiResult(1, "查询成功", re));
             }
-            var res = await resList.FirstOrDefaultAsync();
-            var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking().ToList();
-            var re = AutoMapperHelper.MapDbEntityToDTO<orders_auction, OrderAuctionResponse>(res);
-            var token = chainTokens.FirstOrDefault(c => c.chain_id == re.chain_id && c.token_address.Equals(re.token, StringComparison.OrdinalIgnoreCase));
-            var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
-            re.token_des = tokenView;
-            //return Json(new WebApiResult(1, "CurrentLoginAddress:" + CurrentLoginAddress + ",CurrentLoginChain:"+ CurrentLoginChain, ress));
-            return Json(new WebApiResult(1, "查询成功", re));
+            catch(Exception ex)
+            {
+                return Json(new WebApiResult(-1, "服务器异常", ex));
+            }
         }
     }
 }
