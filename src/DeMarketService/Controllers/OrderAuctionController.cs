@@ -38,43 +38,50 @@ namespace deMarketService.Controllers
         [ProducesResponseType(typeof(PagedModel<OrderAuctionResponse>), 200)]
         public async Task<JsonResult> list([FromBody] OrderAuctionRequest req)
         {
-            var queryEntities = _mySqlMasterDbContext.orders_auction.AsNoTracking().AsQueryable();
-            var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking().ToList();
-            if (!string.IsNullOrEmpty(req.name))
+            try
             {
-                queryEntities = queryEntities.Where(p => p.name.Contains(req.name, StringComparison.OrdinalIgnoreCase));
-            }
-            if (!string.IsNullOrEmpty(req.description))
-            {
-                queryEntities = queryEntities.Where(p => p.description.Contains(req.description, StringComparison.OrdinalIgnoreCase));
-            }
-
-            if (req.chain_id != 0)
-            {
-                queryEntities = queryEntities.Where(p => p.chain_id == req.chain_id);
-            }
-
-            var totalCount = await queryEntities.CountAsync();
-            queryEntities = queryEntities.OrderByDescending(p => p.create_time).Skip((req.pageIndex - 1) * req.pageSize).Take(req.pageSize);
-            var list = await queryEntities.ToListAsync();
-            var viewList = AutoMapperHelper.MapDbEntityToDTO<orders_auction, OrderAuctionResponse>(list);
-            var sellers = viewList.Select(a => a.seller).ToList();
-            var users = _mySqlMasterDbContext.users.AsNoTracking().Where(a => sellers.Contains(a.address)).ToList();
-
-            foreach (var a in viewList)
-            {
-                var token = chainTokens.FirstOrDefault(c => c.chain_id == a.chain_id && c.token_address.Equals(a.token, StringComparison.OrdinalIgnoreCase));
-                var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
-                a.token_des = tokenView;
-                var user = users.FirstOrDefault(c => c.address.Equals(a.seller, StringComparison.OrdinalIgnoreCase));
-                if (user != null)
+                var queryEntities = _mySqlMasterDbContext.orders_auction.AsNoTracking().AsQueryable();
+                var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking().ToList();
+                if (!string.IsNullOrEmpty(req.name))
                 {
-                    a.seller_nick = user.nick_name ?? "匿名商家";
-                    a.seller_email = user.email ?? "未预留邮箱";
+                    queryEntities = queryEntities.Where(p => p.name.Contains(req.name, StringComparison.OrdinalIgnoreCase));
                 }
+                if (!string.IsNullOrEmpty(req.description))
+                {
+                    queryEntities = queryEntities.Where(p => p.description.Contains(req.description, StringComparison.OrdinalIgnoreCase));
+                }
+
+                if (req.chain_id != 0)
+                {
+                    queryEntities = queryEntities.Where(p => p.chain_id == req.chain_id);
+                }
+
+                var totalCount = await queryEntities.CountAsync();
+                queryEntities = queryEntities.OrderByDescending(p => p.create_time).Skip((req.pageIndex - 1) * req.pageSize).Take(req.pageSize);
+                var list = await queryEntities.ToListAsync();
+                var viewList = AutoMapperHelper.MapDbEntityToDTO<orders_auction, OrderAuctionResponse>(list);
+                var sellers = viewList.Select(a => a.seller).ToList();
+                var users = _mySqlMasterDbContext.users.AsNoTracking().Where(a => sellers.Contains(a.address)).ToList();
+
+                foreach (var a in viewList)
+                {
+                    var token = chainTokens.FirstOrDefault(c => c.chain_id == a.chain_id && c.token_address.Equals(a.token, StringComparison.OrdinalIgnoreCase));
+                    var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
+                    a.token_des = tokenView;
+                    var user = users.FirstOrDefault(c => c.address.Equals(a.seller, StringComparison.OrdinalIgnoreCase));
+                    if (user != null)
+                    {
+                        a.seller_nick = user.nick_name ?? "匿名商家";
+                        a.seller_email = user.email ?? "未预留邮箱";
+                    }
+                }
+                var res = new PagedModel<OrderAuctionResponse>(totalCount, viewList);
+                return Json(new WebApiResult(1, "订单列表" + CurrentLoginAddress, res));
             }
-            var res = new PagedModel<OrderAuctionResponse>(totalCount, viewList);
-            return Json(new WebApiResult(1, "订单列表" + CurrentLoginAddress, res));
+            catch(Exception ex)
+            {
+                return Json(new WebApiResult(-1,"服务器异常",ex));
+            }
         }
         /// <summary>
         /// 猜您喜欢
