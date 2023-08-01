@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace deMarketService.Common.Model.HttpApiModel.RequestModel
 {
-    public class ReqOrderVo
+    public class ReqOrder
     {
         public int pageSize { get; set; } = 10;
         public int pageIndex { get; set; } = 1;

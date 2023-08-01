@@ -3,21 +3,21 @@ using System.ComponentModel.DataAnnotations;
 
 namespace deMarketService.Common.Model.HttpApiModel.RequestModel
 {
-    public class EditUserCommand
+    public class EditUserRequest
     {
         /// <summary>
         /// 头像
         /// </summary>
         public string Avatar { get; set; }
     }
-    public class EditUserNickCommand
+    public class EditUserNickRequest
     {
         /// <summary>
         /// 昵称
         /// </summary>
         public string NickName { get; set; }
     }
-    public class EditUserEmaiCommand
+    public class EditUserEmaiRequest
     {
         /// <summary>
         /// 邮箱

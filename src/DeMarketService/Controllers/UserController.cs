@@ -48,7 +48,7 @@ namespace deMarketService.Controllers
         /// < returns ></ returns >
         [HttpPost("login")]
         [ProducesResponseType(typeof(LoginResponse), 200)]
-        public async Task<WebApiResult> login([FromBody] ReqUserVo req)
+        public async Task<WebApiResult> login([FromBody] ReqUser req)
         {
             if (req.address.Length != 42 || !req.address.StartsWith("0x"))
             {
@@ -125,7 +125,7 @@ namespace deMarketService.Controllers
         /// < returns ></ returns >
         [HttpPost("detail")]
         [ProducesResponseType(typeof(UsersResponse), 200)]
-        public async Task<WebApiResult> detail([FromBody] ReqOrderVo req)
+        public async Task<WebApiResult> detail([FromBody] ReqOrder req)
         {
             var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(CurrentLoginAddress, StringComparison.OrdinalIgnoreCase));
 
@@ -190,7 +190,7 @@ namespace deMarketService.Controllers
         /// <param name="command"></param>
         /// <returns></returns>
         [HttpPost("edit/user")]
-        public async Task<WebApiResult> EditUser([FromBody] EditUserCommand command)
+        public async Task<WebApiResult> EditUser([FromBody] EditUserRequest command)
         {
             var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(this.CurrentLoginAddress, StringComparison.OrdinalIgnoreCase));
             user.avatar = command.Avatar;
@@ -203,7 +203,7 @@ namespace deMarketService.Controllers
         /// <param name="command"></param>
         /// <returns></returns>
         [HttpPost("edit/usernick")]
-        public async Task<WebApiResult> EditUserNick([FromBody] EditUserNickCommand command)
+        public async Task<WebApiResult> EditUserNick([FromBody] EditUserNickRequest command)
         {
             if (command.NickName.Contains("DeMarket", StringComparison.OrdinalIgnoreCase) || command.NickName.Contains("德玛", StringComparison.OrdinalIgnoreCase) || command.NickName.Contains("黑名单", StringComparison.OrdinalIgnoreCase))
             {
@@ -245,7 +245,7 @@ namespace deMarketService.Controllers
         /// <param name="command"></param>
         /// <returns></returns>
         [HttpPost("edit/useremail")]
-        public async Task<WebApiResult> EditUserEmail([FromBody] EditUserEmaiCommand command)
+        public async Task<WebApiResult> EditUserEmail([FromBody] EditUserEmaiRequest command)
         {
             string pattern = @"^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$";
 
