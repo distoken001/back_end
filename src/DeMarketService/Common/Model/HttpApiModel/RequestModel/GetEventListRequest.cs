@@ -5,22 +5,14 @@ using System.Threading.Tasks;
 
 namespace deMarketService.Common.Model.HttpApiModel.RequestModel
 {
-    public class ReqOrder
+    public class GetEventListRequest
     {
         public int pageSize { get; set; } = 10;
         public int pageIndex { get; set; } = 1;
-        /// <summary>
-        /// 商品名称
-        /// </summary>
-        public string name { get; set; }
-        /// <summary>
-        /// 商品描述
-        /// </summary>
-        public string description { get; set; }
         ///// <summary>
         ///// 链id
         ///// </summary>
-        public ChainEnum chain_id { get; set; }
+        //public int chain_id { get; set; }
 
     }
 }

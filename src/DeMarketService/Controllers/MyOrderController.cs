@@ -36,7 +36,7 @@ namespace deMarketService.Controllers
         /// < returns ></ returns >
         [HttpPost("list")]
         [ProducesResponseType(typeof(PagedModel<OrderResponse>), 200)]
-        public async Task<JsonResult> list([FromBody] ReqOrder req)
+        public async Task<JsonResult> list([FromBody] GetOrderListRequest req)
         {
             var queryEntities = _mySqlMasterDbContext.orders.AsNoTracking().AsQueryable();
             var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking().ToList();

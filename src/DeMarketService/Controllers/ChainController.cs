@@ -28,7 +28,7 @@ namespace deMarketService.Controllers
         /// <returns></returns>
         [HttpPost("list")]
         [ProducesResponseType(typeof(PagedModel<ChainTokenViewModel>), 200)]
-        public async Task<JsonResult> list([FromBody] ChainTokenQueryModel req)
+        public async Task<JsonResult> list([FromBody] ChainTokenQueryRequest req)
         {
             var queryEntities = _mySqlMasterDbContext.chain_tokens.Where(p => p.chain_id == req.chainId&&p.status==1).AsNoTracking().AsQueryable();
             var totalCount = await queryEntities.CountAsync();
