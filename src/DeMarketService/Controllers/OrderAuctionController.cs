@@ -30,7 +30,7 @@ namespace deMarketService.Controllers
             this.txCosUploadeService = txCosUploadeService;
         }
         /// <summary>
-        /// 订单列表
+        /// 查询拍卖列表
         /// </summary>
         /// <param name = "req" ></ param >
         /// < returns ></ returns >
@@ -104,7 +104,7 @@ namespace deMarketService.Controllers
             }
         }
         /// <summary>
-        /// 猜您喜欢
+        /// 猜您喜欢（拍卖）
         /// </summary>
         /// <param name = "req" ></ param >
         /// < returns ></ returns >
@@ -157,7 +157,7 @@ namespace deMarketService.Controllers
 
 
         /// <summary>
-        ///订单详情
+        ///查询拍卖详情
         /// </summary>
         /// <param name="order_id"></param>
         /// <param name="chain_id"></param>
