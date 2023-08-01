@@ -40,6 +40,11 @@ namespace deMarketService.Controllers
         {
             try
             {
+                // 获取当前时间
+                DateTime currentTime = DateTime.Now;
+                // 将时间转换为时间戳（秒）
+                long timestamp = ((DateTimeOffset)currentTime).ToUnixTimeSeconds();
+
                 var queryEntities = _mySqlMasterDbContext.orders_auction.AsNoTracking().AsQueryable();
                 var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking().ToList();
                 if (!string.IsNullOrEmpty(req.name))
@@ -54,6 +59,21 @@ namespace deMarketService.Controllers
                 if (req.chain_id != 0)
                 {
                     queryEntities = queryEntities.Where(p => p.chain_id == req.chain_id);
+                }
+                if (req.status != 0)
+                {
+                    if (req.status == OrderAuctionStatusActual.即将开始)
+                    {
+                        queryEntities = queryEntities.Where(p => p.start_time > timestamp);
+                    }
+                    else if (req.status == OrderAuctionStatusActual.进行中)
+                    {
+                        queryEntities = queryEntities.Where(p => p.start_time <= timestamp && p.end_time > timestamp);
+                    }
+                    else
+                    {
+                        queryEntities = queryEntities.Where(p => p.end_time <= timestamp);
+                    }
                 }
 
                 var totalCount = await queryEntities.CountAsync();

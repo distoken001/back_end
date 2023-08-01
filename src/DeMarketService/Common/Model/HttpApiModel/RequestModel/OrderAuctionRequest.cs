@@ -21,6 +21,10 @@ namespace deMarketService.Common.Model.HttpApiModel.RequestModel
         ///// 链id
         ///// </summary>
         public ChainEnum chain_id { get; set; }
+        /// <summary>
+        /// 状态 0全部  1即将开始 2进行中 3已结束
+        /// </summary>
+        public OrderAuctionStatusActual status { get; set; }
 
     }
 }
