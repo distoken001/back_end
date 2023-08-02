@@ -184,8 +184,8 @@
     }
     public enum ChainEnum : int
     {
-        MainNet = 1,
-        ArbitrumOne = 42161,
+        Ethereum = 1,
+        Arbitrum = 42161,
         Optimism = 10,
         Polygon = 137,
         Ropsten = 3,
