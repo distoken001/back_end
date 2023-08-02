@@ -59,7 +59,7 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         /// <summary>
         /// 链名称
         /// </summary>
-        public string chain_name { get { if (chain_id == ChainEnum.Avalanche) { return "Avalanche"; } else if (chain_id == ChainEnum.Polygon) { return "Polygon(Matic)"; } else return chain_id.ToString(); } }
+        public string chain_name { get { if (chain_id == ChainEnum.Polygon) { return "Polygon(Matic)"; } else return chain_id.ToString(); } }
         /// <summary>
         /// 卖方
         /// </summary>
