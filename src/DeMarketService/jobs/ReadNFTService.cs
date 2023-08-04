@@ -65,15 +65,19 @@ namespace deMarketService.jobs
                     var function = contract.GetFunction("ownerOf");
                     for (int i = 0; i < 100; i++)
                     {
-                        var owner = await function.CallAsync<string>(i);;
-                        Console.WriteLine($"Query Result: {owner}");
+                        var owner = await function.CallAsync<string>(i);
+                        var user = _masterDbContext.users.Where(a => a.address.Equals(owner)).FirstOrDefault();
+                        if (user != null)
+                        {
+                            user.is_nft = 1;
+                        }
                     }
-
+                    _masterDbContext.SaveChanges();
                     _logger.LogDebug($"ReadNFTService task end {DateTime.Now}");
                 }
                 catch (Exception ex)
                 {
-
+                    _masterDbContext.SaveChanges();
                     _logger.LogDebug($"ReadNFTService task 异常 {ex.InnerException.GetBaseException().Message}");
                 }
             });
