@@ -43,8 +43,8 @@
         <job-name>ReadNFTService</job-name>
         <job-group>GroupBusinessServiceApis</job-group>
         <start-time>2019-03-13T15:15:00.0Z</start-time>
-        <!--每天凌晨执行一次-->
-        <cron-expression>0 0 0 * * ?</cron-expression>
+        <!--每一个小时-->
+        <cron-expression>0 0 * * * ?</cron-expression>
       </cron>
     </trigger>
 
