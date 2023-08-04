@@ -87,9 +87,5 @@ namespace deMarketService.Common.Model.DataEntityModel
         /// 支持哪几种发布商品的方式1:个人 2:店铺 4:社区 注：相加为权限
         /// </summary>
         public int type { get; set; }
-        /// <summary>
-        /// 持有nft序号
-        /// </summary>
-        public int? nft { get; set; }
     }
 }

@@ -22,7 +22,7 @@ namespace deMarketService.DbContext
         public virtual DbSet<event_logs> event_logs { get; set; }
         public virtual DbSet<orders> orders { get; set; }
         public virtual DbSet<users> users { get; set; }
-        public virtual DbSet<contacts> contacts { get; set; }
+        public virtual DbSet<user_nft> user_nft { get; set; }        public virtual DbSet<contacts> contacts { get; set; }
         public virtual DbSet<chain_tokens> chain_tokens { get; set; }
         public virtual DbSet<inviter_rebates> inviter_rebates { get; set; }
     }
