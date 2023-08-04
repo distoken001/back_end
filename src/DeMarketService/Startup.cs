@@ -54,6 +54,7 @@ namespace deMarketService
             services.AddSingleton<ITxCosUploadeService, TxCosUploadeService>();
             services.AddScoped<EmailProxy>();
             services.AddScoped<CustomerRebateService>();
+            services.AddScoped<ReadNFTService>();
             services
                 .AddHttpClient()
                 //.AddSingleton(Configuration)

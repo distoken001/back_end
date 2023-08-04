@@ -24,7 +24,7 @@
     <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="3.1.17" />
     <PackageReference Include="Microsoft.Extensions.PlatformAbstractions" Version="1.1.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.5" />
-    <PackageReference Include="Nethereum.Web3" Version="4.14.0" />
+    <PackageReference Include="Nethereum.Web3" Version="4.15.2" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="3.1.2" />
     <PackageReference Include="qcloud.qcloudsms_csharp" Version="0.1.5" />
     <PackageReference Include="Quartz" Version="3.0.7" />
@@ -42,6 +42,9 @@
   <ItemGroup>
     <Content Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="DeMarketAvatarNFT.json">
+      <CustomToolNamespace>deMarketService</CustomToolNamespace>
     </Content>
   </ItemGroup>
 
