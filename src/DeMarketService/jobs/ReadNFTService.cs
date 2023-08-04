@@ -1,8 +1,10 @@
 ﻿using deMarketService.Common.Model.DataEntityModel;
+using deMarketService.Common.Model.HttpApiModel.ResponseModel;
 using deMarketService.DbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nethereum.Contracts;
+using Nethereum.Contracts.Standards.ERC721.ContractDefinition;
 using Nethereum.RPC;
 using Nethereum.Web3;
 using Newtonsoft.Json.Linq;
@@ -60,14 +62,11 @@ namespace deMarketService.jobs
                     var contract = new Contract(new EthApiService(web3.Client), contractABI, contractAddress);
 
                     // 定义查询函数的输入参数（如果有的话）
-                    var functionABI = contract.GetFunction("ownerOf");
+                    var function = contract.GetFunction("ownerOf");
                     for (int i = 0; i < 100; i++)
                     {
-                        var queryInput = new { i };
-                        // 执行合约查询
-                        //var queryHandler = web3.Eth.GetContractQueryHandler<string>();
-                        //var queryResult = await queryHandler.QueryAsync<string>(contractAddress, functionABI, queryInput);
-                        //Console.WriteLine($"Query Result: {queryResult}");
+                        var owner = await function.CallAsync<string>(i);;
+                        Console.WriteLine($"Query Result: {owner}");
                     }
 
                     _logger.LogDebug($"ReadNFTService task end {DateTime.Now}");
