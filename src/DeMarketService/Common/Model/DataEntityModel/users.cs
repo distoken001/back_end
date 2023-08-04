@@ -88,8 +88,8 @@ namespace deMarketService.Common.Model.DataEntityModel
         /// </summary>
         public int type { get; set; }
         /// <summary>
-        /// 是否持有nft 0没有 1有
+        /// 持有nft序号
         /// </summary>
-        public int is_nft { get; set; }
+        public int? nft { get; set; }
     }
 }

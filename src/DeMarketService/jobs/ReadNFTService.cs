@@ -41,8 +41,8 @@ namespace deMarketService.jobs
                 try
                 {
                     _logger.LogDebug($"ReadNFTService task start {DateTime.Now}");
-                    var users = _masterDbContext.users.Where(a => a.is_nft==1).ToList();
-                    users.ForEach(a => a.is_nft = 0);
+                    var users = _masterDbContext.users.Where(a => a.nft>= 0).ToList();
+                    users.ForEach(a => a.nft = null);
                     // 连接到以太坊区块链网络
                     var web3 = new Web3(_config["BSCRPC"]);
 
@@ -73,7 +73,7 @@ namespace deMarketService.jobs
                         var user = _masterDbContext.users.Where(a => a.address.Equals(owner)).FirstOrDefault();
                         if (user != null)
                         {
-                            user.is_nft = 1;
+                            user.nft = i;
                         }
                     }
                     _masterDbContext.SaveChanges();
