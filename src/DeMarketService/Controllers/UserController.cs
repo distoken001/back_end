@@ -54,7 +54,7 @@ namespace deMarketService.Controllers
             {
                 return new WebApiResult(-1, "登录请求地址不规范");
             }
-            if (string.IsNullOrEmpty(req.parentAddress)||req.parentAddress.Length!=42 || !req.parentAddress.StartsWith("0x"))
+            if (string.IsNullOrEmpty(req.parentAddress) || req.parentAddress.Length != 42 || !req.parentAddress.StartsWith("0x"))
             {
                 req.parentAddress = null;
             }
@@ -79,7 +79,7 @@ namespace deMarketService.Controllers
                 };
                 if (!string.IsNullOrEmpty(users.parent_address))
                 {
-                    users.rate = string.IsNullOrEmpty(_configuration["rate"])?0.002M:  decimal.Parse(_configuration["rate"]);
+                    users.rate = string.IsNullOrEmpty(_configuration["rate"]) ? 0.002M : decimal.Parse(_configuration["rate"]);
                 }
                 try
                 {
@@ -93,7 +93,9 @@ namespace deMarketService.Controllers
             }
             Claim[] userClaims = ConvertToClaims(users);
             var token = TokenHelper.GenerateToken(StringConstant.secretKey, StringConstant.issuer, StringConstant.audience, 365, userClaims);
-            return new WebApiResult(1, "登录成功", new LoginResponse { token = token, avatar = users.avatar, nick_name = users.nick_name, email = users.email, is_first = is_first });
+            var user_nfts = _mySqlMasterDbContext.user_nft.Where(a => a.address.Equals(req.address) && a.status == 1).ToList();
+            var nfts= user_nfts.Select(a => a.nft).ToArray();
+            return new WebApiResult(1, "登录成功", new LoginResponse { token = token, avatar = users.avatar, nick_name = users.nick_name, email = users.email, is_first = is_first, nfts= nfts });
         }
         /// <summary>
         /// 重置ip

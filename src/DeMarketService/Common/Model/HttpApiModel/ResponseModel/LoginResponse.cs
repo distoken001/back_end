@@ -12,5 +12,6 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         public string nick_name { get; set; }
         public string email { get; set; }
         public bool is_first { get; set; }
+        public int[] nfts { get; set; }
     }
 }
