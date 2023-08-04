@@ -2,6 +2,7 @@
 using deMarketService.Common.Model.HttpApiModel.ResponseModel;
 using deMarketService.DbContext;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Nethereum.Contracts;
 using Nethereum.Contracts.Standards.ERC721.ContractDefinition;
@@ -25,10 +26,12 @@ namespace deMarketService.jobs
     {
         private readonly ILogger<ReadNFTService> _logger;
         private readonly MySqlMasterDbContext _masterDbContext;
-        public ReadNFTService(ILogger<ReadNFTService> logger, MySqlMasterDbContext masterDbContext)
+        private IConfiguration _config;
+        public ReadNFTService(ILogger<ReadNFTService> logger, MySqlMasterDbContext masterDbContext, IConfiguration configuration)
         {
             _logger = logger;
             _masterDbContext = masterDbContext;
+            _config = configuration;
         }
 
         public override Task ExecuteMethod(IJobExecutionContext context)
@@ -38,12 +41,13 @@ namespace deMarketService.jobs
                 try
                 {
                     _logger.LogDebug($"ReadNFTService task start {DateTime.Now}");
-
+                    var users = _masterDbContext.users.Where(a => a.is_nft==1).ToList();
+                    users.ForEach(a => a.is_nft = 0);
                     // 连接到以太坊区块链网络
-                    var web3 = new Web3(@"https://dry-restless-dawn.bsc.discover.quiknode.pro/f73e235a8e136c7cbee870e54518e164a3823300/");
+                    var web3 = new Web3(_config["BSCRPC"]);
 
                     // 合约地址和ABI定义
-                    var contractAddress = "0xF30141271104656AEE4D25F785c5E567Af455669"; // 合约地址
+                    var contractAddress = _config["NFTContract"]; // 合约地址
 
                     // 读取JSON文件内容
                     string jsonFilePath = "DeMarketAvatarNFT.json"; // 替换为正确的JSON文件路径
