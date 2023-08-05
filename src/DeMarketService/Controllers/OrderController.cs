@@ -129,7 +129,7 @@ namespace deMarketService.Controllers
                     a.seller_nick = user.nick_name ?? "匿名商家";
                     a.seller_email = user.email ?? "未预留邮箱";
                 }
-                a.like_count = _mySqlMasterDbContext.ebay_user_like.AsNoTracking().Where(au => au.order_id == a.id && au.status == 1).Count();
+                a.like_count = _mySqlMasterDbContext.ebay_user_like.AsNoTracking().Where(au => au.order_id == a.id && au.status == 1).Count() + new Random().Next(1, 15);
                 if (!string.IsNullOrEmpty(CurrentLoginAddress))
                 {
                     a.is_like = _mySqlMasterDbContext.ebay_user_like.AsNoTracking().Where(au => au.order_id == a.id && au.address.Equals(CurrentLoginAddress) && au.status == 1).Count();
@@ -185,7 +185,7 @@ namespace deMarketService.Controllers
                     a.seller_nick = user.nick_name ?? "匿名商家";
                     a.seller_email = user.email ?? "未预留邮箱";
                 }
-                a.like_count = _mySqlMasterDbContext.ebay_user_like.AsNoTracking().Where(au => au.order_id == a.id && au.status == 1).Count() + random.Next(1, 15); ;
+                a.like_count = _mySqlMasterDbContext.ebay_user_like.AsNoTracking().Where(au => au.order_id == a.id && au.status == 1).Count() + random.Next(1, 15); 
                 if (!string.IsNullOrEmpty(CurrentLoginAddress))
                 {
                     a.is_like = _mySqlMasterDbContext.ebay_user_like.AsNoTracking().Where(au => au.order_id == a.id && au.address.Equals(CurrentLoginAddress) && au.status == 1).Count();
