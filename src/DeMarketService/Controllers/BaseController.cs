@@ -33,7 +33,25 @@ namespace deMarketService.Controllers
                 return clientIP;
             }
         }
-
+        public BelongUserEnum getBelongUserEnum(string buyer, string seller)
+        {
+            if (string.IsNullOrEmpty(CurrentLoginAddress))
+            {
+                return BelongUserEnum.未知;
+            }
+            else if (CurrentLoginAddress.Equals(buyer, StringComparison.OrdinalIgnoreCase))
+            {
+                return BelongUserEnum.买家;
+            }
+            else if (CurrentLoginAddress.Equals(seller, StringComparison.OrdinalIgnoreCase))
+            {
+                return BelongUserEnum.卖家;
+            }
+            else
+            {
+                return BelongUserEnum.游客;
+            }
+        }
         //public ChainEnum CurrentLoginChain
         //{
         //    get
