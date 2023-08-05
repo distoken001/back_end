@@ -157,5 +157,9 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         /// 是否是自己喜欢
         /// </summary>
         public int is_like { get; set; }
+        /// <summary>
+        /// 卖家的nft
+        /// </summary>
+        public int[] seller_nfts { get; set; }
     }
 }
