@@ -123,6 +123,7 @@ namespace deMarketService.Controllers
                 var token = chainTokens.FirstOrDefault(c => c.chain_id == a.chain_id && c.token_address.Equals(a.token, StringComparison.OrdinalIgnoreCase));
                 var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
                 a.token_des = tokenView;
+                a.belong = Tool.getBelongUserEnum(CurrentLoginAddress, a.buyer, a.seller);
                 var user = users.FirstOrDefault(c => c.address.Equals(a.seller, StringComparison.OrdinalIgnoreCase));
                 if (user != null)
                 {
@@ -180,6 +181,7 @@ namespace deMarketService.Controllers
                 var token = chainTokens.FirstOrDefault(c => c.chain_id == a.chain_id && c.token_address.Equals(a.token, StringComparison.OrdinalIgnoreCase));
                 var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
                 a.token_des = tokenView;
+                a.belong = Tool.getBelongUserEnum(CurrentLoginAddress, a.buyer, a.seller);
                 var user = users.FirstOrDefault(c => c.address.Equals(a.seller, StringComparison.OrdinalIgnoreCase));
                 if (user != null)
                 {
@@ -194,7 +196,7 @@ namespace deMarketService.Controllers
                 }
             }
             var res = new PagedModel<OrderResponse>(totalCount, viewList);
-            return Json(new WebApiResult(1, "订单列表", res));
+            return Json(new WebApiResult(1, "猜您喜欢" + CurrentLoginAddress, res));
         }
         /// <summary>
         /// 收藏（添加或取消）
@@ -222,7 +224,7 @@ namespace deMarketService.Controllers
                 }
             }
             _mySqlMasterDbContext.SaveChanges();
-            return Json(new WebApiResult(1, "添加成功"));
+            return Json(new WebApiResult(1, "添加成功" + CurrentLoginAddress));
         }
 
         /// <summary>
@@ -244,27 +246,12 @@ namespace deMarketService.Controllers
             var res = await resList.FirstOrDefaultAsync();
             var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking().ToList();
             var re = AutoMapperHelper.MapDbEntityToDTO<orders, OrderResponse>(res);
-            if (string.IsNullOrEmpty(CurrentLoginAddress))
-            {
-                re.belong = BelongUserEnum.未知;
-            }
-            else if (CurrentLoginAddress.Equals(re.buyer, StringComparison.OrdinalIgnoreCase))
-            {
-                re.belong = BelongUserEnum.买家;
-            }
-            else if (CurrentLoginAddress.Equals(re.seller, StringComparison.OrdinalIgnoreCase))
-            {
-                re.belong = BelongUserEnum.卖家;
-            }
-            else
-            {
-                re.belong = BelongUserEnum.游客;
-            }
+            re.belong =Tool.getBelongUserEnum(CurrentLoginAddress,res.buyer, res.seller);
             var token = chainTokens.FirstOrDefault(c => c.chain_id == re.chain_id && c.token_address.Equals(re.token, StringComparison.OrdinalIgnoreCase));
             var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
             re.token_des = tokenView;
             //return Json(new WebApiResult(1, "CurrentLoginAddress:" + CurrentLoginAddress + ",CurrentLoginChain:"+ CurrentLoginChain, ress));
-            return Json(new WebApiResult(1, "查询成功", re));
+            return Json(new WebApiResult(1, "查询成功" + CurrentLoginAddress, re));
         }
         /// <summary>
         /// 我的收藏
@@ -295,6 +282,7 @@ namespace deMarketService.Controllers
                     var token = chainTokens.FirstOrDefault(c => c.chain_id == a.chain_id && c.token_address.Equals(a.token, StringComparison.OrdinalIgnoreCase));
                     var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
                     a.token_des = tokenView;
+                    a.belong = Tool.getBelongUserEnum(CurrentLoginAddress, a.buyer, a.seller);
                     var user = users.FirstOrDefault(c => c.address.Equals(a.seller, StringComparison.OrdinalIgnoreCase));
                     if (user != null)
                     {
@@ -310,7 +298,7 @@ namespace deMarketService.Controllers
                 }
 
                 var res = new PagedModel<OrderResponse>(totalCount, viewList);
-                return Json(new WebApiResult(1, "查询我的收藏列表成功", res));
+                return Json(new WebApiResult(1, "查询我的收藏列表成功"+CurrentLoginAddress, res));
             }
         }
     }

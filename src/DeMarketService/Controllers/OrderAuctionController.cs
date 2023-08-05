@@ -89,7 +89,7 @@ namespace deMarketService.Controllers
                     var token = chainTokens.FirstOrDefault(c => c.chain_id == a.chain_id && c.token_address.Equals(a.token, StringComparison.OrdinalIgnoreCase));
                     var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
                     a.token_des = tokenView;
-                    a.belong = getBelongUserEnum(a.buyer, a.seller);
+                    a.belong = Tool.getBelongUserEnum(CurrentLoginAddress, a.buyer, a.seller);
                     var user = users.FirstOrDefault(c => c.address.Equals(a.seller, StringComparison.OrdinalIgnoreCase));
                     if (user != null)
                     {
@@ -105,7 +105,7 @@ namespace deMarketService.Controllers
                 }
 
                 var res = new PagedModel<OrderAuctionResponse>(totalCount, viewList);
-                return Json(new WebApiResult(1, "订单列表" + CurrentLoginAddress, res));
+                return Json(new WebApiResult(1, "查询拍卖列表" + CurrentLoginAddress, res));
             }
             catch (Exception ex)
             {
@@ -153,7 +153,7 @@ namespace deMarketService.Controllers
                 var token = chainTokens.FirstOrDefault(c => c.chain_id == a.chain_id && c.token_address.Equals(a.token, StringComparison.OrdinalIgnoreCase));
                 var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
                 a.token_des = tokenView;
-                a.belong = getBelongUserEnum(a.buyer, a.seller);
+                a.belong = Tool.getBelongUserEnum(CurrentLoginAddress, a.buyer, a.seller);
                 var user = users.FirstOrDefault(c => c.address.Equals(a.seller, StringComparison.OrdinalIgnoreCase));
                 if (user != null)
                 {
@@ -168,7 +168,7 @@ namespace deMarketService.Controllers
                 }
             }
             var res = new PagedModel<OrderAuctionResponse>(totalCount, viewList);
-            return Json(new WebApiResult(1, "订单列表", res));
+            return Json(new WebApiResult(1, "猜您喜欢"+CurrentLoginAddress, res));
         }
         /// <summary>
         /// 收藏（添加收藏或取消收藏）
@@ -220,12 +220,12 @@ namespace deMarketService.Controllers
                 var res = await resList.FirstOrDefaultAsync();
                 var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking().ToList();
                 var re = AutoMapperHelper.MapDbEntityToDTO<orders_auction, OrderAuctionResponse>(res);
-                re.belong = getBelongUserEnum(res.buyer, res.seller);
+                re.belong = Tool.getBelongUserEnum(CurrentLoginAddress,res.buyer, res.seller);
                 var token = chainTokens.FirstOrDefault(c => c.chain_id == re.chain_id && c.token_address.Equals(re.token, StringComparison.OrdinalIgnoreCase));
                 var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
                 re.token_des = tokenView;
                 //return Json(new WebApiResult(1, "CurrentLoginAddress:" + CurrentLoginAddress + ",CurrentLoginChain:"+ CurrentLoginChain, ress));
-                return Json(new WebApiResult(1, "查询成功"+CurrentLoginAddress, re));
+                return Json(new WebApiResult(1, "查询成功" + CurrentLoginAddress, re));
             }
             catch (Exception ex)
             {
@@ -261,6 +261,7 @@ namespace deMarketService.Controllers
                     var token = chainTokens.FirstOrDefault(c => c.chain_id == a.chain_id && c.token_address.Equals(a.token, StringComparison.OrdinalIgnoreCase));
                     var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
                     a.token_des = tokenView;
+                    a.belong = Tool.getBelongUserEnum(CurrentLoginAddress, a.buyer, a.seller);
                     var user = users.FirstOrDefault(c => c.address.Equals(a.seller, StringComparison.OrdinalIgnoreCase));
                     if (user != null)
                     {
