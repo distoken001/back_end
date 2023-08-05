@@ -172,8 +172,8 @@ namespace deMarketService.Controllers
         /// </summary>
         /// <param name = "req" ></ param >
         /// < returns ></ returns >
-        [HttpGet("switch_like")]
-        public JsonResult switch_like([FromQuery] long id)
+        [HttpPost("switch_like")]
+        public JsonResult switch_like([FromBody] SwitchLikeRequest request)
         {
             if (string.IsNullOrEmpty(CurrentLoginAddress))
             {
@@ -189,7 +189,7 @@ namespace deMarketService.Controllers
                 }
                 else
                 {
-                    _mySqlMasterDbContext.auction_user_like.Add(new auction_user_like() { address = CurrentLoginAddress, create_time = DateTime.Now, update_time = DateTime.Now, order_id = id, status = 1 });
+                    _mySqlMasterDbContext.auction_user_like.Add(new auction_user_like() { address = CurrentLoginAddress, create_time = DateTime.Now, update_time = DateTime.Now, order_id = request.id, status = 1 });
                 }
             }
             _mySqlMasterDbContext.SaveChanges();

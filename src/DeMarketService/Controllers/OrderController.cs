@@ -185,7 +185,7 @@ namespace deMarketService.Controllers
                     a.seller_nick = user.nick_name ?? "匿名商家";
                     a.seller_email = user.email ?? "未预留邮箱";
                 }
-                a.like_count = _mySqlMasterDbContext.ebay_user_like.AsNoTracking().Where(au => au.order_id == a.id && au.status == 1).Count() + random.Next(1, 15); 
+                a.like_count = _mySqlMasterDbContext.ebay_user_like.AsNoTracking().Where(au => au.order_id == a.id && au.status == 1).Count() + random.Next(1, 15);
                 if (!string.IsNullOrEmpty(CurrentLoginAddress))
                 {
                     a.is_like = _mySqlMasterDbContext.ebay_user_like.AsNoTracking().Where(au => au.order_id == a.id && au.address.Equals(CurrentLoginAddress) && au.status == 1).Count();
@@ -197,10 +197,10 @@ namespace deMarketService.Controllers
         /// <summary>
         /// 收藏（添加或取消）
         /// </summary>
-        /// <param name = "req" ></ param >
+        /// <param name = "request" ></ param >
         /// < returns ></ returns >
-        [HttpGet("switch_like")]
-        public JsonResult switch_like([FromQuery] long id)
+        [HttpPost("switch_like")]
+        public JsonResult switch_like([FromBody] SwitchLikeRequest request)
         {
             if (string.IsNullOrEmpty(CurrentLoginAddress))
             {
@@ -216,7 +216,7 @@ namespace deMarketService.Controllers
                 }
                 else
                 {
-                    _mySqlMasterDbContext.ebay_user_like.Add(new ebay_user_like() { address = CurrentLoginAddress, create_time = DateTime.Now, update_time = DateTime.Now, order_id = id, status = 1 });
+                    _mySqlMasterDbContext.ebay_user_like.Add(new ebay_user_like() { address = CurrentLoginAddress, create_time = DateTime.Now, update_time = DateTime.Now, order_id = request.id, status = 1 });
                 }
             }
             _mySqlMasterDbContext.SaveChanges();
