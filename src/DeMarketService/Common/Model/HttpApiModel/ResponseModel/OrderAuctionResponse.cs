@@ -179,5 +179,9 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         /// 次数
         /// </summary>
         public int count { get; set; }
+        /// <summary>
+        /// 卖方持有的nfts
+        /// </summary>
+        public int[] seller_nfts { get; set; }
     }
 }

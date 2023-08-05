@@ -82,7 +82,7 @@ namespace deMarketService.Controllers
                 var viewList = AutoMapperHelper.MapDbEntityToDTO<orders_auction, OrderAuctionResponse>(list);
                 var sellers = viewList.Select(a => a.seller).ToList();
                 var users = _mySqlMasterDbContext.users.AsNoTracking().Where(a => sellers.Contains(a.address)).ToList();
-
+                var user_nfts = _mySqlMasterDbContext.user_nft.AsNoTracking().ToList();
                 foreach (var a in viewList)
                 {
                     var token = chainTokens.FirstOrDefault(c => c.chain_id == a.chain_id && c.token_address.Equals(a.token, StringComparison.OrdinalIgnoreCase));
@@ -93,6 +93,7 @@ namespace deMarketService.Controllers
                     {
                         a.seller_nick = user.nick_name ?? "匿名商家";
                         a.seller_email = user.email ?? "未预留邮箱";
+                        a.seller_nfts = user_nfts.Where(un => un.address.Equals(user.address) && un.status == 1).Select(a => a.nft).ToArray();
                     }
                 }
                 var res = new PagedModel<OrderAuctionResponse>(totalCount, viewList);
@@ -138,7 +139,7 @@ namespace deMarketService.Controllers
             var viewList = AutoMapperHelper.MapDbEntityToDTO<orders_auction, OrderAuctionResponse>(list);
             var sellers = viewList.Select(a => a.seller).ToList();
             var users = _mySqlMasterDbContext.users.AsNoTracking().Where(a => sellers.Contains(a.address)).ToList();
-
+            var user_nfts = _mySqlMasterDbContext.user_nft.AsNoTracking().ToList();
             foreach (var a in viewList)
             {
                 var token = chainTokens.FirstOrDefault(c => c.chain_id == a.chain_id && c.token_address.Equals(a.token, StringComparison.OrdinalIgnoreCase));
@@ -149,6 +150,7 @@ namespace deMarketService.Controllers
                 {
                     a.seller_nick = user.nick_name ?? "匿名商家";
                     a.seller_email = user.email ?? "未预留邮箱";
+                    a.seller_nfts = user_nfts.Where(un => un.address.Equals(user.address) && un.status == 1).Select(a => a.nft).ToArray();
                 }
             }
             var res = new PagedModel<OrderAuctionResponse>(totalCount, viewList);
