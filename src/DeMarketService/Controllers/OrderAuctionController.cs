@@ -141,7 +141,7 @@ namespace deMarketService.Controllers
             }
             var totalCount = await queryEntities.CountAsync();
             Random random = new Random();
-            int randomNumber = random.Next(0, totalCount - req.pageSize + 1);
+            int randomNumber = random.Next(0, (totalCount - req.pageSize + 1) <= 0 ? 1 : (totalCount - req.pageSize + 1));
             queryEntities = queryEntities.OrderByDescending(p => p.create_time).Skip(randomNumber).Take(req.pageSize);
             var list = await queryEntities.ToListAsync();
             var viewList = AutoMapperHelper.MapDbEntityToDTO<orders_auction, OrderAuctionResponse>(list);
@@ -168,7 +168,7 @@ namespace deMarketService.Controllers
                 }
             }
             var res = new PagedModel<OrderAuctionResponse>(totalCount, viewList);
-            return Json(new WebApiResult(1, "猜您喜欢"+CurrentLoginAddress, res));
+            return Json(new WebApiResult(1, "猜您喜欢" + CurrentLoginAddress, res));
         }
         /// <summary>
         /// 收藏（添加收藏或取消收藏）
@@ -220,7 +220,7 @@ namespace deMarketService.Controllers
                 var res = await resList.FirstOrDefaultAsync();
                 var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking().ToList();
                 var re = AutoMapperHelper.MapDbEntityToDTO<orders_auction, OrderAuctionResponse>(res);
-                re.belong = Tool.getBelongUserEnum(CurrentLoginAddress,res.buyer, res.seller);
+                re.belong = Tool.getBelongUserEnum(CurrentLoginAddress, res.buyer, res.seller);
                 var token = chainTokens.FirstOrDefault(c => c.chain_id == re.chain_id && c.token_address.Equals(re.token, StringComparison.OrdinalIgnoreCase));
                 var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
                 re.token_des = tokenView;
