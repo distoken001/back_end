@@ -149,5 +149,13 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         /// 权重
         /// </summary>
         public int weight { get; set; }
+        /// <summary>
+        /// 收藏的人数量
+        /// </summary>
+        public int like_count { get; set; }
+        /// <summary>
+        /// 是否是自己喜欢
+        /// </summary>
+        public int is_like { get; set; }
     }
 }

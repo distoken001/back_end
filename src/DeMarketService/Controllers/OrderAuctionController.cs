@@ -95,7 +95,13 @@ namespace deMarketService.Controllers
                         a.seller_email = user.email ?? "未预留邮箱";
                         a.seller_nfts = user_nfts.Where(un => un.address.Equals(user.address) && un.status == 1).Select(a => a.nft).ToArray();
                     }
+                    a.like_count = _mySqlMasterDbContext.auction_user_like.AsNoTracking().Where(au => au.order_id==a.id&& au.status == 1).Count();
+                    if (!string.IsNullOrEmpty(CurrentLoginAddress))
+                    {
+                        a.is_like = _mySqlMasterDbContext.auction_user_like.AsNoTracking().Where(au => au.order_id == a.id && au.address.Equals(CurrentLoginAddress) && au.status == 1).Count();
+                    }
                 }
+                
                 var res = new PagedModel<OrderAuctionResponse>(totalCount, viewList);
                 return Json(new WebApiResult(1, "订单列表" + CurrentLoginAddress, res));
             }
@@ -151,6 +157,11 @@ namespace deMarketService.Controllers
                     a.seller_nick = user.nick_name ?? "匿名商家";
                     a.seller_email = user.email ?? "未预留邮箱";
                     a.seller_nfts = user_nfts.Where(un => un.address.Equals(user.address) && un.status == 1).Select(a => a.nft).ToArray();
+                }
+                a.like_count = _mySqlMasterDbContext.auction_user_like.AsNoTracking().Where(au => au.order_id == a.id && au.status == 1).Count();
+                if (!string.IsNullOrEmpty(CurrentLoginAddress))
+                {
+                    a.is_like = _mySqlMasterDbContext.auction_user_like.AsNoTracking().Where(au => au.order_id == a.id && au.address.Equals(CurrentLoginAddress) && au.status == 1).Count();
                 }
             }
             var res = new PagedModel<OrderAuctionResponse>(totalCount, viewList);

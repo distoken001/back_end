@@ -183,5 +183,13 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         /// 卖方持有的nfts
         /// </summary>
         public int[] seller_nfts { get; set; }
+        /// <summary>
+        /// 收藏的人数量
+        /// </summary>
+        public int like_count { get; set; }
+        /// <summary>
+        /// 是否是自己喜欢
+        /// </summary>
+        public int is_like { get; set; }
     }
 }
