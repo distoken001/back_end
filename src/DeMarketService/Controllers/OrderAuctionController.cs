@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Org.BouncyCastle.Ocsp;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -111,7 +112,7 @@ namespace deMarketService.Controllers
             }
         }
         /// <summary>
-        /// 猜您喜欢（拍卖）
+        /// 猜您喜欢
         /// </summary>
         /// <param name = "req" ></ param >
         /// < returns ></ returns >
@@ -158,7 +159,7 @@ namespace deMarketService.Controllers
                     a.seller_email = user.email ?? "未预留邮箱";
                     a.seller_nfts = user_nfts.Where(un => un.address.Equals(user.address) && un.status == 1).Select(a => a.nft).ToArray();
                 }
-                a.like_count = _mySqlMasterDbContext.auction_user_like.AsNoTracking().Where(au => au.order_id == a.id && au.status == 1).Count() + random.Next(1, 15) + random.Next(1, 15);
+                a.like_count = _mySqlMasterDbContext.auction_user_like.AsNoTracking().Where(au => au.order_id == a.id && au.status == 1).Count() + random.Next(1, 15);
                 if (!string.IsNullOrEmpty(CurrentLoginAddress))
                 {
                     a.is_like = _mySqlMasterDbContext.auction_user_like.AsNoTracking().Where(au => au.order_id == a.id && au.address.Equals(CurrentLoginAddress) && au.status == 1).Count();
@@ -168,7 +169,7 @@ namespace deMarketService.Controllers
             return Json(new WebApiResult(1, "订单列表", res));
         }
         /// <summary>
-        /// 收藏（添加或取消）
+        /// 收藏（添加收藏或取消收藏）
         /// </summary>
         /// <param name = "req" ></ param >
         /// < returns ></ returns >
@@ -226,6 +227,53 @@ namespace deMarketService.Controllers
             catch (Exception ex)
             {
                 return Json(new WebApiResult(-1, "服务器异常", ex));
+            }
+        }
+        /// <summary>
+        /// 我的收藏
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("my_like")]
+        public JsonResult my_like([FromBody] MyLikeRequest request)
+        {
+            if (string.IsNullOrEmpty(CurrentLoginAddress))
+            {
+                return Json(new WebApiResult(-1, "您未登录"));
+            }
+            else
+            {
+                var queryEntities = _mySqlMasterDbContext.auction_user_like.AsNoTracking().AsQueryable();
+                var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking().ToList();
+                var totalCount = queryEntities.Count();
+                queryEntities = queryEntities.Where(a => a.address.Equals(CurrentLoginAddress)).OrderByDescending(p => p.update_time).Skip((request.pageIndex - 1) * request.pageSize).Take(request.pageSize);
+                var idList = queryEntities.Select(a => a.order_id).ToList();
+                var list = _mySqlMasterDbContext.orders_auction.AsNoTracking().Where(a => idList.Contains(a.id)).ToList();
+                var viewList = AutoMapperHelper.MapDbEntityToDTO<orders_auction, OrderAuctionResponse>(list);
+                var sellers = viewList.Select(a => a.seller).ToList();
+                var users = _mySqlMasterDbContext.users.AsNoTracking().Where(a => sellers.Contains(a.address)).ToList();
+                var user_nfts = _mySqlMasterDbContext.user_nft.AsNoTracking().ToList();
+                foreach (var a in viewList)
+                {
+                    var token = chainTokens.FirstOrDefault(c => c.chain_id == a.chain_id && c.token_address.Equals(a.token, StringComparison.OrdinalIgnoreCase));
+                    var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
+                    a.token_des = tokenView;
+                    var user = users.FirstOrDefault(c => c.address.Equals(a.seller, StringComparison.OrdinalIgnoreCase));
+                    if (user != null)
+                    {
+                        a.seller_nick = user.nick_name ?? "匿名商家";
+                        a.seller_email = user.email ?? "未预留邮箱";
+                        a.seller_nfts = user_nfts.Where(un => un.address.Equals(user.address) && un.status == 1).Select(a => a.nft).ToArray();
+                    }
+                    a.like_count = _mySqlMasterDbContext.auction_user_like.AsNoTracking().Where(au => au.order_id == a.id && au.status == 1).Count() + new Random().Next(1, 15);
+                    if (!string.IsNullOrEmpty(CurrentLoginAddress))
+                    {
+                        a.is_like = _mySqlMasterDbContext.auction_user_like.AsNoTracking().Where(au => au.order_id == a.id && au.address.Equals(CurrentLoginAddress) && au.status == 1).Count();
+                    }
+                }
+
+                var res = new PagedModel<OrderAuctionResponse>(totalCount, viewList);
+                return Json(new WebApiResult(1, "查询我的收藏列表成功", res));
             }
         }
     }

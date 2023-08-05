@@ -248,7 +248,5 @@ namespace deMarketService.Controllers
             //return Json(new WebApiResult(1, "CurrentLoginAddress:" + CurrentLoginAddress + ",CurrentLoginChain:"+ CurrentLoginChain, ress));
             return Json(new WebApiResult(1, "查询成功", re));
         }
-
-
     }
 }
