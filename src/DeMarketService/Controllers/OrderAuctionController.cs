@@ -95,13 +95,13 @@ namespace deMarketService.Controllers
                         a.seller_email = user.email ?? "未预留邮箱";
                         a.seller_nfts = user_nfts.Where(un => un.address.Equals(user.address) && un.status == 1).Select(a => a.nft).ToArray();
                     }
-                    a.like_count = _mySqlMasterDbContext.auction_user_like.AsNoTracking().Where(au => au.order_id==a.id&& au.status == 1).Count() + new Random().Next(1, 15); 
+                    a.like_count = _mySqlMasterDbContext.auction_user_like.AsNoTracking().Where(au => au.order_id == a.id && au.status == 1).Count() + new Random().Next(1, 15);
                     if (!string.IsNullOrEmpty(CurrentLoginAddress))
                     {
                         a.is_like = _mySqlMasterDbContext.auction_user_like.AsNoTracking().Where(au => au.order_id == a.id && au.address.Equals(CurrentLoginAddress) && au.status == 1).Count();
                     }
                 }
-                
+
                 var res = new PagedModel<OrderAuctionResponse>(totalCount, viewList);
                 return Json(new WebApiResult(1, "订单列表" + CurrentLoginAddress, res));
             }
@@ -167,7 +167,34 @@ namespace deMarketService.Controllers
             var res = new PagedModel<OrderAuctionResponse>(totalCount, viewList);
             return Json(new WebApiResult(1, "订单列表", res));
         }
-
+        /// <summary>
+        /// 收藏（添加或取消）
+        /// </summary>
+        /// <param name = "req" ></ param >
+        /// < returns ></ returns >
+        [HttpGet("switch_like")]
+        public JsonResult switch_like([FromQuery] long id)
+        {
+            if (string.IsNullOrEmpty(CurrentLoginAddress))
+            {
+                return Json(new WebApiResult(-1, "您未登录"));
+            }
+            else
+            {
+                var aul = _mySqlMasterDbContext.auction_user_like.Where(a => a.address.Equals(CurrentLoginAddress)).FirstOrDefault();
+                if (aul != null)
+                {
+                    aul.status = aul.status == 0 ? 1 : 0;
+                    aul.update_time = DateTime.Now;
+                }
+                else
+                {
+                    _mySqlMasterDbContext.auction_user_like.Add(new auction_user_like() { address = CurrentLoginAddress, create_time = DateTime.Now, update_time = DateTime.Now, order_id = id, status = 1 });
+                }
+            }
+            _mySqlMasterDbContext.SaveChanges();
+            return Json(new WebApiResult(1, "添加成功"));
+        }
 
         /// <summary>
         ///查询拍卖详情
