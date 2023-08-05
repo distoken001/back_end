@@ -124,23 +124,23 @@ namespace deMarketService.Controllers
         /// <summary>
         /// 我的详情
         /// </summary>
-        /// <param name = "req" ></ param >
-        /// < returns ></ returns >
+        /// <returns></returns>
         [HttpPost("detail")]
         [ProducesResponseType(typeof(UsersResponse), 200)]
-        public async Task<WebApiResult> detail([FromBody] GetOrderListRequest req)
+        public async Task<WebApiResult> detail()
         {
             var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(CurrentLoginAddress, StringComparison.OrdinalIgnoreCase));
             var userView = AutoMapperHelper.MapDbEntityToDTO<users, UsersResponse>(user);
-            var nfts = _mySqlMasterDbContext.user_nft.AsNoTracking().Where(a => a.address.Equals(CurrentLoginAddress) && a.status == 1).Select(a=>a.nft).ToArray();
+            var nfts = _mySqlMasterDbContext.user_nft.AsNoTracking().Where(a => a.address.Equals(CurrentLoginAddress) && a.status == 1).Select(a => a.nft).ToArray();
             userView.nfts = nfts;
             return new WebApiResult(1, "查询成功", userView);
         }
         /// <summary>
         /// 被邀请人列表
         /// </summary>
-        /// <param name = "req" ></ param >
-        /// < returns ></ returns >
+        /// <param name="pageSize"></param>
+        /// <param name="pageIndex"></param>
+        /// <returns></returns>
         [HttpGet("invite/list")]
         [ProducesResponseType(typeof(string), 200)]
         public WebApiResult invitelist([FromQuery] int pageSize, [FromQuery] int pageIndex)
@@ -153,11 +153,11 @@ namespace deMarketService.Controllers
         }
 
         /// <summary>
-        /// 当前登录人的佣金明细
+        /// 当前登录人佣金列表
         /// </summary>
-        /// <param name = "req" ></ param >
-        /// < returns ></ returns >
-        [HttpGet("inviteBates/list")]
+        /// <param name="pageSize"></param>
+        /// <param name="pageIndex"></param>
+        /// <returns></returns>
         [ProducesResponseType(typeof(List<InviterRebatesItemReponse>), 200)]
         public WebApiResult GetinviteRebateList([FromQuery] int pageSize, [FromQuery] int pageIndex)
         {
