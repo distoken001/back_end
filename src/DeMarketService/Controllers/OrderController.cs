@@ -85,7 +85,7 @@ namespace deMarketService.Controllers
 
 
         /// <summary>
-        /// 订单列表
+        /// 商品列表
         /// </summary>
         /// <param name = "req" ></ param >
         /// < returns ></ returns >
@@ -117,7 +117,7 @@ namespace deMarketService.Controllers
             var viewList = AutoMapperHelper.MapDbEntityToDTO<orders, OrderResponse>(list);
             var sellers = viewList.Select(a => a.seller).ToList();
             var users = _mySqlMasterDbContext.users.AsNoTracking().Where(a => sellers.Contains(a.address)).ToList();
-
+            var user_nfts = _mySqlMasterDbContext.user_nft.AsNoTracking().Where(a => a.status == 1).ToList();
             foreach (var a in viewList)
             {
                 var token = chainTokens.FirstOrDefault(c => c.chain_id == a.chain_id && c.token_address.Equals(a.token, StringComparison.OrdinalIgnoreCase));
@@ -128,6 +128,7 @@ namespace deMarketService.Controllers
                 {
                     a.seller_nick = user.nick_name ?? "匿名商家";
                     a.seller_email = user.email ?? "未预留邮箱";
+                    a.seller_nfts = user_nfts.Where(un => un.address.Equals(user.address)).Select(a => a.nft).ToArray();
                 }
                 a.like_count = _mySqlMasterDbContext.ebay_user_like.AsNoTracking().Where(au => au.order_id == a.id && au.status == 1).Count() + new Random().Next(1, 15);
                 if (!string.IsNullOrEmpty(CurrentLoginAddress))
@@ -173,7 +174,7 @@ namespace deMarketService.Controllers
             var viewList = AutoMapperHelper.MapDbEntityToDTO<orders, OrderResponse>(list);
             var sellers = viewList.Select(a => a.seller).ToList();
             var users = _mySqlMasterDbContext.users.AsNoTracking().Where(a => sellers.Contains(a.address)).ToList();
-
+            var user_nfts = _mySqlMasterDbContext.user_nft.AsNoTracking().Where(a => a.status == 1).ToList();
             foreach (var a in viewList)
             {
                 var token = chainTokens.FirstOrDefault(c => c.chain_id == a.chain_id && c.token_address.Equals(a.token, StringComparison.OrdinalIgnoreCase));
@@ -184,6 +185,7 @@ namespace deMarketService.Controllers
                 {
                     a.seller_nick = user.nick_name ?? "匿名商家";
                     a.seller_email = user.email ?? "未预留邮箱";
+                    a.seller_nfts = user_nfts.Where(un => un.address.Equals(user.address)).Select(a => a.nft).ToArray();
                 }
                 a.like_count = _mySqlMasterDbContext.ebay_user_like.AsNoTracking().Where(au => au.order_id == a.id && au.status == 1).Count() + random.Next(1, 15);
                 if (!string.IsNullOrEmpty(CurrentLoginAddress))
