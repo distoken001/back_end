@@ -191,5 +191,6 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         /// 是否是自己喜欢
         /// </summary>
         public int is_like { get; set; }
+        public BelongUserEnum belong { get; set; }
     }
 }

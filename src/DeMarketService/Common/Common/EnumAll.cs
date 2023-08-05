@@ -217,4 +217,11 @@
         HarmonyTest = 1666700000,
         Conflux = 1030
     }
+    public enum BelongUserEnum
+    {
+        未知=0,
+        游客=1,
+        买家=2,
+        卖家=3
+    }
 }

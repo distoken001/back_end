@@ -161,5 +161,6 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         /// 卖家的nft
         /// </summary>
         public int[] seller_nfts { get; set; }
+        public BelongUserEnum belong { get; set; }
     }
 }

@@ -244,6 +244,22 @@ namespace deMarketService.Controllers
             var res = await resList.FirstOrDefaultAsync();
             var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking().ToList();
             var re = AutoMapperHelper.MapDbEntityToDTO<orders, OrderResponse>(res);
+            if (string.IsNullOrEmpty(CurrentLoginAddress))
+            {
+                re.belong = BelongUserEnum.未知;
+            }
+            else if (CurrentLoginAddress.Equals(re.buyer, StringComparison.OrdinalIgnoreCase))
+            {
+                re.belong = BelongUserEnum.买家;
+            }
+            else if (CurrentLoginAddress.Equals(re.seller, StringComparison.OrdinalIgnoreCase))
+            {
+                re.belong = BelongUserEnum.卖家;
+            }
+            else
+            {
+                re.belong = BelongUserEnum.游客;
+            }
             var token = chainTokens.FirstOrDefault(c => c.chain_id == re.chain_id && c.token_address.Equals(re.token, StringComparison.OrdinalIgnoreCase));
             var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
             re.token_des = tokenView;

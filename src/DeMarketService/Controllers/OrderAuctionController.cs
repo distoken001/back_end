@@ -218,6 +218,23 @@ namespace deMarketService.Controllers
                 var res = await resList.FirstOrDefaultAsync();
                 var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking().ToList();
                 var re = AutoMapperHelper.MapDbEntityToDTO<orders_auction, OrderAuctionResponse>(res);
+                if (string.IsNullOrEmpty(CurrentLoginAddress))
+                {
+                    re.belong = BelongUserEnum.未知;
+                }
+                else if (CurrentLoginAddress.Equals(re.buyer, StringComparison.OrdinalIgnoreCase))
+                {
+                    re.belong = BelongUserEnum.买家;
+                }
+                else if (CurrentLoginAddress.Equals(re.seller, StringComparison.OrdinalIgnoreCase))
+                {
+                    re.belong = BelongUserEnum.卖家;
+                }
+                else
+                {
+                    re.belong = BelongUserEnum.游客;
+                }
+
                 var token = chainTokens.FirstOrDefault(c => c.chain_id == re.chain_id && c.token_address.Equals(re.token, StringComparison.OrdinalIgnoreCase));
                 var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
                 re.token_des = tokenView;
@@ -252,7 +269,7 @@ namespace deMarketService.Controllers
                 var viewList = AutoMapperHelper.MapDbEntityToDTO<orders_auction, OrderAuctionResponse>(list);
                 var sellers = viewList.Select(a => a.seller).ToList();
                 var users = _mySqlMasterDbContext.users.AsNoTracking().Where(a => sellers.Contains(a.address)).ToList();
-                var user_nfts = _mySqlMasterDbContext.user_nft.AsNoTracking().Where(a=>a.status==1).ToList();
+                var user_nfts = _mySqlMasterDbContext.user_nft.AsNoTracking().Where(a => a.status == 1).ToList();
                 foreach (var a in viewList)
                 {
                     var token = chainTokens.FirstOrDefault(c => c.chain_id == a.chain_id && c.token_address.Equals(a.token, StringComparison.OrdinalIgnoreCase));
