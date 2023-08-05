@@ -194,7 +194,34 @@ namespace deMarketService.Controllers
             var res = new PagedModel<OrderResponse>(totalCount, viewList);
             return Json(new WebApiResult(1, "订单列表", res));
         }
-
+        /// <summary>
+        /// 收藏（添加或取消）
+        /// </summary>
+        /// <param name = "req" ></ param >
+        /// < returns ></ returns >
+        [HttpGet("switch_like")]
+        public JsonResult switch_like([FromQuery] long id)
+        {
+            if (string.IsNullOrEmpty(CurrentLoginAddress))
+            {
+                return Json(new WebApiResult(-1, "您未登录"));
+            }
+            else
+            {
+                var aul = _mySqlMasterDbContext.ebay_user_like.Where(a => a.address.Equals(CurrentLoginAddress)).FirstOrDefault();
+                if (aul != null)
+                {
+                    aul.status = aul.status == 0 ? 1 : 0;
+                    aul.update_time = DateTime.Now;
+                }
+                else
+                {
+                    _mySqlMasterDbContext.ebay_user_like.Add(new ebay_user_like() { address = CurrentLoginAddress, create_time = DateTime.Now, update_time = DateTime.Now, order_id = id, status = 1 });
+                }
+            }
+            _mySqlMasterDbContext.SaveChanges();
+            return Json(new WebApiResult(1, "添加成功"));
+        }
 
         /// <summary>
         /// 订单详情
