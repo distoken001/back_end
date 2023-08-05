@@ -157,7 +157,7 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
             get
             {
                 DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(start_time);
-                return dateTimeOffset.LocalDateTime; 
+                return dateTimeOffset.LocalDateTime;
             }
         }
         public DateTime end_time_actual
@@ -173,7 +173,7 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         /// </summary>
         public OrderAuctionStatusActual status_actual
         {
-            get { if (DateTime.Now < start_time_actual) { return OrderAuctionStatusActual.即将开始; } else if (DateTime.Now >= end_time_actual) { return OrderAuctionStatusActual.已结束; } else { return OrderAuctionStatusActual.进行中; } }
+            get { if (status == OrderAuctionStatus.SellerCancelWithoutDuty || status == OrderAuctionStatus.SellerBreak) { return OrderAuctionStatusActual.已结束; } else if (DateTime.Now < start_time_actual) { return OrderAuctionStatusActual.即将开始; } else if (DateTime.Now >= end_time_actual) { return OrderAuctionStatusActual.已结束; } else { return OrderAuctionStatusActual.进行中; } }
         }
         /// <summary>
         /// 次数
