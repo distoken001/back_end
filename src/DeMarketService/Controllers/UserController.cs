@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Nethereum.Contracts.Standards.ERC20.TokenList;
 using Newtonsoft.Json;
 using Org.BouncyCastle.Ocsp;
 using Org.BouncyCastle.Utilities.Encoders;
@@ -94,8 +95,8 @@ namespace deMarketService.Controllers
             Claim[] userClaims = ConvertToClaims(users);
             var token = TokenHelper.GenerateToken(StringConstant.secretKey, StringConstant.issuer, StringConstant.audience, 365, userClaims);
             var user_nfts = _mySqlMasterDbContext.user_nft.Where(a => a.address.Equals(req.address) && a.status == 1).ToList();
-            var nfts= user_nfts.Select(a => a.nft).ToArray();
-            return new WebApiResult(1, "登录成功", new LoginResponse { token = token, avatar = users.avatar, nick_name = users.nick_name, email = users.email, is_first = is_first, nfts= nfts });
+            var nfts = user_nfts.Select(a => a.nft).ToArray();
+            return new WebApiResult(1, "登录成功", new LoginResponse { token = token, avatar = users.avatar, nick_name = users.nick_name, email = users.email, is_first = is_first, nfts = nfts });
         }
         /// <summary>
         /// 重置ip
@@ -129,9 +130,11 @@ namespace deMarketService.Controllers
         [ProducesResponseType(typeof(UsersResponse), 200)]
         public async Task<WebApiResult> detail([FromBody] GetOrderListRequest req)
         {
-            var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(CurrentLoginAddress, StringComparison.OrdinalIgnoreCase));
-
-            return new WebApiResult(1, data: users);
+            var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(CurrentLoginAddress, StringComparison.OrdinalIgnoreCase));
+            var userView = AutoMapperHelper.MapDbEntityToDTO<users, UsersResponse>(user);
+            var nfts = _mySqlMasterDbContext.user_nft.AsNoTracking().Where(a => a.address.Equals(CurrentLoginAddress) && a.status == 1).Select(a=>a.nft).ToArray();
+            userView.nfts = nfts;
+            return new WebApiResult(1, "查询成功", userView);
         }
         /// <summary>
         /// 被邀请人列表
