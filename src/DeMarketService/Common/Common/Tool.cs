@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace deMarketService.Common.Common
 {
-	public static class Tool
-	{
+    public static class Tool
+    {
         /// <summary>
         /// 获取用户身份
         /// </summary>
@@ -13,11 +13,15 @@ namespace deMarketService.Common.Common
         /// <param name="seller"></param>
         /// <returns></returns>
         [HttpGet("getBelongUserEnum")]
-        public static BelongUserEnum getBelongUserEnum(string current,string buyer, string seller)
+        public static BelongUserEnum getBelongUserEnum(string current, string buyer, string seller)
         {
             if (string.IsNullOrEmpty(current))
             {
                 return BelongUserEnum.未知;
+            }
+            else if (current.Equals(buyer, StringComparison.OrdinalIgnoreCase) && current.Equals(seller, StringComparison.OrdinalIgnoreCase))
+            {
+                return BelongUserEnum.同是是买家卖家;
             }
             else if (current.Equals(buyer, StringComparison.OrdinalIgnoreCase))
             {

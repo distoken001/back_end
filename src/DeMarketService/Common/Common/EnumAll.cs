@@ -178,9 +178,9 @@
     }
     public enum OrderAuctionStatusActual
     {
-       即将开始=1,
-       进行中=2,
-       已结束=3
+        即将开始 = 1,
+        进行中 = 2,
+        已结束 = 3
     }
     public enum ChainEnum : int
     {
@@ -219,9 +219,10 @@
     }
     public enum BelongUserEnum
     {
-        未知=0,
-        游客=1,
-        买家=2,
-        卖家=3
+        未知 = 0,
+        游客 = 1,
+        买家 = 2,
+        卖家 = 3,
+        同是是买家卖家 = 4
     }
 }
