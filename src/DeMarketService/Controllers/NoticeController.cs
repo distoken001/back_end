@@ -65,7 +65,7 @@ namespace deMarketService.Controllers
                     ls.Add(buyer.email);
                 }
 
-                string subject = "德玛商城通知";
+                string subject = "德玛市场C2C通知";
                 string mailMessage = "";
                 if (status == OrderStatus.Initial)
                 {
