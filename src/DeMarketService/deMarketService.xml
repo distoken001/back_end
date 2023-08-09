@@ -23,6 +23,8 @@
 				<cron-expression>0 0 0 * * ?</cron-expression>
 			</cron>
 		</trigger>
+
+
 		<job>
 			<name>ReadNFTService</name>
 			<group>GroupBusinessService</group>
