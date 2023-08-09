@@ -15,7 +15,7 @@
 		<trigger>
 			<cron>
 				<name>TriggerCustomerRebateService</name>
-				<group>GroupTriggerBusinessServiceApis</group>
+				<group>GroupTriggerBusinessService</group>
 				<job-name>CustomerRebateService</job-name>
 				<job-group>GroupBusinessServiceApis</job-group>
 				<start-time>2019-03-13T15:15:00.0Z</start-time>
@@ -25,7 +25,7 @@
 		</trigger>
 		<job>
 			<name>ReadNFTService</name>
-			<group>GroupBusinessServiceApis</group>
+			<group>GroupBusinessService</group>
 			<description>生成客户邀请佣金</description>
 			<job-type>deMarketService.jobs.ReadNFTService, deMarketService</job-type>
 			<durable>true</durable>
@@ -34,9 +34,9 @@
 		<trigger>
 			<cron>
 				<name>TriggerReadNFTService</name>
-				<group>GroupTriggerBusinessServiceApis</group>
+				<group>GroupTriggerBusinessService</group>
 				<job-name>ReadNFTService</job-name>
-				<job-group>GroupBusinessServiceApis</job-group>
+				<job-group>GroupBusinessService</job-group>
 				<start-time>2019-03-13T15:15:00.0Z</start-time>
 				<!--每5分钟-->
 				<cron-expression>0 0/5 * * * ?</cron-expression>
