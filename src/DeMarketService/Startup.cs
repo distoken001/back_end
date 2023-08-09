@@ -20,6 +20,7 @@ using deMarketService.Services.Interfaces;
 using deMarketService.Services;
 using AutoMapper;
 using deMarketService.jobs;
+using deMarketService.Common.Common;
 
 namespace deMarketService
 {
@@ -155,6 +156,11 @@ namespace deMarketService
             //   app.UseMvc(routes => routes.MapRoute(name: "default", template: "api/{controller=Home}/{action=Index}/{id?}"));
 
             //app.RegisterConsul(lifetime, Configuration, Configuration[StringConstant.DeMarketServiceConsulServiceName]);
+            app.UseHttpsRedirection();
+            //app.UseMvc();
+            app.Map("/trigger/manage", AppMap.ManageQuartz);
+            app.Map("/trigger/state", AppMap.GetQuartzState);
+            app.Map("/job/running", AppMap.Runningjobs);
         }
     }
 }
