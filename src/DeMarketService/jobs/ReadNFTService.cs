@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 namespace deMarketService.jobs
 {
     /// <summary>
-    /// 每日凌晨产生前一天的邀请人返佣明细
+    /// 读取NFT
     /// </summary>
     [DisallowConcurrentExecution]
     public class ReadNFTService : BaseJob
