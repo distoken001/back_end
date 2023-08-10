@@ -14,6 +14,8 @@ namespace deMarketService.Common.Model.DataEntityModel
         public int status { get; set; }
         public DateTime create_time { get; set; }
         public DateTime update_time { get; set; }
+        public string contract { get; set; }
+        public ChainEnum chain_id { get; set; }
 
     }
 }

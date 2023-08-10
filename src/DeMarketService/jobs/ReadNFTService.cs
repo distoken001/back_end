@@ -1,4 +1,5 @@
-﻿using deMarketService.Common.Model.DataEntityModel;
+﻿using deMarketService.Common.Model;
+using deMarketService.Common.Model.DataEntityModel;
 using deMarketService.Common.Model.HttpApiModel.ResponseModel;
 using deMarketService.DbContext;
 using Microsoft.EntityFrameworkCore;
@@ -85,7 +86,9 @@ namespace deMarketService.jobs
                                     create_time = DateTime.Now,
                                     nft = i,
                                     status = 1,
-                                    update_time = DateTime.Now
+                                    update_time = DateTime.Now,
+                                    contract= contractAddress,
+                                    chain_id= ChainEnum.Bsc
                                 };
                                 _masterDbContext.Add(model);
                             }
