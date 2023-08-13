@@ -116,7 +116,7 @@ namespace deMarketService.Controllers
             var list = await queryEntities.ToListAsync();
             var viewList = AutoMapperHelper.MapDbEntityToDTO<orders, OrderResponse>(list);
             var sellers = viewList.Select(a => a.seller).ToList();
-            var users = _mySqlMasterDbContext.users.AsNoTracking().Where(a => sellers.Contains(a.address)).ToList();
+            var users = _mySqlMasterDbContext.users.AsNoTracking().Where(a => sellers.Contains(a.address, StringComparer.OrdinalIgnoreCase)).ToList();
             var user_nfts = _mySqlMasterDbContext.user_nft.AsNoTracking().Where(a => a.status == 1).ToList();
             foreach (var a in viewList)
             {
@@ -247,6 +247,7 @@ namespace deMarketService.Controllers
             var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking().ToList();
             var re = AutoMapperHelper.MapDbEntityToDTO<orders, OrderResponse>(res);
             re.belong = Tool.getBelongUserEnum(CurrentLoginAddress, res.buyer, res.seller);
+            re.seller_nfts = _mySqlMasterDbContext.user_nft.AsNoTracking().Where(a => a.status == 1 && a.address.Equals(re.seller)).Select(a => a.nft).ToArray();
             var token = chainTokens.FirstOrDefault(c => c.chain_id == re.chain_id && c.token_address.Equals(re.token, StringComparison.OrdinalIgnoreCase));
             var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
             re.token_des = tokenView;
