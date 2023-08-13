@@ -116,7 +116,7 @@ namespace deMarketService.Controllers
             var list = await queryEntities.ToListAsync();
             var viewList = AutoMapperHelper.MapDbEntityToDTO<orders, OrderResponse>(list);
             var sellers = viewList.Select(a => a.seller).ToList();
-            var users = _mySqlMasterDbContext.users.AsNoTracking().Where(a => sellers.Contains(a.address, StringComparer.OrdinalIgnoreCase)).ToList();
+            var users = _mySqlMasterDbContext.users.AsNoTracking().Where(a => sellers.Contains(a.address)).ToList();
             var user_nfts = _mySqlMasterDbContext.user_nft.AsNoTracking().Where(a => a.status == 1).ToList();
             foreach (var a in viewList)
             {
