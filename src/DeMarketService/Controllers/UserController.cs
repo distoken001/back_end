@@ -93,7 +93,7 @@ namespace deMarketService.Controllers
                 }
             }
             Claim[] userClaims = ConvertToClaims(users);
-            var token = TokenHelper.GenerateToken(StringConstant.secretKey, StringConstant.issuer, StringConstant.audience, 365, userClaims);
+            var token = TokenHelper.GenerateToken(StringConstant.secretKey, StringConstant.issuer, StringConstant.audience, 1, userClaims);
             var user_nfts = _mySqlMasterDbContext.user_nft.Where(a => a.address.Equals(req.address) && a.status == 1).ToList();
             var nfts = user_nfts.Select(a => a.nft).ToArray();
             return new WebApiResult(1, "登录成功", new LoginResponse { token = token, avatar = users.avatar, nick_name = users.nick_name, email = users.email, is_first = is_first, nfts = nfts });
