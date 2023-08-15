@@ -28,7 +28,7 @@
 		<job>
 			<name>ReadNFTService</name>
 			<group>GroupBusinessService</group>
-			<description>生成客户邀请佣金</description>
+			<description>读NFT到库</description>
 			<job-type>deMarketService.jobs.ReadNFTService, deMarketService</job-type>
 			<durable>true</durable>
 			<recover>false</recover>
