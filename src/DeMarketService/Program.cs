@@ -58,11 +58,13 @@ namespace deMarketService
                 builder.ClearProviders();
                 builder.AddSerilog();
 
-            }).ConfigureKestrel(options =>
-            {
-                options.ListenAnyIP(5000);
+            })
+            //.ConfigureKestrel(options =>
+            //{
+            //    options.ListenAnyIP(5000);
 
-            }).UseContentRoot(appRoot)
+            //})
+            .UseContentRoot(appRoot)
             .UseStartup<Startup>();
         }
     }
