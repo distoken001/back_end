@@ -1,17 +1,17 @@
 module.exports = {
     apps: [
         {
-            name: "deMarketService",
+            name: "deMarketServiceJobs",
             cmd: "dotnet",
-            args: ["deMarketService.dll", "--urls", "http://localhost:5000"],
+            args: ["run", "deMarketService.csproj", "--urls", "http://localhost:5005"],
             watch: false,
             autorestart: true,
-            env_development: {
+            env: {
                 ASPNETCORE_ENVIRONMENT: "Development",
             },
             // env_testing: {
-            // ASPNETCORE_ENVIRONMENT: "Testing",
-            //   },
+            //     ASPNETCORE_ENVIRONMENT: "Testing",
+            // },
             env_production: {
                 ASPNETCORE_ENVIRONMENT: "Production",
             },
