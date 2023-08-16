@@ -158,6 +158,7 @@ namespace deMarketService.Controllers
         /// <param name="pageSize"></param>
         /// <param name="pageIndex"></param>
         /// <returns></returns>
+        [HttpGet("inviteBates/list")]
         [ProducesResponseType(typeof(List<InviterRebatesItemReponse>), 200)]
         public WebApiResult GetinviteRebateList([FromQuery] int pageSize, [FromQuery] int pageIndex)
         {

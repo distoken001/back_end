@@ -1,7 +1,7 @@
-﻿module.exports = {
+module.exports = {
     apps: [
         {
-            name: "back_end",
+            name: "deMarketService",
             cmd: "dotnet",
             args: "deMarketService.dll",
             watch: false,
