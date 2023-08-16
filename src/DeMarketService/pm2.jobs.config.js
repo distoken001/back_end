@@ -1,7 +1,7 @@
 module.exports = {
     apps: [
         {
-            name: "deMarketServiceJobs",
+            name: "deMarketService",
             cmd: "dotnet",
             args: ["run", "deMarketService.csproj", "--urls", "http://localhost:5005"],
             watch: false,
@@ -18,3 +18,5 @@ module.exports = {
         },
     ],
 };
+
+
