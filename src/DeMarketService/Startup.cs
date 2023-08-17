@@ -129,10 +129,12 @@ namespace deMarketService
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, Microsoft.AspNetCore.Hosting.IApplicationLifetime lifetime)
         {
+            app.UseHttpsRedirection();
             app.UseStaticFiles();
+            string grandparentDirectory = Directory.GetParent(Directory.GetParent(env.ContentRootPath).FullName).FullName;
             app.UseDirectoryBrowser(new DirectoryBrowserOptions
             {
-                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetParent(env.ContentRootPath).FullName, "uploads")), // 修改为你选择的目录
+                FileProvider = new PhysicalFileProvider(Path.Combine(grandparentDirectory, "uploads")),
                 RequestPath = "/uploads"
             });
             //定时任务
