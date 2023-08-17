@@ -40,7 +40,7 @@ namespace FileUploadExample.Controllers
                     await file.CopyToAsync(stream);
                 }
 
-                fileName = _configuration["Domain"] + "/uploads/" + fileName;
+                fileName = _configuration["ApiDomain"] + "/uploads/" + fileName;
                 return Json(new WebApiResult(1, "上传图片", fileName));
             }
             else
