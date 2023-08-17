@@ -107,6 +107,29 @@ namespace deMarketService.Controllers
             return Json(new WebApiResult(1, "下载完成"));
         }
 
+        /// <summary>
+        /// 上传图片
+        /// </summary>
+        /// <param name = "req" ></ param >
+        /// < returns ></ returns >
+        //[HttpPost("upload")]
+        //public async Task<JsonResult> upload([FromForm] IFormCollection formCollection)
+        //{
+        //    if ((formCollection == null || formCollection.Files.Count == 0))
+        //    {
+        //        return Json(new WebApiResult(-1, "没有可上传的文件"));
+        //    }
+        //    var file = formCollection.Files[0];
+
+        //    var cosName = string.Format("{0}_{1}_cp{2}", DateTime.Now.ToString("yyyyMMddhhmmss"), new Random().Next(10000), Path.GetExtension(file.FileName));
+
+        //    using (var stream = file.OpenReadStream())
+        //    {
+        //        var bytes = ToByteArray(stream);
+        //        var res = await txCosUploadeService.Upload(bytes, cosName);
+        //        return Json(new WebApiResult(1, "上传图片", res));
+        //    }
+        //}
 
         private byte[] ToByteArray(Stream input)
         {
