@@ -13,7 +13,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
+using TencentCloud.Ecm.V20190719.Models;
+using TencentCloud.Tcss.V20201101.Models;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Configuration;
 
 namespace deMarketService.Controllers
 {
@@ -23,11 +28,14 @@ namespace deMarketService.Controllers
     {
         MySqlMasterDbContext _mySqlMasterDbContext;
         private readonly ITxCosUploadeService txCosUploadeService;
+        private readonly IHostEnvironment _environment;
+        private readonly IConfiguration _configuration;
 
-        public OrderController(MySqlMasterDbContext mySqlMasterDbContext, ITxCosUploadeService txCosUploadeService)
+        public OrderController(MySqlMasterDbContext mySqlMasterDbContext, ITxCosUploadeService txCosUploadeService, IHostEnvironment environment, IConfiguration configuration)
         {
             _mySqlMasterDbContext = mySqlMasterDbContext;
             this.txCosUploadeService = txCosUploadeService;
+            _environment = environment;
         }
 
         /// <summary>
@@ -44,28 +52,59 @@ namespace deMarketService.Controllers
         }
 
         /// <summary>
-        /// 上传图片
+        /// 下载图片
         /// </summary>
         /// <param name = "req" ></ param >
         /// < returns ></ returns >
-        [HttpPost("upload")]
-        public async Task<JsonResult> upload([FromForm] IFormCollection formCollection)
+        [HttpPost("download")]
+        public async Task<JsonResult> download()
         {
-            if ((formCollection == null || formCollection.Files.Count == 0))
+            var list = _mySqlMasterDbContext.chain_tokens.AsNoTracking().Where(a => a.status == 1).ToList();
+            foreach (var a in list)
             {
-                return Json(new WebApiResult(-1, "没有可上传的文件"));
+                using (HttpClient client = new HttpClient())
+                {
+                    try
+                    {
+                        HttpResponseMessage response = await client.GetAsync(a.icon);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            string suggestedFileName = Path.GetFileName(a.icon);
+                            Stream contentStream = await response.Content.ReadAsStreamAsync();
+                            string grandparentDirectory = Directory.GetParent(Directory.GetParent(_environment.ContentRootPath).FullName).FullName;
+                            var uploadDirectory = Path.Combine(grandparentDirectory, "uploads"); // 修改为你选择的目录
+                            var filePath = Path.Combine(uploadDirectory, suggestedFileName);
+
+                            byte[] fileBytes;
+                            using (var memoryStream = new MemoryStream())
+                            {
+                                contentStream.CopyTo(memoryStream);
+                                fileBytes = memoryStream.ToArray();
+                            }
+
+                            var formFile = new FormFile(new MemoryStream(fileBytes), 0, fileBytes.Length, "StreamFile", suggestedFileName)
+                            {
+                                Headers = new HeaderDictionary(),
+                                ContentType = "webp"
+                            };
+                            using (var stream = new FileStream(filePath, FileMode.Create))
+                            {
+                                await formFile.CopyToAsync(stream);
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine($"无法下载图片。HTTP 状态码：{response.StatusCode}");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"下载过程中出现错误：{ex.Message}");
+                    }
+                }
             }
-            var file = formCollection.Files[0];
-
-            var cosName = string.Format("{0}_{1}_cp{2}", DateTime.Now.ToString("yyyyMMddhhmmss"), new Random().Next(10000), Path.GetExtension(file.FileName));
-
-            using (var stream = file.OpenReadStream())
-            {
-                var bytes = ToByteArray(stream);
-                var res = await txCosUploadeService.Upload(bytes, cosName);
-                return Json(new WebApiResult(1, "上传图片", res));
-            }
-
+            return Json(new WebApiResult(1, "下载完成"));
         }
 
 
