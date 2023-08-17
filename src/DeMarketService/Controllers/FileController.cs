@@ -30,8 +30,8 @@ namespace FileUploadExample.Controllers
             if (file.Length > 0)
             {
                 var fileName = string.Format("{0}_{1}_cp{2}", DateTime.Now.ToString("yyyyMMddhhmmss"), new Random().Next(10000), Path.GetExtension(file.FileName));
-                var filePath = Path.Combine(_environment.ContentRootPath, "uploads", fileName);
-
+                var uploadDirectory = Path.Combine(Directory.GetParent(_environment.ContentRootPath).FullName, "uploads"); // 修改为你选择的目录
+                var filePath = Path.Combine(uploadDirectory, fileName);
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     await file.CopyToAsync(stream);

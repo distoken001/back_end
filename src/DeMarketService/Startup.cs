@@ -132,11 +132,9 @@ namespace deMarketService
             app.UseStaticFiles();
             app.UseDirectoryBrowser(new DirectoryBrowserOptions
             {
-                FileProvider = new PhysicalFileProvider(
-                    Path.Combine(env.ContentRootPath, "uploads")),
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetParent(env.ContentRootPath).FullName, "uploads")), // 修改为你选择的目录
                 RequestPath = "/uploads"
             });
-
             //定时任务
             QuartzStartup.Run().Wait();
             if (env.IsDevelopment())
