@@ -21,6 +21,8 @@ using deMarketService.Services;
 using AutoMapper;
 using deMarketService.jobs;
 using deMarketService.Common.Common;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
 
 namespace deMarketService
 {
@@ -49,6 +51,8 @@ namespace deMarketService
             //var deMarketConn = "Server=97.74.86.12;Database=ebay;Uid=dev;Pwd=Dev@1234;sslMode=None;";//Configuration[StringConstant.DatabaseConnectionString];
             var deMarketConn = Configuration["DbConnecting"];
 
+            services.AddControllers();
+            services.AddDirectoryBrowser();
             services.AddSingleton<IConfiguration>(Configuration);
             services.AddScoped<ExLogFilter>();
             services.AddScoped<TokenFilter>();
@@ -125,6 +129,14 @@ namespace deMarketService
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, Microsoft.AspNetCore.Hosting.IApplicationLifetime lifetime)
         {
+            app.UseStaticFiles();
+            app.UseDirectoryBrowser(new DirectoryBrowserOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                    Path.Combine(env.ContentRootPath, "uploads")),
+                RequestPath = "/uploads"
+            });
+
             //定时任务
             QuartzStartup.Run().Wait();
             if (env.IsDevelopment())

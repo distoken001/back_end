@@ -58,6 +58,9 @@
     <None Update="pm2.config.js">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
+    <None Update="uploads\WechatIMG1149.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
