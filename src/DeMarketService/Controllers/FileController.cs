@@ -2,6 +2,7 @@
 using deMarketService.Controllers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.IO;
@@ -13,10 +14,11 @@ namespace FileUploadExample.Controllers
     public class FileController : BaseController
     {
         private readonly IHostEnvironment _environment;
-
-        public FileController(IHostEnvironment environment)
+        private readonly IConfiguration _configuration;
+        public FileController(IHostEnvironment environment, IConfiguration configuration)
         {
             _environment = environment;
+            _configuration = configuration;
         }
 
         [HttpPost("upload")]
@@ -37,6 +39,8 @@ namespace FileUploadExample.Controllers
                 {
                     await file.CopyToAsync(stream);
                 }
+
+                fileName = _configuration["Domain"] + "/uploads/" + fileName;
                 return Json(new WebApiResult(1, "上传图片", fileName));
             }
             else

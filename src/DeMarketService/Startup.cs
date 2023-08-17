@@ -23,6 +23,7 @@ using deMarketService.jobs;
 using deMarketService.Common.Common;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
+using Microsoft.AspNetCore.Http;
 
 namespace deMarketService
 {
@@ -132,10 +133,15 @@ namespace deMarketService
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             string grandparentDirectory = Directory.GetParent(Directory.GetParent(env.ContentRootPath).FullName).FullName;
-            app.UseDirectoryBrowser(new DirectoryBrowserOptions
+            //app.UseDirectoryBrowser(new DirectoryBrowserOptions
+            //{
+            //    FileProvider = new PhysicalFileProvider(Path.Combine(grandparentDirectory, "uploads")),
+            //    RequestPath = "/uploads"
+            //});
+            app.UseStaticFiles(new StaticFileOptions()
             {
                 FileProvider = new PhysicalFileProvider(Path.Combine(grandparentDirectory, "uploads")),
-                RequestPath = "/uploads"
+                RequestPath = new PathString("/uploads")//对外的访问路径
             });
             //定时任务
             QuartzStartup.Run().Wait();
