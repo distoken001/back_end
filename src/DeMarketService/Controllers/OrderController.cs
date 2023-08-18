@@ -59,7 +59,7 @@ namespace deMarketService.Controllers
         [HttpPost("download")]
         public async Task<JsonResult> download()
         {
-            var list = _mySqlMasterDbContext.orders.AsNoTracking().ToList();
+            var list = _mySqlMasterDbContext.orders_auction.AsNoTracking().ToList();
             foreach (var a in list)
             {
                 using (HttpClient client = new HttpClient())
