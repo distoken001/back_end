@@ -66,36 +66,39 @@ namespace deMarketService.Controllers
                 {
                     try
                     {
-                        HttpResponseMessage response = await client.GetAsync(a.img);
-
-                        if (response.IsSuccessStatusCode)
+                        if (!string.IsNullOrEmpty(a.img))
                         {
-                            string suggestedFileName = Path.GetFileName(a.img);
-                            Stream contentStream = await response.Content.ReadAsStreamAsync();
-                            string grandparentDirectory = Directory.GetParent(Directory.GetParent(_environment.ContentRootPath).FullName).FullName;
-                            var uploadDirectory = Path.Combine(grandparentDirectory, "uploads"); // 修改为你选择的目录
-                            var filePath = Path.Combine(uploadDirectory, suggestedFileName);
+                            HttpResponseMessage response = await client.GetAsync(a.img);
 
-                            byte[] fileBytes;
-                            using (var memoryStream = new MemoryStream())
+                            if (response.IsSuccessStatusCode)
                             {
-                                contentStream.CopyTo(memoryStream);
-                                fileBytes = memoryStream.ToArray();
-                            }
+                                string suggestedFileName = Path.GetFileName(a.img);
+                                Stream contentStream = await response.Content.ReadAsStreamAsync();
+                                string grandparentDirectory = Directory.GetParent(Directory.GetParent(_environment.ContentRootPath).FullName).FullName;
+                                var uploadDirectory = Path.Combine(grandparentDirectory, "uploads"); // 修改为你选择的目录
+                                var filePath = Path.Combine(uploadDirectory, suggestedFileName);
 
-                            var formFile = new FormFile(new MemoryStream(fileBytes), 0, fileBytes.Length, "StreamFile", suggestedFileName)
-                            {
-                                Headers = new HeaderDictionary(),
-                                ContentType = "webp"
-                            };
-                            using (var stream = new FileStream(filePath, FileMode.Create))
-                            {
-                                await formFile.CopyToAsync(stream);
+                                byte[] fileBytes;
+                                using (var memoryStream = new MemoryStream())
+                                {
+                                    contentStream.CopyTo(memoryStream);
+                                    fileBytes = memoryStream.ToArray();
+                                }
+
+                                var formFile = new FormFile(new MemoryStream(fileBytes), 0, fileBytes.Length, "StreamFile", suggestedFileName)
+                                {
+                                    Headers = new HeaderDictionary(),
+                                    ContentType = "webp"
+                                };
+                                using (var stream = new FileStream(filePath, FileMode.Create))
+                                {
+                                    await formFile.CopyToAsync(stream);
+                                }
                             }
-                        }
-                        else
-                        {
-                            Console.WriteLine($"无法下载图片。HTTP 状态码：{response.StatusCode}");
+                            else
+                            {
+                                Console.WriteLine($"无法下载图片。HTTP 状态码：{response.StatusCode}");
+                            }
                         }
                     }
                     catch (Exception ex)
