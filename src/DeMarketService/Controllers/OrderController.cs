@@ -75,7 +75,7 @@ namespace deMarketService.Controllers
                                 string suggestedFileName = Path.GetFileName(a.img);
                                 Stream contentStream = await response.Content.ReadAsStreamAsync();
                                 string grandparentDirectory = Directory.GetParent(Directory.GetParent(_environment.ContentRootPath).FullName).FullName;
-                                var uploadDirectory = Path.Combine(grandparentDirectory, "uploads"); // 修改为你选择的目录
+                                var uploadDirectory = Path.Combine(grandparentDirectory, "docs"); // 修改为你选择的目录
                                 var filePath = Path.Combine(uploadDirectory, suggestedFileName);
 
                                 byte[] fileBytes;

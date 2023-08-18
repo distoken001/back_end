@@ -33,14 +33,14 @@ namespace FileUploadExample.Controllers
             {
                 var fileName = string.Format("{0}_{1}_cp{2}", DateTime.Now.ToString("yyyyMMddhhmmss"), new Random().Next(10000), Path.GetExtension(file.FileName));
                 string grandparentDirectory = Directory.GetParent(Directory.GetParent(_environment.ContentRootPath).FullName).FullName;
-                var uploadDirectory = Path.Combine(grandparentDirectory, "uploads"); // 修改为你选择的目录
+                var uploadDirectory = Path.Combine(grandparentDirectory, "docs"); // 修改为你选择的目录
                 var filePath = Path.Combine(uploadDirectory, fileName);
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     await file.CopyToAsync(stream);
                 }
 
-                fileName = _configuration["ApiDomain"] + "/uploads/" + fileName;
+                fileName = _configuration["ApiDomain"] + "/docs/" + fileName;
                 return Json(new WebApiResult(1, "上传图片", fileName));
             }
             else

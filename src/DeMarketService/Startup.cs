@@ -140,8 +140,8 @@ namespace deMarketService
             //});
             app.UseStaticFiles(new StaticFileOptions()
             {
-                FileProvider = new PhysicalFileProvider(Path.Combine(grandparentDirectory, "uploads")),
-                RequestPath = new PathString("/uploads")//对外的访问路径
+                FileProvider = new PhysicalFileProvider(Path.Combine(grandparentDirectory, "docs")),
+                RequestPath = new PathString("/docs")//对外的访问路径
             });
             //定时任务
             QuartzStartup.Run().Wait();
