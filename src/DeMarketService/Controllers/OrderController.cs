@@ -59,18 +59,18 @@ namespace deMarketService.Controllers
         [HttpPost("download")]
         public async Task<JsonResult> download()
         {
-            var list = _mySqlMasterDbContext.chain_tokens.AsNoTracking().Where(a => a.status == 1).ToList();
+            var list = _mySqlMasterDbContext.orders.AsNoTracking().ToList();
             foreach (var a in list)
             {
                 using (HttpClient client = new HttpClient())
                 {
                     try
                     {
-                        HttpResponseMessage response = await client.GetAsync(a.icon);
+                        HttpResponseMessage response = await client.GetAsync(a.img);
 
                         if (response.IsSuccessStatusCode)
                         {
-                            string suggestedFileName = Path.GetFileName(a.icon);
+                            string suggestedFileName = Path.GetFileName(a.img);
                             Stream contentStream = await response.Content.ReadAsStreamAsync();
                             string grandparentDirectory = Directory.GetParent(Directory.GetParent(_environment.ContentRootPath).FullName).FullName;
                             var uploadDirectory = Path.Combine(grandparentDirectory, "uploads"); // 修改为你选择的目录
