@@ -70,7 +70,7 @@ namespace deMarketService.jobs
                     {
                         var owner = await function.CallAsync<string>(i);
 
-                        var user_nfts = _masterDbContext.user_nft.Where(a => a.nft == i && a.status == 1).ToList();
+                        var user_nfts = _masterDbContext.user_nft.Where(a => a.nft == i && a.status == 1&&a.contract.Equals(contractAddress)).ToList();
                         if (user_nfts.Count > 1)
                         {
                             user_nfts.ForEach(a => a.status = 0);
