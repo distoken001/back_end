@@ -23,6 +23,8 @@
 				<cron-expression>0 0 0 * * ?</cron-expression>
 			</cron>
 		</trigger>
+
+
 		<job>
 			<name>ReadNFTService</name>
 			<group>GroupBusinessService</group>
@@ -36,26 +38,6 @@
 				<name>TriggerReadNFTService</name>
 				<group>GroupTriggerBusinessService</group>
 				<job-name>ReadNFTService</job-name>
-				<job-group>GroupBusinessService</job-group>
-				<start-time>2019-03-13T15:15:00.0Z</start-time>
-				<!--每5分钟-->
-				<cron-expression>0 0/5 * * * ?</cron-expression>
-			</cron>
-		</trigger>
-
-		<job>
-			<name>TronReadNFTService</name>
-			<group>GroupBusinessService</group>
-			<description>TRON读NFT到库</description>
-			<job-type>deMarketService.jobs.TronReadNFTService, deMarketService</job-type>
-			<durable>true</durable>
-			<recover>false</recover>
-		</job>
-		<trigger>
-			<cron>
-				<name>TriggerTronReadNFTService</name>
-				<group>GroupTriggerBusinessService</group>
-				<job-name>TronReadNFTService</job-name>
 				<job-group>GroupBusinessService</job-group>
 				<start-time>2019-03-13T15:15:00.0Z</start-time>
 				<!--每5分钟-->
