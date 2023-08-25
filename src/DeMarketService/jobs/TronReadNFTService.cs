@@ -66,7 +66,7 @@ namespace deMarketService.jobs
 
                     // 定义查询函数的输入参数（如果有的话）
                     var function = contract.GetFunction("ownerOf");
-                    for (int i = 0; i < 100; i++)
+                    for (int i = 1; i < 4064; i++)
                     {
                         var owner = await function.CallAsync<string>(i);
 

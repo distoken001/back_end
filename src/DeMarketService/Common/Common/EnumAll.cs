@@ -184,6 +184,7 @@
     }
     public enum ChainEnum : int
     {
+        Tron = -1,
         Ethereum = 1,
         Arbitrum = 42161,
         Optimism = 10,
