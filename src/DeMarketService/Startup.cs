@@ -61,7 +61,7 @@ namespace deMarketService
             services.AddScoped<EmailProxy>();
             services.AddScoped<CustomerRebateService>();
             services.AddScoped<ReadNFTService>();
-            services.AddScoped<TronReadNFTService>();
+            //services.AddScoped<TronReadNFTService>();
             services
                 .AddHttpClient()
                 //.AddSingleton(Configuration)
