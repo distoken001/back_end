@@ -139,11 +139,11 @@ namespace deMarketService
             //    FileProvider = new PhysicalFileProvider(Path.Combine(grandparentDirectory, "uploads")),
             //    RequestPath = "/uploads"
             //});
-            //app.UseStaticFiles(new StaticFileOptions()
-            //{
-            //    FileProvider = new PhysicalFileProvider(Path.Combine(grandparentDirectory, "docs")),
-            //    RequestPath = new PathString("/docs")//对外的访问路径
-            //});
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(grandparentDirectory, "docs")),
+                RequestPath = new PathString("/docs")//对外的访问路径
+            });
             //定时任务
             QuartzStartup.Run().Wait();
             if (env.IsDevelopment())
