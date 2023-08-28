@@ -83,7 +83,7 @@ namespace deMarketService.Controllers
                 var viewList = AutoMapperHelper.MapDbEntityToDTO<orders_auction, OrderAuctionResponse>(list);
                 var sellers = viewList.Select(a => a.seller).ToList();
                 var users = _mySqlMasterDbContext.users.AsNoTracking().Where(a => sellers.Contains(a.address)).ToList();
-                var user_nfts = _mySqlMasterDbContext.user_nft.AsNoTracking().ToList();
+                var user_nfts = _mySqlMasterDbContext.user_nft.AsNoTracking();
                 foreach (var a in viewList)
                 {
                     var token = chainTokens.FirstOrDefault(c => c.chain_id == a.chain_id && c.token_address.Equals(a.token, StringComparison.OrdinalIgnoreCase));
@@ -147,7 +147,7 @@ namespace deMarketService.Controllers
             var viewList = AutoMapperHelper.MapDbEntityToDTO<orders_auction, OrderAuctionResponse>(list);
             var sellers = viewList.Select(a => a.seller).ToList();
             var users = _mySqlMasterDbContext.users.AsNoTracking().Where(a => sellers.Contains(a.address)).ToList();
-            var user_nfts = _mySqlMasterDbContext.user_nft.AsNoTracking().ToList();
+            var user_nfts = _mySqlMasterDbContext.user_nft.AsNoTracking();
             foreach (var a in viewList)
             {
                 var token = chainTokens.FirstOrDefault(c => c.chain_id == a.chain_id && c.token_address.Equals(a.token, StringComparison.OrdinalIgnoreCase));
@@ -255,7 +255,7 @@ namespace deMarketService.Controllers
                 var viewList = AutoMapperHelper.MapDbEntityToDTO<orders_auction, OrderAuctionResponse>(list);
                 var sellers = viewList.Select(a => a.seller).ToList();
                 var users = _mySqlMasterDbContext.users.AsNoTracking().Where(a => sellers.Contains(a.address)).ToList();
-                var user_nfts = _mySqlMasterDbContext.user_nft.AsNoTracking().Where(a => a.status == 1).ToList();
+                var user_nfts = _mySqlMasterDbContext.user_nft.AsNoTracking().Where(a => a.status == 1);
                 foreach (var a in viewList)
                 {
                     var token = chainTokens.FirstOrDefault(c => c.chain_id == a.chain_id && c.token_address.Equals(a.token, StringComparison.OrdinalIgnoreCase));
