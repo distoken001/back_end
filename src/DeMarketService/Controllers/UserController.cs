@@ -98,7 +98,14 @@ namespace deMarketService.Controllers
             var nfts = user_nfts.Select(a => a.nft).ToArray();
             if (nfts.Length > 0)
             {
-                users.avatar = "https://api-dev.demarket.io/docs/" + nfts[0] + ".png";
+                if (_configuration["Env"] == "dev")
+                {
+                    users.avatar = "https://api-dev.demarket.io/docs/" + nfts[0] + ".png";
+                }
+                else if (_configuration["Env"] == "prod")
+                {
+                    users.avatar = "https://api.demarket.io/docs/" + nfts[0] + ".png";
+                }
             }
             return new WebApiResult(1, "登录成功", new LoginResponse { token = token, avatar = users.avatar, nick_name = users.nick_name, email = users.email, is_first = is_first, nfts = nfts });
         }
