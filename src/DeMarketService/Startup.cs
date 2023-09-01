@@ -59,7 +59,7 @@ namespace deMarketService
             services.AddScoped<TokenFilter>();
             services.AddSingleton<ITxCosUploadeService, TxCosUploadeService>();
             services.AddScoped<EmailProxy>();
-            services.AddScoped<CustomerRebateService>();
+            //services.AddScoped<CustomerRebateService>();
             services.AddScoped<ReadNFTService>();
             //services.AddScoped<TronReadNFTService>();
             services
