@@ -93,7 +93,7 @@ namespace deMarketService.Controllers
                     var user = users.FirstOrDefault(c => c.address.Equals(a.seller, StringComparison.OrdinalIgnoreCase));
                     if (user != null)
                     {
-                        a.seller_nick = user.nick_name ?? "匿名用户";
+                        a.seller_nick = user.nick_name ?? "用户未设置昵称";
                         a.seller_email = user.email ?? "未预留邮箱";
                         a.seller_nfts = user_nfts.Where(un => un.address.Equals(user.address) && un.status == 1).Select(a => a.nft).ToArray();
                     }
@@ -157,7 +157,7 @@ namespace deMarketService.Controllers
                 var user = users.FirstOrDefault(c => c.address.Equals(a.seller, StringComparison.OrdinalIgnoreCase));
                 if (user != null)
                 {
-                    a.seller_nick = user.nick_name ?? "匿名用户";
+                    a.seller_nick = user.nick_name ?? "用户未设置昵称";
                     a.seller_email = user.email ?? "未预留邮箱";
                     a.seller_nfts = user_nfts.Where(un => un.address.Equals(user.address) && un.status == 1).Select(a => a.nft).ToArray();
                 }
