@@ -65,7 +65,7 @@ namespace deMarketService.Controllers
                     ls.Add(buyer.email);
                 }
 
-                string subject = "恋（链）上闲鱼通知";
+                string subject = "链上闲鱼通知";
                 string mailMessage = "";
                 if (status == OrderStatus.Initial)
                 {
