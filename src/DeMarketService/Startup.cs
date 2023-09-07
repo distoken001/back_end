@@ -48,10 +48,11 @@ namespace deMarketService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // 其他服务配置
+            // 设置请求大小限制
             services.Configure<FormOptions>(options =>
             {
-                options.MultipartBodyLengthLimit = 104857600; // 设置文件上传大小限制，单位是字节 (这里设置为100 MB)
+                options.MultipartBodyLengthLimit = 104857600; // 设置文件上传大小限制为100 MB，单位是字节
+                options.ValueLengthLimit = 104857600; // 设置请求总大小限制为100 MB，单位是字节
             });
             EncodingProvider provider = CodePagesEncodingProvider.Instance;
             Encoding.RegisterProvider(provider);
