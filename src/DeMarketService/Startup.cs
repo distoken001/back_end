@@ -48,12 +48,15 @@ namespace deMarketService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // 设置请求大小限制
-            services.Configure<FormOptions>(options =>
+
+            //解决文件上传Multipart body length limit 134217728 exceeded
+            services.Configure<FormOptions>(x =>
             {
-                options.MultipartBodyLengthLimit = 104857600; // 设置文件上传大小限制为100 MB，单位是字节
-                options.ValueLengthLimit = 104857600; // 设置请求总大小限制为100 MB，单位是字节
+                x.ValueLengthLimit = int.MaxValue;
+                x.MultipartBodyLengthLimit = int.MaxValue;
+                x.MemoryBufferThreshold = int.MaxValue;
             });
+
             EncodingProvider provider = CodePagesEncodingProvider.Instance;
             Encoding.RegisterProvider(provider);
             //var deMarketConn = "Server=97.74.86.12;Database=ebay;Uid=dev;Pwd=Dev@1234;sslMode=None;";//Configuration[StringConstant.DatabaseConnectionString];
