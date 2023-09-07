@@ -31,7 +31,7 @@ namespace FileUploadExample.Controllers
             var file = formCollection.Files[0];
             if (file.Length > 0)
             {
-                var fileName = string.Format("{0}{2}", Guid.NewGuid().ToString(), Path.GetExtension(file.FileName));
+                var fileName = string.Format("{0}_{1}_cp{2}", DateTime.Now.ToString("yyyyMMddhhmmss"), new Random().Next(10000), Path.GetExtension(file.FileName));
                 string grandparentDirectory = Directory.GetParent(Directory.GetParent(_environment.ContentRootPath).FullName).FullName;
                 var uploadDirectory = Path.Combine(grandparentDirectory, "docs"); // 修改为你选择的目录
                 var filePath = Path.Combine(uploadDirectory, fileName);
