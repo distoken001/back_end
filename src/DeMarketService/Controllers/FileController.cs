@@ -22,6 +22,7 @@ namespace FileUploadExample.Controllers
         }
 
         [HttpPost("upload")]
+        [RequestSizeLimit(200_000_000)]
         public async Task<IActionResult> UploadFile([FromForm] IFormCollection formCollection)
         {
             if ((formCollection == null || formCollection.Files.Count == 0))
