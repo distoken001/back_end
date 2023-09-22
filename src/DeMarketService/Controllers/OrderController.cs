@@ -192,8 +192,8 @@ namespace deMarketService.Controllers
                 var user = users.FirstOrDefault(c => c.address.Equals(a.seller, StringComparison.OrdinalIgnoreCase));
                 if (user != null)
                 {
-                    a.seller_nick = user.nick_name ?? "用户未设置昵称";
-                    a.seller_email = user.email ?? "未预留邮箱";
+                    a.seller_nick = user.nick_name ?? "";
+                    a.seller_email = user.email ?? "";
                     a.seller_nfts = user_nfts.Where(un => un.address.Equals(user.address)).Select(a => a.nft).ToArray();
                 }
                 a.like_count = _mySqlMasterDbContext.ebay_user_like.AsNoTracking().Where(au => au.order_id == a.id && au.status == 1).Count() + new Random().Next(1, 15);
@@ -250,8 +250,8 @@ namespace deMarketService.Controllers
                 var user = users.FirstOrDefault(c => c.address.Equals(a.seller, StringComparison.OrdinalIgnoreCase));
                 if (user != null)
                 {
-                    a.seller_nick = user.nick_name ?? "用户未设置昵称";
-                    a.seller_email = user.email ?? "未预留邮箱";
+                    a.seller_nick = user.nick_name ?? "";
+                    a.seller_email = user.email ?? "";
                     a.seller_nfts = user_nfts.Where(un => un.address.Equals(user.address)).Select(a => a.nft).ToArray();
                 }
                 a.like_count = _mySqlMasterDbContext.ebay_user_like.AsNoTracking().Where(au => au.order_id == a.id && au.status == 1).Count() + random.Next(1, 15);
