@@ -127,7 +127,7 @@ namespace deMarketService.Controllers
 
                             // 准备要发送的数据
                             var content = new StringContent($"chat_id={username}&text={mailMessage}", Encoding.UTF8, "application/x-www-form-urlencoded");
-                            Console.WriteLine("发送BOT消息:", apiUrl, content);
+                            Console.WriteLine("发送BOT消息:apiurl:{0},content:{1}", apiUrl, content);
                             // 发送POST请求
                             HttpResponseMessage response = await client.PostAsync(apiUrl, content);
                         }
