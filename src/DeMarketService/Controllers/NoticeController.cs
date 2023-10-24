@@ -49,9 +49,83 @@ namespace deMarketService.Controllers
             _mailKitEmail = mailKitEmail;
             _configuration = configuration;
         }
-
         [HttpPost("sendemail")]
         public async Task<JsonResult> SendEmail([FromBody] SendEmailRequest request)
+        {
+
+            try
+            {
+                List<string> ls = new List<string>();
+                var order = await _mySqlMasterDbContext.orders.FirstOrDefaultAsync(p => p.order_id == request.order_id && p.chain_id == request.chain_id && p.contract == request.contract);
+                OrderStatus status = order.status;
+                var seller = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(u => u.address == order.seller);
+                var buyer = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(u => u.address == order.buyer);
+                if (!string.IsNullOrEmpty(seller?.email))
+                {
+                    ls.Add(seller.email);
+                }
+                if (!string.IsNullOrEmpty(buyer?.email))
+                {
+                    ls.Add(buyer.email);
+                }
+
+                string subject = "DeMarket通知";
+                string mailMessage = "";
+                if (status == OrderStatus.Initial)
+                {
+                    if (ls.Count == 2)
+                    {
+                        mailMessage = $"指定交易商品({order.name})在{order.chain_id.ToString()}网络已成功上架，特此通知！";
+                    }
+                    else if (ls.Contains(seller.email))
+                    {
+                        mailMessage = $"您在{order.chain_id.ToString()}网络发布的商品({order.name})已成功上架，如果您的商品有新动态，我们将邮件通知您！";
+                    }
+                    else if (ls.Contains(buyer.email))
+                    {
+                        mailMessage = $"一位商家在{order.chain_id.ToString()}网络发布的商品({order.name})指定您为唯一购买人！";
+                    }
+                }
+                else if (status == OrderStatus.SellerCancelWithoutDuty)
+                {
+                    if (ls.Count == 2)
+                    {
+                        mailMessage = $"指定交易商品({order.name})在{order.chain_id.ToString()}网络已取消，特此通知！";
+                    }
+                    else if (ls.Contains(seller.email))
+                    {
+                        mailMessage = $"您在{order.chain_id.ToString()}网络发布的商品({order.name})已取消，特此通知！";
+                    }
+                    else if (ls.Contains(buyer.email))
+                    {
+                        mailMessage = $"商家在{order.chain_id.ToString()}网络发布的商品({order.name})已取消，该商品曾指定您为唯一购买人。";
+                    }
+
+
+                }
+                else if (status == OrderStatus.Completed)
+                {
+                    mailMessage = $"您在{order.chain_id.ToString()}网络的商品({order.name})交易已完成，特此通知！";
+                }
+                else if (status == OrderStatus.ConsultCancelCompleted)
+                {
+                    mailMessage = $"您在{order.chain_id.ToString()}网络的商品({order.name})已经与对方协商取消交易，特此通知！";
+                }
+                else
+                {
+                    mailMessage = $"您在{order.chain_id.ToString()}网络的商品（{order.name}）有新动态，请注意查看！<br/><br/><br/>---此邮件收件人为买卖双方预留的邮箱联系方式<br/><br/><br/>---您也可以在商品详情页查看对方的其他联系方式！";
+                }
+                var a = _mailKitEmail.SendMailAsync(subject, mailMessage, ls).Result;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception caught in SendEmail(): {0}", ex.ToString());
+                return Json(new WebApiResult(1, "发送失败"));
+            }
+            return Json(new WebApiResult(1, "发送成功"));
+        }
+        [HttpPost("sendBot")]
+        public async Task<JsonResult> sendBot([FromBody] SendEmailRequest request)
         {
 
             try
@@ -141,7 +215,7 @@ namespace deMarketService.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Exception caught in SendEmail(): {0}", ex.ToString());
+                Console.WriteLine("Exception caught in sendBot(): {0}", ex.ToString());
                 return Json(new WebApiResult(1, "发送失败"));
             }
             return Json(new WebApiResult(1, "发送成功"));
