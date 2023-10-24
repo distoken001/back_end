@@ -26,6 +26,10 @@ using Newtonsoft.Json;
 using deMarketService.Proxies;
 using System.Collections.Generic;
 using Org.BouncyCastle.Ocsp;
+using System.Net.Http;
+using System.Text;
+using TencentCloud.Ame.V20190916.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace deMarketService.Controllers
 {
@@ -37,12 +41,13 @@ namespace deMarketService.Controllers
         MySqlMasterDbContext _mySqlMasterDbContext;
         private readonly ITxCosUploadeService txCosUploadeService;
         private readonly EmailProxy _mailKitEmail;
-
-        public NoticeController(MySqlMasterDbContext mySqlMasterDbContext, ITxCosUploadeService txCosUploadeService, EmailProxy mailKitEmail)
+        private readonly IConfiguration _configuration;
+        public NoticeController(MySqlMasterDbContext mySqlMasterDbContext, ITxCosUploadeService txCosUploadeService, EmailProxy mailKitEmail, IConfiguration configuration)
         {
             _mySqlMasterDbContext = mySqlMasterDbContext;
             this.txCosUploadeService = txCosUploadeService;
             _mailKitEmail = mailKitEmail;
+            _configuration = configuration;
         }
 
         [HttpPost("sendemail")]
@@ -56,13 +61,13 @@ namespace deMarketService.Controllers
                 OrderStatus status = order.status;
                 var seller = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(u => u.address == order.seller);
                 var buyer = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(u => u.address == order.buyer);
-                if (!string.IsNullOrEmpty(seller?.email))
+                if (!string.IsNullOrEmpty(seller?.nick_name))
                 {
-                    ls.Add(seller.email);
+                    ls.Add(seller.nick_name);
                 }
-                if (!string.IsNullOrEmpty(buyer?.email))
+                if (!string.IsNullOrEmpty(buyer?.nick_name))
                 {
-                    ls.Add(buyer.email);
+                    ls.Add(buyer.nick_name);
                 }
 
                 string subject = "链上闲鱼通知";
@@ -79,7 +84,7 @@ namespace deMarketService.Controllers
                     }
                     else if (ls.Contains(buyer.email))
                     {
-                        mailMessage = $"一位商家在{order.chain_id.ToString()}网络发布的商品({order.name})指定您为唯一购买人！";
+                        mailMessage = $"一位卖家在{order.chain_id.ToString()}网络发布的商品({order.name})指定您为唯一购买人！";
                     }
                 }
                 else if (status == OrderStatus.SellerCancelWithoutDuty)
@@ -94,7 +99,7 @@ namespace deMarketService.Controllers
                     }
                     else if (ls.Contains(buyer.email))
                     {
-                        mailMessage = $"商家在{order.chain_id.ToString()}网络发布的商品({order.name})已取消，该商品曾指定您为唯一购买人。";
+                        mailMessage = $"卖家在{order.chain_id.ToString()}网络发布的商品({order.name})已取消，该商品曾指定您为唯一购买人。";
                     }
 
                    
@@ -111,7 +116,28 @@ namespace deMarketService.Controllers
                 {
                     mailMessage = $"您在{order.chain_id.ToString()}网络的商品（{order.name}）有新动态，请注意查看！<br/><br/><br/>---此邮件收件人为买卖双方预留的邮箱联系方式<br/><br/><br/>---您也可以在商品详情页查看对方的其他联系方式！";
                 }
-                var a = _mailKitEmail.SendMailAsync(subject, mailMessage, ls).Result;
+                //var a = _mailKitEmail.SendMailAsync(subject, mailMessage, ls).Result;
+                foreach (var username in ls)
+                {
+                    using (HttpClient client = new HttpClient())
+                    {
+                        try
+                        {
+                            string apiUrl = $"https://api.telegram.org/bot{_configuration["BotToken"]}//sendMessage";
+
+                            // 准备要发送的数据
+                            var content = new StringContent($"chat_id={username}&text={mailMessage}", Encoding.UTF8, "application/x-www-form-urlencoded");
+
+                            // 发送POST请求
+                            HttpResponseMessage response = await client.PostAsync(apiUrl, content);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Error: {ex.Message}");
+                        }
+                    }
+                }
+
             }
             catch (Exception ex)
             {
