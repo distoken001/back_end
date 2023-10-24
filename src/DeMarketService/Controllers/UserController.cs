@@ -222,24 +222,16 @@ namespace deMarketService.Controllers
         [HttpPost("edit/usernick")]
         public async Task<WebApiResult> EditUserNick([FromBody] EditUserNickRequest command)
         {
-            if (command.NickName.Contains("DeMarket", StringComparison.OrdinalIgnoreCase) || command.NickName.Contains("德玛", StringComparison.OrdinalIgnoreCase) || command.NickName.Contains("黑名单", StringComparison.OrdinalIgnoreCase))
+            if (command.NickName.Contains("DeMarket", StringComparison.OrdinalIgnoreCase) || command.NickName.Contains("德玛", StringComparison.OrdinalIgnoreCase) )
             {
                 return new WebApiResult(-1, "不能包含官方敏感词汇");
             }
             var length = command.NickName.Length;
             if (length > 15)
             {
-                return new WebApiResult(-1, "您输入的昵称过长");
+                return new WebApiResult(-1, "您输入的Telegram用户名过长");
             }
             command.NickName = string.IsNullOrEmpty(command.NickName) ? null : command.NickName;
-            if (command.NickName != null)
-            {
-                var userNick = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.nick_name.Equals(command.NickName, StringComparison.OrdinalIgnoreCase));
-                if (userNick != null)
-                {
-                    return new WebApiResult(-1, "该昵称已经被占用");
-                }
-            }
             var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(CurrentLoginAddress, StringComparison.OrdinalIgnoreCase));
             if (user == null)
             {
@@ -253,7 +245,7 @@ namespace deMarketService.Controllers
             {
                 user.nick_name = command.NickName;
                 await _mySqlMasterDbContext.SaveChangesAsync();
-                return new WebApiResult(1, "修改昵称成功");
+                return new WebApiResult(1, "修改成功");
             }
         }
         /// <summary>
