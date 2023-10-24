@@ -70,7 +70,7 @@ namespace deMarketService.Controllers
                     ls.Add(buyer.nick_name);
                 }
 
-                string subject = "链上闲鱼通知";
+                //string subject = "链上闲鱼通知";
                 string mailMessage = "";
                 if (status == OrderStatus.Initial)
                 {
@@ -78,11 +78,11 @@ namespace deMarketService.Controllers
                     {
                         mailMessage = $"指定交易商品({order.name})在{order.chain_id.ToString()}网络已成功上架，特此通知！";
                     }
-                    else if (ls.Contains(seller.email))
+                    else if (ls.Contains(seller.nick_name))
                     {
                         mailMessage = $"您在{order.chain_id.ToString()}网络发布的商品({order.name})已成功上架，如果您的商品有新动态，我们将邮件通知您！";
                     }
-                    else if (ls.Contains(buyer.email))
+                    else if (ls.Contains(buyer.nick_name))
                     {
                         mailMessage = $"一位卖家在{order.chain_id.ToString()}网络发布的商品({order.name})指定您为唯一购买人！";
                     }
@@ -93,11 +93,11 @@ namespace deMarketService.Controllers
                     {
                         mailMessage = $"指定交易商品({order.name})在{order.chain_id.ToString()}网络已取消，特此通知！";
                     }
-                    else if (ls.Contains(seller.email))
+                    else if (ls.Contains(seller.nick_name))
                     {
                         mailMessage = $"您在{order.chain_id.ToString()}网络发布的商品({order.name})已取消，特此通知！";
                     }
-                    else if (ls.Contains(buyer.email))
+                    else if (ls.Contains(buyer.nick_name))
                     {
                         mailMessage = $"卖家在{order.chain_id.ToString()}网络发布的商品({order.name})已取消，该商品曾指定您为唯一购买人。";
                     }
