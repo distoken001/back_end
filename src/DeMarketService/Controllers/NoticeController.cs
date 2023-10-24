@@ -123,11 +123,11 @@ namespace deMarketService.Controllers
                     {
                         try
                         {
-                            string apiUrl = $"https://api.telegram.org/bot{_configuration["BotToken"]}//sendMessage";
+                            string apiUrl = $"https://api.telegram.org/bot{_configuration["BotToken"]}/sendMessage";
 
                             // 准备要发送的数据
                             var content = new StringContent($"chat_id={username}&text={mailMessage}", Encoding.UTF8, "application/x-www-form-urlencoded");
-
+                            Console.WriteLine("发送BOT消息:", apiUrl, content);
                             // 发送POST请求
                             HttpResponseMessage response = await client.PostAsync(apiUrl, content);
                         }
