@@ -30,6 +30,7 @@ using System.Net.Http;
 using System.Text;
 using TencentCloud.Ame.V20190916.Models;
 using Microsoft.Extensions.Configuration;
+using Telegram.Bot;
 
 namespace deMarketService.Controllers
 {
@@ -135,13 +136,13 @@ namespace deMarketService.Controllers
                 OrderStatus status = order.status;
                 var seller = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(u => u.address == order.seller);
                 var buyer = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(u => u.address == order.buyer);
-                if (!string.IsNullOrEmpty(seller?.nick_name))
+                if (!string.IsNullOrEmpty(seller?.telegram_id))
                 {
-                    ls.Add(seller.nick_name);
+                    ls.Add(seller.telegram_id);
                 }
-                if (!string.IsNullOrEmpty(buyer?.nick_name))
+                if (!string.IsNullOrEmpty(buyer?.telegram_id))
                 {
-                    ls.Add(buyer.nick_name);
+                    ls.Add(buyer.telegram_id);
                 }
 
                 //string subject = "链上闲鱼通知";
@@ -152,11 +153,11 @@ namespace deMarketService.Controllers
                     {
                         mailMessage = $"指定交易商品({order.name})在{order.chain_id.ToString()}网络已成功上架，特此通知！";
                     }
-                    else if (ls.Contains(seller.nick_name))
+                    else if (ls.Contains(seller.telegram_id))
                     {
                         mailMessage = $"您在{order.chain_id.ToString()}网络发布的商品({order.name})已成功上架，如果您的商品有新动态，我们将邮件通知您！";
                     }
-                    else if (ls.Contains(buyer.nick_name))
+                    else if (ls.Contains(buyer.telegram_id))
                     {
                         mailMessage = $"一位卖家在{order.chain_id.ToString()}网络发布的商品({order.name})指定您为唯一购买人！";
                     }
@@ -167,11 +168,11 @@ namespace deMarketService.Controllers
                     {
                         mailMessage = $"指定交易商品({order.name})在{order.chain_id.ToString()}网络已取消，特此通知！";
                     }
-                    else if (ls.Contains(seller.nick_name))
+                    else if (ls.Contains(seller.telegram_id))
                     {
                         mailMessage = $"您在{order.chain_id.ToString()}网络发布的商品({order.name})已取消，特此通知！";
                     }
-                    else if (ls.Contains(buyer.nick_name))
+                    else if (ls.Contains(buyer.telegram_id))
                     {
                         mailMessage = $"卖家在{order.chain_id.ToString()}网络发布的商品({order.name})已取消，该商品曾指定您为唯一购买人。";
                     }
@@ -191,25 +192,15 @@ namespace deMarketService.Controllers
                     mailMessage = $"您在{order.chain_id.ToString()}网络的商品（{order.name}）有新动态，请注意查看！<br/><br/><br/>---此邮件收件人为买卖双方预留的邮箱联系方式<br/><br/><br/>---您也可以在商品详情页查看对方的其他联系方式！";
                 }
                 //var a = _mailKitEmail.SendMailAsync(subject, mailMessage, ls).Result;
-                foreach (var username in ls)
+                foreach (var telegram_id in ls)
                 {
-                    using (HttpClient client = new HttpClient())
-                    {
-                        try
-                        {
-                            string apiUrl = $"https://api.telegram.org/bot{_configuration["BotToken"]}/sendMessage";
+                    var botClient = new TelegramBotClient(_configuration["BotToken"]);
 
-                            // 准备要发送的数据
-                            var content = new StringContent($"chat_id={username}&text={mailMessage}", Encoding.UTF8, "application/x-www-form-urlencoded");
-                            Console.WriteLine("发送BOT消息:apiurl:{0},content:{1}", apiUrl, content);
-                            // 发送POST请求
-                            HttpResponseMessage response = await client.PostAsync(apiUrl, content);
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine($"Error: {ex.Message}");
-                        }
-                    }
+                    var chatId = telegram_id; // 替换为您要发送消息的聊天ID
+
+                  var message=  await botClient.SendTextMessageAsync(chatId, mailMessage);
+                  Console.WriteLine("message", message);
+
                 }
 
             }
