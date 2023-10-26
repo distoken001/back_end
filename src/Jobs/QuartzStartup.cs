@@ -18,6 +18,7 @@ namespace Jobs
         {
             try
             {
+
                 var properties = new NameValueCollection
                 {
                     ["quartz.plugin.triggHistory.type"] = "Quartz.Plugin.History.LoggingJobHistoryPlugin, Quartz.Plugins",
