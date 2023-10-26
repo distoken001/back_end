@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 
-namespace deMarketService.Common.Common
+namespace deMarketService
 {
     public static class AppMap
     {
