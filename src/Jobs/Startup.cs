@@ -45,8 +45,9 @@ namespace Jobs
             services.AddControllers();
             services.AddDirectoryBrowser();
             services.AddSingleton<IConfiguration>(Configuration);
-            //services.AddScoped<CustomerRebateService>();
+           
             services.AddScoped<ReadNFTService>();
+            //services.AddScoped<CustomerRebateService>();
             //services.AddScoped<TronReadNFTService>();
             services
                 .AddHttpClient()
