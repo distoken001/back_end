@@ -39,9 +39,6 @@
     <Content Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Update="DeMarketAvatarNFT.json">
-      <CustomToolNamespace>deMarketService</CustomToolNamespace>
-    </Content>
   </ItemGroup>
 
   <ItemGroup>

@@ -19,7 +19,6 @@ using Com.Ctrip.Framework.Apollo;
 using deMarketService.Services.Interfaces;
 using deMarketService.Services;
 using AutoMapper;
-using deMarketService.jobs;
 using CommonLibrary.Common.Common;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
@@ -71,7 +70,7 @@ namespace deMarketService
             services.AddSingleton<ITxCosUploadeService, TxCosUploadeService>();
             services.AddScoped<EmailProxy>();
             //services.AddScoped<CustomerRebateService>();
-            services.AddScoped<ReadNFTService>();
+            //services.AddScoped<ReadNFTService>();
             //services.AddScoped<TronReadNFTService>();
             services
                 .AddHttpClient()
@@ -155,8 +154,7 @@ namespace deMarketService
                 FileProvider = new PhysicalFileProvider(Path.Combine(grandparentDirectory, "docs")),
                 RequestPath = new PathString("/docs")//对外的访问路径
             });
-            //定时任务
-            QuartzStartup.Run().Wait();
+           
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -188,9 +186,6 @@ namespace deMarketService
             //app.RegisterConsul(lifetime, Configuration, Configuration[StringConstant.DeMarketServiceConsulServiceName]);
             app.UseHttpsRedirection();
             //app.UseMvc();
-            app.Map("/trigger/manage", AppMap.ManageQuartz);
-            app.Map("/trigger/state", AppMap.GetQuartzState);
-            app.Map("/job/running", AppMap.Runningjobs);
         }
     }
 }

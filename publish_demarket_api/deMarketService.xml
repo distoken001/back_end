@@ -768,65 +768,6 @@
             <param name="toMailAddressList"></param>
             <returns></returns>
         </member>
-        <member name="M:deMarketService.jobs.BaseJob.GetService``1">
-            <summary>
-            获取实体
-            </summary>
-            <typeparam name="T"></typeparam>
-            <returns></returns>
-        </member>
-        <member name="T:deMarketService.jobs.CustomerRebateService">
-            <summary>
-            每日凌晨产生前一天的邀请人返佣明细
-            </summary>
-        </member>
-        <member name="T:deMarketService.jobs.ReadNFTService">
-            <summary>
-            读取NFT
-            </summary>
-        </member>
-        <member name="T:deMarketService.jobs.TronReadNFTService">
-            <summary>
-            读取NFT
-            </summary>
-        </member>
-        <member name="M:deMarketService.QuartzStartup.PauseOrResumeSchedulerAsync(System.String)">
-            <summary>
-            暂停或者恢复调度器
-            </summary>
-            <param name="scheduler"></param>
-        </member>
-        <member name="M:deMarketService.QuartzStartup.GetTriggerState">
-            <summary>
-            获取trigger状态
-            </summary>
-            <param name="scheduler"></param>
-        </member>
-        <member name="M:deMarketService.QuartzStartup.GetCurrentlyExecutingJobsAsync">
-            <summary>
-            获取正在执行的job
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:deMarketService.QuartzStartup.TranslateTriggerState(Quartz.TriggerState)">
-            <summary>
-            翻译trigger状态
-            </summary>
-            <param name="triggerState"></param>
-            <returns></returns>
-        </member>
-        <member name="M:deMarketService.QuartzStartup.GetBuiltyCurrentlyExecutingJobsAsync">
-            <summary>
-            获取html 正在运行job
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:deMarketService.QuartzStartup.GetBuiltyTriggerStateAsync">
-            <summary>
-            获取html trigger状态
-            </summary>
-            <returns></returns>
-        </member>
         <member name="M:deMarketService.Services.HttpRetryExtension.HttpErrorRetryAsyncPolicy``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Int32,System.Func{System.Exception,System.Boolean}[],System.Func{System.Net.Http.HttpResponseMessage,System.Boolean}[])">
             <summary>
             添加可重试的异步HttpClient
