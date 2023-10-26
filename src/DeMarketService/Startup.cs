@@ -1,4 +1,4 @@
-﻿using deMarketService.DbContext;
+﻿using CommonLibrary.DbContext;
 using deMarketServiceApis.Filters;
 using deMarketService.Common;
 using deMarketService.Model;
@@ -20,7 +20,7 @@ using deMarketService.Services.Interfaces;
 using deMarketService.Services;
 using AutoMapper;
 using deMarketService.jobs;
-using deMarketService.Common.Common;
+using CommonLibrary.Common.Common;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
 using Microsoft.AspNetCore.Http;

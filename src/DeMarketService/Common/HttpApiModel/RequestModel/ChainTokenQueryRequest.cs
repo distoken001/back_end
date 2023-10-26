@@ -1,4 +1,6 @@
-﻿namespace deMarketService.Common.Model.HttpApiModel.RequestModel
+﻿using CommonLibrary.Common.Model;
+
+namespace deMarketService.Common.Model.HttpApiModel.RequestModel
 {
     public class ChainTokenQueryRequest
     {

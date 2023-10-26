@@ -7,7 +7,7 @@ using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Signer;
 using Nethereum.Util;
 
-namespace deMarketService.Common.Common
+namespace CommonLibrary.Common.Common
 {
 
     public class EthereumSignatureVerifier

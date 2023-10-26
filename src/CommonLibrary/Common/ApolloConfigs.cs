@@ -1,7 +1,7 @@
-﻿using deMarketService.Model;
+﻿using CommonLibrary.Model;
 using Microsoft.Extensions.Configuration;
 
-namespace deMarketService.Common
+namespace CommonLibrary.Common 
 {
     public class ApolloConfigs
     {

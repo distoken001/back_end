@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using System.Collections.Generic;
 
-namespace deMarketService.Common.Common
+namespace CommonLibrary.Common.Common
 {
     public class AutoMapperHelper
     {

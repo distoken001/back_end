@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace deMarketService.Common.Model.DataEntityModel
+namespace CommonLibrary.Common.Model.DataEntityModel
 {
     [Table("event_logs")]
     public class event_logs

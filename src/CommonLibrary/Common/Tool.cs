@@ -1,7 +1,7 @@
 ﻿using System;
-using deMarketService.Common.Model;
+using CommonLibrary.Common.Model;
 
-namespace deMarketService.Common.Common
+namespace CommonLibrary.Common.Common
 {
     public static class Tool
     {

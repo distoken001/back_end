@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CommonLibrary.Common.Model;
 
 namespace deMarketService.Common.Model.HttpApiModel.RequestModel
 {
-    public class GetOrderListRequest
+    public class OrderAuctionRequest
     {
         public int pageSize { get; set; } = 10;
         public int pageIndex { get; set; } = 1;
@@ -21,6 +22,10 @@ namespace deMarketService.Common.Model.HttpApiModel.RequestModel
         ///// 链id
         ///// </summary>
         public ChainEnum chain_id { get; set; }
+        /// <summary>
+        /// 状态 0全部  1即将开始 2进行中 3已结束
+        /// </summary>
+        public OrderAuctionStatusActual status { get; set; }
 
     }
 }

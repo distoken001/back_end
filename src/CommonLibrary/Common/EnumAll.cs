@@ -1,4 +1,4 @@
-﻿namespace deMarketService.Common.Model
+﻿namespace CommonLibrary.Common.Model
 {
     /// <summary>
     /// 用户四要素验证类型

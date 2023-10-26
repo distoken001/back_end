@@ -1,7 +1,7 @@
 ﻿using deMarketService.Common.Model;
-using deMarketService.Common.Model.DataEntityModel;
+using CommonLibrary.Common.Model.DataEntityModel;
 using deMarketService.Common.Model.HttpApiModel.ResponseModel;
-using deMarketService.DbContext;
+using CommonLibrary.DbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using CommonLibrary.Common.Model;
 
 namespace deMarketService.jobs
 {

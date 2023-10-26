@@ -2,14 +2,14 @@
 using deMarketService.Common.Model.HttpApiModel.ResponseModel;
 using System.IO;
 using System.Threading.Tasks;
-using deMarketService.DbContext;
+using CommonLibrary.DbContext;
 using deMarketService.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using deMarketService.Common.Model.HttpApiModel.RequestModel;
 using System.Net;
-using deMarketService.Common.Common;
-using deMarketService.Common.Model.DataEntityModel;
+using CommonLibrary.Common.Common;
+using CommonLibrary.Common.Model.DataEntityModel;
 using Microsoft.EntityFrameworkCore;
 using deMarketService.Common.Model;
 using Google.Apis.Auth.OAuth2;
@@ -31,6 +31,7 @@ using System.Text;
 using TencentCloud.Ame.V20190916.Models;
 using Microsoft.Extensions.Configuration;
 using Telegram.Bot;
+using CommonLibrary.Common.Model;
 
 namespace deMarketService.Controllers
 {

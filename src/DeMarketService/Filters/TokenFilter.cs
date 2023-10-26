@@ -1,4 +1,5 @@
-﻿using deMarketService.Common.Model.DataEntityModel;
+﻿using CommonLibrary.Model;
+using CommonLibrary.Common.Model.DataEntityModel;
 using deMarketService.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;

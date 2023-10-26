@@ -1,5 +1,6 @@
-﻿using deMarketService.Common.Model.DataEntityModel;
-using deMarketService.DbContext;
+﻿using CommonLibrary.Common.Model;
+using CommonLibrary.Common.Model.DataEntityModel;
+using CommonLibrary.DbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Quartz;
@@ -53,7 +54,7 @@ namespace deMarketService.jobs
                         var beinAddresses = beinQueries.Select(p => p.address).ToList();
 
                         //查出昨日被邀请人为买家所有交易完成的订单
-                        var ordersEntities = _masterDbContext.orders.AsNoTracking().Where(p => p.status == Common.Model.OrderStatus.Completed && p.create_time >= yesStartDate && p.create_time < yesEndDate && beinAddresses.Contains(p.buyer));
+                        var ordersEntities = _masterDbContext.orders.AsNoTracking().Where(p => p.status == OrderStatus.Completed && p.create_time >= yesStartDate && p.create_time < yesEndDate && beinAddresses.Contains(p.buyer));
 
 
                         var irEntities = await (from order in ordersEntities
@@ -75,7 +76,7 @@ namespace deMarketService.jobs
                                                 }).ToListAsync();
 
                         //查出昨日被邀请人为卖家所有交易完成的订单
-                        var ordersSellerEntities = _masterDbContext.orders.AsNoTracking().Where(p => p.status == Common.Model.OrderStatus.Completed && p.create_time >= yesStartDate && p.create_time < yesEndDate && beinAddresses.Contains(p.seller));
+                        var ordersSellerEntities = _masterDbContext.orders.AsNoTracking().Where(p => p.status == OrderStatus.Completed && p.create_time >= yesStartDate && p.create_time < yesEndDate && beinAddresses.Contains(p.seller));
 
 
                         var irSellerEntities = await (from order in ordersSellerEntities

@@ -5,7 +5,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace deMarketService.Common.Common
+namespace CommonLibrary.Common.Common
 {
     public static class TokenHelper {
 

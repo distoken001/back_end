@@ -1,7 +1,7 @@
-using deMarketService.Common.Model.DataEntityModel;
+using CommonLibrary.Common.Model.DataEntityModel;
 using Microsoft.EntityFrameworkCore;
 
-namespace deMarketService.DbContext
+namespace CommonLibrary.DbContext
 {
     public class MySqlSlaveDbContext : Microsoft.EntityFrameworkCore.DbContext
     {

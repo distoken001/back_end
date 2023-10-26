@@ -1,9 +1,9 @@
-﻿using deMarketService.Common.Common;
+﻿using CommonLibrary.Common.Common;
 using deMarketService.Common.Model;
-using deMarketService.Common.Model.DataEntityModel;
+using CommonLibrary.Common.Model.DataEntityModel;
 using deMarketService.Common.Model.HttpApiModel.RequestModel;
 using deMarketService.Common.Model.HttpApiModel.ResponseModel;
-using deMarketService.DbContext;
+using CommonLibrary.DbContext;
 using deMarketService.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

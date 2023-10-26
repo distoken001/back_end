@@ -1,4 +1,4 @@
-﻿namespace deMarketService.Model
+﻿namespace CommonLibrary.Model
 {
     public static class StringConstant
     {

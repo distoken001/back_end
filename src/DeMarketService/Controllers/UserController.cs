@@ -1,9 +1,9 @@
-﻿using deMarketService.Common.Common;
+﻿using CommonLibrary.Common.Common;
 using deMarketService.Common.Model;
-using deMarketService.Common.Model.DataEntityModel;
+using CommonLibrary.Common.Model.DataEntityModel;
 using deMarketService.Common.Model.HttpApiModel.RequestModel;
 using deMarketService.Common.Model.HttpApiModel.ResponseModel;
-using deMarketService.DbContext;
+using CommonLibrary.DbContext;
 using deMarketService.Model;
 using deMarketService.Services;
 using deMarketService.Services.Interfaces;
@@ -25,6 +25,7 @@ using System.Security.Claims;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TencentCloud.Ckafka.V20190819.Models;
+using CommonLibrary.Model;
 
 namespace deMarketService.Controllers
 {
@@ -70,7 +71,7 @@ namespace deMarketService.Controllers
             if (users == null)
             {
                 is_first = true;
-                users = new Common.Model.DataEntityModel.users
+                users = new users
                 {
                     address = req.address,
                     status = 1,

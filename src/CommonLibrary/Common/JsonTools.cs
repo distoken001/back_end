@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 
-namespace deMarketService.Common.Common
+namespace CommonLibrary.Common.Common
 {
     /// <summary>
     /// JSON 序列化

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace deMarketService.Common.Model.DataEntityModel
+namespace CommonLibrary.Common.Model.DataEntityModel
 {
     public class chain_tokens
     {
