@@ -7,10 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System;
 using System.Linq;
-using deMarketService.Common.Model.HttpApiModel;
 using CommonLibrary.Common.Common;
 
-namespace deMarketService
+namespace Jobs
 {
     public class QuartzStartup
     {
@@ -23,7 +22,7 @@ namespace deMarketService
                 {
                     ["quartz.plugin.triggHistory.type"] = "Quartz.Plugin.History.LoggingJobHistoryPlugin, Quartz.Plugins",
                     ["quartz.plugin.jobInitializer.type"] = "Quartz.Plugin.Xml.XMLSchedulingDataProcessorPlugin, Quartz.Plugins",
-                    ["quartz.plugin.jobInitializer.fileNames"] = "deMarketService.xml",
+                    ["quartz.plugin.jobInitializer.fileNames"] = "Jobs.xml",
                     ["quartz.plugin.jobInitializer.failOnFileNotFound"] = "true",
                     ["quartz.plugin.jobInitializer.scanInterval"] = "120",
                     ["quartz.threadPool.type"] = "Quartz.Simpl.SimpleThreadPool, Quartz",

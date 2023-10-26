@@ -22,7 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Com.Ctrip.Framework.Apollo.Configuration" Version="2.10.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.16" />
     <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="3.1.17" />
     <PackageReference Include="Microsoft.Extensions.PlatformAbstractions" Version="1.1.0" />
@@ -50,9 +49,6 @@
     <None Remove="Common\" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="pm2.config.js">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
     <None Update="uploads\WechatIMG1149.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -1,6 +1,6 @@
 ﻿using Quartz;
 
-namespace deMarketService.Common.Model.HttpApiModel
+namespace CommonLibrary.Common.Common
 {
     public class JobState
     {
