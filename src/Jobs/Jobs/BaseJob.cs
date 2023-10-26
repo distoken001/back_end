@@ -3,7 +3,7 @@ using Quartz;
 using System;
 using System.Threading.Tasks;
 
-namespace Jobs.jobs
+namespace Jobs.Jobs
 {
     public abstract class BaseJob : IDisposable, IJob
     {

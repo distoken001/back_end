@@ -16,7 +16,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CommonLibrary.Common.Model;
 
-namespace Jobs.jobs
+namespace Jobs.Jobs
 {
     /// <summary>
     /// 读取NFT

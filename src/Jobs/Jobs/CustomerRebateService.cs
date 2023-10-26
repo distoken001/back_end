@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Jobs.jobs
+namespace Jobs.Jobs
 {
     /// <summary>
     /// 每日凌晨产生前一天的邀请人返佣明细
