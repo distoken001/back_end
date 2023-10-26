@@ -1,0 +1,879 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>deMarketService</name>
+    </assembly>
+    <members>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.RequestModel.CooperateRequest.contact">
+            <summary>
+            联系方式
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.RequestModel.CooperateRequest.name">
+            <summary>
+            姓名
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.RequestModel.EditUserRequest.Avatar">
+            <summary>
+            头像
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.RequestModel.EditUserNickRequest.NickName">
+            <summary>
+            昵称
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.RequestModel.EditUserEmaiRequest.Email">
+            <summary>
+            邮箱
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.RequestModel.GetCredentialRequest.bucketName">
+            <summary>
+            存储桶
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.RequestModel.GetOrderListRequest.name">
+            <summary>
+            商品名称
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.RequestModel.GetOrderListRequest.description">
+            <summary>
+            商品描述
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.RequestModel.GetStoreRequest.name">
+            <summary>
+            店铺名称
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.RequestModel.GetStoreRequest.address">
+            <summary>
+            店铺address（eth地址）
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.RequestModel.GetStoreRequest.type">
+            <summary>
+            1个人 2店铺 4社区
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.RequestModel.GetStoreRequest.pageSize">
+            <summary>
+            页大小
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.RequestModel.GetStoreRequest.pageIndex">
+            <summary>
+            第几页
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.RequestModel.LoginRequest.signature">
+            <summary>
+            签名
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.RequestModel.LoginRequest.parentAddress">
+            <summary>
+            邀请人
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.RequestModel.LoginRequest.address">
+            <summary>
+            地址
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.RequestModel.OrderAuctionRequest.name">
+            <summary>
+            商品名称
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.RequestModel.OrderAuctionRequest.description">
+            <summary>
+            商品描述
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.RequestModel.OrderAuctionRequest.status">
+            <summary>
+            状态 0全部  1即将开始 2进行中 3已结束
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.RequestModel.RefreshRequest.chain_id">
+            <summary>
+            链id
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.RequestModel.SendEmailRequest.order_id">
+            <summary>
+            订单id
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.RequestModel.SendEmailRequest.chain_id">
+            <summary>
+            链id
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.RequestModel.SendEmailRequest.contract">
+            <summary>
+            合约
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.EventLogsResponse.event_name">
+            事件名
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.EventLogsResponse.operater">
+            调用人
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.EventLogsResponse.order_id">
+            订单编号
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.EventLogsResponse.data">
+            发送数据
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.EventLogsResponse.status">
+            
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.EventLogsResponse.create_time">
+            创建时间
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.EventLogsResponse.update_time">
+            修改时间
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.EventLogsResponse.updater">
+            修改人
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.EventLogsResponse.creator">
+            创建人
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.EventLogsResponse.chain_id">
+             <summary>
+            链id
+             </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.EventLogsResponse.chain_name">
+            <summary>
+            链名称
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.EventLogsResponse.seller">
+            <summary>
+            卖方
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.EventLogsResponse.buyer">
+            <summary>
+            买方
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.EventLogsResponse.contract">
+            <summary>
+            合约
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.InviterRebatesItemReponse.date">
+            <summary>
+            生成日期
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.InviterRebatesItemReponse.order_id">
+            <summary>
+            订单id,非商品ID
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.InviterRebatesItemReponse.inviter_address">
+            <summary>
+            邀请人地址
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.InviterRebatesItemReponse.amount">
+            <summary>
+            佣金
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.InviterRebatesItemReponse.amount_str">
+            <summary>
+            佣金
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.InviterRebatesItemReponse.be_inviter_address">
+            <summary>
+            被邀请人
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.InviterRebatesItemReponse.token_name">
+            <summary>
+            交易的token名称
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.InviterRebatesItemReponse.is_rebate">
+            <summary>
+            是否已经返佣
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.InviterRebatesItemReponse.token_address">
+            <summary>
+            token地址
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.InviterRebatesItemReponse.chain_id">
+            <summary>
+            链ID
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.LoginResponse.token">
+            <summary>
+            token
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.LoginResponse.avatar">
+            <summary>
+            头像
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.LoginResponse.nick_name">
+            <summary>
+            昵称
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.LoginResponse.email">
+            <summary>
+            邮箱
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.LoginResponse.is_first">
+            <summary>
+            是否第一次登录
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.LoginResponse.nfts">
+            <summary>
+            持有的nft 
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderAuctionResponse.order_id">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderAuctionResponse.name">
+            <summary>
+            商品名字
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderAuctionResponse.description">
+            <summary>
+            商品描述
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderAuctionResponse.amount">
+            <summary>
+            商品数量
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderAuctionResponse.price">
+            <summary>
+            商品价格（包含decimals的，一般不用）
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderAuctionResponse.img">
+            <summary>
+            图片
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderAuctionResponse.seller_pledge">
+            <summary>
+            卖家质押（包含decimals的，一般不用）
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderAuctionResponse.buyer_pledge">
+            <summary>
+            买家质押（包含decimals的，一般不用）
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderAuctionResponse.seller_contact">
+            <summary>
+            卖家联系方式
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderAuctionResponse.buyer_contact">
+            <summary>
+            买家联系方式
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderAuctionResponse.status">
+            <summary>
+            订单状态（逻辑状态，不常用）
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderAuctionResponse.seller">
+            <summary>
+            卖家地址
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderAuctionResponse.buyer">
+            <summary>
+            买家地址
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderAuctionResponse.token">
+            <summary>
+            token地址
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderAuctionResponse.chain_id">
+            <summary>
+            链id
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderAuctionResponse.buyer_ex">
+            <summary>
+            买家比卖家额外多质押数量（包含decimals的，一般不用）
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderAuctionResponse.contract">
+            <summary>
+            合约地址
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderAuctionResponse.decimals">
+            <summary>
+            小输点个数
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderAuctionResponse.chain_name">
+            <summary>
+            链名称
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderAuctionResponse.decimals_long">
+            <summary>
+            算数
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderAuctionResponse.buyer_ex_actual">
+            <summary>
+            买家比卖家额外多质押数量
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderAuctionResponse.seller_pledge_actual">
+            <summary>
+            卖家质押
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderAuctionResponse.buyer_pledge_actual">
+            <summary>
+            买家质押
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderAuctionResponse.price_actual">
+            <summary>
+            商品价格
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderAuctionResponse.total_price">
+            <summary>
+            订单总价
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderAuctionResponse.start_time">
+            <summary>
+            开始时间（时间戳）
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderAuctionResponse.end_time">
+            <summary>
+            结束时间（时间戳）
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderAuctionResponse.status_actual">
+            <summary>
+            订单状态
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderAuctionResponse.count">
+            <summary>
+            次数
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderAuctionResponse.seller_nfts">
+            <summary>
+            卖方持有的nfts
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderAuctionResponse.like_count">
+            <summary>
+            收藏的人数量
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderAuctionResponse.is_like">
+            <summary>
+            是否是自己喜欢
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderResponse.order_id">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderResponse.name">
+            <summary>
+            商品名字
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderResponse.description">
+            <summary>
+            商品描述
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderResponse.amount">
+            <summary>
+            商品数量
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderResponse.price">
+            <summary>
+            商品价格
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderResponse.img">
+            <summary>
+            图片
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderResponse.seller_pledge">
+            <summary>
+            卖家质押
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderResponse.buyer_pledge">
+            <summary>
+            买家质押
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderResponse.seller_contact">
+            <summary>
+            卖家联系方式
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderResponse.buyer_contact">
+            <summary>
+            买家联系方式
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderResponse.status">
+            <summary>
+            订单状态
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderResponse.seller">
+            <summary>
+            卖家地址
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderResponse.buyer">
+            <summary>
+            买家地址
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderResponse.token">
+            <summary>
+            token地址
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderResponse.chain_id">
+            <summary>
+            链id
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderResponse.buyer_ex">
+            <summary>
+            买家比卖家额外多质押数量
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderResponse.contract">
+            <summary>
+            合约地址
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderResponse.decimals">
+            <summary>
+            小时点
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderResponse.chain_name">
+            <summary>
+            链名称
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderResponse.decimals_long">
+            <summary>
+            算数
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderResponse.buyer_ex_actual">
+            <summary>
+            买家比卖家额外多质押数量
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderResponse.seller_pledge_actual">
+            <summary>
+            卖家质押
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderResponse.buyer_pledge_actual">
+            <summary>
+            买家质押
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderResponse.price_actual">
+            <summary>
+            商品价格
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderResponse.total_price">
+            <summary>
+            订单总价
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderResponse.weight">
+            <summary>
+            权重
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderResponse.like_count">
+            <summary>
+            收藏的人数量
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderResponse.is_like">
+            <summary>
+            是否是自己喜欢
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.OrderResponse.seller_nfts">
+            <summary>
+            卖家的nft
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.UsersResponse.address">
+            钱包地址
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.UsersResponse.avatar">
+            头像
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.UsersResponse.email">
+            邮箱
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.UsersResponse.nick_name">
+            昵称
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.UsersResponse.status">
+            状态，0：有效，1无效
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.UsersResponse.create_time">
+            创建时间
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.UsersResponse.update_time">
+            修改时间
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.UsersResponse.rate">
+            <summary>
+            费率
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.UsersResponse.store_name">
+            <summary>
+            店铺名称
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.UsersResponse.club_name">
+            <summary>
+            社区名称
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.UsersResponse.type">
+            <summary>
+            支持哪几种发布商品的方式1:个人 2:店铺 4:社区 注：相加为权限
+            </summary>
+        </member>
+        <member name="P:deMarketService.Common.Model.HttpApiModel.ResponseModel.UsersResponse.nfts">
+            <summary>
+            持有nft
+            </summary>
+        </member>
+        <member name="P:deMarketService.Model.HttpApiModel.ResponseModel.BaseResponse`1.code">
+            <summary>
+            返回码
+            0：识别成功
+            其他：识别失败
+            </summary>
+        </member>
+        <member name="P:deMarketService.Model.HttpApiModel.ResponseModel.BaseResponse`1.msg">
+            <summary>
+            请求结果描述
+            </summary>
+        </member>
+        <member name="P:deMarketService.Model.HttpApiModel.ResponseModel.BspFivBody.authCode">
+            <summary>
+            请求是否验证成功标识
+            00：成功
+            其它：失败
+            </summary>
+        </member>
+        <member name="P:deMarketService.Model.HttpApiModel.ResponseModel.BspFivBody.authMessage">
+            <summary>
+            验证信息
+            </summary>
+        </member>
+        <member name="P:deMarketService.Controllers.BaseController.CurrentLoginAddress">
+            <summary>
+            当前钱包地址
+            </summary>
+        </member>
+        <member name="M:deMarketService.Controllers.ChainController.list(deMarketService.Common.Model.HttpApiModel.RequestModel.ChainTokenQueryRequest)">
+            <summary>
+            根据链ID获取热门代币
+            </summary>
+            <param name="req"></param>
+            <returns></returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:deMarketService.Controllers.EventController.list(deMarketService.Common.Model.HttpApiModel.RequestModel.GetEventListRequest)" -->
+        <!-- Badly formed XML comment ignored for member "M:deMarketService.Controllers.MyOrderController.list(deMarketService.Common.Model.HttpApiModel.RequestModel.GetOrderListRequest)" -->
+        <!-- Badly formed XML comment ignored for member "M:deMarketService.Controllers.OrderAuctionController.list(deMarketService.Common.Model.HttpApiModel.RequestModel.OrderAuctionRequest)" -->
+        <!-- Badly formed XML comment ignored for member "M:deMarketService.Controllers.OrderAuctionController.like(deMarketService.Common.Model.HttpApiModel.RequestModel.OrderAuctionRequest)" -->
+        <!-- Badly formed XML comment ignored for member "M:deMarketService.Controllers.OrderAuctionController.switch_like(deMarketService.Common.Model.HttpApiModel.RequestModel.SwitchLikeRequest)" -->
+        <member name="M:deMarketService.Controllers.OrderAuctionController.detail(System.Int64,CommonLibrary.Common.Model.ChainEnum,System.String)">
+             <summary>
+            查询拍卖详情
+             </summary>
+             <param name="order_id"></param>
+             <param name="chain_id"></param>
+             <param name="contract"></param>
+             <returns></returns>
+        </member>
+        <member name="M:deMarketService.Controllers.OrderAuctionController.my_like(deMarketService.Common.Model.HttpApiModel.RequestModel.MyLikeRequest)">
+            <summary>
+            我的收藏
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:deMarketService.Controllers.OrderController.GetCosParms">
+            <summary>
+            获取腾讯COS相关参数
+            </summary>
+            <returns></returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:deMarketService.Controllers.OrderController.download" -->
+        <!-- Badly formed XML comment ignored for member "M:deMarketService.Controllers.OrderController.ToByteArray(System.IO.Stream)" -->
+        <!-- Badly formed XML comment ignored for member "M:deMarketService.Controllers.OrderController.list(deMarketService.Common.Model.HttpApiModel.RequestModel.GetOrderListRequest)" -->
+        <!-- Badly formed XML comment ignored for member "M:deMarketService.Controllers.OrderController.like(deMarketService.Common.Model.HttpApiModel.RequestModel.GetOrderListRequest)" -->
+        <!-- Badly formed XML comment ignored for member "M:deMarketService.Controllers.OrderController.switch_like(deMarketService.Common.Model.HttpApiModel.RequestModel.SwitchLikeRequest)" -->
+        <member name="M:deMarketService.Controllers.OrderController.detail(System.Int64,CommonLibrary.Common.Model.ChainEnum,System.String)">
+            <summary>
+            订单详情
+            </summary>
+            <param name="order_id"></param>
+            <param name="chain_id"></param>
+            <param name="contract"></param>
+            <returns></returns>
+        </member>
+        <member name="M:deMarketService.Controllers.OrderController.my_like(deMarketService.Common.Model.HttpApiModel.RequestModel.MyLikeRequest)">
+            <summary>
+            我的收藏
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:deMarketService.Controllers.StoreController.list(deMarketService.Common.Model.HttpApiModel.RequestModel.GetStoreRequest)">
+            <summary>
+            店铺(社区)列表
+            </summary>
+            <param name="req"></param>
+            <returns></returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:deMarketService.Controllers.UserController.login(deMarketService.Common.Model.HttpApiModel.RequestModel.LoginRequest)" -->
+        <!-- Badly formed XML comment ignored for member "M:deMarketService.Controllers.UserController.reset" -->
+        <member name="M:deMarketService.Controllers.UserController.detail">
+            <summary>
+            我的详情
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:deMarketService.Controllers.UserController.invitelist(System.Int32,System.Int32)">
+            <summary>
+            被邀请人列表
+            </summary>
+            <param name="pageSize"></param>
+            <param name="pageIndex"></param>
+            <returns></returns>
+        </member>
+        <member name="M:deMarketService.Controllers.UserController.GetinviteRebateList(System.Int32,System.Int32)">
+            <summary>
+            当前登录人佣金列表
+            </summary>
+            <param name="pageSize"></param>
+            <param name="pageIndex"></param>
+            <returns></returns>
+        </member>
+        <member name="M:deMarketService.Controllers.UserController.GetInviteRebateTotalList">
+            <summary>
+            当前登录人佣金汇总列表
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:deMarketService.Controllers.UserController.EditUser(deMarketService.Common.Model.HttpApiModel.RequestModel.EditUserRequest)">
+            <summary>
+            修改用户
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
+        <member name="M:deMarketService.Controllers.UserController.EditUserNick(deMarketService.Common.Model.HttpApiModel.RequestModel.EditUserNickRequest)">
+            <summary>
+            修改昵称
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
+        <member name="M:deMarketService.Controllers.UserController.EditUserEmail(deMarketService.Common.Model.HttpApiModel.RequestModel.EditUserEmaiRequest)">
+            <summary>
+            修改用户邮箱
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
+        <member name="T:deMarketService.Proxies.EmailProxy">
+            <summary>
+            邮件服务
+            </summary>
+        </member>
+        <member name="P:deMarketService.Proxies.EmailProxy.UserName">
+            <summary>
+            demarket@foxmail.com
+            </summary>
+        </member>
+        <member name="P:deMarketService.Proxies.EmailProxy.PassWord">
+            <summary>
+            aqvpgsnuuyimbjdc
+            </summary>
+        </member>
+        <member name="M:deMarketService.Proxies.EmailProxy.SendMailAsync(System.String,System.String,System.Collections.Generic.List{System.String})">
+            <summary>
+            邮件发送
+            </summary>
+            <param name="subject"></param>
+            <param name="body"></param>
+            <param name="toMailAddressList"></param>
+            <returns></returns>
+        </member>
+        <member name="M:deMarketService.jobs.BaseJob.GetService``1">
+            <summary>
+            获取实体
+            </summary>
+            <typeparam name="T"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="T:deMarketService.jobs.CustomerRebateService">
+            <summary>
+            每日凌晨产生前一天的邀请人返佣明细
+            </summary>
+        </member>
+        <member name="T:deMarketService.jobs.ReadNFTService">
+            <summary>
+            读取NFT
+            </summary>
+        </member>
+        <member name="T:deMarketService.jobs.TronReadNFTService">
+            <summary>
+            读取NFT
+            </summary>
+        </member>
+        <member name="M:deMarketService.QuartzStartup.PauseOrResumeSchedulerAsync(System.String)">
+            <summary>
+            暂停或者恢复调度器
+            </summary>
+            <param name="scheduler"></param>
+        </member>
+        <member name="M:deMarketService.QuartzStartup.GetTriggerState">
+            <summary>
+            获取trigger状态
+            </summary>
+            <param name="scheduler"></param>
+        </member>
+        <member name="M:deMarketService.QuartzStartup.GetCurrentlyExecutingJobsAsync">
+            <summary>
+            获取正在执行的job
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:deMarketService.QuartzStartup.TranslateTriggerState(Quartz.TriggerState)">
+            <summary>
+            翻译trigger状态
+            </summary>
+            <param name="triggerState"></param>
+            <returns></returns>
+        </member>
+        <member name="M:deMarketService.QuartzStartup.GetBuiltyCurrentlyExecutingJobsAsync">
+            <summary>
+            获取html 正在运行job
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:deMarketService.QuartzStartup.GetBuiltyTriggerStateAsync">
+            <summary>
+            获取html trigger状态
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:deMarketService.Services.HttpRetryExtension.HttpErrorRetryAsyncPolicy``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Int32,System.Func{System.Exception,System.Boolean}[],System.Func{System.Net.Http.HttpResponseMessage,System.Boolean}[])">
+            <summary>
+            添加可重试的异步HttpClient
+            
+            网络故障（System.Net.Http.HttpRequestException）
+            HTTP 5XX状态代码（服务器错误）
+            HTTP 408状态码（请求超时）
+            </summary>
+            <typeparam name="TClient">要注入的异步HttpClient</typeparam>
+            <param name="services">注入集合</param>
+            <param name="retryCount">重试次数</param>
+            <param name="exs">要捕获的异常</param>
+            <param name="res">要捕获的结果</param>
+            <returns></returns>
+        </member>
+        <member name="M:deMarketService.Services.HttpRetryExtension.HttpErrorRetryPolicy``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Int32,System.Func{System.Exception,System.Boolean}[],System.Func{System.Net.Http.HttpResponseMessage,System.Boolean}[])">
+            <summary>
+            添加可重试的HttpClient
+            
+            网络故障（System.Net.Http.HttpRequestException）
+            HTTP 5XX状态代码（服务器错误）
+            HTTP 408状态码（请求超时）
+            </summary>
+            <typeparam name="TClient">要注入的HttpClient</typeparam>
+            <param name="services">注入集合</param>
+            <param name="retryCount">重试次数</param>
+            <param name="exs">要捕获的异常</param>
+            <param name="res">要捕获的结果</param>
+            <returns></returns>
+        </member>
+        <member name="M:deMarketService.Services.TgBotHost.HandleUpdateAsync(Telegram.Bot.ITelegramBotClient,Telegram.Bot.Types.Update,System.Threading.CancellationToken)">
+            <summary>
+            消息处理方法
+            </summary>
+            <param name="botClient"></param>
+            <param name="update"></param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+        </member>
+        <member name="M:deMarketService.Services.TgBotHost.HandlePollingErrorAsync(Telegram.Bot.ITelegramBotClient,System.Exception,System.Threading.CancellationToken)">
+            <summary>
+            异常处理方法
+            </summary>
+            <param name="botClient"></param>
+            <param name="exception"></param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
