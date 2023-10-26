@@ -1,34 +1,54 @@
-﻿
-using Microsoft.Extensions.Configuration;
-using Quartz;
-using Quartz.Impl;
-using System;
-using System.Collections.Specialized;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Hosting;
+﻿using System;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using Jobs;
 using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Events;
 
 namespace Jobs
 {
-    class Program
+    public class Program
     {
-        private static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            Console.Title = "deMarketService";
+
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                .MinimumLevel.Override("System", LogEventLevel.Warning)
+                .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
+                .Enrich.FromLogContext()
+                .WriteTo.File($"logs/jobs_{DateTime.Now.ToString("yyMMddHHmm")}.log")
+                //.WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", theme: AnsiConsoleTheme.Literate)
+                .CreateLogger();
+
+            var host = CreateWebHostBuilder(args);
+
+            host.Build().Run();
         }
 
-        public static IWebHostBuilder CreateHostBuilder(string[] args) =>
-        WebHost.CreateDefaultBuilder(args)
-            .ConfigureLogging(log =>
-            {
-                log.ClearProviders();
-                log.AddFilter("Microsoft", LogLevel.Warning)
-                    .AddFilter("System", LogLevel.Warning)
-                    .AddConsole();
-            })
-            .UseStartup<Startup>()
-            .UseUrls("http://*:5001/");
+  
 
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args)
+        {
+
+            string appRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            return WebHost.CreateDefaultBuilder(args)
+            .ConfigureLogging(builder =>
+            {
+                builder.ClearProviders();
+                builder.AddSerilog();
+
+            })
+         
+            .UseContentRoot(appRoot)
+            .UseStartup<Startup>();
+        }
     }
 }
