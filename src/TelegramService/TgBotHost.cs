@@ -64,9 +64,11 @@ namespace TelegramService
                     case UpdateType.Unknown:
                         break;
                     case UpdateType.Message:
-                        sb.AppendLine("➡️ 请选择您想要完成的操作 ");
-                        InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(new[]
+                        if (update.Message.Type == MessageType.ChatMembersAdded||update.Message.Text.Equals("绑定")|| update.Message.Text.Equals("Bind",StringComparison.OrdinalIgnoreCase) || update.Message.Text.Equals("@"+_configuration["BotUserName"]))
                         {
+                            sb.AppendLine("➡️ 请选择您想要完成的操作 ");
+                            InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(new[]
+                            {
                 new []
                 {
                     InlineKeyboardButton.WithUrl(text: "DeMarket德玛市场", url: "https://demarket.io/"),
@@ -81,31 +83,32 @@ namespace TelegramService
                 },
 
                 });
-                        telegramUserChat = _masterDbContext.telegram_user_chat.Where(a => a.chat_id == update.Message.Chat.Id).FirstOrDefault();
-                        if (telegramUserChat == null)
-                        {
-                            _masterDbContext.telegram_user_chat.Add(
-                                new telegram_user_chat()
-                                {
-                                    user_name = update.Message.From.Username,
-                                    user_id=update.Message.From.Id,
-                                    chat_id = update.Message.Chat.Id,
-                                    create_time = DateTime.Now,
-                                    update_time = DateTime.Now,
-                                    verify_code = ""
-                                });
+                            telegramUserChat = _masterDbContext.telegram_user_chat.Where(a => a.chat_id == update.Message.Chat.Id).FirstOrDefault();
+                            if (telegramUserChat == null)
+                            {
+                                _masterDbContext.telegram_user_chat.Add(
+                                    new telegram_user_chat()
+                                    {
+                                        user_name = update.Message.From.Username,
+                                        user_id = update.Message.From.Id,
+                                        chat_id = update.Message.Chat.Id,
+                                        create_time = DateTime.Now,
+                                        update_time = DateTime.Now,
+                                        verify_code = ""
+                                    });
+                            }
+                            else
+                            {
+                                telegramUserChat.user_name = update.Message.From.Username;
+                                telegramUserChat.user_id = update.Message.From.Id;
+                            }
+                            _masterDbContext.SaveChanges();
+                            result = await botClient.SendTextMessageAsync(
+                                  chatId: new ChatId(update.Message.Chat.Id),
+                                  text: sb.ToString(),
+                                  parseMode: ParseMode.Markdown,
+                                  replyMarkup: inlineKeyboard);
                         }
-                        else
-                        {
-                            telegramUserChat.user_name = update.Message.From.Username;
-                            telegramUserChat.user_id = update.Message.From.Id;
-                        }
-                        _masterDbContext.SaveChanges();
-                        result = await botClient.SendTextMessageAsync(
-                              chatId: new ChatId(update.Message.Chat.Id),
-                              text: sb.ToString(),
-                              parseMode: ParseMode.Markdown,
-                              replyMarkup: inlineKeyboard);
                         break;
                     case UpdateType.InlineQuery:
                         break;
