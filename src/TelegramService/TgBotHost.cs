@@ -67,7 +67,7 @@ namespace TelegramService
 
                         if (update.Message.Type == MessageType.ChatMembersAdded || update.Message.Text.Equals("绑定") || update.Message.Text.Equals("Bind", StringComparison.OrdinalIgnoreCase) || update.Message.Text.Equals("@" + _configuration["BotUserName"]) || update.Message.Chat.Id > 0)
                         {
-                            sb.AppendLine("很高兴遇见你！ "+update.Message.From.FirstName.Replace("_", @"\_"));
+                            sb.AppendLine("很高兴遇见你！ "+update.Message.From.Username.Replace("_", @"\_"));
                             var obj = new[]
                             {
                 new []
