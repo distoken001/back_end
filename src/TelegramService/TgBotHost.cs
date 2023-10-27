@@ -13,6 +13,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 using TelegramService.Service;
 using CommonLibrary.DbContext;
 using CommonLibrary.Model.DataEntityModel;
+using Microsoft.Extensions.Primitives;
 
 namespace TelegramService
 {
@@ -57,7 +58,7 @@ namespace TelegramService
             {
                 Message result;
                 var sb = new StringBuilder();
-                telegram_user telegramUser;
+                telegram_user_chat telegramUserChat;
                 switch (update.Type)
                 {
                     case UpdateType.Unknown:
@@ -76,13 +77,14 @@ namespace TelegramService
                 },
 
                 });
-                         telegramUser= _masterDbContext.telegram_user.Where(a => a.user_name == update.Message.Chat.Username).FirstOrDefault();
-                        if (telegramUser == null)
+                        telegramUserChat = _masterDbContext.telegram_user_chat.Where(a => a.chat_id == update.Message.Chat.Id).FirstOrDefault();
+                        if (telegramUserChat == null)
                         {
-                            _masterDbContext.telegram_user.Add(
-                                new telegram_user()
+                            _masterDbContext.telegram_user_chat.Add(
+                                new telegram_user_chat()
                                 {
-                                    user_name = update.Message.Chat.Username,
+                                    user_name = update.Message.From.Username,
+                                    user_id=update.Message.From.Id,
                                     chat_id = update.Message.Chat.Id,
                                     create_time = DateTime.Now,
                                     update_time = DateTime.Now,
@@ -91,7 +93,8 @@ namespace TelegramService
                         }
                         else
                         {
-                            telegramUser.chat_id = update.Message.Chat.Id;
+                            telegramUserChat.user_name = update.Message.From.Username;
+                            telegramUserChat.user_id = update.Message.From.Id;
                         }
                         _masterDbContext.SaveChanges();
                         result = await botClient.SendTextMessageAsync(
@@ -107,19 +110,22 @@ namespace TelegramService
                     case UpdateType.CallbackQuery:
                         if (update.CallbackQuery.Data == "Bind")
                         {
-                            sb.Append("您的验证码是： ");
+                            string modifiedString = update.CallbackQuery.From.Username.Replace("_", @"\_");
+                            sb.Append("@"+ modifiedString+" 您的验证码是： ");
+                            sb.Append("*");
                             Random random = new Random();
                             int randomNumber = random.Next(100000, 999999); // 生成6位随机数字
                             sb.Append(randomNumber.ToString());
-
-                            telegramUser = _masterDbContext.telegram_user.Where(a => a.chat_id == update.CallbackQuery.From.Id).FirstOrDefault();
-                            if (telegramUser == null)
+                            sb.Append("*");
+                            telegramUserChat = _masterDbContext.telegram_user_chat.Where(a => a.chat_id == update.CallbackQuery.Message.Chat.Id).FirstOrDefault();
+                            if (telegramUserChat == null)
                             {
-                                _masterDbContext.telegram_user.Add(
-                                    new telegram_user()
+                                _masterDbContext.telegram_user_chat.Add(
+                                    new telegram_user_chat()
                                     {
-                                        user_name = update.CallbackQuery.From.Username,
-                                        chat_id = update.CallbackQuery.From.Id,
+                                        user_name = update.CallbackQuery.Message.From.Username,
+                                        user_id = update.CallbackQuery.Message.From.Id,
+                                        chat_id = update.CallbackQuery.Message.Chat.Id,
                                         create_time = DateTime.Now,
                                         update_time = DateTime.Now,
                                         verify_code = "",
@@ -128,9 +134,11 @@ namespace TelegramService
                             }
                             else
                             {
-                                telegramUser.update_time = DateTime.Now;
-                                telegramUser.verify_code = randomNumber.ToString();
-                                telegramUser.count = 0;
+                                telegramUserChat.user_name = update.CallbackQuery.Message.From.Username;
+                                telegramUserChat.update_time = DateTime.Now;
+                                telegramUserChat.verify_code = randomNumber.ToString();
+                                telegramUserChat.count = 0;
+                                telegramUserChat.user_id = update.CallbackQuery.Message.From.Id;
                             }
                             _masterDbContext.SaveChanges();
                             result = await botClient.SendTextMessageAsync(
