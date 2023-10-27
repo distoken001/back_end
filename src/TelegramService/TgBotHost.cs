@@ -10,6 +10,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using System.Text;
 using Telegram.Bot.Types.ReplyMarkups;
+using TelegramService.Service;
 
 namespace TelegramService
 {
@@ -49,22 +50,18 @@ namespace TelegramService
         /// <returns></returns>
         async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
-            // 消息的类型有多种，最常见的是文本型 UpdateType.Message
-            switch (update.Type)
+            try
             {
-                case UpdateType.Unknown:
-                    break;
-                case UpdateType.Message:
-                    Console.WriteLine(update?.Message?.Text); // 将受到的文本消息输出到控制台
-                    if (string.IsNullOrEmpty(update?.Message?.Text))
-                        return;
-                    //组织开始回复消息模板
-                    var sb = new StringBuilder();
-                    sb.AppendLine("➡️ 请选择您想要完成的操作 ");
-                    //sb.AppendLine("");
-                    InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(new[]
-                    {
-                // first row
+                Message result;
+                var sb = new StringBuilder();
+                switch (update.Type)
+                {
+                    case UpdateType.Unknown:
+                        break;
+                    case UpdateType.Message:
+                        sb.AppendLine("➡️ 请选择您想要完成的操作 ");
+                        InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(new[]
+                        {
                 new []
                 {
                     InlineKeyboardButton.WithUrl(text: "DeMarket德玛市场", url: "https://demarket.io/"),
@@ -75,64 +72,78 @@ namespace TelegramService
                 },
 
                 });
+                        result= await botClient.SendTextMessageAsync(
+                              chatId: new ChatId(update.Message.Chat.Id),
+                              text: sb.ToString(),
+                              parseMode: ParseMode.Markdown,
+                              replyMarkup: inlineKeyboard);
+                        break;
+                    case UpdateType.InlineQuery:
+                        break;
+                    case UpdateType.ChosenInlineResult:
+                        break;
+                    case UpdateType.CallbackQuery:
+                        if (update.CallbackQuery.Data == "Bind")
+                        {
+                            sb.Append("您的验证码是： ");
+                            Random random = new Random();
+                            int randomNumber = random.Next(100000, 999999); // 生成6位随机数字
+                            sb.Append(randomNumber.ToString());
+                          result = await botClient.SendTextMessageAsync(
+                                  chatId: update.CallbackQuery.Message.Chat.Id,
+                                  text: sb.ToString(),
+                                  parseMode: ParseMode.MarkdownV2);
+                            Console.WriteLine(result.ToString());
+                        }
+                      
+                        break;
+                    case UpdateType.EditedMessage:
+                        break;
+                    case UpdateType.ChannelPost:
+                        break;
+                    case UpdateType.EditedChannelPost:
+                        break;
+                    case UpdateType.ShippingQuery:
+                        break;
+                    case UpdateType.PreCheckoutQuery:
+                        break;
+                    case UpdateType.Poll:
+                        break;
+                    case UpdateType.PollAnswer:
+                        break;
+                    case UpdateType.MyChatMember:
+                        break;
+                    case UpdateType.ChatMember:
+                        break;
+                    case UpdateType.ChatJoinRequest:
+                        break;
+                    default:
+                        break;
+                }
+            }
 
-                    var reMsg = await botClient.SendTextMessageAsync(
-                          chatId: new ChatId(update.Message.Chat.Id),
-                          text: sb.ToString(),
-                          parseMode: ParseMode.Markdown,
-                          replyMarkup: inlineKeyboard);
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return;
 
-                    break;
-                case UpdateType.InlineQuery:
-                    break;
-                case UpdateType.ChosenInlineResult:
-                    break;
-                case UpdateType.CallbackQuery:
-
-
-                    break;
-                case UpdateType.EditedMessage:
-                    break;
-                case UpdateType.ChannelPost:
-                    break;
-                case UpdateType.EditedChannelPost:
-                    break;
-                case UpdateType.ShippingQuery:
-                    break;
-                case UpdateType.PreCheckoutQuery:
-                    break;
-                case UpdateType.Poll:
-                    break;
-                case UpdateType.PollAnswer:
-                    break;
-                case UpdateType.MyChatMember:
-                    break;
-                case UpdateType.ChatMember:
-                    break;
-                case UpdateType.ChatJoinRequest:
-                    break;
-                default:
-                    break;
             }
         }
-
-        /// <summary>
-        /// 异常处理方法
-        /// </summary>
-        /// <param name="botClient"></param>
-        /// <param name="exception"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
-        {
-            var ErrorMessage = exception switch
+            /// 异常处理方法            /// </summary>
+            /// <param name="botClient"></param>
+            /// <param name="exception"></param>
+            /// <param name="cancellationToken"></param>
+            /// <returns></returns>
+            Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
             {
-                ApiRequestException apiRequestException
-                    => $"Telegram API Error:\n[{apiRequestException.ErrorCode}]\n{apiRequestException.Message}",
-                _ => exception.ToString()
-            };
-            Console.WriteLine(ErrorMessage);
-            return Task.CompletedTask;
+                var ErrorMessage = exception switch
+                {
+                    ApiRequestException apiRequestException
+                        => $"Telegram API Error:\n[{apiRequestException.ErrorCode}]\n{apiRequestException.Message}",
+                    _ => exception.ToString()
+                };
+                Console.WriteLine(ErrorMessage);
+                return Task.CompletedTask;
+            }
         }
     }
-}
