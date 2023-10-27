@@ -79,7 +79,7 @@ namespace TelegramService
                 },
                 new []
                 {
-                    InlineKeyboardButton.WithCallbackData(text: "获取验证码绑定DeMarket", callbackData: "Bind")
+                    InlineKeyboardButton.WithCallbackData(text: "获取绑定验证码", callbackData: "Bind")
                 },
 
                 });
