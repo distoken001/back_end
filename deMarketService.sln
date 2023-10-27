@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonLibrary", "src\Common
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jobs", "src\Jobs\Jobs.csproj", "{9715E4CF-8027-4192-BF44-C81739061485}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TelegramService", "src\TelegramService\TelegramService.csproj", "{4260FE40-9327-4B79-B3C4-76909FDE4CD8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{9715E4CF-8027-4192-BF44-C81739061485}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9715E4CF-8027-4192-BF44-C81739061485}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9715E4CF-8027-4192-BF44-C81739061485}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4260FE40-9327-4B79-B3C4-76909FDE4CD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4260FE40-9327-4B79-B3C4-76909FDE4CD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4260FE40-9327-4B79-B3C4-76909FDE4CD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4260FE40-9327-4B79-B3C4-76909FDE4CD8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

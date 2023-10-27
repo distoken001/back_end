@@ -9,7 +9,7 @@ using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
-namespace deMarketService.Services
+namespace TelegramService.Service
 {
     public class TgBotHost : IHostedService
     {

@@ -65,7 +65,6 @@ namespace deMarketService
             services.AddDirectoryBrowser();
             services.AddSingleton<IConfiguration>(Configuration);
             services.AddScoped<ExLogFilter>();
-            services.AddHostedService<TgBotHost>();
             services.AddScoped<TokenFilter>();
             services.AddSingleton<ITxCosUploadeService, TxCosUploadeService>();
             services.AddScoped<EmailProxy>();
