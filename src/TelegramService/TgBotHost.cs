@@ -142,7 +142,7 @@ namespace TelegramService
                             {
                                 await botClient.SendTextMessageAsync(
                             chatId: update.CallbackQuery.Message.Chat.Id,
-                            text: "@" + modifiedString + " *您的验证码已经私发您，注意查收！*",
+                            text: "@" + modifiedString + " *私聊我获取验证码*",
                             parseMode: ParseMode.MarkdownV2);
 
                             }
