@@ -8,8 +8,10 @@ using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using System.Text;
+using Telegram.Bot.Types.ReplyMarkups;
 
-namespace TelegramService.Service
+namespace TelegramService
 {
     public class TgBotHost : IHostedService
     {
@@ -53,18 +55,41 @@ namespace TelegramService.Service
                 case UpdateType.Unknown:
                     break;
                 case UpdateType.Message:
-                    Console.WriteLine(update.Message.Text); // 将受到的文本消息输出到控制台
-                                                            // 将收到的文本消息，发送至对话框
-                    await botClient.SendTextMessageAsync(
-                            chatId: update.Message.Chat.Id,
-                            text: $"_您输入的文本是：{update.Message.Text}_",
-                            parseMode: ParseMode.MarkdownV2);
+                    Console.WriteLine(update?.Message?.Text); // 将受到的文本消息输出到控制台
+                    if (string.IsNullOrEmpty(update?.Message?.Text))
+                        return;
+                    //组织开始回复消息模板
+                    var sb = new StringBuilder();
+                    sb.AppendLine("➡️ 请选择您想要完成的操作 ");
+                    //sb.AppendLine("");
+                    InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(new[]
+                    {
+                // first row
+                new []
+                {
+                    InlineKeyboardButton.WithUrl(text: "DeMarket德玛市场", url: "https://demarket.io/"),
+                },
+                new []
+                {
+                    InlineKeyboardButton.WithCallbackData(text: "获取验证码绑定DeMarket", callbackData: "Bind")
+                },
+
+                });
+
+                    var reMsg = await botClient.SendTextMessageAsync(
+                          chatId: new ChatId(update.Message.Chat.Id),
+                          text: sb.ToString(),
+                          parseMode: ParseMode.Markdown,
+                          replyMarkup: inlineKeyboard);
+
                     break;
                 case UpdateType.InlineQuery:
                     break;
                 case UpdateType.ChosenInlineResult:
                     break;
                 case UpdateType.CallbackQuery:
+
+
                     break;
                 case UpdateType.EditedMessage:
                     break;
