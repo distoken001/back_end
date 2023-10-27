@@ -73,6 +73,10 @@ namespace TelegramService
                 },
                 new []
                 {
+                    InlineKeyboardButton.WithUrl(text: "Twitter推特", url: "https://twitter.com/demarket_io"),
+                },
+                new []
+                {
                     InlineKeyboardButton.WithCallbackData(text: "获取验证码绑定DeMarket", callbackData: "Bind")
                 },
 
