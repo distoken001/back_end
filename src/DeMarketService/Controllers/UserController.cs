@@ -275,7 +275,7 @@ namespace deMarketService.Controllers
                 {
                     user.nick_name = telegramUserChat.user_name;
                     await _mySqlMasterDbContext.SaveChangesAsync();
-                    return new WebApiResult(1, "修改成功",telegramUserChat.user_name);
+                    return new WebApiResult(1, "绑定成功",telegramUserChat.user_name);
                 }
                 else
                 {
