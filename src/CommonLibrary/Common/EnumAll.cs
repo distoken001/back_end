@@ -1,4 +1,4 @@
-﻿namespace CommonLibrary.Common.Model
+﻿namespace CommonLibrary.Common.Common
 {
     /// <summary>
     /// 用户四要素验证类型

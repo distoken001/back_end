@@ -1,6 +1,5 @@
 ﻿using CommonLibrary.Common.Common;
 using deMarketService.Common.Model;
-using CommonLibrary.Common.Model.DataEntityModel;
 using deMarketService.Common.Model.HttpApiModel.RequestModel;
 using deMarketService.Common.Model.HttpApiModel.ResponseModel;
 using CommonLibrary.DbContext;
@@ -19,7 +18,7 @@ using TencentCloud.Ecm.V20190719.Models;
 using TencentCloud.Tcss.V20201101.Models;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
-using CommonLibrary.Common.Model;
+using CommonLibrary.Model.DataEntityModel;
 
 namespace deMarketService.Controllers
 {

@@ -4,34 +4,15 @@ using System.IO;
 using System.Threading.Tasks;
 using CommonLibrary.DbContext;
 using deMarketService.Services.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using deMarketService.Common.Model.HttpApiModel.RequestModel;
-using System.Net;
 using CommonLibrary.Common.Common;
-using CommonLibrary.Common.Model.DataEntityModel;
 using Microsoft.EntityFrameworkCore;
-using deMarketService.Common.Model;
-using Google.Apis.Auth.OAuth2;
-using Google.Apis.Auth.OAuth2.Flows;
-using Google.Apis.Auth.OAuth2.Responses;
-using Google.Apis.Services;
-using MimeKit;
-using MailKit;
-using MailKit.Security;
-using Google.Apis.Util.Store;
-using System.Threading;
-using System.Net.Mail;
-using Newtonsoft.Json;
 using deMarketService.Proxies;
 using System.Collections.Generic;
-using Org.BouncyCastle.Ocsp;
-using System.Net.Http;
-using System.Text;
-using TencentCloud.Ame.V20190916.Models;
 using Microsoft.Extensions.Configuration;
 using Telegram.Bot;
-using CommonLibrary.Common.Model;
+using CommonLibrary.Model.DataEntityModel;
 
 namespace deMarketService.Controllers
 {
@@ -218,7 +199,7 @@ namespace deMarketService.Controllers
 
             try
             {
-                var cooperator = new cooperator
+                var co = new cooperator
                 {
                     status = 1,
                     create_time = DateTime.Now,
@@ -229,7 +210,7 @@ namespace deMarketService.Controllers
                     name = request.name,
                     ip= ClientIP
                 };
-                await _mySqlMasterDbContext.cooperator.AddAsync(cooperator);
+                await _mySqlMasterDbContext.cooperator.AddAsync(co);
                 await _mySqlMasterDbContext.SaveChangesAsync();
                 List<string> ls = new List<string>();
                 ls.Add("songnian.liu@outlook.com");

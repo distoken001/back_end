@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace CommonLibrary.Common.Model.DataEntityModel
+namespace CommonLibrary.Model.DataEntityModel
 {
     [Table("auction_user_like")]
     public class auction_user_like

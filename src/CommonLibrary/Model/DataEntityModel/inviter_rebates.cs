@@ -1,8 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using CommonLibrary.Common.Common;
 
-namespace CommonLibrary.Common.Model.DataEntityModel
+namespace CommonLibrary.Model.DataEntityModel
 {
     [Table("inviter_rebates")]
     public class inviter_rebates

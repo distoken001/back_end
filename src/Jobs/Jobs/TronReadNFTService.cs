@@ -1,20 +1,11 @@
-﻿using CommonLibrary.Common.Model.DataEntityModel;
+﻿using CommonLibrary.Common.Common;
 using CommonLibrary.DbContext;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using CommonLibrary.Model.DataEntityModel;
 using Nethereum.Contracts;
-using Nethereum.Contracts.Standards.ERC721.ContractDefinition;
 using Nethereum.RPC;
 using Nethereum.Web3;
 using Newtonsoft.Json.Linq;
 using Quartz;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using CommonLibrary.Common.Model;
 
 namespace Jobs.Jobs
 {
@@ -76,8 +67,8 @@ namespace Jobs.Jobs
                         }
                         else
                         {
-                            var user_nft = user_nfts.FirstOrDefault();
-                            if (user_nft == null)
+                            var userNft = user_nfts.FirstOrDefault();
+                            if (userNft == null)
                             {
                                 var model = new user_nft()
                                 {
@@ -91,10 +82,10 @@ namespace Jobs.Jobs
                                 };
                                 _masterDbContext.Add(model);
                             }
-                            if (user_nft != null)
+                            if (userNft != null)
                             {
-                                user_nft.address = owner;
-                                user_nft.update_time = DateTime.Now;
+                                userNft.address = owner;
+                                userNft.update_time = DateTime.Now;
                             }
                         }
                     }

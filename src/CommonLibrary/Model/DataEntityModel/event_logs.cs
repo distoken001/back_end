@@ -4,8 +4,9 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using CommonLibrary.Common.Common;
 
-namespace CommonLibrary.Common.Model.DataEntityModel
+namespace CommonLibrary.Model.DataEntityModel
 {
     [Table("event_logs")]
     public class event_logs

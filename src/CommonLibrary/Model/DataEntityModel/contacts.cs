@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CommonLibrary.Common.Model.DataEntityModel
+namespace CommonLibrary.Model.DataEntityModel
 {
     [Table("contacts")]
     public class contacts

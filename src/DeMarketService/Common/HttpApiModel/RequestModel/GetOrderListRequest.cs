@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CommonLibrary.Common.Model;
+using CommonLibrary.Common.Common;
 
 namespace deMarketService.Common.Model.HttpApiModel.RequestModel
 {

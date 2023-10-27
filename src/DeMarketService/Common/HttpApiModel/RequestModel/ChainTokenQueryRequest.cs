@@ -1,4 +1,4 @@
-﻿using CommonLibrary.Common.Model;
+﻿using CommonLibrary.Common.Common;
 
 namespace deMarketService.Common.Model.HttpApiModel.RequestModel
 {

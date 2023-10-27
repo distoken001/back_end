@@ -4,8 +4,8 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
-
-namespace CommonLibrary.Common.Model.DataEntityModel
+using CommonLibrary.Common.Common;
+namespace CommonLibrary.Model.DataEntityModel
 {
     [Table("orders_auction")]
     public class orders_auction

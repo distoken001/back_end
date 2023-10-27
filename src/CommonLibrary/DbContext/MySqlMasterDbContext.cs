@@ -1,4 +1,4 @@
-using CommonLibrary.Common.Model.DataEntityModel;
+using CommonLibrary.Model.DataEntityModel;
 using Microsoft.EntityFrameworkCore;
 
 namespace CommonLibrary.DbContext

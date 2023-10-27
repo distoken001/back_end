@@ -1,5 +1,4 @@
 ﻿using System;
-using CommonLibrary.Common.Model;
 
 namespace CommonLibrary.Common.Common
 {

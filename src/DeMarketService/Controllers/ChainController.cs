@@ -1,5 +1,4 @@
 ﻿using CommonLibrary.Common.Common;
-using CommonLibrary.Common.Model.DataEntityModel;
 using deMarketService.Common.Model.HttpApiModel.RequestModel;
 using deMarketService.Common.Model.HttpApiModel.ResponseModel;
 using CommonLibrary.DbContext;
@@ -7,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
+using CommonLibrary.Model.DataEntityModel;
 
 namespace deMarketService.Controllers
 {

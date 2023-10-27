@@ -1,4 +1,4 @@
-﻿using CommonLibrary.Common.Model.DataEntityModel;
+﻿using CommonLibrary.Model.DataEntityModel;
 using CommonLibrary.DbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -14,7 +14,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using CommonLibrary.Common.Model;
+using CommonLibrary.Common.Common;
 
 namespace Jobs.Jobs
 {

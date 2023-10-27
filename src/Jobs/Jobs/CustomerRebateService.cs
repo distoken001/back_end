@@ -1,6 +1,6 @@
-﻿using CommonLibrary.Common.Model;
-using CommonLibrary.Common.Model.DataEntityModel;
+﻿using CommonLibrary.Common.Common;
 using CommonLibrary.DbContext;
+using CommonLibrary.Model.DataEntityModel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Quartz;

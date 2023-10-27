@@ -1,6 +1,5 @@
 ﻿using CommonLibrary.Common.Common;
 using deMarketService.Common.Model;
-using CommonLibrary.Common.Model.DataEntityModel;
 using deMarketService.Common.Model.HttpApiModel.RequestModel;
 using deMarketService.Common.Model.HttpApiModel.ResponseModel;
 using CommonLibrary.DbContext;
@@ -14,6 +13,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using CommonLibrary.Model.DataEntityModel;
 
 namespace deMarketService.Controllers
 {

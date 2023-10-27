@@ -9,7 +9,7 @@ using deMarketService.Common.Model.HttpApiModel.ResponseModel;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using CommonLibrary.Common.Common;
-using CommonLibrary.Common.Model.DataEntityModel;
+using CommonLibrary.Model.DataEntityModel;
 
 namespace deMarketService.Controllers
 {
