@@ -64,10 +64,11 @@ namespace TelegramService
                     case UpdateType.Unknown:
                         break;
                     case UpdateType.Message:
-                        if (update.Message.Type == MessageType.ChatMembersAdded || update.Message.Text.Equals("绑定") || update.Message.Text.Equals("Bind", StringComparison.OrdinalIgnoreCase) || update.Message.Text.Equals("@" + _configuration["BotUserName"]) || update.Message.Chat.Id>0)
+
+                        if (update.Message.Type == MessageType.ChatMembersAdded || update.Message.Text.Equals("绑定") || update.Message.Text.Equals("Bind", StringComparison.OrdinalIgnoreCase) || update.Message.Text.Equals("@" + _configuration["BotUserName"]) || update.Message.Chat.Id > 0)
                         {
-                            sb.AppendLine("➡️ 请选择您想要完成的操作 ");
-                            InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(new[]
+                            sb.AppendLine("您好！ "+update.Message.From.FirstName);
+                            var obj = new[]
                             {
                 new []
                 {
@@ -76,39 +77,50 @@ namespace TelegramService
                 new []
                 {
                     InlineKeyboardButton.WithUrl(text: "Twitter推特", url: "https://twitter.com/demarket_io"),
-                },
-                new []
-                {
-                    InlineKeyboardButton.WithCallbackData(text: "获取绑定验证码", callbackData: "Bind")
-                },
-
-                });
-                            telegramUserChat = _masterDbContext.telegram_user_chat.Where(a => a.chat_id == update.Message.Chat.Id).FirstOrDefault();
-                            if (telegramUserChat == null)
+                } };
+                            if (update.Message.Chat.Id > 0)
                             {
-                                _masterDbContext.telegram_user_chat.Add(
-                                    new telegram_user_chat()
-                                    {
-                                        user_name = update.Message.From.Username,
-                                        user_id = update.Message.From.Id,
-                                        chat_id = update.Message.Chat.Id,
-                                        create_time = DateTime.Now,
-                                        update_time = DateTime.Now,
-                                        verify_code = ""
-                                    });
+                                sb.AppendLine("不要删除我哦，我是DeMarket通知机器人，您的相关订单动态我会第一时间通知您！");
+                                obj = obj.Concat(new[]{new[]
+                {
+                    InlineKeyboardButton.WithCallbackData(text: "获取绑定验证码", callbackData: "Bind") }
+                }).ToArray();
                             }
                             else
                             {
-                                telegramUserChat.user_name = update.Message.From.Username;
-                                telegramUserChat.user_id = update.Message.From.Id;
-                            }
-                            _masterDbContext.SaveChanges();
-                            result = await botClient.SendTextMessageAsync(
-                                  chatId: new ChatId(update.Message.Chat.Id),
-                                  text: sb.ToString(),
-                                  parseMode: ParseMode.Markdown,
-                                  replyMarkup: inlineKeyboard);
+                                obj = obj.Concat(new[]{new[]
+                {
+                    InlineKeyboardButton.WithUrl(text: "获取绑定验证码", url: @"https://t.me/"+_configuration["BotUserName"]) }
+                }).ToArray();
+                                                           }                        
+                        InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(obj);
+                        telegramUserChat = _masterDbContext.telegram_user_chat.Where(a => a.chat_id == update.Message.Chat.Id).FirstOrDefault();
+                        if (telegramUserChat == null)
+                        {
+                            _masterDbContext.telegram_user_chat.Add(
+                                new telegram_user_chat()
+                                {
+                                    user_name = update.Message.From.Username,
+                                    user_id = update.Message.From.Id,
+                                    chat_id = update.Message.Chat.Id,
+                                    create_time = DateTime.Now,
+                                    update_time = DateTime.Now,
+                                    verify_code = ""
+                                });
                         }
+                        else
+                        {
+                            telegramUserChat.user_name = update.Message.From.Username;
+                            telegramUserChat.user_id = update.Message.From.Id;
+                        }
+                        _masterDbContext.SaveChanges();
+                        result = await botClient.SendTextMessageAsync(
+                              chatId: new ChatId(update.Message.Chat.Id),
+                              text: sb.ToString(),
+                              parseMode: ParseMode.Markdown,
+                              replyMarkup: inlineKeyboard);
+                }
+            
                         break;
                     case UpdateType.InlineQuery:
                         break;
@@ -186,21 +198,21 @@ namespace TelegramService
 
             }
         }
-            /// 异常处理方法            /// </summary>
-            /// <param name="botClient"></param>
-            /// <param name="exception"></param>
-            /// <param name="cancellationToken"></param>
-            /// <returns></returns>
-            Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
+        /// 异常处理方法            /// </summary>
+        /// <param name="botClient"></param>
+        /// <param name="exception"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
+        {
+            var ErrorMessage = exception switch
             {
-                var ErrorMessage = exception switch
-                {
-                    ApiRequestException apiRequestException
-                        => $"Telegram API Error:\n[{apiRequestException.ErrorCode}]\n{apiRequestException.Message}",
-                    _ => exception.ToString()
-                };
-                Console.WriteLine(ErrorMessage);
-                return Task.CompletedTask;
-            }
+                ApiRequestException apiRequestException
+                    => $"Telegram API Error:\n[{apiRequestException.ErrorCode}]\n{apiRequestException.Message}",
+                _ => exception.ToString()
+            };
+            Console.WriteLine(ErrorMessage);
+            return Task.CompletedTask;
         }
     }
+}
