@@ -11,16 +11,19 @@ using Telegram.Bot.Types.Enums;
 using System.Text;
 using Telegram.Bot.Types.ReplyMarkups;
 using TelegramService.Service;
+using CommonLibrary.DbContext;
+using CommonLibrary.Model.DataEntityModel;
 
 namespace TelegramService
 {
     public class TgBotHost : IHostedService
     {
         private readonly IConfiguration _configuration;
-
-        public TgBotHost(IConfiguration configuration)
+        private readonly MySqlMasterDbContext _masterDbContext;
+        public TgBotHost(IConfiguration configuration, MySqlMasterDbContext mySqlMasterDbContext)
         {
             _configuration = configuration;
+            _masterDbContext = mySqlMasterDbContext;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -54,6 +57,7 @@ namespace TelegramService
             {
                 Message result;
                 var sb = new StringBuilder();
+                telegram_user telegramUser;
                 switch (update.Type)
                 {
                     case UpdateType.Unknown:
@@ -72,7 +76,25 @@ namespace TelegramService
                 },
 
                 });
-                        result= await botClient.SendTextMessageAsync(
+                         telegramUser= _masterDbContext.telegram_user.Where(a => a.user_name == update.Message.Chat.Username).FirstOrDefault();
+                        if (telegramUser == null)
+                        {
+                            _masterDbContext.telegram_user.Add(
+                                new telegram_user()
+                                {
+                                    user_name = update.Message.Chat.Username,
+                                    chat_id = update.Message.Chat.Id,
+                                    create_time = DateTime.Now,
+                                    update_time = DateTime.Now,
+                                    verify_code = ""
+                                });
+                        }
+                        else
+                        {
+                            telegramUser.chat_id = update.Message.Chat.Id;
+                        }
+                        _masterDbContext.SaveChanges();
+                        result = await botClient.SendTextMessageAsync(
                               chatId: new ChatId(update.Message.Chat.Id),
                               text: sb.ToString(),
                               parseMode: ParseMode.Markdown,
@@ -89,7 +111,29 @@ namespace TelegramService
                             Random random = new Random();
                             int randomNumber = random.Next(100000, 999999); // 生成6位随机数字
                             sb.Append(randomNumber.ToString());
-                          result = await botClient.SendTextMessageAsync(
+
+                            telegramUser = _masterDbContext.telegram_user.Where(a => a.chat_id == update.CallbackQuery.From.Id).FirstOrDefault();
+                            if (telegramUser == null)
+                            {
+                                _masterDbContext.telegram_user.Add(
+                                    new telegram_user()
+                                    {
+                                        user_name = update.CallbackQuery.From.Username,
+                                        chat_id = update.CallbackQuery.From.Id,
+                                        create_time = DateTime.Now,
+                                        update_time = DateTime.Now,
+                                        verify_code = "",
+                                        count = 0
+                                    });
+                            }
+                            else
+                            {
+                                telegramUser.update_time = DateTime.Now;
+                                telegramUser.verify_code = randomNumber.ToString();
+                                telegramUser.count = 0;
+                            }
+                            _masterDbContext.SaveChanges();
+                            result = await botClient.SendTextMessageAsync(
                                   chatId: update.CallbackQuery.Message.Chat.Id,
                                   text: sb.ToString(),
                                   parseMode: ParseMode.MarkdownV2);

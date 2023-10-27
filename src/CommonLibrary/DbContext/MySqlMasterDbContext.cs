@@ -30,6 +30,7 @@ namespace CommonLibrary.DbContext
         public virtual DbSet<inviter_rebates> inviter_rebates { get; set; }
         public virtual DbSet<ebay_user_like> ebay_user_like { get; set; }
         public virtual DbSet<auction_user_like> auction_user_like { get; set; }
+        public virtual DbSet<telegram_user> telegram_user { get; set; }
 
     }
 }

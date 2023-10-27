@@ -62,9 +62,8 @@ namespace TelegramService
                     });
                 })
                 //.AddDbContext<MySqlMasterDbContext>(options => options.UseMySql(identityConn))
-                .AddDbContext<MySqlMasterDbContext>(options => options.UseMySql(deMarketConn, builder => builder.EnableRetryOnFailure()));
-             
-            privider = services.BuildServiceProvider();
+                .AddDbContext<MySqlMasterDbContext>(options => { options.UseMySql(deMarketConn, builder => builder.EnableRetryOnFailure()); }, ServiceLifetime.Singleton) ;
+                         privider = services.BuildServiceProvider();
        
         }
 

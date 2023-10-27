@@ -1,9 +1,18 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace CommonLibrary.Model.DataEntityModel
 {
-	public class telegram
-	{
-		
+    [Table("telegram_user")]
+    public class telegram_user
+    {
+		public int id { get; set; }
+	    public string user_name { get; set; }
+		public long chat_id { get; set; }
+		public string verify_code { get; set; }
+		public  DateTime create_time { get; set; }
+		public DateTime update_time { get; set; }
+		public int count { get; set; }
 	}
 }
 
