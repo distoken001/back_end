@@ -117,6 +117,7 @@ namespace TelegramService
                             int randomNumber = random.Next(10000000, 99999999); // 生成8位随机数字
                             sb.Append(randomNumber.ToString());
                             sb.Append("*");
+                            sb.Append("  有效期五分钟");
                             telegramUserChat = _masterDbContext.telegram_user_chat.Where(a => a.chat_id == update.CallbackQuery.Message.Chat.Id).FirstOrDefault();
                             if (telegramUserChat == null)
                             {
@@ -130,11 +131,15 @@ namespace TelegramService
                                 telegramUserChat.count = 0;
                             }
                             _masterDbContext.SaveChanges();
-                                                  
-                            await botClient.SendTextMessageAsync(
-                        chatId: update.CallbackQuery.Message.Chat.Id,
-                        text: "@" + modifiedString + " *您的验证码已经私发您，注意查收！*",
-                        parseMode: ParseMode.MarkdownV2);
+                            if (_configuration["GroupChatID"] == update.CallbackQuery.Message.Chat.Id.ToString())
+                            {
+                                await botClient.SendTextMessageAsync(
+                            chatId: update.CallbackQuery.Message.Chat.Id,
+                            text: "@" + modifiedString + " *您的验证码已经私发您，注意查收！*",
+                            parseMode: ParseMode.MarkdownV2);
+
+                            }
+
                             await botClient.SendTextMessageAsync(
                                   chatId: telegramUserChat.user_id,
                                   text: sb.ToString(),

@@ -223,7 +223,7 @@ namespace deMarketService.Controllers
         [HttpPost("edit/usernick")]
         public async Task<WebApiResult> EditUserNick([FromBody] EditUserNickRequest command)
         {
-            if (command.NickName.Contains("DeMarket", StringComparison.OrdinalIgnoreCase) || command.NickName.Contains("德玛", StringComparison.OrdinalIgnoreCase) )
+            if (command.NickName.Contains("DeMarket", StringComparison.OrdinalIgnoreCase) || command.NickName.Contains("德玛", StringComparison.OrdinalIgnoreCase))
             {
                 return new WebApiResult(-1, "不能包含官方敏感词汇");
             }
@@ -247,6 +247,40 @@ namespace deMarketService.Controllers
                 user.nick_name = command.NickName;
                 await _mySqlMasterDbContext.SaveChangesAsync();
                 return new WebApiResult(1, "修改成功");
+            }
+        }
+        /// <summary>
+        /// 修改Telegram账户
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPost("edit/usertelegram")]
+        public async Task<WebApiResult> EditUserTelegram([FromBody] EditUserNickRequest command)
+        {
+            var length = command.VerifyCode.Length;
+            if (length > 20)
+            {
+                return new WebApiResult(-1, "您输入的验证码过长");
+            }
+            var user = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(CurrentLoginAddress, StringComparison.OrdinalIgnoreCase));
+            if (user == null)
+            {
+                return new WebApiResult(-1, "未找到该用户" + CurrentLoginAddress);
+            }
+       
+            else
+            {
+                var telegramUserChat = _mySqlMasterDbContext.telegram_user_chat.Where(a => a.verify_code == command.VerifyCode && DateTime.Now.AddMinutes(-5) <= a.update_time).FirstOrDefault();
+                if (telegramUserChat != null)
+                {
+                    user.nick_name = telegramUserChat.user_name;
+                    await _mySqlMasterDbContext.SaveChangesAsync();
+                    return new WebApiResult(1, "修改成功");
+                }
+                else
+                {
+                    return new WebApiResult(-1, "验证码不正确或已过期！");
+                }
             }
         }
         /// <summary>

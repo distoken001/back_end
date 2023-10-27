@@ -16,6 +16,10 @@ namespace deMarketService.Common.Model.HttpApiModel.RequestModel
         /// 昵称
         /// </summary>
         public string NickName { get; set; }
+        /// <summary>
+        /// 昵称
+        /// </summary>
+        public string VerifyCode { get; set; }
     }
     public class EditUserEmaiRequest
     {
