@@ -64,7 +64,7 @@ namespace TelegramService
                     case UpdateType.Unknown:
                         break;
                     case UpdateType.Message:
-                        if (update.Message.Type == MessageType.ChatMembersAdded||update.Message.Text.Equals("绑定")|| update.Message.Text.Equals("Bind",StringComparison.OrdinalIgnoreCase) || update.Message.Text.Equals("@"+_configuration["BotUserName"]))
+                        if (update.Message.Type == MessageType.ChatMembersAdded || update.Message.Text.Equals("绑定") || update.Message.Text.Equals("Bind", StringComparison.OrdinalIgnoreCase) || update.Message.Text.Equals("@" + _configuration["BotUserName"]) || update.Message.Chat.Id.ToString() != _configuration["GroupChatID"])
                         {
                             sb.AppendLine("➡️ 请选择您想要完成的操作 ");
                             InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(new[]
