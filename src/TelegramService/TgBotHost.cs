@@ -64,7 +64,7 @@ namespace TelegramService
                     case UpdateType.Unknown:
                         break;
                     case UpdateType.Message:
-                        if (update.Message.Type == MessageType.ChatMembersAdded || update.Message.Text.Equals("绑定") || update.Message.Text.Equals("Bind", StringComparison.OrdinalIgnoreCase) || update.Message.Text.Equals("@" + _configuration["BotUserName"]) || update.Message.Chat.Id.ToString() != _configuration["GroupChatID"])
+                        if (update.Message.Type == MessageType.ChatMembersAdded || update.Message.Text.Equals("绑定") || update.Message.Text.Equals("Bind", StringComparison.OrdinalIgnoreCase) || update.Message.Text.Equals("@" + _configuration["BotUserName"]) || update.Message.Chat.Id>0)
                         {
                             sb.AppendLine("➡️ 请选择您想要完成的操作 ");
                             InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(new[]
@@ -142,7 +142,7 @@ namespace TelegramService
                             {
                                 await botClient.SendTextMessageAsync(
                             chatId: update.CallbackQuery.Message.Chat.Id,
-                            text: "@" + modifiedString + " *私聊我获取验证码*",
+                            text: "@" + modifiedString + " *私聊我立即获取绑定验证码*",
                             parseMode: ParseMode.MarkdownV2);
 
                             }
