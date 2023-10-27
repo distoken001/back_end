@@ -111,43 +111,36 @@ namespace TelegramService
                         if (update.CallbackQuery.Data == "Bind")
                         {
                             string modifiedString = update.CallbackQuery.From.Username.Replace("_", @"\_");
-                            sb.Append("@"+ modifiedString+" 您的验证码是： ");
+                            sb.Append(" 您的验证码是： ");
                             sb.Append("*");
                             Random random = new Random();
-                            int randomNumber = random.Next(100000, 999999); // 生成6位随机数字
+                            int randomNumber = random.Next(10000000, 99999999); // 生成8位随机数字
                             sb.Append(randomNumber.ToString());
                             sb.Append("*");
                             telegramUserChat = _masterDbContext.telegram_user_chat.Where(a => a.chat_id == update.CallbackQuery.Message.Chat.Id).FirstOrDefault();
                             if (telegramUserChat == null)
                             {
-                                _masterDbContext.telegram_user_chat.Add(
-                                    new telegram_user_chat()
-                                    {
-                                        user_name = update.CallbackQuery.Message.From.Username,
-                                        user_id = update.CallbackQuery.Message.From.Id,
-                                        chat_id = update.CallbackQuery.Message.Chat.Id,
-                                        create_time = DateTime.Now,
-                                        update_time = DateTime.Now,
-                                        verify_code = "",
-                                        count = 0
-                                    });
+                                return;
                             }
                             else
                             {
-                                telegramUserChat.user_name = update.CallbackQuery.Message.From.Username;
+                                telegramUserChat.user_name = update.CallbackQuery.Message.Chat.Username;
                                 telegramUserChat.update_time = DateTime.Now;
                                 telegramUserChat.verify_code = randomNumber.ToString();
                                 telegramUserChat.count = 0;
-                                telegramUserChat.user_id = update.CallbackQuery.Message.From.Id;
                             }
                             _masterDbContext.SaveChanges();
-                            result = await botClient.SendTextMessageAsync(
-                                  chatId: update.CallbackQuery.Message.Chat.Id,
+                                                  
+                            await botClient.SendTextMessageAsync(
+                        chatId: update.CallbackQuery.Message.Chat.Id,
+                        text: "@" + modifiedString + " *您的验证码已经私发您，注意查收！*",
+                        parseMode: ParseMode.MarkdownV2);
+                            await botClient.SendTextMessageAsync(
+                                  chatId: telegramUserChat.user_id,
                                   text: sb.ToString(),
                                   parseMode: ParseMode.MarkdownV2);
-                            Console.WriteLine(result.ToString());
+
                         }
-                      
                         break;
                     case UpdateType.EditedMessage:
                         break;
