@@ -113,18 +113,18 @@ namespace deMarketService.Controllers
 
             try
             {
-                List<string> ls = new List<string>();
+                List<long> ls = new List<long>();
                 var order = await _mySqlMasterDbContext.orders.FirstOrDefaultAsync(p => p.order_id == request.order_id && p.chain_id == request.chain_id && p.contract == request.contract);
                 OrderStatus status = order.status;
                 var seller = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(u => u.address == order.seller);
                 var buyer = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(u => u.address == order.buyer);
-                if (!string.IsNullOrEmpty(seller?.telegram_id))
+                if (seller?.telegram_id!=null)
                 {
-                    ls.Add(seller.telegram_id);
+                    ls.Add((long)seller.telegram_id);
                 }
-                if (!string.IsNullOrEmpty(buyer?.telegram_id))
+                if (buyer?.telegram_id!=null)
                 {
-                    ls.Add(buyer.telegram_id);
+                    ls.Add((long)buyer.telegram_id);
                 }
 
                 //string subject = "链上闲鱼通知";
@@ -135,11 +135,11 @@ namespace deMarketService.Controllers
                     {
                         mailMessage = $"指定交易商品({order.name})在{order.chain_id.ToString()}网络已成功上架，特此通知！";
                     }
-                    else if (ls.Contains(seller.telegram_id))
+                    else if (ls.Contains((long)seller.telegram_id))
                     {
                         mailMessage = $"您在{order.chain_id.ToString()}网络发布的商品({order.name})已成功上架，如果您的商品有新动态，我们将邮件通知您！";
                     }
-                    else if (ls.Contains(buyer.telegram_id))
+                    else if (ls.Contains((long)buyer.telegram_id))
                     {
                         mailMessage = $"一位卖家在{order.chain_id.ToString()}网络发布的商品({order.name})指定您为唯一购买人！";
                     }
@@ -150,11 +150,11 @@ namespace deMarketService.Controllers
                     {
                         mailMessage = $"指定交易商品({order.name})在{order.chain_id.ToString()}网络已取消，特此通知！";
                     }
-                    else if (ls.Contains(seller.telegram_id))
+                    else if (ls.Contains((long)seller.telegram_id))
                     {
                         mailMessage = $"您在{order.chain_id.ToString()}网络发布的商品({order.name})已取消，特此通知！";
                     }
-                    else if (ls.Contains(buyer.telegram_id))
+                    else if (ls.Contains((long)buyer.telegram_id))
                     {
                         mailMessage = $"卖家在{order.chain_id.ToString()}网络发布的商品({order.name})已取消，该商品曾指定您为唯一购买人。";
                     }

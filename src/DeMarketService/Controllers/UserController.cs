@@ -273,7 +273,7 @@ namespace deMarketService.Controllers
                 var telegramUserChat = _mySqlMasterDbContext.telegram_user_chat.Where(a => a.verify_code == command.VerifyCode && DateTime.Now.AddMinutes(-5) <= a.update_time).FirstOrDefault();
                 if (telegramUserChat != null)
                 {
-                    user.nick_name = telegramUserChat.user_name;
+                    user.nick_name = telegramUserChat.user_name;user.telegram_id = telegramUserChat.user_id;
                     await _mySqlMasterDbContext.SaveChangesAsync();
                     return new WebApiResult(1, "绑定成功",telegramUserChat.user_name);
                 }
