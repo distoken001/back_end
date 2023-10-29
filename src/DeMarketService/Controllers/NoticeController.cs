@@ -113,6 +113,7 @@ namespace deMarketService.Controllers
 
             try
             {
+                Console.WriteLine("德玛通知{0}", request.order_id);
                 List<long> ls = new List<long>();
                 var order = await _mySqlMasterDbContext.orders.FirstOrDefaultAsync(p => p.order_id == request.order_id && p.chain_id == request.chain_id && p.contract == request.contract);
                 OrderStatus status = order.status;
