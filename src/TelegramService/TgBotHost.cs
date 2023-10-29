@@ -64,7 +64,10 @@ namespace TelegramService
                     case UpdateType.Unknown:
                         break;
                     case UpdateType.Message:
-
+                        if (update.Message.Type == MessageType.ChatMemberLeft)
+                        {
+                            return;
+                        }
                         if (update.Message.Type == MessageType.ChatMembersAdded || update.Message.Text.Equals("绑定") || update.Message.Text.Equals("Bind", StringComparison.OrdinalIgnoreCase) || update.Message.Text.Equals("@" + _configuration["BotUserName"]) || update.Message.Chat.Id > 0)
                         {
                             sb.AppendLine("很高兴遇见你！ "+update.Message.From.Username.Replace("_", @"\_"));
@@ -80,7 +83,7 @@ namespace TelegramService
                 } };
                             if (update.Message.Chat.Id > 0)
                             {
-                                sb.AppendLine("不要删除我哦，我是DeMarket通知机器人，您的相关订单动态我会第一时间通知您！");
+                                sb.AppendLine("我是DeMarket通知机器人，您的相关订单动态我会第一时间通知您！切记不要将我删除哦～");
                                 obj = obj.Concat(new[]{new[]
                 {
                     InlineKeyboardButton.WithCallbackData(text: "获取绑定验证码", callbackData: "Bind") }
