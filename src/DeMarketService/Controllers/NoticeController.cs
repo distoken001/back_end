@@ -113,7 +113,6 @@ namespace deMarketService.Controllers
 
             try
             {
-                Console.WriteLine("德玛通知{0}", request.order_id);
                 List<long> ls = new List<long>();
                 var order = await _mySqlMasterDbContext.orders.FirstOrDefaultAsync(p => p.order_id == request.order_id && p.chain_id == request.chain_id && p.contract == request.contract);
                 OrderStatus status = order.status;
@@ -142,7 +141,7 @@ namespace deMarketService.Controllers
                     }
                     else if (ls.Contains((long)buyer.telegram_id))
                     {
-                        mailMessage = $"一位卖家在{order.chain_id.ToString()}网络发布的商品({order.name})指定您为唯一购买人！";
+                        mailMessage = $"卖家(@{seller?.nick_name})在{order.chain_id.ToString()}网络发布的商品({order.name})指定您为唯一购买人！";
                     }
                 }
                 else if (status == OrderStatus.SellerCancelWithoutDuty)
@@ -157,7 +156,7 @@ namespace deMarketService.Controllers
                     }
                     else if (ls.Contains((long)buyer.telegram_id))
                     {
-                        mailMessage = $"卖家在{order.chain_id.ToString()}网络发布的商品({order.name})已取消，该商品曾指定您为唯一购买人。";
+                        mailMessage = $"卖家(@{seller?.nick_name})在{order.chain_id.ToString()}网络发布的商品({order.name})已取消，该商品曾指定您为唯一购买人。";
                     }
 
                    
@@ -172,7 +171,7 @@ namespace deMarketService.Controllers
                 }
                 else
                 {
-                    mailMessage = $"您在{order.chain_id.ToString()}网络的商品（{order.name}）有新动态，请注意查看！<br/><br/><br/>---此邮件收件人为买卖双方预留的邮箱联系方式<br/><br/><br/>---您也可以在商品详情页查看对方的其他联系方式！";
+                    mailMessage = $"您在{order.chain_id.ToString()}网络的商品（{order.name}）有新动态，特此通知！";
                 }
                 //var a = _mailKitEmail.SendMailAsync(subject, mailMessage, ls).Result;
                 foreach (var telegram_id in ls)
