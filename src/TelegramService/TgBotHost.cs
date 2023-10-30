@@ -89,14 +89,12 @@ namespace TelegramService
                     InlineKeyboardButton.WithUrl(text: "Telegram电报", url: @"https://t.me/"+_configuration["ChatGroup"]) }
                 }).ToArray();
                             }
-                            else
-                            {
+                            
                                 obj = obj.Concat(new[]{new[]
                 {
                     InlineKeyboardButton.WithUrl(text: "获取绑定验证码", url: @"https://t.me/"+_configuration["BotUserName"]) }
                 }).ToArray();
-                            }
-                            InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(obj);
+                                                        InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(obj);
                             telegramUserChat = _masterDbContext.telegram_user_chat.Where(a => a.chat_id == update.Message.Chat.Id).FirstOrDefault();
                             if (telegramUserChat == null)
                             {
@@ -135,6 +133,15 @@ namespace TelegramService
                 {
                     InlineKeyboardButton.WithUrl(text: "Twitter推特", url: "https://twitter.com/demarket_io"),
                 } };
+                            if (update.Message.Chat.Id.ToString() != _configuration["GroupChatID"])
+                            {
+
+                                obj = obj.Concat(new[]{new[]
+                {
+                    InlineKeyboardButton.WithUrl(text: "Telegram电报", url: @"https://t.me/"+_configuration["ChatGroup"]) }
+                }).ToArray();
+                            }
+                                
                             if (update.Message.Chat.Id > 0) {
                                 sb.AppendLine("我是DeMarket机器人，与您相关的订单动态我会第一时间通知您～");
                                 obj = obj.Concat(new[]{new[]
@@ -149,6 +156,8 @@ namespace TelegramService
                     InlineKeyboardButton.WithUrl(text: "获取绑定验证码", url: @"https://t.me/"+_configuration["BotUserName"]) }
                 }).ToArray();
                             }
+                    
+ 
                             InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(obj);
                             telegramUserChat = _masterDbContext.telegram_user_chat.Where(a => a.chat_id == update.Message.Chat.Id).FirstOrDefault();
                             if (telegramUserChat == null)
@@ -203,7 +212,7 @@ namespace TelegramService
                                 telegramUserChat.user_name = update.CallbackQuery.Message.Chat.Username;
                                 telegramUserChat.update_time = DateTime.Now;
                                 telegramUserChat.verify_code = randomNumber.ToString();
-                                telegramUserChat.count = 0;
+                                telegramUserChat.state = 1;
                             }
                             _masterDbContext.SaveChanges();
                             if (_configuration["GroupChatID"] == update.CallbackQuery.Message.Chat.Id.ToString())

@@ -13,7 +13,7 @@ namespace CommonLibrary.Model.DataEntityModel
 		public string verify_code { get; set; }
 		public  DateTime create_time { get; set; }
 		public DateTime update_time { get; set; }
-		public int count { get; set; }
+		public int state { get; set; }
 	}
 }
 
