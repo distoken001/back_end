@@ -68,9 +68,10 @@ namespace TelegramService
                         {
                             return;
                         }
-                        if (update.Message.Type == MessageType.ChatMembersAdded || update.Message.Text.Equals("绑定") || update.Message.Text.Equals("Bind", StringComparison.OrdinalIgnoreCase) || update.Message.Text.Equals("@" + _configuration["BotUserName"]) || update.Message.Chat.Id > 0)
+                        else if ( update.Message.Type == MessageType.ChatMembersAdded)
                         {
-                            sb.AppendLine("很高兴遇见你！ "+update.Message.From.Username.Replace("_", @"\_"));
+
+                            sb.AppendLine("很高兴遇见你！ @" + update.Message.From.Username.Replace("_", @"\_"));
                             var obj = new[]
                             {
                 new []
@@ -81,9 +82,61 @@ namespace TelegramService
                 {
                     InlineKeyboardButton.WithUrl(text: "Twitter推特", url: "https://twitter.com/demarket_io"),
                 } };
-                            if (update.Message.Chat.Id > 0)
+                            if (update.Message.Chat.Id.ToString() != _configuration["GroupChatID"])
                             {
-                                sb.AppendLine("我是DeMarket通知机器人，您的相关订单动态我会第一时间通知您！切记不要将我删除哦～");
+                                obj = obj.Concat(new[]{new[]
+                {
+                    InlineKeyboardButton.WithUrl(text: "Telegram电报", url: @"https://t.me/"+_configuration["ChatGroup"]) }
+                }).ToArray();
+                            }
+                            else
+                            {
+                                obj = obj.Concat(new[]{new[]
+                {
+                    InlineKeyboardButton.WithUrl(text: "获取绑定验证码", url: @"https://t.me/"+_configuration["BotUserName"]) }
+                }).ToArray();
+                            }
+                            InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(obj);
+                            telegramUserChat = _masterDbContext.telegram_user_chat.Where(a => a.chat_id == update.Message.Chat.Id).FirstOrDefault();
+                            if (telegramUserChat == null)
+                            {
+                                _masterDbContext.telegram_user_chat.Add(
+                                    new telegram_user_chat()
+                                    {
+                                        user_name = update.Message.From.Username,
+                                        user_id = update.Message.From.Id,
+                                        chat_id = update.Message.Chat.Id,
+                                        create_time = DateTime.Now,
+                                        update_time = DateTime.Now,
+                                        verify_code = ""
+                                    });
+                            }
+                            else
+                            {
+                                telegramUserChat.user_name = update.Message.From.Username;
+                                telegramUserChat.user_id = update.Message.From.Id;
+                            }
+                            _masterDbContext.SaveChanges();
+                            result = await botClient.SendTextMessageAsync(
+                                  chatId: new ChatId(update.Message.Chat.Id),
+                                  text: sb.ToString(),
+                                  parseMode: ParseMode.Markdown,
+                                  replyMarkup: inlineKeyboard);
+                        }
+                        else if (update.Message.Text.Equals("绑定") || update.Message.Text.Equals("Bind", StringComparison.OrdinalIgnoreCase) || update.Message.Text.Equals("@" + _configuration["BotUserName"]) || update.Message.Chat.Id > 0)
+
+                        {
+                            sb.AppendLine("Hello！ @" + update.Message.From.Username.Replace("_", @"\_"));
+                            var obj = new[]
+                            {                new []
+                {                    InlineKeyboardButton.WithUrl(text: "DeMarket德玛市场", url: "https://demarket.io/"),
+                },
+                new []
+                {
+                    InlineKeyboardButton.WithUrl(text: "Twitter推特", url: "https://twitter.com/demarket_io"),
+                } };
+                            if (update.Message.Chat.Id > 0) {
+                                sb.AppendLine("我是DeMarket机器人，与您相关的订单动态我会第一时间通知您～");
                                 obj = obj.Concat(new[]{new[]
                 {
                     InlineKeyboardButton.WithCallbackData(text: "获取绑定验证码", callbackData: "Bind") }
@@ -95,35 +148,35 @@ namespace TelegramService
                 {
                     InlineKeyboardButton.WithUrl(text: "获取绑定验证码", url: @"https://t.me/"+_configuration["BotUserName"]) }
                 }).ToArray();
-                                                           }                        
-                        InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(obj);
-                        telegramUserChat = _masterDbContext.telegram_user_chat.Where(a => a.chat_id == update.Message.Chat.Id).FirstOrDefault();
-                        if (telegramUserChat == null)
-                        {
-                            _masterDbContext.telegram_user_chat.Add(
-                                new telegram_user_chat()
-                                {
-                                    user_name = update.Message.From.Username,
-                                    user_id = update.Message.From.Id,
-                                    chat_id = update.Message.Chat.Id,
-                                    create_time = DateTime.Now,
-                                    update_time = DateTime.Now,
-                                    verify_code = ""
-                                });
+                            }
+                            InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(obj);
+                            telegramUserChat = _masterDbContext.telegram_user_chat.Where(a => a.chat_id == update.Message.Chat.Id).FirstOrDefault();
+                            if (telegramUserChat == null)
+                            {
+                                _masterDbContext.telegram_user_chat.Add(
+                                    new telegram_user_chat()
+                                    {
+                                        user_name = update.Message.From.Username,
+                                        user_id = update.Message.From.Id,
+                                        chat_id = update.Message.Chat.Id,
+                                        create_time = DateTime.Now,
+                                        update_time = DateTime.Now,
+                                        verify_code = ""
+                                    });
+                            }
+                            else
+                            {
+                                telegramUserChat.user_name = update.Message.From.Username;
+                                telegramUserChat.user_id = update.Message.From.Id;
+                            }
+                            _masterDbContext.SaveChanges();
+                            result = await botClient.SendTextMessageAsync(
+                                  chatId: new ChatId(update.Message.Chat.Id),
+                                  text: sb.ToString(),
+                                  parseMode: ParseMode.Markdown,
+                                  replyMarkup: inlineKeyboard);
                         }
-                        else
-                        {
-                            telegramUserChat.user_name = update.Message.From.Username;
-                            telegramUserChat.user_id = update.Message.From.Id;
-                        }
-                        _masterDbContext.SaveChanges();
-                        result = await botClient.SendTextMessageAsync(
-                              chatId: new ChatId(update.Message.Chat.Id),
-                              text: sb.ToString(),
-                              parseMode: ParseMode.Markdown,
-                              replyMarkup: inlineKeyboard);
-                }
-            
+
                         break;
                     case UpdateType.InlineQuery:
                         break;
@@ -184,6 +237,34 @@ namespace TelegramService
                     case UpdateType.PollAnswer:
                         break;
                     case UpdateType.MyChatMember:
+                        if (update.MyChatMember.NewChatMember.Status == ChatMemberStatus.Member)
+                        {
+                            telegramUserChat = _masterDbContext.telegram_user_chat.Where(a => a.chat_id == update.MyChatMember.From.Id).FirstOrDefault();
+                            if (telegramUserChat == null)
+                            {
+                                _masterDbContext.telegram_user_chat.Add(
+                                    new telegram_user_chat()
+                                    {
+                                        user_name = update.MyChatMember.From.Username,
+                                        user_id = update.MyChatMember.From.Id,
+                                        chat_id = update.MyChatMember.Chat.Id,
+                                        create_time = DateTime.Now,
+                                        update_time = DateTime.Now,
+                                        verify_code = ""
+                                    });
+                            }
+                            else
+                            {
+                                telegramUserChat.user_name = update.MyChatMember.From.Username;
+                                telegramUserChat.user_id = update.MyChatMember.From.Id;
+                            }
+                        }
+                        else if (update.MyChatMember.NewChatMember.Status == ChatMemberStatus.Kicked){
+                            var list = _masterDbContext.users.Where(a => a.telegram_id == update.MyChatMember.From.Id).ToList();
+                            list.ForEach(a => { a.nick_name = null; a.telegram_id = null; });
+                        }
+                       
+                        _masterDbContext.SaveChanges();
                         break;
                     case UpdateType.ChatMember:
                         break;
