@@ -124,7 +124,7 @@ namespace TelegramService
                         else if (update.Message.Text.Equals("绑定") || update.Message.Text.Equals("Bind", StringComparison.OrdinalIgnoreCase) || update.Message.Text.Equals("@" + _configuration["BotUserName"]) || update.Message.Chat.Id > 0)
 
                         {
-                            sb.AppendLine("@" + update.Message.From.Username.Replace("_", @"\_"));
+                            sb.AppendLine("Hey！靓仔！@" + update.Message.From.Username.Replace("_", @"\_"));
                             var obj = new[]
                             {                new []
                 {                    InlineKeyboardButton.WithUrl(text: "DeMarket德玛市场", url: "https://demarket.io/"),
