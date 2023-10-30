@@ -132,13 +132,14 @@ namespace deMarketService.Controllers
                     if (seller?.telegram_id != null)
                     {
                         mailMessageSeller = $"您在{order.chain_id.ToString()}链上发布了商品：{order.name}。";
+                        var chatMessage = "";
                         if (request.type == 0)
                         {
-                            var chatMessage = $"市场订单：用户@{seller?.nick_name}在{order.chain_id.ToString()}链上发布了新商品：{orderDto.name}，单价：{orderDto.price_actual} {orderDto.token_des.token_name},数量：{order.amount}。";
+                             chatMessage = $"市场订单：用户@{seller?.nick_name}在{order.chain_id.ToString()}链上发布了新商品：{orderDto.name}，单价：{orderDto.price_actual} {orderDto.token_des.token_name},数量：{order.amount}。";
                         }
                         else
                         {
-                            var chatMessage = $"拍卖订单：用户@{seller?.nick_name}在{order.chain_id.ToString()}链上发布了新商品：{orderDto.name}，单价：{orderDto.price_actual} {orderDto.token_des.token_name},数量：{order.amount}。";
+                             chatMessage = $"拍卖订单：用户@{seller?.nick_name}在{order.chain_id.ToString()}链上发布了新商品：{orderDto.name}，单价：{orderDto.price_actual} {orderDto.token_des.token_name},数量：{order.amount}。";
                         }
 
                         var chatId = long.Parse(_configuration["GroupChatID"]);
