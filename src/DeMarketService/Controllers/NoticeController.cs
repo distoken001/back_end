@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using Telegram.Bot;
 using CommonLibrary.Model.DataEntityModel;
+using System.Net.Mail;
 
 namespace deMarketService.Controllers
 {
@@ -118,71 +119,67 @@ namespace deMarketService.Controllers
                 OrderStatus status = order.status;
                 var seller = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(u => u.address == order.seller);
                 var buyer = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(u => u.address == order.buyer);
-                if (seller?.telegram_id!=null)
-                {
-                    ls.Add((long)seller.telegram_id);
-                }
-                if (buyer?.telegram_id!=null)
-                {
-                    ls.Add((long)buyer.telegram_id);
-                }
 
-                //string subject = "链上闲鱼通知";
-                string mailMessage = "";
+                var botClient = new TelegramBotClient(_configuration["BotToken"]);
+                string mailMessageSeller = "";
+                string mailMessageBuyer = "";
                 if (status == OrderStatus.Initial)
                 {
-                    if (ls.Count == 2)
+                    if (seller?.telegram_id != null)
                     {
-                        mailMessage = $"指定交易商品({order.name})在{order.chain_id.ToString()}网络已成功上架，特此通知！";
+                        mailMessageSeller = $"您在{order.chain_id.ToString()}网络发布的商品({order.name})已成功上架。";
+                        var chatMessage = $"卖家(@{seller?.nick_name})在{order.chain_id.ToString()}网络发布了新商品({order.name})";
+
+                        var chatId = _configuration["GroupChatID"];
+
+                        var message = await botClient.SendTextMessageAsync(chatId, mailMessageBuyer);
                     }
-                    else if (ls.Contains((long)seller.telegram_id))
+                    if (buyer?.telegram_id != null)
                     {
-                        mailMessage = $"您在{order.chain_id.ToString()}网络发布的商品({order.name})已成功上架，如果您的商品有新动态，我们将邮件通知您！";
-                    }
-                    else if (ls.Contains((long)buyer.telegram_id))
-                    {
-                        mailMessage = $"卖家(@{seller?.nick_name})在{order.chain_id.ToString()}网络发布的商品({order.name})指定您为唯一购买人！";
+                        mailMessageBuyer = $"卖家(@{seller?.nick_name})在{order.chain_id.ToString()}网络发布的商品({order.name})指定您为唯一购买人。";
                     }
                 }
                 else if (status == OrderStatus.SellerCancelWithoutDuty)
                 {
-                    if (ls.Count == 2)
+                    if (seller?.telegram_id != null)
                     {
-                        mailMessage = $"指定交易商品({order.name})在{order.chain_id.ToString()}网络已取消，特此通知！";
+                        mailMessageSeller = $"您在{order.chain_id.ToString()}网络发布的商品({order.name})已取消。";
                     }
-                    else if (ls.Contains((long)seller.telegram_id))
+                    if (buyer?.telegram_id != null)
                     {
-                        mailMessage = $"您在{order.chain_id.ToString()}网络发布的商品({order.name})已取消，特此通知！";
+                        mailMessageBuyer = $"卖家(@{seller?.nick_name})在{order.chain_id.ToString()}网络发布的商品({order.name})已取消，该商品曾指定您为唯一购买人。";
                     }
-                    else if (ls.Contains((long)buyer.telegram_id))
-                    {
-                        mailMessage = $"卖家(@{seller?.nick_name})在{order.chain_id.ToString()}网络发布的商品({order.name})已取消，该商品曾指定您为唯一购买人。";
-                    }
-
-                   
                 }
                 else if (status == OrderStatus.Completed)
                 {
-                    mailMessage = $"您在{order.chain_id.ToString()}网络的商品({order.name})交易已完成，特此通知！";
+                    mailMessageSeller = $"您在{order.chain_id.ToString()}网络的发布的商品({order.name})交易已完成。";
+                    mailMessageBuyer = $"您在{order.chain_id.ToString()}网络购买的商品({order.name})交易已完成。";
                 }
                 else if (status == OrderStatus.ConsultCancelCompleted)
                 {
-                    mailMessage = $"您在{order.chain_id.ToString()}网络的商品({order.name})已经与对方协商取消交易，特此通知！";
+                    mailMessageSeller = $"您在{order.chain_id.ToString()}网络的发布的商品({order.name})协商取消已完成。";
+                    mailMessageBuyer = $"您在{order.chain_id.ToString()}网络购买的商品({order.name})协商取消已完成。";
                 }
                 else
                 {
-                    mailMessage = $"您在{order.chain_id.ToString()}网络的商品（{order.name}）有新动态，特此通知！";
+                    mailMessageSeller = $"您在{order.chain_id.ToString()}网络发布的商品（{order.name}）有新动态，请及时查看。";
+                    mailMessageBuyer = $"您在{order.chain_id.ToString()}网络购买的商品（{order.name}）有新动态，请及时查看。";
                 }
-                //var a = _mailKitEmail.SendMailAsync(subject, mailMessage, ls).Result;
-                foreach (var telegram_id in ls)
+
+                if (!string.IsNullOrEmpty(mailMessageSeller))
                 {
-                    var botClient = new TelegramBotClient(_configuration["BotToken"]);
 
-                    var chatId = telegram_id; // 替换为您要发送消息的聊天ID
+                    var chatId = seller?.telegram_id; // 替换为您要发送消息的聊天ID
 
-                  var message=  await botClient.SendTextMessageAsync(chatId, mailMessage);
-                  Console.WriteLine("message", message);
+                    var message = await botClient.SendTextMessageAsync(chatId, mailMessageSeller);
+                }
+                if (!string.IsNullOrEmpty(mailMessageBuyer))
+                {
 
+
+                    var chatId = seller?.telegram_id; // 替换为您要发送消息的聊天ID
+
+                    var message = await botClient.SendTextMessageAsync(chatId, mailMessageBuyer);
                 }
 
             }
@@ -208,7 +205,7 @@ namespace deMarketService.Controllers
                     updater = null,
                     contact = request.contact,
                     name = request.name,
-                    ip= ClientIP
+                    ip = ClientIP
                 };
                 await _mySqlMasterDbContext.cooperator.AddAsync(co);
                 await _mySqlMasterDbContext.SaveChangesAsync();
