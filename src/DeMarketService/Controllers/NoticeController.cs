@@ -14,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Telegram.Bot;
 using CommonLibrary.Model.DataEntityModel;
 using System.Net.Mail;
+using System.Linq;
 
 namespace deMarketService.Controllers
 {
@@ -59,45 +60,45 @@ namespace deMarketService.Controllers
                 {
                     if (ls.Count == 2)
                     {
-                        mailMessage = $"指定交易商品({order.name})在{order.chain_id.ToString()}网络已成功上架，特此通知！";
+                        mailMessage = $"指定交易商品({order.name})在{order.chain_id.ToString()}链上已成功上架，特此通知！";
                     }
                     else if (ls.Contains(seller.email))
                     {
-                        mailMessage = $"您在{order.chain_id.ToString()}网络发布的商品({order.name})已成功上架，如果您的商品有新动态，我们将邮件通知您！";
+                        mailMessage = $"您在{order.chain_id.ToString()}链上发布的商品({order.name})已成功上架，如果您的商品有新动态，我们将邮件通知您！";
                     }
                     else if (ls.Contains(buyer.email))
                     {
-                        mailMessage = $"一位商家在{order.chain_id.ToString()}网络发布的商品({order.name})指定您为唯一购买人！";
+                        mailMessage = $"一位商家在{order.chain_id.ToString()}链上发布的商品({order.name})指定您为唯一购买人！";
                     }
                 }
                 else if (status == OrderStatus.SellerCancelWithoutDuty)
                 {
                     if (ls.Count == 2)
                     {
-                        mailMessage = $"指定交易商品({order.name})在{order.chain_id.ToString()}网络已取消，特此通知！";
+                        mailMessage = $"指定交易商品({order.name})在{order.chain_id.ToString()}链上已取消，特此通知！";
                     }
                     else if (ls.Contains(seller.email))
                     {
-                        mailMessage = $"您在{order.chain_id.ToString()}网络发布的商品({order.name})已取消，特此通知！";
+                        mailMessage = $"您在{order.chain_id.ToString()}链上发布的商品({order.name})已取消，特此通知！";
                     }
                     else if (ls.Contains(buyer.email))
                     {
-                        mailMessage = $"商家在{order.chain_id.ToString()}网络发布的商品({order.name})已取消，该商品曾指定您为唯一购买人。";
+                        mailMessage = $"商家在{order.chain_id.ToString()}链上发布的商品({order.name})已取消，该商品曾指定您为唯一购买人。";
                     }
 
 
                 }
                 else if (status == OrderStatus.Completed)
                 {
-                    mailMessage = $"您在{order.chain_id.ToString()}网络的商品({order.name})交易已完成，特此通知！";
+                    mailMessage = $"您在{order.chain_id.ToString()}链上的商品({order.name})交易已完成，特此通知！";
                 }
                 else if (status == OrderStatus.ConsultCancelCompleted)
                 {
-                    mailMessage = $"您在{order.chain_id.ToString()}网络的商品({order.name})已经与对方协商取消交易，特此通知！";
+                    mailMessage = $"您在{order.chain_id.ToString()}链上的商品({order.name})已经与对方协商取消交易，特此通知！";
                 }
                 else
                 {
-                    mailMessage = $"您在{order.chain_id.ToString()}网络的商品（{order.name}）有新动态，请注意查看！<br/><br/><br/>---此邮件收件人为买卖双方预留的邮箱联系方式<br/><br/><br/>---您也可以在商品详情页查看对方的其他联系方式！";
+                    mailMessage = $"您在{order.chain_id.ToString()}链上的商品（{order.name}）有新动态，请注意查看！<br/><br/><br/>---此邮件收件人为买卖双方预留的邮箱联系方式<br/><br/><br/>---您也可以在商品详情页查看对方的其他联系方式！";
                 }
                 var a = _mailKitEmail.SendMailAsync(subject, mailMessage, ls).Result;
             }
@@ -119,7 +120,10 @@ namespace deMarketService.Controllers
                 OrderStatus status = order.status;
                 var seller = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(u => u.address == order.seller);
                 var buyer = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(u => u.address == order.buyer);
-
+                var orderDto = AutoMapperHelper.MapDbEntityToDTO<orders, OrderResponse>(order);
+                var token = _mySqlMasterDbContext.chain_tokens.AsNoTracking().FirstOrDefault(c => c.chain_id == orderDto.chain_id && c.token_address.Equals(orderDto.token, StringComparison.OrdinalIgnoreCase));
+                var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
+                orderDto.token_des = tokenView;
                 var botClient = new TelegramBotClient(_configuration["BotToken"]);
                 string mailMessageSeller = "";
                 string mailMessageBuyer = "";
@@ -127,8 +131,9 @@ namespace deMarketService.Controllers
                 {
                     if (seller?.telegram_id != null)
                     {
-                        mailMessageSeller = $"您在{order.chain_id.ToString()}网络发布的商品({order.name})已成功上架。";
-                        var chatMessage = $"卖家(@{seller?.nick_name})在{order.chain_id.ToString()}网络发布了新商品({order.name})";
+                        mailMessageSeller = $"您在{order.chain_id.ToString()}链上发布了商品：{order.name}。";
+                      
+                        var chatMessage = $"卖家@{seller?.nick_name}在{order.chain_id.ToString()}链上发布了新商品：名字：{orderDto.name}，单价：{orderDto.price_actual}{orderDto.token_des.token_name}";
 
                         var chatId = long.Parse(_configuration["GroupChatID"]);
 
@@ -136,34 +141,34 @@ namespace deMarketService.Controllers
                     }
                     if (buyer?.telegram_id != null)
                     {
-                        mailMessageBuyer = $"卖家(@{seller?.nick_name})在{order.chain_id.ToString()}网络发布的商品({order.name})指定您为唯一购买人。";
+                        mailMessageBuyer = $"卖家(@{seller?.nick_name})在{order.chain_id.ToString()}链上发布的商品({order.name})指定您为唯一购买人。";
                     }
                 }
                 else if (status == OrderStatus.SellerCancelWithoutDuty)
                 {
                     if (seller?.telegram_id != null)
                     {
-                        mailMessageSeller = $"您在{order.chain_id.ToString()}网络发布的商品({order.name})已取消。";
+                        mailMessageSeller = $"您在{order.chain_id.ToString()}链上发布的商品({order.name})已取消。";
                     }
                     if (buyer?.telegram_id != null)
                     {
-                        mailMessageBuyer = $"卖家(@{seller?.nick_name})在{order.chain_id.ToString()}网络发布的商品({order.name})已取消，该商品曾指定您为唯一购买人。";
+                        mailMessageBuyer = $"卖家(@{seller?.nick_name})在{order.chain_id.ToString()}链上发布的商品({order.name})已取消，该商品曾指定您为唯一购买人。";
                     }
                 }
                 else if (status == OrderStatus.Completed)
                 {
-                    mailMessageSeller = $"您在{order.chain_id.ToString()}网络的发布的商品({order.name})交易已完成。";
-                    mailMessageBuyer = $"您在{order.chain_id.ToString()}网络购买的商品({order.name})交易已完成。";
+                    mailMessageSeller = $"您在{order.chain_id.ToString()}链上的发布的商品({order.name})交易已完成。";
+                    mailMessageBuyer = $"您在{order.chain_id.ToString()}链上购买的商品({order.name})交易已完成。";
                 }
                 else if (status == OrderStatus.ConsultCancelCompleted)
                 {
-                    mailMessageSeller = $"您在{order.chain_id.ToString()}网络的发布的商品({order.name})协商取消已完成。";
-                    mailMessageBuyer = $"您在{order.chain_id.ToString()}网络购买的商品({order.name})协商取消已完成。";
+                    mailMessageSeller = $"您在{order.chain_id.ToString()}链上的发布的商品({order.name})协商取消已完成。";
+                    mailMessageBuyer = $"您在{order.chain_id.ToString()}链上购买的商品({order.name})协商取消已完成。";
                 }
                 else
                 {
-                    mailMessageSeller = $"您在{order.chain_id.ToString()}网络发布的商品（{order.name}）有新动态，请及时查看。";
-                    mailMessageBuyer = $"您在{order.chain_id.ToString()}网络购买的商品（{order.name}）有新动态，请及时查看。";
+                    mailMessageSeller = $"您在{order.chain_id.ToString()}链上发布的商品（{order.name}）有新动态，请及时查看。";
+                    mailMessageBuyer = $"您在{order.chain_id.ToString()}链上购买的商品（{order.name}）有新动态，请及时查看。";
                 }
 
                 if (!string.IsNullOrEmpty(mailMessageSeller))
