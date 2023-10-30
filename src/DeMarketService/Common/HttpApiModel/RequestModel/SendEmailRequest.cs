@@ -17,10 +17,6 @@ namespace deMarketService.Common.Model.HttpApiModel.RequestModel
         /// 合约
         /// </summary>
         public string contract { get; set; }
-		/// <summary>
-		/// 0市场 1 拍卖
-		/// </summary>
-		public int type { get; set; }
     }
 }
 

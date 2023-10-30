@@ -132,15 +132,7 @@ namespace deMarketService.Controllers
                     if (seller?.telegram_id != null)
                     {
                         mailMessageSeller = $"您在{order.chain_id.ToString()}链上发布了商品：{order.name}。";
-                        var chatMessage = "";
-                        if (request.type == 0)
-                        {
-                             chatMessage = $"市场订单：用户@{seller?.nick_name}在{order.chain_id.ToString()}链上发布了新商品：{orderDto.name}，单价：{orderDto.price_actual} {orderDto.token_des.token_name},数量：{order.amount}。";
-                        }
-                        else
-                        {
-                             chatMessage = $"拍卖订单：用户@{seller?.nick_name}在{order.chain_id.ToString()}链上发布了新商品：{orderDto.name}，单价：{orderDto.price_actual} {orderDto.token_des.token_name},数量：{order.amount}。";
-                        }
+                        var chatMessage = $"市场订单：用户@{seller?.nick_name}在{order.chain_id.ToString()}链上发布了新商品：{orderDto.name}，单价：{orderDto.price_actual} {orderDto.token_des.token_name},数量：{order.amount}。";
 
                         var chatId = long.Parse(_configuration["GroupChatID"]);
 
@@ -200,6 +192,43 @@ namespace deMarketService.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine("Exception caught in sendBot(): {0}", ex.ToString());
+                return Json(new WebApiResult(1, "发送失败"));
+            }
+            return Json(new WebApiResult(1, "发送成功"));
+        }
+
+        [HttpPost("sendBotAuction")]
+        public async Task<JsonResult> sendBotAuction([FromBody] SendEmailRequest request)
+        {
+
+            try
+            {
+                List<long> ls = new List<long>();
+                var order = await _mySqlMasterDbContext.orders_auction.FirstOrDefaultAsync(p => p.order_id == request.order_id && p.chain_id == request.chain_id && p.contract == request.contract);
+                OrderAuctionStatus status = order.status;
+                var seller = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(u => u.address == order.seller);
+
+                var orderDto = AutoMapperHelper.MapDbEntityToDTO<orders_auction, OrderAuctionResponse>(order);
+                var token = _mySqlMasterDbContext.chain_tokens.AsNoTracking().FirstOrDefault(c => c.chain_id == orderDto.chain_id && c.token_address.Equals(orderDto.token, StringComparison.OrdinalIgnoreCase));
+                var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
+                orderDto.token_des = tokenView;
+                var botClient = new TelegramBotClient(_configuration["BotToken"]);
+
+                if (status == OrderAuctionStatus.Initial)
+                {
+
+                    var chatMessage = $"拍卖订单：用户@{seller?.nick_name}在{order.chain_id.ToString()}链上发布了新商品：{orderDto.name}，起拍单价：{orderDto.price_actual} {orderDto.token_des.token_name},数量：{order.amount}。";
+
+
+                    var chatId = long.Parse(_configuration["GroupChatID"]);
+
+                    var message = await botClient.SendTextMessageAsync(chatId, chatMessage);
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception caught in sendBotAuction(): {0}", ex.ToString());
                 return Json(new WebApiResult(1, "发送失败"));
             }
             return Json(new WebApiResult(1, "发送成功"));
