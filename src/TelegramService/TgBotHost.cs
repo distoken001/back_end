@@ -124,7 +124,7 @@ namespace TelegramService
                         else if (update.Message.Text.Equals("绑定") || update.Message.Text.Equals("Bind", StringComparison.OrdinalIgnoreCase) || update.Message.Text.Equals("@" + _configuration["BotUserName"]) || update.Message.Chat.Id > 0)
 
                         {
-                            sb.AppendLine("Hello！ @" + update.Message.From.Username.Replace("_", @"\_"));
+                            sb.AppendLine("@" + update.Message.From.Username.Replace("_", @"\_"));
                             var obj = new[]
                             {                new []
                 {                    InlineKeyboardButton.WithUrl(text: "DeMarket德玛市场", url: "https://demarket.io/"),
@@ -143,7 +143,7 @@ namespace TelegramService
                             }
                                 
                             if (update.Message.Chat.Id > 0) {
-                                sb.AppendLine("我是DeMarket机器人，与您相关的订单动态我会第一时间通知您～");
+                                sb.AppendLine("我是DeMarket小助手，与您相关的订单动态我会第一时间通知您，切记不要删除或拉黑我哦，不然会解除与DeMarket的绑定...");
                                 obj = obj.Concat(new[]{new[]
                 {
                     InlineKeyboardButton.WithCallbackData(text: "获取绑定验证码", callbackData: "Bind") }
