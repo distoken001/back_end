@@ -130,9 +130,9 @@ namespace deMarketService.Controllers
                         mailMessageSeller = $"您在{order.chain_id.ToString()}网络发布的商品({order.name})已成功上架。";
                         var chatMessage = $"卖家(@{seller?.nick_name})在{order.chain_id.ToString()}网络发布了新商品({order.name})";
 
-                        var chatId = _configuration["GroupChatID"];
+                        var chatId = long.Parse(_configuration["GroupChatID"]);
 
-                        var message = await botClient.SendTextMessageAsync(chatId, mailMessageBuyer);
+                        var message = await botClient.SendTextMessageAsync(chatId, chatMessage);
                     }
                     if (buyer?.telegram_id != null)
                     {
@@ -170,16 +170,18 @@ namespace deMarketService.Controllers
                 {
 
                     var chatId = seller?.telegram_id; // 替换为您要发送消息的聊天ID
-
-                    var message = await botClient.SendTextMessageAsync(chatId, mailMessageSeller);
+                    if (chatId != null)
+                    {
+                        var message = await botClient.SendTextMessageAsync(chatId, mailMessageSeller);
+                    }
                 }
                 if (!string.IsNullOrEmpty(mailMessageBuyer))
                 {
-
-
-                    var chatId = seller?.telegram_id; // 替换为您要发送消息的聊天ID
-
-                    var message = await botClient.SendTextMessageAsync(chatId, mailMessageBuyer);
+                    var chatId = buyer?.telegram_id; // 替换为您要发送消息的聊天ID
+                    if (chatId != null)
+                    {
+                        var message = await botClient.SendTextMessageAsync(chatId, mailMessageBuyer);
+                    }
                 }
 
             }
