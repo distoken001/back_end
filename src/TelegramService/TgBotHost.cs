@@ -121,7 +121,7 @@ namespace TelegramService
                                   parseMode: ParseMode.Markdown,
                                   replyMarkup: inlineKeyboard);
                         }
-                        else if (update.Message.Text.Equals("绑定") || update.Message.Text.Equals("Bind", StringComparison.OrdinalIgnoreCase) || update.Message.Text.Equals("@" + _configuration["BotUserName"]) || update.Message.Chat.Id > 0)
+                        else if (update.Message.Text.Equals("绑定") || update.Message.Text.Equals("Bind", StringComparison.OrdinalIgnoreCase) || update.Message.Text.Equals("DeMarket", StringComparison.OrdinalIgnoreCase) || update.Message.Text.Equals("德玛", StringComparison.OrdinalIgnoreCase) || update.Message.Text.Equals("@" + _configuration["BotUserName"]) || update.Message.Chat.Id > 0)
 
                         {
                             sb.AppendLine("Hey！靓仔！@" + update.Message.From.Username.Replace("_", @"\_"));
