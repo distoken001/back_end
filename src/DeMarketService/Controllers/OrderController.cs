@@ -19,6 +19,7 @@ using TencentCloud.Tcss.V20201101.Models;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using CommonLibrary.Model.DataEntityModel;
+using TencentCloud.Pds.V20210701.Models;
 
 namespace deMarketService.Controllers
 {
@@ -313,6 +314,12 @@ namespace deMarketService.Controllers
             var re = AutoMapperHelper.MapDbEntityToDTO<orders, OrderResponse>(res);
             re.belong = Tool.getBelongUserEnum(CurrentLoginAddress, res.buyer, res.seller);
             re.seller_nfts = _mySqlMasterDbContext.user_nft.AsNoTracking().Where(a => a.status == 1 && a.address.Equals(re.seller)).Select(a => a.nft).ToArray();
+            var user = _mySqlMasterDbContext.users.AsNoTracking().FirstOrDefault(c => c.address.Equals(re.seller, StringComparison.OrdinalIgnoreCase));
+            if (user != null)
+            {
+                re.seller_nick = user.nick_name ?? "";
+                re.seller_email = user.email ?? "";
+            }
             var token = chainTokens.FirstOrDefault(c => c.chain_id == re.chain_id && c.token_address.Equals(re.token, StringComparison.OrdinalIgnoreCase));
             var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
             re.token_des = tokenView;
