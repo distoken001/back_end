@@ -222,12 +222,11 @@ namespace deMarketService.Controllers
                 {
 
                     var chatMessage = $"拍卖订单：用户 @{seller?.nick_name} 在{order.chain_id.ToString()}链上发布了新商品：{orderDto.name}，起拍单价：{orderDto.price_actual} {orderDto.token_des.token_name}, 数量：{order.amount}。";
-
-
-                    var chatId = long.Parse(_configuration["GroupChatID"]);
-
-                    var message = await botClient.SendTextMessageAsync(chatId, chatMessage);
-
+                    var chatIDs = _configuration["GroupChatIDs"].Split(',');
+                    foreach (var chatID in chatIDs)
+                    {
+                        var message = await botClient.SendTextMessageAsync(long.Parse(chatID), chatMessage);
+                    }
                 }
             }
             catch (Exception ex)
