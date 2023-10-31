@@ -304,36 +304,44 @@ namespace deMarketService.Controllers
         [ProducesResponseType(typeof(orders), 200)]
         public async Task<JsonResult> detail([FromQuery] long order_id, [FromQuery] ChainEnum chain_id, [FromQuery] string contract)
         {
-            var resList = _mySqlMasterDbContext.orders.Where(p => p.order_id == order_id && p.chain_id == chain_id);
-            if (!string.IsNullOrEmpty(contract))
+            try
             {
-                resList = resList.Where(p => p.contract.Equals(contract, StringComparison.OrdinalIgnoreCase));
-            }
-            var res = await resList.FirstOrDefaultAsync();
-            var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking().ToList();
-            var re = AutoMapperHelper.MapDbEntityToDTO<orders, OrderResponse>(res);
-            re.belong = Tool.getBelongUserEnum(CurrentLoginAddress, res.buyer, res.seller);
-            re.seller_nfts = _mySqlMasterDbContext.user_nft.AsNoTracking().Where(a => a.status == 1 && a.address.Equals(re.seller)).Select(a => a.nft).ToArray();
-            var user = _mySqlMasterDbContext.users.AsNoTracking().FirstOrDefault(c => c.address.Equals(re.seller, StringComparison.OrdinalIgnoreCase));
-            if (user != null)
-            {
-                re.seller_nick = user.nick_name ?? "";
-                re.seller_email = user.email ?? "";
-            }
-            if (CurrentLoginAddress.Equals(re.buyer, StringComparison.OrdinalIgnoreCase)|| CurrentLoginAddress.Equals(re.seller, StringComparison.OrdinalIgnoreCase))
-            {
-                var userBuyer = _mySqlMasterDbContext.users.AsNoTracking().FirstOrDefault(c => c.address.Equals(re.buyer, StringComparison.OrdinalIgnoreCase));
+                var resList = _mySqlMasterDbContext.orders.Where(p => p.order_id == order_id && p.chain_id == chain_id);
+                if (!string.IsNullOrEmpty(contract))
+                {
+                    resList = resList.Where(p => p.contract.Equals(contract, StringComparison.OrdinalIgnoreCase));
+                }
+                var res = await resList.FirstOrDefaultAsync();
+                var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking().ToList();
+                var re = AutoMapperHelper.MapDbEntityToDTO<orders, OrderResponse>(res);
+                re.belong = Tool.getBelongUserEnum(CurrentLoginAddress, res.buyer, res.seller);
+                re.seller_nfts = _mySqlMasterDbContext.user_nft.AsNoTracking().Where(a => a.status == 1 && a.address.Equals(re.seller)).Select(a => a.nft).ToArray();
+                var user = _mySqlMasterDbContext.users.AsNoTracking().FirstOrDefault(c => c.address.Equals(re.seller, StringComparison.OrdinalIgnoreCase));
                 if (user != null)
                 {
-                    re.buyer_nick = userBuyer.nick_name ?? "";
-                    re.buyer_email = userBuyer.email ?? "";
+                    re.seller_nick = user.nick_name ?? "";
+                    re.seller_email = user.email ?? "";
                 }
+                if (CurrentLoginAddress.Equals(re.buyer, StringComparison.OrdinalIgnoreCase) || CurrentLoginAddress.Equals(re.seller, StringComparison.OrdinalIgnoreCase))
+                {
+                    var userBuyer = _mySqlMasterDbContext.users.AsNoTracking().FirstOrDefault(c => c.address.Equals(re.buyer, StringComparison.OrdinalIgnoreCase));
+                    if (user != null)
+                    {
+                        re.buyer_nick = userBuyer.nick_name ?? "";
+                        re.buyer_email = userBuyer.email ?? "";
+                    }
+                }
+                var token = chainTokens.FirstOrDefault(c => c.chain_id == re.chain_id && c.token_address.Equals(re.token, StringComparison.OrdinalIgnoreCase));
+                var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
+                re.token_des = tokenView;
+                //return Json(new WebApiResult(1, "CurrentLoginAddress:" + CurrentLoginAddress + ",CurrentLoginChain:"+ CurrentLoginChain, ress));
+                return Json(new WebApiResult(1, "查询成功" + CurrentLoginAddress, re));
             }
-            var token = chainTokens.FirstOrDefault(c => c.chain_id == re.chain_id && c.token_address.Equals(re.token, StringComparison.OrdinalIgnoreCase));
-            var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
-            re.token_des = tokenView;
-            //return Json(new WebApiResult(1, "CurrentLoginAddress:" + CurrentLoginAddress + ",CurrentLoginChain:"+ CurrentLoginChain, ress));
-            return Json(new WebApiResult(1, "查询成功" + CurrentLoginAddress, re));
+            catch(Exception ex)
+            {
+                Console.WriteLine($"发送错误：{ex.Message}");
+                return Json(new WebApiResult(-1, "查询订单详情失败" + ex.Message));
+            }
         }
         /// <summary>
         /// 我的收藏
