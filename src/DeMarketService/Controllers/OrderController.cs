@@ -325,7 +325,7 @@ namespace deMarketService.Controllers
                 if (CurrentLoginAddress.Equals(re.buyer, StringComparison.OrdinalIgnoreCase) || CurrentLoginAddress.Equals(re.seller, StringComparison.OrdinalIgnoreCase))
                 {
                     var userBuyer = _mySqlMasterDbContext.users.AsNoTracking().FirstOrDefault(c => c.address.Equals(re.buyer, StringComparison.OrdinalIgnoreCase));
-                    if (user != null)
+                    if (userBuyer != null)
                     {
                         re.buyer_nick = userBuyer.nick_name ?? "";
                         re.buyer_email = userBuyer.email ?? "";
