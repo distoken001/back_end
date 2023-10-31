@@ -146,6 +146,8 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         public ChainTokenViewModel token_des { get; set; }
         public string seller_nick { get; set; }
         public string seller_email { get; set; }
+        public string buyer_nick { get; set; }
+        public string buyer_email { get; set; }
         /// <summary>
         /// 权重
         /// </summary>

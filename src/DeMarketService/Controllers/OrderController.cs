@@ -320,6 +320,12 @@ namespace deMarketService.Controllers
                 re.seller_nick = user.nick_name ?? "";
                 re.seller_email = user.email ?? "";
             }
+            var userBuyer = _mySqlMasterDbContext.users.AsNoTracking().FirstOrDefault(c => c.address.Equals(re.buyer, StringComparison.OrdinalIgnoreCase));
+            if (user != null)
+            {
+                re.buyer_nick = userBuyer.nick_name ?? "";
+                re.buyer_email = userBuyer.email ?? "";
+            }
             var token = chainTokens.FirstOrDefault(c => c.chain_id == re.chain_id && c.token_address.Equals(re.token, StringComparison.OrdinalIgnoreCase));
             var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
             re.token_des = tokenView;
