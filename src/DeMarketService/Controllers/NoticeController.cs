@@ -15,6 +15,7 @@ using Telegram.Bot;
 using CommonLibrary.Model.DataEntityModel;
 using System.Net.Mail;
 using System.Linq;
+using Telegram.Bot.Types;
 
 namespace deMarketService.Controllers
 {
@@ -134,9 +135,12 @@ namespace deMarketService.Controllers
                         mailMessageSeller = $"您在{order.chain_id.ToString()}链上发布了商品：{order.name}。";
                         var chatMessage = $"市场订单：用户 @{seller?.nick_name} 在{order.chain_id.ToString()}链上发布了新商品：{orderDto.name}，单价：{orderDto.price_actual} {orderDto.token_des.token_name}, 数量：{order.amount}。";
 
-                        var chatId = long.Parse(_configuration["GroupChatID"]);
+                        var chatIDs = _configuration["GroupChatIDs"].Split(',');
+                        foreach(var chatID in chatIDs)
+                        {
+                            var message = await botClient.SendTextMessageAsync(long.Parse(chatID), chatMessage);
+                        }
 
-                        var message = await botClient.SendTextMessageAsync(chatId, chatMessage);
                     }
                     if (buyer?.telegram_id != null)
                     {
