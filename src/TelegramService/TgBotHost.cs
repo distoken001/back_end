@@ -61,8 +61,7 @@ namespace TelegramService
                 telegram_user_chat telegramUserChat;
                 switch (update.Type)
                 {
-                    case UpdateType.Unknown:
-                        break;
+                    case UpdateType.Unknown:                        break;
                     case UpdateType.Message:
                         if (update.Message.Type == MessageType.ChatMemberLeft)
                         {
@@ -70,7 +69,11 @@ namespace TelegramService
                         }
                         else if (update.Message.Type == MessageType.ChatMembersAdded)
                         {
-
+                            if (string.IsNullOrEmpty(update.Message.From.Username))
+                            {
+                                var message = await botClient.SendTextMessageAsync(update.Message.Chat.Id, "Hey，" + update.Message.From.FirstName + "，您需要先设置你的Telegram用户名才能与DeMarket绑定哦");
+                                return;
+                            }
                             sb.AppendLine("很高兴遇见你！ @" + update.Message.From.Username.Replace("_", @"\_"));
                             var obj = new[]
                             {
@@ -121,9 +124,14 @@ namespace TelegramService
                                   parseMode: ParseMode.Markdown,
                                   replyMarkup: inlineKeyboard);
                         }
-                        else if (update.Message.Text.Equals("绑定") || update.Message.Text.Equals("Bind", StringComparison.OrdinalIgnoreCase) || update.Message.Text.Equals("DeMarket", StringComparison.OrdinalIgnoreCase) || update.Message.Text.Equals("德玛", StringComparison.OrdinalIgnoreCase) || update.Message.Text.Equals("@" + _configuration["BotUserName"]) || update.Message.Chat.Id > 0)
+                        else if (update.Message.Text.Equals("绑定") || update.Message.Text.Equals("Bind", StringComparison.OrdinalIgnoreCase) || update.Message.Text.Equals("DeMarket", StringComparison.OrdinalIgnoreCase) || update.Message.Text.Equals("德玛", StringComparison.OrdinalIgnoreCase) || update.Message.Text.Equals("@" + _configuration["BotUserName"]) || update.Message.Chat.Id > 0||!string.IsNullOrEmpty( update.Message.ReplyToMessage.Text))
 
                         {
+                            if (string.IsNullOrEmpty(update.Message.From.Username))
+                            {
+                                var message = await botClient.SendTextMessageAsync(update.Message.Chat.Id, "Hey，" + update.Message.From.FirstName + "，您需要先设置你的Telegram用户名才能与DeMarket绑定哦");
+                                return;
+                            }
                             sb.AppendLine("Hey！靓仔！@" + update.Message.From.Username.Replace("_", @"\_"));
                             var obj = new[]
                             {                new []
