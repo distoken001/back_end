@@ -193,5 +193,9 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         /// </summary>
         public int is_like { get; set; }
         public BelongUserEnum belong { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string buyer_nick { get; set; }
     }
 }

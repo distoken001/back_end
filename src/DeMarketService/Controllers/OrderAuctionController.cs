@@ -224,6 +224,20 @@ namespace deMarketService.Controllers
                 var token = chainTokens.FirstOrDefault(c => c.chain_id == re.chain_id && c.token_address.Equals(re.token, StringComparison.OrdinalIgnoreCase));
                 var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
                 re.token_des = tokenView;
+                var user = _mySqlMasterDbContext.users.AsNoTracking().FirstOrDefault(c => c.address.Equals(re.seller, StringComparison.OrdinalIgnoreCase));
+                if (user != null)
+                {
+                    re.seller_nick = user.nick_name ?? "";
+                    re.seller_email = user.email ?? "";
+                }
+                if (CurrentLoginAddress.Equals(re.buyer, StringComparison.OrdinalIgnoreCase) || CurrentLoginAddress.Equals(re.seller, StringComparison.OrdinalIgnoreCase))
+                {
+                    var userBuyer = _mySqlMasterDbContext.users.AsNoTracking().FirstOrDefault(c => c.address.Equals(re.buyer, StringComparison.OrdinalIgnoreCase));
+                    if (userBuyer != null)
+                    {
+                        re.buyer_nick = userBuyer.nick_name ?? "";
+                    }
+                }
                 //return Json(new WebApiResult(1, "CurrentLoginAddress:" + CurrentLoginAddress + ",CurrentLoginChain:"+ CurrentLoginChain, ress));
                 return Json(new WebApiResult(1, "查询成功" + CurrentLoginAddress, re));
             }
