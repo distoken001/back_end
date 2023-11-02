@@ -177,7 +177,7 @@ namespace TelegramService
                         }
 
                         //else  (update.Message.Text.Equals("绑定") || update.Message.Text.Equals("Bind", StringComparison.OrdinalIgnoreCase) || update.Message.Text.Equals("DeMarket", StringComparison.OrdinalIgnoreCase) || update.Message.Text.Equals("德玛", StringComparison.OrdinalIgnoreCase) || update.Message.Text.Equals("@" + _configuration["BotUserName"]) || update.Message.Chat.Id > 0 || !string.IsNullOrEmpty(update.Message.ReplyToMessage.Text))
-                        else
+                        else if(update.Message.Chat.Id>0)
                         {
                             if (string.IsNullOrEmpty(update.Message.From.Username))
                             {
