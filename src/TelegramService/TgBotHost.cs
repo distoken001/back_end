@@ -134,18 +134,29 @@ namespace TelegramService
                         }
                         else if (update.Message.Chat.Id < 0)
                         {
-                            if (update.Message.Text.Contains( _configuration["BotUserName"]) )
+                            if (update.Message.Text.Contains(_configuration["BotUserName"]))
                             {
                                 if (string.IsNullOrEmpty(update.Message.From.Username))
                                 {
-                                    var message = await botClient.SendTextMessageAsync(update.Message.Chat.Id, "Hey，" + update.Message.From.FirstName + "，您需要先设置Telegram用户名才能与DeMarket绑定哦");
-                                    return;
+                                    if (update.Message.Chat.Id.ToString() == _configuration["GroupChatID"])
+                                    {
+                                        var message = await botClient.SendTextMessageAsync(update.Message.Chat.Id, "Hey，" + update.Message.From.FirstName + "，您需要先设置用户名才能与DeMarket绑定哦");
+                                        return;
+                                    }
+                                    else
+                                    {
+                                        var message = await botClient.SendTextMessageAsync(update.Message.Chat.Id, "Hey，" + update.Message.From.FirstName + "，您没有设置用户名，不能与我沟通哦～");
+                                        return;
+                                    }
                                 }
                                 else
                                 {
-                                    sb.AppendLine("Hey！靓仔！@" + update.Message.From.Username.Replace("_", @"\_"));
-                                    var obj = new[]
-                          {                new []
+                                    if (update.Message.Chat.Id.ToString() == _configuration["GroupChatID"])
+                                    {
+
+                                        sb.AppendLine("Hey！靓仔！@" + update.Message.From.Username.Replace("_", @"\_"));
+                                        var obj = new[]
+                              {                new []
                 {                    InlineKeyboardButton.WithUrl(text: "DeMarket德玛市场", url: "https://demarket.io/"),
                 },
                 new []
@@ -159,18 +170,41 @@ namespace TelegramService
                 }
                         };
 
-                                    obj = obj.Concat(new[]{new[]
+                                        obj = obj.Concat(new[]{new[]
                 {
                     InlineKeyboardButton.WithUrl(text: "获取绑定验证码", url: @"https://t.me/"+_configuration["BotUserName"]) }
                 }).ToArray();
 
-                                    InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(obj);
-                                    result = await botClient.SendTextMessageAsync(
-                                          chatId: new ChatId(update.Message.Chat.Id),
-                                          text: sb.ToString(),
-                                          parseMode: ParseMode.Markdown,
-                                          replyMarkup: inlineKeyboard);
+                                        InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(obj);
+                                        result = await botClient.SendTextMessageAsync(
+                                              chatId: new ChatId(update.Message.Chat.Id),
+                                              text: sb.ToString(),
+                                              parseMode: ParseMode.Markdown,
+                                              replyMarkup: inlineKeyboard);
 
+                                    }
+                                    else
+                                    {
+                                        sb.AppendLine("很高兴遇见你！ @" + update.Message.From.Username.Replace("_", @"\_"));
+                                        var obj = new[]
+                                        {
+                new []
+                {
+                    InlineKeyboardButton.WithUrl(text: "用此币购买商品", url: "https://demarket.io/"),
+                },
+                  new[]
+                {
+                    InlineKeyboardButton.WithUrl(text: "获取绑定验证码", url: @"https://t.me/"+_configuration["BotUserName"])
+                }
+                            };
+
+                                        InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(obj);
+                                        result = await botClient.SendTextMessageAsync(
+                                              chatId: new ChatId(update.Message.Chat.Id),
+                                              text: sb.ToString(),
+                                              parseMode: ParseMode.Markdown,
+                                              replyMarkup: inlineKeyboard);
+                                    }
                                 }
                             }
                             return;
