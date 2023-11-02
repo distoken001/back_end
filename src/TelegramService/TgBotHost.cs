@@ -133,6 +133,45 @@ namespace TelegramService
                         }
                         else if (update.Message.Type == MessageType.Text && update.Message.Chat.Id < 0)
                         {
+                            if (update.Message.Text.Equals("@" + _configuration["BotUserName"]) || !string.IsNullOrEmpty(update.Message.ReplyToMessage.Text))
+                            {
+                                if (string.IsNullOrEmpty(update.Message.From.Username))
+                                {
+                                    var message = await botClient.SendTextMessageAsync(update.Message.Chat.Id, "Hey，" + update.Message.From.FirstName + "，您需要先设置Telegram用户名才能与DeMarket绑定哦");
+                                    return;
+                                }
+                                else
+                                {
+                                    sb.AppendLine("Hey！靓仔！@" + update.Message.From.Username.Replace("_", @"\_"));
+                                    var obj = new[]
+                          {                new []
+                {                    InlineKeyboardButton.WithUrl(text: "DeMarket德玛市场", url: "https://demarket.io/"),
+                },
+                new []
+                {
+                    InlineKeyboardButton.WithUrl(text: "Twitter推特", url: "https://twitter.com/demarket_io"),
+                },
+
+                  new[]
+                {
+                    InlineKeyboardButton.WithUrl(text: "Telegram电报", url: @"https://t.me/"+_configuration["ChatGroup"])
+                }
+                        };
+
+                                    obj = obj.Concat(new[]{new[]
+                {
+                    InlineKeyboardButton.WithUrl(text: "获取绑定验证码", url: @"https://t.me/"+_configuration["BotUserName"]) }
+                }).ToArray();
+
+                                    InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(obj);
+                                    result = await botClient.SendTextMessageAsync(
+                                          chatId: new ChatId(update.Message.Chat.Id),
+                                          text: sb.ToString(),
+                                          parseMode: ParseMode.Markdown,
+                                          replyMarkup: inlineKeyboard);
+
+                                }
+                            }
                             return;
                         }
 
