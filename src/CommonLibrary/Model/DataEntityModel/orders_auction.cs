@@ -31,7 +31,7 @@ namespace CommonLibrary.Model.DataEntityModel
         /// <summary>
         /// 商品价格
         /// </summary>
-        public decimal price { get; set; }
+        public double price { get; set; }
         /// <summary>
         /// 图片
         /// </summary>

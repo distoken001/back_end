@@ -30,7 +30,7 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         /// <summary>
         /// 商品价格（包含decimals的，一般不用）
         /// </summary>
-        public decimal price { get; set; }
+        public double price { get; set; }
         /// <summary>
         /// 图片
         /// </summary>
@@ -121,7 +121,7 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         /// </summary>
         public decimal price_actual
         {
-            get { return price / decimals_long; }
+            get { return (decimal)(price / (double)decimals_long); }
         }
         /// <summary>
         /// 订单总价

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using CommonLibrary.Common.Common;
 
@@ -32,7 +33,7 @@ namespace CommonLibrary.Model.DataEntityModel
         /// <summary>
         /// 商品价格
         /// </summary>
-        public decimal price { get; set; }
+        public double price { get; set; }
         /// <summary>
         /// 图片
         /// </summary>
