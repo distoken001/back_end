@@ -21,7 +21,8 @@ namespace TelegramService
     {
         private readonly IConfiguration _configuration;
         private readonly MySqlMasterDbContext _masterDbContext;
-        public TgBotHost(IConfiguration configuration, MySqlMasterDbContext mySqlMasterDbContext)        {
+        public TgBotHost(IConfiguration configuration, MySqlMasterDbContext mySqlMasterDbContext)
+        {
             _configuration = configuration;
             _masterDbContext = mySqlMasterDbContext;
         }
@@ -60,7 +61,7 @@ namespace TelegramService
                 telegram_user_chat telegramUserChat;
                 switch (update.Type)
                 {
-                    case UpdateType.Unknown:                        break;
+                    case UpdateType.Unknown: break;
                     case UpdateType.Message:
                         if (update.Message.Type == MessageType.ChatMemberLeft)
                         {
@@ -68,21 +69,19 @@ namespace TelegramService
                         }
                         else if (update.Message.Type == MessageType.ChatMembersAdded)
                         {
-                            if (string.IsNullOrEmpty(update.Message.From.Username))
+                            if (update.Message.Chat.Id.ToString() == _configuration["GroupChatID"])
                             {
-                                if (update.Message.Chat.Id.ToString() == _configuration["GroupChatID"])
+
+                                if (string.IsNullOrEmpty(update.Message.From.Username))
                                 {
                                     var message = await botClient.SendTextMessageAsync(update.Message.Chat.Id, "Hey，" + update.Message.From.FirstName + "，您需要先设置Telegram用户名才能与DeMarket绑定哦");
                                     return;
                                 }
                                 else
                                 {
-                                    return;
-                                }
-                            }
-                            sb.AppendLine("很高兴遇见你！ @" + update.Message.From.FirstName.Replace("_", @"\_"));
-                            var obj = new[]
-                            {
+                                    sb.AppendLine("很高兴遇见你！ @" + update.Message.From.Username.Replace("_", @"\_"));
+                                    var obj = new[]
+                {
                 new []
                 {
                     InlineKeyboardButton.WithUrl(text: "DeMarket德玛市场", url: "https://demarket.io/"),
@@ -90,62 +89,65 @@ namespace TelegramService
                 new []
                 {
                     InlineKeyboardButton.WithUrl(text: "Twitter推特", url: "https://twitter.com/demarket_io"),
-                } };
-                            if (update.Message.Chat.Id.ToString() != _configuration["GroupChatID"])
-                            {
-                                obj = obj.Concat(new[]{new[]
+                },
+                  new[]
                 {
-                    InlineKeyboardButton.WithUrl(text: "Telegram电报", url: @"https://t.me/"+_configuration["ChatGroup"]) }
-                }).ToArray();
-                            }
+                    InlineKeyboardButton.WithUrl(text: "获取绑定验证码", url: @"https://t.me/"+_configuration["BotUserName"])
+                }
+                                    };
+                                    InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(obj);
+                                    result = await botClient.SendTextMessageAsync(
+                                      chatId: new ChatId(update.Message.Chat.Id),
+                                      text: sb.ToString(),
+                                      parseMode: ParseMode.Markdown,
+                                      replyMarkup: inlineKeyboard);
 
-                            obj = obj.Concat(new[]{new[]
-                {
-                    InlineKeyboardButton.WithUrl(text: "获取绑定验证码", url: @"https://t.me/"+_configuration["BotUserName"]) }
-                }).ToArray();
-                            InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(obj);
-                            telegramUserChat = _masterDbContext.telegram_user_chat.Where(a => a.chat_id == update.Message.Chat.Id).FirstOrDefault();
-                            if (telegramUserChat == null)
-                            {
-                                _masterDbContext.telegram_user_chat.Add(
-                                    new telegram_user_chat()
-                                    {
-                                        user_name = update.Message.From.Username,
-                                        user_id = update.Message.From.Id,
-                                        chat_id = update.Message.Chat.Id,
-                                        create_time = DateTime.Now,
-                                        update_time = DateTime.Now,
-                                        verify_code = ""
-                                    });
+                                }
                             }
                             else
                             {
-                                telegramUserChat.user_name = update.Message.From.Username;
-                                telegramUserChat.user_id = update.Message.From.Id;
-                            }
-                            _masterDbContext.SaveChanges();
-                            result = await botClient.SendTextMessageAsync(
-                                  chatId: new ChatId(update.Message.Chat.Id),
-                                  text: sb.ToString(),
-                                  parseMode: ParseMode.Markdown,
-                                  replyMarkup: inlineKeyboard);
-                        }
-                        else if (update.Message.Text.Equals("绑定") || update.Message.Text.Equals("Bind", StringComparison.OrdinalIgnoreCase) || update.Message.Text.Equals("DeMarket", StringComparison.OrdinalIgnoreCase) || update.Message.Text.Equals("德玛", StringComparison.OrdinalIgnoreCase) || update.Message.Text.Equals("@" + _configuration["BotUserName"]) || update.Message.Chat.Id > 0||!string.IsNullOrEmpty( update.Message.ReplyToMessage.Text))
+                                if (string.IsNullOrEmpty(update.Message.From.Username))
+                                {
+                                    return;
+                                }
+                                sb.AppendLine("很高兴遇见你！ @" + update.Message.From.Username.Replace("_", @"\_"));
+                                var obj = new[]
+                                {
+                new []
+                {
+                    InlineKeyboardButton.WithUrl(text: "用此币购买商品", url: "https://demarket.io/"),
+                },
+                  new[]
+                {
+                    InlineKeyboardButton.WithUrl(text: "获取绑定验证码", url: @"https://t.me/"+_configuration["BotUserName"])
+                }
+                            };
 
+                                InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(obj);
+                                result = await botClient.SendTextMessageAsync(
+                                      chatId: new ChatId(update.Message.Chat.Id),
+                                      text: sb.ToString(),
+                                      parseMode: ParseMode.Markdown,
+                                      replyMarkup: inlineKeyboard);
+                            }
+                        }
+                        else if (update.Message.Type == MessageType.Text && update.Message.Chat.Id < 0)
+                        {
+                            return;
+                        }
+
+                        //else  (update.Message.Text.Equals("绑定") || update.Message.Text.Equals("Bind", StringComparison.OrdinalIgnoreCase) || update.Message.Text.Equals("DeMarket", StringComparison.OrdinalIgnoreCase) || update.Message.Text.Equals("德玛", StringComparison.OrdinalIgnoreCase) || update.Message.Text.Equals("@" + _configuration["BotUserName"]) || update.Message.Chat.Id > 0 || !string.IsNullOrEmpty(update.Message.ReplyToMessage.Text))
+                        else
                         {
                             if (string.IsNullOrEmpty(update.Message.From.Username))
                             {
-                                if (update.Message.Chat.Id.ToString() == _configuration["GroupChatID"])
-                                {
-                                    var message = await botClient.SendTextMessageAsync(update.Message.Chat.Id, "Hey，" + update.Message.From.FirstName + "，您需要先设置Telegram用户名才能与DeMarket绑定哦");
-                                    return;
-                                }
-                                else
-                                {
-                                    return;
-                                }
+
+                                var message = await botClient.SendTextMessageAsync(update.Message.Chat.Id, "Hey，" + update.Message.From.FirstName + "，您需要先设置Telegram用户名才能与DeMarket绑定哦");
+                                return;
                             }
                             sb.AppendLine("Hey！靓仔！@" + update.Message.From.Username.Replace("_", @"\_"));
+                            sb.AppendLine("与您相关的订单动态我会第一时间通知您，切记不要拉黑我哦，不然会解除与DeMarket的绑定...");
+                            sb.AppendLine("");
                             var obj = new[]
                             {                new []
                 {                    InlineKeyboardButton.WithUrl(text: "DeMarket德玛市场", url: "https://demarket.io/"),
@@ -153,33 +155,18 @@ namespace TelegramService
                 new []
                 {
                     InlineKeyboardButton.WithUrl(text: "Twitter推特", url: "https://twitter.com/demarket_io"),
-                } };
-                            if (update.Message.Chat.Id.ToString() != _configuration["GroupChatID"])
-                            {
+                },
 
-                                obj = obj.Concat(new[]{new[]
+                  new[]
                 {
-                    InlineKeyboardButton.WithUrl(text: "Telegram电报", url: @"https://t.me/"+_configuration["ChatGroup"]) }
-                }).ToArray();
-                            }
+                    InlineKeyboardButton.WithUrl(text: "Telegram电报", url: @"https://t.me/"+_configuration["ChatGroup"])
+                }
+                        };
 
-                            if (update.Message.Chat.Id > 0)
-                            {
-                                sb.AppendLine("与您相关的订单动态我会第一时间通知您，切记不要拉黑我哦，不然会解除与DeMarket的绑定...");
-                                sb.AppendLine("");
-                                obj = obj.Concat(new[]{new[]
+                            obj = obj.Concat(new[]{new[]
                 {
                     InlineKeyboardButton.WithCallbackData(text: "获取绑定验证码", callbackData: "Bind") }
                 }).ToArray();
-                            }
-                            else
-                            {
-                                obj = obj.Concat(new[]{new[]
-                {
-                    InlineKeyboardButton.WithUrl(text: "获取绑定验证码", url: @"https://t.me/"+_configuration["BotUserName"]) }
-                }).ToArray();
-                            }
-
 
                             InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(obj);
                             telegramUserChat = _masterDbContext.telegram_user_chat.Where(a => a.chat_id == update.Message.Chat.Id).FirstOrDefault();
