@@ -133,7 +133,7 @@ namespace TelegramService
                         }
                         else if (update.Message.Type == MessageType.Text && update.Message.Chat.Id < 0)
                         {
-                            if (update.Message.Text.Equals("@" + _configuration["BotUserName"]) || !string.IsNullOrEmpty(update.Message.ReplyToMessage.Text))
+                            if (update.Message.Text.Contains( _configuration["BotUserName"]) )
                             {
                                 if (string.IsNullOrEmpty(update.Message.From.Username))
                                 {
