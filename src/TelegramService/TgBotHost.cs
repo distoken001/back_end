@@ -27,6 +27,7 @@ namespace TelegramService
             _masterDbContext = mySqlMasterDbContext;
         }
 
+
         public async Task StartAsync(CancellationToken cancellationToken)
         {
             var botClient = new TelegramBotClient(_configuration["BotToken"]); // 使用申请的 Token 创建机器人
