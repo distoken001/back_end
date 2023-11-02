@@ -21,8 +21,7 @@ namespace TelegramService
     {
         private readonly IConfiguration _configuration;
         private readonly MySqlMasterDbContext _masterDbContext;
-        public TgBotHost(IConfiguration configuration, MySqlMasterDbContext mySqlMasterDbContext)
-        {
+        public TgBotHost(IConfiguration configuration, MySqlMasterDbContext mySqlMasterDbContext)        {
             _configuration = configuration;
             _masterDbContext = mySqlMasterDbContext;
         }
@@ -71,10 +70,17 @@ namespace TelegramService
                         {
                             if (string.IsNullOrEmpty(update.Message.From.Username))
                             {
-                                var message = await botClient.SendTextMessageAsync(update.Message.Chat.Id, "Hey，" + update.Message.From.FirstName + "，您需要先设置你的Telegram用户名才能与DeMarket绑定哦");
-                                return;
+                                if (update.Message.Chat.Id.ToString() == _configuration["GroupChatID"])
+                                {
+                                    var message = await botClient.SendTextMessageAsync(update.Message.Chat.Id, "Hey，" + update.Message.From.FirstName + "，您需要先设置Telegram用户名才能与DeMarket绑定哦");
+                                    return;
+                                }
+                                else
+                                {
+                                    return;
+                                }
                             }
-                            sb.AppendLine("很高兴遇见你！ @" + update.Message.From.Username.Replace("_", @"\_"));
+                            sb.AppendLine("很高兴遇见你！ @" + update.Message.From.FirstName.Replace("_", @"\_"));
                             var obj = new[]
                             {
                 new []
@@ -129,8 +135,15 @@ namespace TelegramService
                         {
                             if (string.IsNullOrEmpty(update.Message.From.Username))
                             {
-                                var message = await botClient.SendTextMessageAsync(update.Message.Chat.Id, "Hey，" + update.Message.From.FirstName + "，您需要先设置你的Telegram用户名才能与DeMarket绑定哦");
-                                return;
+                                if (update.Message.Chat.Id.ToString() == _configuration["GroupChatID"])
+                                {
+                                    var message = await botClient.SendTextMessageAsync(update.Message.Chat.Id, "Hey，" + update.Message.From.FirstName + "，您需要先设置Telegram用户名才能与DeMarket绑定哦");
+                                    return;
+                                }
+                                else
+                                {
+                                    return;
+                                }
                             }
                             sb.AppendLine("Hey！靓仔！@" + update.Message.From.Username.Replace("_", @"\_"));
                             var obj = new[]
@@ -152,7 +165,8 @@ namespace TelegramService
 
                             if (update.Message.Chat.Id > 0)
                             {
-                                sb.AppendLine("我是DeMarket小助手，与您相关的订单动态我会第一时间通知您，切记不要拉黑我哦，不然会解除与DeMarket的绑定...");
+                                sb.AppendLine("与您相关的订单动态我会第一时间通知您，切记不要拉黑我哦，不然会解除与DeMarket的绑定...");
+                                sb.AppendLine("");
                                 obj = obj.Concat(new[]{new[]
                 {
                     InlineKeyboardButton.WithCallbackData(text: "获取绑定验证码", callbackData: "Bind") }
