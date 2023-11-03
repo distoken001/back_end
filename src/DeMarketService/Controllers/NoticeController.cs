@@ -135,14 +135,17 @@ namespace deMarketService.Controllers
                         mailMessageSeller = $"您在{order.chain_id.ToString()}链上发布了商品：{order.name}。";
                         var chatMessage = $"市场订单：用户 @{seller?.nick_name} 在{order.chain_id.ToString()}链上发布了新商品：{orderDto.name}，单价：{orderDto.price_actual} {orderDto.token_des.token_name}, 数量：{order.amount}，订单链接:{_configuration["Domain"]}/market/detail/{order.contract}/{(int)order.chain_id}/{order.order_id}";
 
+                        await botClient.SendTextMessageAsync(_configuration["GroupChatID"], chatMessage);
+
                         var chatIDs = _configuration["GroupChatIDs"].Split(',');
                         foreach(var chatID in chatIDs)
                         {
-                            if (_configuration[chatID] == orderDto.token_des.token_name)
+                            if (_configuration[chatID] == orderDto.token_des.token_name||orderDto.token_des.token_name=="USDT")
                             {
                                 var message = await botClient.SendTextMessageAsync(long.Parse(chatID), chatMessage);
                             }
                         }
+                      
                     }
                     if (buyer?.telegram_id != null)
                     {
@@ -192,7 +195,6 @@ namespace deMarketService.Controllers
                     {
                         var message = await botClient.SendTextMessageAsync(chatId, mailMessageBuyer);
                     }
-                    await botClient.SendTextMessageAsync(_configuration["GroupChatID"], mailMessageBuyer);
                 }
 
             }
@@ -225,10 +227,16 @@ namespace deMarketService.Controllers
                 {
 
                     var chatMessage = $"拍卖订单：用户 @{seller?.nick_name} 在{order.chain_id.ToString()}链上发布了新商品：{orderDto.name}，起拍单价：{orderDto.price_actual} {orderDto.token_des.token_name}, 数量：{order.amount}，订单链接:{_configuration["Domain"]}/auction/detail/{order.contract}/{(int)order.chain_id}/{order.order_id}";;
+                    await botClient.SendTextMessageAsync(_configuration["GroupChatID"], chatMessage);
+
                     var chatIDs = _configuration["GroupChatIDs"].Split(',');
+
                     foreach (var chatID in chatIDs)
                     {
-                        var message = await botClient.SendTextMessageAsync(long.Parse(chatID), chatMessage);
+                        if (_configuration[chatID] == orderDto.token_des.token_name || orderDto.token_des.token_name == "USDT")
+                        {
+                            var message = await botClient.SendTextMessageAsync(long.Parse(chatID), chatMessage);
+                        }
                     }
                 }
             }
