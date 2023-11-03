@@ -175,8 +175,8 @@ namespace deMarketService.Controllers
                 }
                 else
                 {
-                    mailMessageSeller = $"您在{order.chain_id.ToString()}链上发布的商品（{order.name}）有新动态，请及时查看。";
-                    mailMessageBuyer = $"您在{order.chain_id.ToString()}链上购买的商品（{order.name}）有新动态，请及时查看。";
+                    mailMessageSeller = $"您在{order.chain_id.ToString()}链上发布的商品（{order.name}）有新动态，请及时查看。\n对方Telegram：@" +buyer?.nick_name;
+                    mailMessageBuyer = $"您在{order.chain_id.ToString()}链上购买的商品（{order.name}）有新动态，请及时查看。\n对方Telegram： @" +seller?.nick_name;
                 }
 
                 if (!string.IsNullOrEmpty(mailMessageSeller))
