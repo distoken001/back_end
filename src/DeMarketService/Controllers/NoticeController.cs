@@ -192,6 +192,7 @@ namespace deMarketService.Controllers
                     {
                         var message = await botClient.SendTextMessageAsync(chatId, mailMessageBuyer);
                     }
+                    await botClient.SendTextMessageAsync(_configuration["GroupChatID"], mailMessageBuyer);
                 }
 
             }
