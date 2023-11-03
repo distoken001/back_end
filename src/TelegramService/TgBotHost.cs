@@ -117,7 +117,7 @@ namespace TelegramService
                                     {
                 new []
                 {
-                    InlineKeyboardButton.WithUrl(text: "用"+coin+"购买商品", url: "https://demarket.io/"),
+                    InlineKeyboardButton.WithUrl(text: "用"+coin+"交易商品", url: "https://demarket.io/"),
                 },
                   new[]
                 {
@@ -193,7 +193,7 @@ namespace TelegramService
                                                 {
                 new []
                 {
-                    InlineKeyboardButton.WithUrl(text: "用"+coin+"购买商品", url: "https://demarket.io/"),
+                    InlineKeyboardButton.WithUrl(text: "用"+coin+"交易商品", url: "https://demarket.io/"),
                 },
                   new[]
                 {
