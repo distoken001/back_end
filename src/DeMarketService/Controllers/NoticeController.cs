@@ -138,9 +138,11 @@ namespace deMarketService.Controllers
                         var chatIDs = _configuration["GroupChatIDs"].Split(',');
                         foreach(var chatID in chatIDs)
                         {
-                            var message = await botClient.SendTextMessageAsync(long.Parse(chatID), chatMessage);
+                            if (_configuration[chatID] == orderDto.token_des.token_name)
+                            {
+                                var message = await botClient.SendTextMessageAsync(long.Parse(chatID), chatMessage);
+                            }
                         }
-
                     }
                     if (buyer?.telegram_id != null)
                     {
