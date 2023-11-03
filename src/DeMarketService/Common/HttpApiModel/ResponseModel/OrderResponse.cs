@@ -37,11 +37,11 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         /// <summary>
         /// 卖家质押
         /// </summary>
-        public decimal seller_pledge { get; set; }
+        public double seller_pledge { get; set; }
         /// <summary>
         /// 买家质押
         /// </summary>
-        public decimal buyer_pledge { get; set; }
+        public double buyer_pledge { get; set; }
         /// <summary>
         /// 卖家联系方式
         /// </summary>
@@ -82,7 +82,7 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         /// <summary>
         /// 买家比卖家额外多质押数量
         /// </summary>
-        public decimal buyer_ex { get; set; }
+        public double buyer_ex { get; set; }
         /// <summary>
         /// 合约地址
         /// </summary>
@@ -108,15 +108,15 @@ namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
         /// <summary>
         /// 买家比卖家额外多质押数量
         /// </summary>
-        public decimal buyer_ex_actual { get { return buyer_ex / decimals_long; } }
+        public decimal buyer_ex_actual { get { return(decimal)( buyer_ex / (double)decimals_long); } }
         /// <summary>
         /// 卖家质押
         /// </summary>
-        public decimal seller_pledge_actual { get { return seller_pledge / decimals_long; } }
+        public decimal seller_pledge_actual { get { return (decimal)(seller_pledge / (double)decimals_long); } }
         /// <summary>
         /// 买家质押
         /// </summary>
-        public decimal buyer_pledge_actual { get { return buyer_pledge / decimals_long; } }
+        public decimal buyer_pledge_actual { get { return (decimal)(buyer_pledge / (double)decimals_long); } }
         /// <summary>
         /// 商品价格
         /// </summary>

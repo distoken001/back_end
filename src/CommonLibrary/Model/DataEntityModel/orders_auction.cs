@@ -39,11 +39,11 @@ namespace CommonLibrary.Model.DataEntityModel
         /// <summary>
         /// 卖家质押
         /// </summary>
-        public decimal seller_pledge { get; set; }
+        public double seller_pledge { get; set; }
         /// <summary>
         /// 买家质押
         /// </summary>
-        public decimal buyer_pledge { get; set; }
+        public double buyer_pledge { get; set; }
         /// <summary>
         /// 卖家联系方式
         /// </summary>
@@ -84,7 +84,7 @@ namespace CommonLibrary.Model.DataEntityModel
         /// <summary>
         /// 买家比卖家额外多质押数量
         /// </summary>
-        public decimal buyer_ex { get; set; }
+        public double buyer_ex { get; set; }
         /// <summary>
         /// 合约地址
         /// </summary>
