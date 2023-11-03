@@ -111,11 +111,13 @@ namespace TelegramService
                                         return;
                                     }
                                     sb.AppendLine("很高兴遇见你！ @" + update.Message.From.Username.Replace("_", @"\_"));
+                                    string coin = _configuration[update.Message.Chat.Id.ToString()]==null?"此币": _configuration[update.Message.Chat.Id.ToString()];
+
                                     var obj = new[]
                                     {
                 new []
                 {
-                    InlineKeyboardButton.WithUrl(text: "用此币购买商品", url: "https://demarket.io/"),
+                    InlineKeyboardButton.WithUrl(text: "用"+coin+"购买商品", url: "https://demarket.io/"),
                 },
                   new[]
                 {
@@ -186,11 +188,12 @@ namespace TelegramService
                                             else
                                             {
                                                 sb.AppendLine("很高兴遇见你！ @" + update.Message.From.Username.Replace("_", @"\_"));
+                                                string coin = _configuration[update.Message.Chat.Id.ToString()] == null ? "此币" : _configuration[update.Message.Chat.Id.ToString()];
                                                 var obj = new[]
                                                 {
                 new []
                 {
-                    InlineKeyboardButton.WithUrl(text: "用此币购买商品", url: "https://demarket.io/"),
+                    InlineKeyboardButton.WithUrl(text: "用"+coin+"购买商品", url: "https://demarket.io/"),
                 },
                   new[]
                 {
