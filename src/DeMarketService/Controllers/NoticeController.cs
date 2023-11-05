@@ -133,20 +133,23 @@ namespace deMarketService.Controllers
                     if (seller?.telegram_id != null)
                     {
                         mailMessageSeller = $"您在{order.chain_id.ToString()}链上发布了商品：{order.name}。";
+
                         var chatMessage = $"市场订单：用户 @{seller?.nick_name} 在{order.chain_id.ToString()}链上发布了新商品：{orderDto.name}，单价：{orderDto.price_actual} {orderDto.token_des.token_name}, 数量：{order.amount}，订单链接:{_configuration["Domain"]}/market/detail/{order.contract}/{(int)order.chain_id}/{order.order_id}";
 
                         await botClient.SendTextMessageAsync(_configuration["GroupChatID"], chatMessage);
 
                         var chatIDs = _configuration["GroupChatIDs"].Split(',');
-                        foreach(var chatID in chatIDs)
+                        foreach (var chatID in chatIDs)
                         {
+                            Console.WriteLine("值"+ _configuration[chatID] + orderDto.token_des.token_name);
                             //if (_configuration[chatID] == orderDto.token_des.token_name||orderDto.token_des.token_name=="USDT")
-                                if (_configuration[chatID] == orderDto.token_des.token_name )
-                                {
+                            if (_configuration[chatID] == orderDto.token_des.token_name)
+                            {
+                               
                                 var message = await botClient.SendTextMessageAsync(long.Parse(chatID), chatMessage);
                             }
                         }
-                      
+
                     }
                     if (buyer?.telegram_id != null)
                     {
@@ -176,8 +179,8 @@ namespace deMarketService.Controllers
                 }
                 else
                 {
-                    mailMessageSeller = $"您在{order.chain_id.ToString()}链上发布的商品（{order.name}）有新动态，请及时查看。\n对方Telegram：@" +buyer?.nick_name;
-                    mailMessageBuyer = $"您在{order.chain_id.ToString()}链上购买的商品（{order.name}）有新动态，请及时查看。\n对方Telegram： @" +seller?.nick_name;
+                    mailMessageSeller = $"您在{order.chain_id.ToString()}链上发布的商品（{order.name}）有新动态，请及时查看。\n对方Telegram：@" + buyer?.nick_name;
+                    mailMessageBuyer = $"您在{order.chain_id.ToString()}链上购买的商品（{order.name}）有新动态，请及时查看。\n对方Telegram： @" + seller?.nick_name;
                 }
 
                 if (!string.IsNullOrEmpty(mailMessageSeller))
@@ -227,15 +230,16 @@ namespace deMarketService.Controllers
                 if (status == OrderAuctionStatus.Initial)
                 {
 
-                    var chatMessage = $"拍卖订单：用户 @{seller?.nick_name} 在{order.chain_id.ToString()}链上发布了新商品：{orderDto.name}，起拍单价：{orderDto.price_actual} {orderDto.token_des.token_name}, 数量：{order.amount}，订单链接:{_configuration["Domain"]}/auction/detail/{order.contract}/{(int)order.chain_id}/{order.order_id}";;
+                    var chatMessage = $"拍卖订单：用户 @{seller?.nick_name} 在{order.chain_id.ToString()}链上发布了新商品：{orderDto.name}，起拍单价：{orderDto.price_actual} {orderDto.token_des.token_name}, 数量：{order.amount}，订单链接:{_configuration["Domain"]}/auction/detail/{order.contract}/{(int)order.chain_id}/{order.order_id}"; ;
                     await botClient.SendTextMessageAsync(_configuration["GroupChatID"], chatMessage);
 
                     var chatIDs = _configuration["GroupChatIDs"].Split(',');
 
                     foreach (var chatID in chatIDs)
                     {
+                        Console.WriteLine("值" + _configuration[chatID] + orderDto.token_des.token_name);
                         //if (_configuration[chatID] == orderDto.token_des.token_name || orderDto.token_des.token_name == "USDT")
-                        if (_configuration[chatID] == orderDto.token_des.token_name )
+                        if (_configuration[chatID] == orderDto.token_des.token_name)
                         {
                             var message = await botClient.SendTextMessageAsync(long.Parse(chatID), chatMessage);
                         }
