@@ -140,6 +140,10 @@ namespace deMarketService.Controllers
                         var chatIDs = _configuration["GroupChatIDs"].Split(',');
                         foreach(var chatID in chatIDs)
                         {
+                            if(chatID== _configuration["GroupChatID"])
+                            {
+                                continue;
+                            }
                             if (_configuration[chatID] == orderDto.token_des.token_name||orderDto.token_des.token_name=="USDT")
                             {
                                 var message = await botClient.SendTextMessageAsync(long.Parse(chatID), chatMessage);
@@ -233,6 +237,10 @@ namespace deMarketService.Controllers
 
                     foreach (var chatID in chatIDs)
                     {
+                        if (chatID == _configuration["GroupChatID"])
+                        {
+                            continue;
+                        }
                         if (_configuration[chatID] == orderDto.token_des.token_name || orderDto.token_des.token_name == "USDT")
                         {
                             var message = await botClient.SendTextMessageAsync(long.Parse(chatID), chatMessage);
