@@ -271,6 +271,23 @@ namespace deMarketService.Controllers
                     mailMessageSeller = $"您在{order.chain_id.ToString()}链上发布的拍卖商品（{order.name}）有新动态，请及时查看。\n对方Telegram：@" + buyer?.nick_name;
                     mailMessageBuyer = $"您在{order.chain_id.ToString()}链上拍下的商品（{order.name}）有新动态，请及时查看。\n对方Telegram： @" + seller?.nick_name;
                 }
+                if (!string.IsNullOrEmpty(mailMessageSeller))
+                {
+
+                    var chatId = seller?.telegram_id; // 替换为您要发送消息的聊天ID
+                    if (chatId != null)
+                    {
+                        var message = await botClient.SendTextMessageAsync(chatId, mailMessageSeller);
+                    }
+                }
+                if (!string.IsNullOrEmpty(mailMessageBuyer))
+                {
+                    var chatId = buyer?.telegram_id; // 替换为您要发送消息的聊天ID
+                    if (chatId != null)
+                    {
+                        var message = await botClient.SendTextMessageAsync(chatId, mailMessageBuyer);
+                    }
+                }
             }
             catch (Exception ex)
             {
