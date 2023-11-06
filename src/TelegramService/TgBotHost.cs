@@ -166,10 +166,10 @@ namespace TelegramService
                     InlineKeyboardButton.WithUrl(text: "Twitter推特", url: "https://twitter.com/demarket_io"),
                 },
 
-                  new[]
-                {
-                    InlineKeyboardButton.WithUrl(text: "Telegram电报", url: @"https://t.me/"+_configuration["ChatGroup"])
-                }
+                //  new[]
+                //{
+                //    InlineKeyboardButton.WithUrl(text: "Telegram电报", url: @"https://t.me/"+_configuration["ChatGroup"])
+                //}
                         };
 
                                                 obj = obj.Concat(new[]{new[]
