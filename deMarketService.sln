@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jobs", "src\Jobs\Jobs.cspro
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TelegramService", "src\TelegramService\TelegramService.csproj", "{4260FE40-9327-4B79-B3C4-76909FDE4CD8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListenWeb3", "src\ListenWeb3\ListenWeb3.csproj", "{3287D01E-887D-4545-8998-A095102420C0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{4260FE40-9327-4B79-B3C4-76909FDE4CD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4260FE40-9327-4B79-B3C4-76909FDE4CD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4260FE40-9327-4B79-B3C4-76909FDE4CD8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3287D01E-887D-4545-8998-A095102420C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3287D01E-887D-4545-8998-A095102420C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3287D01E-887D-4545-8998-A095102420C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3287D01E-887D-4545-8998-A095102420C0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -9,13 +9,13 @@ using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Events;
 
-namespace TelegramService
+namespace ListenWeb3
 {
     public class Program
     {
         public static void Main(string[] args)
         {
-            Console.Title = "TelegramService";
+            Console.Title = "ListenWeb3";
 
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
@@ -23,7 +23,7 @@ namespace TelegramService
                 .MinimumLevel.Override("System", LogEventLevel.Warning)
                 .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
                 .Enrich.FromLogContext()
-                .WriteTo.File($"logs/telegram_service_{DateTime.Now.ToString("yyMMddHHmm")}.log")
+                .WriteTo.File($"logs/listen_web3_{DateTime.Now.ToString("yyMMddHHmm")}.log")
                 .CreateLogger();
 
             var host = CreateWebHostBuilder(args);
