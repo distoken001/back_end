@@ -25,5 +25,8 @@
     <PackageReference Include="Com.Ctrip.Framework.Apollo.Configuration" Version="2.10.1" />
     <PackageReference Include="SkyAPM.Agent.AspNetCore" Version="1.3.0" />
     <PackageReference Include="Telegram.Bot" Version="19.0.0" />
+    <PackageReference Include="Nethereum.JsonRpc.WebSocketClient" Version="4.17.1" />
+    <PackageReference Include="Nethereum.RPC" Version="4.15.2" />
+    <PackageReference Include="Nethereum.RPC.Reactive" Version="4.15.2" />
   </ItemGroup>
 </Project>

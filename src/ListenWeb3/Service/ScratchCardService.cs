@@ -6,8 +6,17 @@ using Nethereum.Contracts;
 using Nethereum.RPC.Eth.DTOs;
 using CommonLibrary.DbContext;
 using Newtonsoft.Json.Linq;
+using Nethereum.JsonRpc.WebSocketClient;
+using Nethereum.JsonRpc.WebSocketStreamingClient;
+using Nethereum.RPC.Reactive.Eth.Subscriptions;
+using Newtonsoft.Json;
+using System;
+using System.Reactive.Linq;
+using System.Threading.Tasks;
 using Nethereum.ABI.Model;
 using ListenWeb3.Model;
+using Nethereum.JsonRpc.Client;
+
 namespace ListenWeb3.Service
 {
     public class ScratchCardService : IHostedService
@@ -45,27 +54,49 @@ namespace ListenWeb3.Service
                 // 获取abi节点的值
                 string abi = jsonObject["abi"]?.ToString();
 
-                // 创建 Web3 实例
-                var web3 = new Web3WebSocket(nodeUrl);
+                var client = new StreamingWebSocketClient(nodeUrl);
 
-                // 创建智能合约实例
-                var contract = web3.Eth.GetContract(abi, contractAddress);
+                var cardTypeAdded = Event<CardTypeAddedEventDTO>.GetEventABI().CreateFilterInput();
 
-                // 事件名
-                string eventName = "CardTypeAdded";
-
-                // 订阅事件
-                var subscription = contract.GetEvent(eventName).CreateFilterInput().Subscribe(log =>
+                var subscription = new EthLogsObservableSubscription(client);
+                // attach a handler for Transfer event logs
+                subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(log =>
                 {
-                    // 处理实时事件
-                    Console.WriteLine($"Real-time Event {eventName} received: {log.TransactionHash}");
+                    try
+                    {
+                        // decode the log into a typed event log
+                        var decoded = Event<CardTypeAddedEventDTO>.DecodeEvent(log);
+                        if (decoded != null)
+                        {
+                            Console.WriteLine("Contract address: " + log.Address + " Log Transfer from:" + decoded.Event.CardName);
+                        }
+                        else
+                        {
+                          
+                            Console.WriteLine("Found not standard CardTypeAddedEvent log");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Log Address: " + log.Address + " is not a standard transfer log:", ex.Message);
+                    }
                 });
+                // open the web socket connection
+                await client.StartAsync();
 
-                Console.WriteLine("Press Enter to exit.");
-                Console.ReadLine();
+                // begin receiving subscription data
+                // data will be received on a background thread
+                await subscription.SubscribeAsync(cardTypeAdded);
 
-                // 取消订阅
-                await subscription;
+                //// run for a while
+                //await Task.Delay(TimeSpan.FromMinutes(1));
+
+                //// unsubscribe
+                //await subscription.UnsubscribeAsync();
+
+                //// allow time to unsubscribe
+                //await Task.Delay(TimeSpan.FromSeconds(5));
+
             }
             catch (Exception ex)
             {
