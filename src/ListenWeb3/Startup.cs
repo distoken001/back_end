@@ -48,6 +48,7 @@ namespace ListenWeb3
             services.AddSingleton<IConfiguration>(Configuration);
            
             services.AddHostedService<CardTypeAddedService>();
+            services.AddHostedService<CardPurchasedService>();
             services
                 .AddHttpClient()
                 //.AddSingleton(Configuration)
