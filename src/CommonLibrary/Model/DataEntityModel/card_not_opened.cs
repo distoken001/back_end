@@ -18,6 +18,8 @@ namespace CommonLibrary.Model.DataEntityModel
 		public string buyer { get; set; }
 		public ChainEnum chain_id { get; set; }
 		public string contract { get; set; }
+		public string token { get; set; }
+		public int decimals { get; set; }
     }
 }
 
