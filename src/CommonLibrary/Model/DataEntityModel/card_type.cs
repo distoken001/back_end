@@ -1,0 +1,22 @@
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using CommonLibrary.Common.Common;
+
+namespace CommonLibrary.Model.DataEntityModel
+{
+    [Table("card_type")]
+    public class card_type
+    {
+        [Key]
+        public string type { get; set; }
+        public string name { get; set; }
+        public double price { get; set; }
+        public double max_prize { get; set; }
+        public string token { get; set; }
+        public int winning_probability { get; set; }
+        public int max_prize_probability { get; set; }
+        public ChainEnum chain_id { get; set; }
+    }
+}
+

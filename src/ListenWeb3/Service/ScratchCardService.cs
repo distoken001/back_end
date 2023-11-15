@@ -16,6 +16,8 @@ using System.Threading.Tasks;
 using Nethereum.ABI.Model;
 using ListenWeb3.Model;
 using Nethereum.JsonRpc.Client;
+using CommonLibrary.Model.DataEntityModel;
+using CommonLibrary.Common.Common;
 
 namespace ListenWeb3.Service
 {
@@ -35,8 +37,6 @@ namespace ListenWeb3.Service
 
             try
             {
-
-
                 // Infura 提供的以太坊节点 WebSocket 地址
                 string nodeUrl = _configuration["OP:WSS_URL"];
 
@@ -68,11 +68,20 @@ namespace ListenWeb3.Service
                         var decoded = Event<CardTypeAddedEventDTO>.DecodeEvent(log);
                         if (decoded != null)
                         {
+                            ChainEnum chain_id = ChainEnum.OptimisticGoerli;
+                            if (_configuration["Env"] == "prod")
+                            {
+                                chain_id = ChainEnum.Optimism;
+                            }
+
+                            var cardType = new card_type() { type = decoded.Event.CardType, max_prize = (double)decoded.Event.MaxPrize, max_prize_probability = (int)decoded.Event.MaxPrizeProbability, name = decoded.Event.CardName, price = (double)decoded.Event.Price, token = decoded.Event.TokenAddress, winning_probability = (int)decoded.Event.WinningProbability, chain_id = chain_id };
+                            _masterDbContext.card_type.Add(cardType);
+                            _masterDbContext.SaveChanges();
                             Console.WriteLine("Contract address: " + log.Address + " Log Transfer from:" + decoded.Event.CardName);
                         }
                         else
                         {
-                          
+
                             Console.WriteLine("Found not standard CardTypeAddedEvent log");
                         }
                     }

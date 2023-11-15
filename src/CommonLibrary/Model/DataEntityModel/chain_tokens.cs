@@ -19,5 +19,6 @@ namespace CommonLibrary.Model.DataEntityModel
         public DateTime create_time { get; set;}
         public int weight { get; set; }
         public int status { get; set; }
+        public int decimals { get; set; }
     }
 }

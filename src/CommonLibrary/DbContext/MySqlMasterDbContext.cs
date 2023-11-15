@@ -31,6 +31,7 @@ namespace CommonLibrary.DbContext
         public virtual DbSet<ebay_user_like> ebay_user_like { get; set; }
         public virtual DbSet<auction_user_like> auction_user_like { get; set; }
         public virtual DbSet<telegram_user_chat> telegram_user_chat { get; set; }
+        public virtual DbSet<card_type> card_type { get; set; }
 
     }
 }
