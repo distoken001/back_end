@@ -17,6 +17,7 @@ namespace CommonLibrary.Model.DataEntityModel
         public int winning_probability { get; set; }
         public int max_prize_probability { get; set; }
         public ChainEnum chain_id { get; set; }
+        public string img { get; set; }
     }
 }
 
