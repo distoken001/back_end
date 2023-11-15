@@ -21,11 +21,11 @@ using CommonLibrary.Common.Common;
 
 namespace ListenWeb3.Service.ScratchCard
 {
-    public class ScratchCardService : IHostedService
+    public class CardTypeAddedService : IHostedService
     {
         private readonly IConfiguration _configuration;
         private readonly MySqlMasterDbContext _masterDbContext;
-        public ScratchCardService(IConfiguration configuration, MySqlMasterDbContext mySqlMasterDbContext)
+        public CardTypeAddedService(IConfiguration configuration, MySqlMasterDbContext mySqlMasterDbContext)
         {
             _configuration = configuration;
             _masterDbContext = mySqlMasterDbContext;

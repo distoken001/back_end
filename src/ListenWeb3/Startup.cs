@@ -47,7 +47,7 @@ namespace ListenWeb3
             services.AddDirectoryBrowser();
             services.AddSingleton<IConfiguration>(Configuration);
            
-            services.AddHostedService<ScratchCardService>();
+            services.AddHostedService<CardTypeAddedService>();
             services
                 .AddHttpClient()
                 //.AddSingleton(Configuration)
