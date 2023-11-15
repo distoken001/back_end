@@ -19,7 +19,7 @@ using Nethereum.JsonRpc.Client;
 using CommonLibrary.Model.DataEntityModel;
 using CommonLibrary.Common.Common;
 
-namespace ListenWeb3.Service
+namespace ListenWeb3.Service.ScratchCard
 {
     public class ScratchCardService : IHostedService
     {

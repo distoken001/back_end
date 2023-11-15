@@ -18,9 +18,11 @@
   <ItemGroup>
     <None Remove="Service\" />
     <None Remove="Model\" />
+    <None Remove="Service\ScratchCard\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Service\" />
     <Folder Include="Model\" />
+    <Folder Include="Service\ScratchCard\" />
   </ItemGroup>
 </Project>

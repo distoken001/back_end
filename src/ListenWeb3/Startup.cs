@@ -5,6 +5,7 @@ using Com.Ctrip.Framework.Apollo;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.Http.Features;
 using ListenWeb3.Service;
+using ListenWeb3.Service.ScratchCard;
 
 namespace ListenWeb3
 {
