@@ -20,15 +20,17 @@
     <None Remove="Model\" />
     <None Remove="Service\ScratchCard\" />
     <None Remove="Repository\" />
-    <None Remove="Repository\Implements\" />
-    <None Remove="Repository\Interfaces\" />
+    <None Remove="Repository\ScratchCard\" />
+    <None Remove="Repository\ScratchCard\Implements\" />
+    <None Remove="Repository\ScratchCard\Interfaces\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Service\" />
     <Folder Include="Model\" />
     <Folder Include="Service\ScratchCard\" />
     <Folder Include="Repository\" />
-    <Folder Include="Repository\Implements\" />
-    <Folder Include="Repository\Interfaces\" />
+    <Folder Include="Repository\ScratchCard\" />
+    <Folder Include="Repository\ScratchCard\Implements\" />
+    <Folder Include="Repository\ScratchCard\Interfaces\" />
   </ItemGroup>
 </Project>

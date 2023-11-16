@@ -18,17 +18,15 @@ using ListenWeb3.Model;
 using Nethereum.JsonRpc.Client;
 using CommonLibrary.Model.DataEntityModel;
 using CommonLibrary.Common.Common;
-using Microsoft.VisualBasic;
-using Nethereum.Contracts.Standards.ERC20.TokenList;
-using ListenWeb3.Repository.Interfaces;
+using ListenWeb3.Repository.ScratchCard.Interfaces;
 
-namespace ListenWeb3.Service.ScratchCard
+namespace ListenWeb3.Repository.ScratchCard.Implements
 {
-    public class PrizeClaimed : IPrizeClaimed
+    public class CardPurchased: ICardPurchased
     {
         private readonly IConfiguration _configuration;
         private readonly MySqlMasterDbContext _masterDbContext;
-        public PrizeClaimed(IConfiguration configuration, MySqlMasterDbContext mySqlMasterDbContext)
+        public CardPurchased(IConfiguration configuration, MySqlMasterDbContext mySqlMasterDbContext)
         {
             _configuration = configuration;
             _masterDbContext = mySqlMasterDbContext;
@@ -38,15 +36,9 @@ namespace ListenWeb3.Service.ScratchCard
 
             try
             {
-                //// Infura 提供的以太坊节点 WebSocket 地址
-                //string nodeUrl = _configuration["OP:WSS_URL"];
-
-                //// 你的以太坊智能合约地址
-                //string contractAddress = _configuration["OP:Contract_ScratchCard"];
-
                 var client = new StreamingWebSocketClient(nodeUrl);
 
-                var prizeClaimed = Event<PrizeClaimedEventDTO>.GetEventABI().CreateFilterInput();
+                var cardPurchased = Event<CardPurchasedEventDTO>.GetEventABI().CreateFilterInput();
 
                 var subscription = new EthLogsObservableSubscription(client);
                 // attach a handler for Transfer event logs
@@ -55,7 +47,7 @@ namespace ListenWeb3.Service.ScratchCard
                     try
                     {
                         // decode the log into a typed event log
-                        var decoded = Event<PrizeClaimedEventDTO>.DecodeEvent(log);
+                        var decoded = Event<CardPurchasedEventDTO>.DecodeEvent(log);
                         if (decoded != null)
                         {
                             ChainEnum chain_id = ChainEnum.OptimisticGoerli;
@@ -64,25 +56,30 @@ namespace ListenWeb3.Service.ScratchCard
                                 chain_id = ChainEnum.Optimism;
                             }
                             var card = _masterDbContext.card_type.Where(a => a.type == decoded.Event.CardType).FirstOrDefault();
-                            var chainToken = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(card.token) && a.chain_id == chain_id).FirstOrDefault();
-                            var decimals_num = (double)Math.Pow(10, chainToken.decimals);
-                            var prize = (double)decoded.Event.Prize / decimals_num;
-                            _masterDbContext.card_opened.Add(new card_opened() { buyer = decoded.Event.User, card_name = card.name, card_type = card.type, chain_id = chain_id, create_time = DateTime.Now, creator = "system", contract = log.Address, img = card.img, price = card.price, token = card.token, wining = prize });
-                            var cardNotOpened = _masterDbContext.card_not_opened.Where(a => a.buyer.Equals(decoded.Event.User) && a.card_type.Equals(card.type) && a.contract.Equals(log.Address) && a.token.Equals(chainToken.token_address)).FirstOrDefault();
-                            cardNotOpened.amount -= 1;
-                            cardNotOpened.updater = "system";
-                            cardNotOpened.update_time = DateTime.Now;
-
+                            var token = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(card.token) && a.chain_id == card.chain_id).FirstOrDefault();
+                            var cardNotOpened = _masterDbContext.card_not_opened.Where(a => a.buyer.Equals(decoded.Event.User) && a.card_type.Equals(card.type) && a.contract.Equals(log.Address) && a.token.Equals(token.token_address)).FirstOrDefault();
+                            if (cardNotOpened != null)
+                            {
+                                cardNotOpened.amount += (int)decoded.Event.NumberOfCards;
+                                cardNotOpened.updater = "system";
+                                cardNotOpened.update_time = DateTime.Now;
+                            }
+                            else
+                            {
+                                var notOpened = new card_not_opened() { card_type = card.type, card_name = card.name, amount = (int)decoded.Event.NumberOfCards, buyer = decoded.Event.User, chain_id = chain_id, contract = log.Address, create_time = DateTime.Now, creator = "system", price = card.price, token = card.token, img = card.img };
+                                _masterDbContext.card_not_opened.Add(notOpened);
+                            }
                             _masterDbContext.SaveChanges();
                         }
                         else
                         {
-                            Console.WriteLine("PrizeClaimed:Found not standard log");
+
+                            Console.WriteLine("CardPurchased:Found not standard log");
                         }
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("PrizeClaimed: Log Address: " + log.Address + " is not a standard log:", ex.Message);
+                        Console.WriteLine("CardPurchased:Log Address: " + log.Address + " is not a standard log:", ex.Message);
                     }
                 });
                 // open the web socket connection
@@ -90,15 +87,14 @@ namespace ListenWeb3.Service.ScratchCard
 
                 // begin receiving subscription data
                 // data will be received on a background thread
-                await subscription.SubscribeAsync(prizeClaimed);
-
-
+                await subscription.SubscribeAsync(cardPurchased);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
             }
         }
+
     }
 }
 

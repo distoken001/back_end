@@ -18,7 +18,7 @@ using ListenWeb3.Model;
 using Nethereum.JsonRpc.Client;
 using CommonLibrary.Model.DataEntityModel;
 using CommonLibrary.Common.Common;
-using ListenWeb3.Repository.Interfaces;
+using ListenWeb3.Repository.ScratchCard.Interfaces;
 
 namespace ListenWeb3.Service.ScratchCard
 {

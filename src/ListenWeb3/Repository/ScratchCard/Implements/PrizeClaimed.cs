@@ -18,21 +18,21 @@ using ListenWeb3.Model;
 using Nethereum.JsonRpc.Client;
 using CommonLibrary.Model.DataEntityModel;
 using CommonLibrary.Common.Common;
-using ListenWeb3.Repository.Interfaces;
+using Microsoft.VisualBasic;
+using Nethereum.Contracts.Standards.ERC20.TokenList;
+using ListenWeb3.Repository.ScratchCard.Interfaces;
 
-namespace ListenWeb3.Service.ScratchCard
+namespace ListenWeb3.Repository.ScratchCard.Implements
 {
-    public class CardTypeAdded : ICardTypeAdded
+    public class PrizeClaimed : IPrizeClaimed
     {
         private readonly IConfiguration _configuration;
         private readonly MySqlMasterDbContext _masterDbContext;
-        public CardTypeAdded(IConfiguration configuration, MySqlMasterDbContext mySqlMasterDbContext)
+        public PrizeClaimed(IConfiguration configuration, MySqlMasterDbContext mySqlMasterDbContext)
         {
             _configuration = configuration;
             _masterDbContext = mySqlMasterDbContext;
         }
-
-
         public async Task StartAsync(string nodeUrl, string contractAddress)
         {
 
@@ -44,20 +44,9 @@ namespace ListenWeb3.Service.ScratchCard
                 //// 你的以太坊智能合约地址
                 //string contractAddress = _configuration["OP:Contract_ScratchCard"];
 
-                // 读取JSON文件内容
-                string jsonFilePath = "ScratchCard.json"; // 替换为正确的JSON文件路径
-
-                string jsonString = System.IO.File.ReadAllText(jsonFilePath);
-
-                // 解析JSON
-                JObject jsonObject = JObject.Parse(jsonString);
-
-                // 获取abi节点的值
-                string abi = jsonObject["abi"]?.ToString();
-
                 var client = new StreamingWebSocketClient(nodeUrl);
 
-                var cardTypeAdded = Event<CardTypeAddedEventDTO>.GetEventABI().CreateFilterInput();
+                var prizeClaimed = Event<PrizeClaimedEventDTO>.GetEventABI().CreateFilterInput();
 
                 var subscription = new EthLogsObservableSubscription(client);
                 // attach a handler for Transfer event logs
@@ -66,7 +55,7 @@ namespace ListenWeb3.Service.ScratchCard
                     try
                     {
                         // decode the log into a typed event log
-                        var decoded = Event<CardTypeAddedEventDTO>.DecodeEvent(log);
+                        var decoded = Event<PrizeClaimedEventDTO>.DecodeEvent(log);
                         if (decoded != null)
                         {
                             ChainEnum chain_id = ChainEnum.OptimisticGoerli;
@@ -74,22 +63,26 @@ namespace ListenWeb3.Service.ScratchCard
                             {
                                 chain_id = ChainEnum.Optimism;
                             }
-                            var chainToken = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals( decoded.Event.TokenAddress)&&a.chain_id==chain_id).FirstOrDefault();
-                            var decimals_num= (double)Math.Pow(10, chainToken.decimals);
-                            var cardType = new card_type() { type = decoded.Event.CardType, max_prize = (double)decoded.Event.MaxPrize/decimals_num, max_prize_probability = (int)decoded.Event.MaxPrizeProbability, name = decoded.Event.CardName, price = (double)decoded.Event.Price/ decimals_num, token = decoded.Event.TokenAddress, winning_probability = (int)decoded.Event.WinningProbability, chain_id = chain_id };
-                            _masterDbContext.card_type.Add(cardType);
+                            var card = _masterDbContext.card_type.Where(a => a.type == decoded.Event.CardType).FirstOrDefault();
+                            var chainToken = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(card.token) && a.chain_id == chain_id).FirstOrDefault();
+                            var decimals_num = (double)Math.Pow(10, chainToken.decimals);
+                            var prize = (double)decoded.Event.Prize / decimals_num;
+                            _masterDbContext.card_opened.Add(new card_opened() { buyer = decoded.Event.User, card_name = card.name, card_type = card.type, chain_id = chain_id, create_time = DateTime.Now, creator = "system", contract = log.Address, img = card.img, price = card.price, token = card.token, wining = prize });
+                            var cardNotOpened = _masterDbContext.card_not_opened.Where(a => a.buyer.Equals(decoded.Event.User) && a.card_type.Equals(card.type) && a.contract.Equals(log.Address) && a.token.Equals(chainToken.token_address)).FirstOrDefault();
+                            cardNotOpened.amount -= 1;
+                            cardNotOpened.updater = "system";
+                            cardNotOpened.update_time = DateTime.Now;
+
                             _masterDbContext.SaveChanges();
-                            Console.WriteLine("Contract address: " + log.Address + " Log Transfer from:" + decoded.Event.CardName);
                         }
                         else
                         {
-
-                            Console.WriteLine("CardTypeAdded: Found not standard log");
+                            Console.WriteLine("PrizeClaimed:Found not standard log");
                         }
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("CardTypeAdded:Log Address: " + log.Address + " is not a standard log:", ex.Message);
+                        Console.WriteLine("PrizeClaimed: Log Address: " + log.Address + " is not a standard log:", ex.Message);
                     }
                 });
                 // open the web socket connection
@@ -97,16 +90,8 @@ namespace ListenWeb3.Service.ScratchCard
 
                 // begin receiving subscription data
                 // data will be received on a background thread
-                await subscription.SubscribeAsync(cardTypeAdded);
+                await subscription.SubscribeAsync(prizeClaimed);
 
-                //// run for a while
-                //await Task.Delay(TimeSpan.FromMinutes(1));
-
-                //// unsubscribe
-                //await subscription.UnsubscribeAsync();
-
-                //// allow time to unsubscribe
-                //await Task.Delay(TimeSpan.FromSeconds(5));
 
             }
             catch (Exception ex)
@@ -116,3 +101,4 @@ namespace ListenWeb3.Service.ScratchCard
         }
     }
 }
+

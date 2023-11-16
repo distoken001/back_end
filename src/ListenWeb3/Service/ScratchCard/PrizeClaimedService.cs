@@ -20,7 +20,7 @@ using CommonLibrary.Model.DataEntityModel;
 using CommonLibrary.Common.Common;
 using Microsoft.VisualBasic;
 using Nethereum.Contracts.Standards.ERC20.TokenList;
-using ListenWeb3.Repository.Interfaces;
+using ListenWeb3.Repository.ScratchCard.Interfaces;
 
 namespace ListenWeb3.Service.ScratchCard
 {
