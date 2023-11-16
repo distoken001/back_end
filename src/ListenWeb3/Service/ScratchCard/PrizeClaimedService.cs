@@ -21,11 +21,11 @@ using CommonLibrary.Common.Common;
 
 namespace ListenWeb3.Service.ScratchCard
 {
-    public class CardPurchasedService : IHostedService
+	public class PrizeClaimedService : IHostedService
     {
         private readonly IConfiguration _configuration;
         private readonly MySqlMasterDbContext _masterDbContext;
-        public CardPurchasedService(IConfiguration configuration, MySqlMasterDbContext mySqlMasterDbContext)
+        public PrizeClaimedService(IConfiguration configuration, MySqlMasterDbContext mySqlMasterDbContext)
         {
             _configuration = configuration;
             _masterDbContext = mySqlMasterDbContext;
@@ -43,7 +43,7 @@ namespace ListenWeb3.Service.ScratchCard
 
                 var client = new StreamingWebSocketClient(nodeUrl);
 
-                var cardPurchased = Event<CardPurchasedEventDTO>.GetEventABI().CreateFilterInput();
+                var prizeClaimed = Event<PrizeClaimedEventDTO>.GetEventABI().CreateFilterInput();
 
                 var subscription = new EthLogsObservableSubscription(client);
                 // attach a handler for Transfer event logs
@@ -62,29 +62,16 @@ namespace ListenWeb3.Service.ScratchCard
                             }
                             var card = _masterDbContext.card_type.Where(a => a.type == decoded.Event.CardType).FirstOrDefault();
                             var token = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(card.token) && a.chain_id == card.chain_id).FirstOrDefault();
-                            var cardNotOpened = _masterDbContext.card_not_opened.Where(a => a.buyer.Equals(decoded.Event.User) && a.card_type.Equals(card.type) && a.contract.Equals(a.contract) && a.token.Equals(token.token_address)).FirstOrDefault();
-                            if (cardNotOpened != null)
-                            {
-                                cardNotOpened.amount += (int)decoded.Event.NumberOfCards;
-                                cardNotOpened.updater = "system";
-                                cardNotOpened.update_time = DateTime.Now;
-                            }
-                            else
-                            {
-                                var notOpened = new card_not_opened() { card_type = card.type, card_name = card.name, amount = (int)decoded.Event.NumberOfCards, buyer = decoded.Event.User, chain_id = chain_id, contract = log.Address, create_time = DateTime.Now, creator = "system", price = card.price, token = card.token,  img = card.img };
-                                _masterDbContext.card_not_opened.Add(notOpened);
-                            }
-                            _masterDbContext.SaveChanges();
+                          
                         }
                         else
                         {
-
-                            Console.WriteLine("CardTypeAddedService:Found not standard log");
+                            Console.WriteLine("PrizeClaimedService:Found not standard log");
                         }
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("CardTypeAddedService:Log Address: " + log.Address + " is not a standard log:", ex.Message);
+                        Console.WriteLine("PrizeClaimedService: Log Address: " + log.Address + " is not a standard log:", ex.Message);
                     }
                 });
                 // open the web socket connection
@@ -92,7 +79,7 @@ namespace ListenWeb3.Service.ScratchCard
 
                 // begin receiving subscription data
                 // data will be received on a background thread
-                await subscription.SubscribeAsync(cardPurchased);
+                await subscription.SubscribeAsync(prizeClaimed);
 
 
             }
@@ -105,7 +92,6 @@ namespace ListenWeb3.Service.ScratchCard
         {
             throw new NotImplementedException();
         }
-
     }
 }
 

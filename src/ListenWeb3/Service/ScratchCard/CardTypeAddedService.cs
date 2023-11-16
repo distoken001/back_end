@@ -73,8 +73,9 @@ namespace ListenWeb3.Service.ScratchCard
                             {
                                 chain_id = ChainEnum.Optimism;
                             }
-
-                            var cardType = new card_type() { type = decoded.Event.CardType, max_prize = (double)decoded.Event.MaxPrize, max_prize_probability = (int)decoded.Event.MaxPrizeProbability, name = decoded.Event.CardName, price = (double)decoded.Event.Price, token = decoded.Event.TokenAddress, winning_probability = (int)decoded.Event.WinningProbability, chain_id = chain_id };
+                            var card = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals( decoded.Event.TokenAddress)&&a.chain_id==chain_id).FirstOrDefault();
+                            var decimals_num= (double)Math.Pow(10, card.decimals);
+                            var cardType = new card_type() { type = decoded.Event.CardType, max_prize = (double)decoded.Event.MaxPrize/decimals_num, max_prize_probability = (int)decoded.Event.MaxPrizeProbability, name = decoded.Event.CardName, price = (double)decoded.Event.Price/ decimals_num, token = decoded.Event.TokenAddress, winning_probability = (int)decoded.Event.WinningProbability, chain_id = chain_id };
                             _masterDbContext.card_type.Add(cardType);
                             _masterDbContext.SaveChanges();
                             Console.WriteLine("Contract address: " + log.Address + " Log Transfer from:" + decoded.Event.CardName);
@@ -82,12 +83,12 @@ namespace ListenWeb3.Service.ScratchCard
                         else
                         {
 
-                            Console.WriteLine("Found not standard CardTypeAddedEvent log");
+                            Console.WriteLine("CardTypeAddedService: Found not standard log");
                         }
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("Log Address: " + log.Address + " is not a standard log:", ex.Message);
+                        Console.WriteLine("CardTypeAddedService:Log Address: " + log.Address + " is not a standard log:", ex.Message);
                     }
                 });
                 // open the web socket connection

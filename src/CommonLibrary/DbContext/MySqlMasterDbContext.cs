@@ -33,6 +33,7 @@ namespace CommonLibrary.DbContext
         public virtual DbSet<telegram_user_chat> telegram_user_chat { get; set; }
         public virtual DbSet<card_type> card_type { get; set; }
         public virtual DbSet<card_not_opened> card_not_opened { get; set; }
+        public virtual DbSet<card_opened> card_opened { get; set; }
 
     }
 }
