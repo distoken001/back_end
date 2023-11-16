@@ -6,6 +6,8 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.Http.Features;
 using ListenWeb3.Service;
 using ListenWeb3.Service.ScratchCard;
+using ListenWeb3.Repository.Interfaces;
+using ListenWeb3.Repository.ScratchCard.Implements;
 
 namespace ListenWeb3
 {
@@ -46,9 +48,13 @@ namespace ListenWeb3
             services.AddControllers();
             services.AddDirectoryBrowser();
             services.AddSingleton<IConfiguration>(Configuration);
-           
+
             services.AddHostedService<CardTypeAddedService>();
             services.AddHostedService<CardPurchasedService>();
+            services.AddSingleton<ICardPurchased, CardPurchased>();
+            services.AddSingleton<ICardTypeAdded, CardTypeAdded>();
+            services.AddSingleton<IPrizeClaimed, PrizeClaimed>();
+
             services
                 .AddHttpClient()
                 //.AddSingleton(Configuration)
@@ -64,9 +70,9 @@ namespace ListenWeb3
                     });
                 })
                 //.AddDbContext<MySqlMasterDbContext>(options => options.UseMySql(identityConn))
-                .AddDbContext<MySqlMasterDbContext>(options => { options.UseMySql(deMarketConn, builder => builder.EnableRetryOnFailure()); }, ServiceLifetime.Singleton) ;
-                         privider = services.BuildServiceProvider();
-       
+                .AddDbContext<MySqlMasterDbContext>(options => { options.UseMySql(deMarketConn, builder => builder.EnableRetryOnFailure()); }, ServiceLifetime.Singleton);
+            privider = services.BuildServiceProvider();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

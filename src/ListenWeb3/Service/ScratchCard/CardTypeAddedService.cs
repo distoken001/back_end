@@ -18,95 +18,26 @@ using ListenWeb3.Model;
 using Nethereum.JsonRpc.Client;
 using CommonLibrary.Model.DataEntityModel;
 using CommonLibrary.Common.Common;
+using ListenWeb3.Repository.Interfaces;
 
 namespace ListenWeb3.Service.ScratchCard
 {
     public class CardTypeAddedService : IHostedService
     {
         private readonly IConfiguration _configuration;
-        private readonly MySqlMasterDbContext _masterDbContext;
-        public CardTypeAddedService(IConfiguration configuration, MySqlMasterDbContext mySqlMasterDbContext)
+        private readonly ICardTypeAdded _cardTypeAdded;
+        public CardTypeAddedService(IConfiguration configuration, ICardTypeAdded cardTypeAdded)
         {
             _configuration = configuration;
-            _masterDbContext = mySqlMasterDbContext;
+            _cardTypeAdded = cardTypeAdded;
         }
 
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-
             try
             {
-                // Infura 提供的以太坊节点 WebSocket 地址
-                string nodeUrl = _configuration["OP:WSS_URL"];
-
-                // 你的以太坊智能合约地址
-                string contractAddress = _configuration["OP:Contract_ScratchCard"];
-
-                // 读取JSON文件内容
-                string jsonFilePath = "ScratchCard.json"; // 替换为正确的JSON文件路径
-
-                string jsonString = System.IO.File.ReadAllText(jsonFilePath);
-
-                // 解析JSON
-                JObject jsonObject = JObject.Parse(jsonString);
-
-                // 获取abi节点的值
-                string abi = jsonObject["abi"]?.ToString();
-
-                var client = new StreamingWebSocketClient(nodeUrl);
-
-                var cardTypeAdded = Event<CardTypeAddedEventDTO>.GetEventABI().CreateFilterInput();
-
-                var subscription = new EthLogsObservableSubscription(client);
-                // attach a handler for Transfer event logs
-                subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(log =>
-                {
-                    try
-                    {
-                        // decode the log into a typed event log
-                        var decoded = Event<CardTypeAddedEventDTO>.DecodeEvent(log);
-                        if (decoded != null)
-                        {
-                            ChainEnum chain_id = ChainEnum.OptimisticGoerli;
-                            if (_configuration["Env"] == "prod")
-                            {
-                                chain_id = ChainEnum.Optimism;
-                            }
-                            var chainToken = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals( decoded.Event.TokenAddress)&&a.chain_id==chain_id).FirstOrDefault();
-                            var decimals_num= (double)Math.Pow(10, chainToken.decimals);
-                            var cardType = new card_type() { type = decoded.Event.CardType, max_prize = (double)decoded.Event.MaxPrize/decimals_num, max_prize_probability = (int)decoded.Event.MaxPrizeProbability, name = decoded.Event.CardName, price = (double)decoded.Event.Price/ decimals_num, token = decoded.Event.TokenAddress, winning_probability = (int)decoded.Event.WinningProbability, chain_id = chain_id };
-                            _masterDbContext.card_type.Add(cardType);
-                            _masterDbContext.SaveChanges();
-                            Console.WriteLine("Contract address: " + log.Address + " Log Transfer from:" + decoded.Event.CardName);
-                        }
-                        else
-                        {
-
-                            Console.WriteLine("CardTypeAddedService: Found not standard log");
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("CardTypeAddedService:Log Address: " + log.Address + " is not a standard log:", ex.Message);
-                    }
-                });
-                // open the web socket connection
-                await client.StartAsync();
-
-                // begin receiving subscription data
-                // data will be received on a background thread
-                await subscription.SubscribeAsync(cardTypeAdded);
-
-                //// run for a while
-                //await Task.Delay(TimeSpan.FromMinutes(1));
-
-                //// unsubscribe
-                //await subscription.UnsubscribeAsync();
-
-                //// allow time to unsubscribe
-                //await Task.Delay(TimeSpan.FromSeconds(5));
-
+                await _cardTypeAdded.StartAsync(_configuration["OP:WSS_URL"], _configuration["OP:Contract_ScratchCard"]);
             }
             catch (Exception ex)
             {

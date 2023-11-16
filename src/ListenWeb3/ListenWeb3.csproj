@@ -19,10 +19,16 @@
     <None Remove="Service\" />
     <None Remove="Model\" />
     <None Remove="Service\ScratchCard\" />
+    <None Remove="Repository\" />
+    <None Remove="Repository\Implements\" />
+    <None Remove="Repository\Interfaces\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Service\" />
     <Folder Include="Model\" />
     <Folder Include="Service\ScratchCard\" />
+    <Folder Include="Repository\" />
+    <Folder Include="Repository\Implements\" />
+    <Folder Include="Repository\Interfaces\" />
   </ItemGroup>
 </Project>

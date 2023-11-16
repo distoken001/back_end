@@ -216,7 +216,8 @@
         AuroraTestnet = 1313161555,
         Harmony = 1666600000,
         HarmonyTest = 1666700000,
-        Conflux = 1030
+        Conflux = 1030,
+        OPSepolia = 11155420
     }
     public enum BelongUserEnum
     {
