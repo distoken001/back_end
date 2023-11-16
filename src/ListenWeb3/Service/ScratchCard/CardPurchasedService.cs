@@ -62,7 +62,7 @@ namespace ListenWeb3.Service.ScratchCard
                             }
                             var card = _masterDbContext.card_type.Where(a => a.type == decoded.Event.CardType).FirstOrDefault();
                             var token = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(card.token) && a.chain_id == card.chain_id).FirstOrDefault();
-                            var cardNotOpened = _masterDbContext.card_not_opened.Where(a => a.buyer.Equals(decoded.Event.User) && a.card_type.Equals(card.type) && a.contract.Equals(a.contract) && a.token.Equals(token.token_address)).FirstOrDefault();
+                            var cardNotOpened = _masterDbContext.card_not_opened.Where(a => a.buyer.Equals(decoded.Event.User) && a.card_type.Equals(card.type) && a.contract.Equals(log.Address) && a.token.Equals(token.token_address)).FirstOrDefault();
                             if (cardNotOpened != null)
                             {
                                 cardNotOpened.amount += (int)decoded.Event.NumberOfCards;

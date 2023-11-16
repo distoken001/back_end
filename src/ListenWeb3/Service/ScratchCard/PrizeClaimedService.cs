@@ -18,10 +18,12 @@ using ListenWeb3.Model;
 using Nethereum.JsonRpc.Client;
 using CommonLibrary.Model.DataEntityModel;
 using CommonLibrary.Common.Common;
+using Microsoft.VisualBasic;
+using Nethereum.Contracts.Standards.ERC20.TokenList;
 
 namespace ListenWeb3.Service.ScratchCard
 {
-	public class PrizeClaimedService : IHostedService
+    public class PrizeClaimedService : IHostedService
     {
         private readonly IConfiguration _configuration;
         private readonly MySqlMasterDbContext _masterDbContext;
@@ -52,7 +54,7 @@ namespace ListenWeb3.Service.ScratchCard
                     try
                     {
                         // decode the log into a typed event log
-                        var decoded = Event<CardPurchasedEventDTO>.DecodeEvent(log);
+                        var decoded = Event<PrizeClaimedEventDTO>.DecodeEvent(log);
                         if (decoded != null)
                         {
                             ChainEnum chain_id = ChainEnum.OptimisticGoerli;
@@ -61,8 +63,16 @@ namespace ListenWeb3.Service.ScratchCard
                                 chain_id = ChainEnum.Optimism;
                             }
                             var card = _masterDbContext.card_type.Where(a => a.type == decoded.Event.CardType).FirstOrDefault();
-                            var token = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(card.token) && a.chain_id == card.chain_id).FirstOrDefault();
-                          
+                            var chainToken = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(card.token) && a.chain_id == chain_id).FirstOrDefault();
+                            var decimals_num = (double)Math.Pow(10, chainToken.decimals);
+                            var prize = (double)decoded.Event.Prize / decimals_num;
+                            _masterDbContext.card_opened.Add(new card_opened() { buyer = decoded.Event.User, card_name = card.name, card_type = card.type, chain_id = chain_id, create_time = DateTime.Now, creator = "system", contract = log.Address, img = card.img, price = card.price, token = card.token, wining = prize });
+                            var cardNotOpened = _masterDbContext.card_not_opened.Where(a => a.buyer.Equals(decoded.Event.User) && a.card_type.Equals(card.type) && a.contract.Equals(log.Address) && a.token.Equals(chainToken.token_address)).FirstOrDefault();
+                            cardNotOpened.amount -= 1;
+                            cardNotOpened.updater = "system";
+                            cardNotOpened.update_time = DateTime.Now;
+
+                            _masterDbContext.SaveChanges();
                         }
                         else
                         {

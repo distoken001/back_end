@@ -19,7 +19,6 @@ namespace CommonLibrary.Model.DataEntityModel
 		public ChainEnum chain_id { get; set; }
 		public string contract { get; set; }
 		public string token { get; set; }
-		public int decimals { get; set; }
 		public string img { get; set; }
     }
 }

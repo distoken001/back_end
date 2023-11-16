@@ -73,8 +73,8 @@ namespace ListenWeb3.Service.ScratchCard
                             {
                                 chain_id = ChainEnum.Optimism;
                             }
-                            var card = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals( decoded.Event.TokenAddress)&&a.chain_id==chain_id).FirstOrDefault();
-                            var decimals_num= (double)Math.Pow(10, card.decimals);
+                            var chainToken = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals( decoded.Event.TokenAddress)&&a.chain_id==chain_id).FirstOrDefault();
+                            var decimals_num= (double)Math.Pow(10, chainToken.decimals);
                             var cardType = new card_type() { type = decoded.Event.CardType, max_prize = (double)decoded.Event.MaxPrize/decimals_num, max_prize_probability = (int)decoded.Event.MaxPrizeProbability, name = decoded.Event.CardName, price = (double)decoded.Event.Price/ decimals_num, token = decoded.Event.TokenAddress, winning_probability = (int)decoded.Event.WinningProbability, chain_id = chain_id };
                             _masterDbContext.card_type.Add(cardType);
                             _masterDbContext.SaveChanges();
