@@ -33,7 +33,7 @@ namespace ListenWeb3.Repository.Implements
         }
 
 
-        public async Task StartAsync(string nodeUrl, string contractAddress)
+        public async Task StartAsync(string nodeUrl, string contractAddress, ChainEnum chain_id)
         {
 
             try
@@ -69,14 +69,9 @@ namespace ListenWeb3.Repository.Implements
                         var decoded = Event<CardTypeAddedEventDTO>.DecodeEvent(log);
                         if (decoded != null && log.Address.Equals(contractAddress))
                         {
-                            ChainEnum chain_id = ChainEnum.OptimisticGoerli;
-                            if (_configuration["Env"] == "prod")
-                            {
-                                chain_id = ChainEnum.Optimism;
-                            }
                             var chainToken = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(decoded.Event.TokenAddress) && a.chain_id == chain_id).FirstOrDefault();
                             var decimals_num = (double)Math.Pow(10, chainToken.decimals);
-                            var cardType = new card_type() { type = decoded.Event.CardType, max_prize = (double)decoded.Event.MaxPrize / decimals_num, max_prize_probability = (int)decoded.Event.MaxPrizeProbability, name = decoded.Event.CardName, price = (double)decoded.Event.Price / decimals_num, token = decoded.Event.TokenAddress, winning_probability = (int)decoded.Event.WinningProbability, chain_id = chain_id };
+                            var cardType = new card_type() { type = decoded.Event.CardType, max_prize = (double)decoded.Event.MaxPrize / decimals_num, max_prize_probability = (int)decoded.Event.MaxPrizeProbability, name = decoded.Event.CardName, price = (double)decoded.Event.Price / decimals_num, token = decoded.Event.TokenAddress, winning_probability = (int)decoded.Event.WinningProbability, chain_id = chain_id,state=1 };
                             _masterDbContext.card_type.Add(cardType);
                             _masterDbContext.SaveChanges();
                             Console.WriteLine("Contract address: " + log.Address + " Log Transfer from:" + decoded.Event.CardName);

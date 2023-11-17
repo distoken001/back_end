@@ -33,7 +33,7 @@ namespace ListenWeb3.Repository.Implements
             _configuration = configuration;
             _masterDbContext = mySqlMasterDbContext;
         }
-        public async Task StartAsync(string nodeUrl, string contractAddress)
+        public async Task StartAsync(string nodeUrl, string contractAddress, ChainEnum chain_id)
         {
 
             try
@@ -58,12 +58,7 @@ namespace ListenWeb3.Repository.Implements
                         var decoded = Event<PrizeClaimedEventDTO>.DecodeEvent(log);
                         if (decoded != null && log.Address.Equals(contractAddress))
                         {
-                            ChainEnum chain_id = ChainEnum.OptimisticGoerli;
-                            if (_configuration["Env"] == "prod")
-                            {
-                                chain_id = ChainEnum.Optimism;
-                            }
-                            var card = _masterDbContext.card_type.Where(a => a.type == decoded.Event.CardType).FirstOrDefault();
+                            var card = _masterDbContext.card_type.Where(a => a.type == decoded.Event.CardType&&a.chain_id==chain_id).FirstOrDefault();
                             var chainToken = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(card.token) && a.chain_id == chain_id).FirstOrDefault();
                             var decimals_num = (double)Math.Pow(10, chainToken.decimals);
                             var prize = (double)decoded.Event.Prize / decimals_num;

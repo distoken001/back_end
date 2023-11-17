@@ -35,7 +35,12 @@ namespace ListenWeb3.Service.ScratchCard
         {
             try
             {
-                await _cardPurchased.StartAsync(_configuration["OP:WSS_URL"], _configuration["OP:Contract_ScratchCard"]);
+                ChainEnum chain_id = ChainEnum.OptimisticGoerli;
+                if (_configuration["Env"] == "prod")
+                {
+                    chain_id = ChainEnum.Optimism;
+                }
+                await _cardPurchased.StartAsync(_configuration["OP:WSS_URL"], _configuration["OP:Contract_ScratchCard"],chain_id);
             }
             catch (Exception ex)
             {
