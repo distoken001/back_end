@@ -94,7 +94,7 @@ namespace deMarketService.Controllers
                 a.token_des = tokenView;
             }
             var res = new PagedModel<CardOpenedResponse>(totalCount, viewList);
-            return Json(new WebApiResult(1, "刮刮卡未刮开列表" + CurrentLoginAddress, res));
+            return Json(new WebApiResult(1, "刮刮卡已刮开列表" + CurrentLoginAddress, res));
         }
     }
 }
