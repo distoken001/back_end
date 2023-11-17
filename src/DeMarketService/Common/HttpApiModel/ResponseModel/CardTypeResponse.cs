@@ -1,15 +1,14 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Threading.Tasks;
 using CommonLibrary.Common.Common;
 
-namespace CommonLibrary.Model.DataEntityModel
+namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
 {
-    [Table("card_type")]
-    public class card_type
+    public class CardTypeResponse
     {
-        [Key]
-        public int id { get; set; }
         public string type { get; set; }
         public string name { get; set; }
         public double price { get; set; }
@@ -19,8 +18,7 @@ namespace CommonLibrary.Model.DataEntityModel
         public int max_prize_probability { get; set; }
         public ChainEnum chain_id { get; set; }
         public string img { get; set; }
-        public DateTime create_time { get; set; }
         public int state { get; set; }
+        public ChainTokenViewModel token_des { get; set; }
     }
 }
-

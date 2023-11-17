@@ -4,8 +4,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 using CommonLibrary.Common.Common;
 namespace CommonLibrary.Model.DataEntityModel
 {
-	public class card_opened
+    [Table("card_opened")]
+    public class card_opened
 	{
+		[Key]
 		public int id { get; set; }
 		public string card_type { get; set; }
         public string card_name { get; set; }

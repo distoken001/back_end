@@ -11,7 +11,7 @@ namespace deMarketService.Common.Model.HttpApiModel.RequestModel
         public int pageSize { get; set; } = 10;
         public int pageIndex { get; set; } = 1;
         ///// <summary>
-        ///// 链id（暂时不用）
+        ///// 链id
         ///// </summary>
         public ChainEnum chain_id { get; set; }
     }

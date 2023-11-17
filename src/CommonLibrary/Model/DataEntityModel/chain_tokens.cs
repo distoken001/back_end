@@ -1,9 +1,11 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using CommonLibrary.Common.Common;
 
 namespace CommonLibrary.Model.DataEntityModel
 {
+    [Table("chain_tokens")]
     public class chain_tokens
     {
         [Key]
