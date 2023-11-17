@@ -20,9 +20,9 @@ using CommonLibrary.Model.DataEntityModel;
 using CommonLibrary.Common.Common;
 using Microsoft.VisualBasic;
 using Nethereum.Contracts.Standards.ERC20.TokenList;
-using ListenWeb3.Repository.ScratchCard.Interfaces;
+using ListenWeb3.Repository.Interfaces;
 
-namespace ListenWeb3.Repository.ScratchCard.Implements
+namespace ListenWeb3.Repository.Implements
 {
     public class PrizeClaimed : IPrizeClaimed
     {

@@ -6,8 +6,8 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.Http.Features;
 using ListenWeb3.Service;
 using ListenWeb3.Service.ScratchCard;
-using ListenWeb3.Repository.ScratchCard.Implements;
-using ListenWeb3.Repository.ScratchCard.Interfaces;
+using ListenWeb3.Repository.Implements;
+using ListenWeb3.Repository.Interfaces;
 
 namespace ListenWeb3
 {

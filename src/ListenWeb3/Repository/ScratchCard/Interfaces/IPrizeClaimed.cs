@@ -1,5 +1,5 @@
 ﻿using System;
-namespace ListenWeb3.Repository.ScratchCard.Interfaces
+namespace ListenWeb3.Repository.Interfaces
 {
 	public interface IPrizeClaimed
     {

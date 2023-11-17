@@ -18,9 +18,9 @@ using ListenWeb3.Model;
 using Nethereum.JsonRpc.Client;
 using CommonLibrary.Model.DataEntityModel;
 using CommonLibrary.Common.Common;
-using ListenWeb3.Repository.ScratchCard.Interfaces;
+using ListenWeb3.Repository.Interfaces;
 
-namespace ListenWeb3.Repository.ScratchCard.Implements
+namespace ListenWeb3.Repository.Implements
 {
     public class CardPurchased: ICardPurchased
     {
