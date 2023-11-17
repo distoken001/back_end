@@ -52,7 +52,10 @@ namespace ListenWeb3
             services.AddHostedService<CardTypeAddedService>();
             services.AddHostedService<CardPurchasedService>();
             services.AddHostedService<PrizeClaimedService>();
+            services.AddHostedService<CardTypeRemovedService>();
+            
             services.AddSingleton<ICardPurchased, CardPurchased>();
+            services.AddSingleton<ICardTypeRemoved, CardTypeRemoved>();
             services.AddSingleton<ICardTypeAdded, CardTypeAdded>();
             services.AddSingleton<IPrizeClaimed, PrizeClaimed>();
 
