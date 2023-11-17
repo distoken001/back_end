@@ -6,13 +6,13 @@ namespace ListenWeb3.Model
     [Event("PrizeClaimed")]
     public class PrizeClaimedEventDTO : IEventDTO
     {
-        [Parameter("string", "user", 1, true)]
+        [Parameter("address", "user", 1, true)]
         public string User { get; set; }
 
         [Parameter("string", "cardType", 2, false)]
         public string CardType { get; set; }
 
-        [Parameter("uint256", "prize", 4, false)]
+        [Parameter("uint256", "prize", 3, false)]
         public BigInteger Prize { get; set; }
     }
 }

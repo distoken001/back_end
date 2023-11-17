@@ -81,7 +81,6 @@ namespace deMarketService.Controllers
             var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking();
             queryEntities = queryEntities.Where(p => p.buyer.Equals(CurrentLoginAddress, StringComparison.OrdinalIgnoreCase));
 
-
             var totalCount = await queryEntities.CountAsync();
             queryEntities = queryEntities.OrderByDescending(p => p.create_time).Skip((req.pageIndex - 1) * req.pageSize).Take(req.pageSize);
             var list = await queryEntities.ToListAsync();
