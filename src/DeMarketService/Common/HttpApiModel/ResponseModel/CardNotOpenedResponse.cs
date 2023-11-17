@@ -7,7 +7,7 @@ using CommonLibrary.Common.Common;
 
 namespace deMarketService.Common.Model.HttpApiModel.ResponseModel
 {
-    public class NotOpenCardResponse
+    public class CardNotOpenedResponse
     {
         public int id { get; set; }
         public string card_type { get; set; }

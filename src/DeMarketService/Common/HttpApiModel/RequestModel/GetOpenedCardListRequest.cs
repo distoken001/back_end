@@ -6,7 +6,7 @@ using CommonLibrary.Common.Common;
 
 namespace deMarketService.Common.Model.HttpApiModel.RequestModel
 {
-    public class GetNotOpenCardListRequest
+    public class GetOpenedCardListRequest
     {
         public int pageSize { get; set; } = 10;
         public int pageIndex { get; set; } = 1;
