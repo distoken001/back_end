@@ -47,7 +47,7 @@ namespace ListenWeb3.Repository.Implements
                     {
                         // decode the log into a typed event log
                         var decoded = Event<CardPurchasedEventDTO>.DecodeEvent(log);
-                        if (decoded != null&&log.Address.Equals(contractAddress))
+                        if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
                         {
                             var card = _masterDbContext.card_type.Where(a => a.type == decoded.Event.CardType&&a.chain_id==chain_id).FirstOrDefault();
                             var token = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(card.token) && a.chain_id == card.chain_id).FirstOrDefault();
