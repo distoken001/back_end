@@ -18,18 +18,21 @@ using ListenWeb3.Model;
 using Nethereum.JsonRpc.Client;
 using CommonLibrary.Model.DataEntityModel;
 using CommonLibrary.Common.Common;
+using Microsoft.VisualBasic;
+using Nethereum.Contracts.Standards.ERC20.TokenList;
 using ListenWeb3.Repository.Interfaces;
 
 namespace ListenWeb3.Service
 {
-    public class CardPurchasedService : IHostedService
+
+    public class AddOrderService : IHostedService
     {
         private readonly IConfiguration _configuration;
-        private readonly ICardPurchased _cardPurchased;
-        public CardPurchasedService(IConfiguration configuration, ICardPurchased cardPurchased)
+        private readonly IAddOrder _addOrder;
+        public AddOrderService(IConfiguration configuration, IAddOrder addOrder)
         {
             _configuration = configuration;
-            _cardPurchased = cardPurchased;
+            _addOrder = addOrder;
         }
         public async Task StartAsync(CancellationToken cancellationToken)
         {
@@ -40,7 +43,7 @@ namespace ListenWeb3.Service
                 {
                     chain_id = ChainEnum.Optimism;
                 }
-                await _cardPurchased.StartAsync(_configuration["OP:WSS_URL"], _configuration["OP:Contract_ScratchCard"],chain_id);
+                await _addOrder.StartAsync(_configuration["OP:WSS_URL"], _configuration["OP:Contract_Ebay"], chain_id);
             }
             catch (Exception ex)
             {
@@ -51,7 +54,6 @@ namespace ListenWeb3.Service
         {
             throw new NotImplementedException();
         }
-
     }
 }
 

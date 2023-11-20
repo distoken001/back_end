@@ -20,7 +20,7 @@ using CommonLibrary.Model.DataEntityModel;
 using CommonLibrary.Common.Common;
 using ListenWeb3.Repository.Interfaces;
 
-namespace ListenWeb3.Service.ScratchCard
+namespace ListenWeb3.Service
 {
     public class CardTypeAddedService : IHostedService
     {

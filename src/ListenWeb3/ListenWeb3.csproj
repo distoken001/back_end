@@ -20,17 +20,17 @@
     <None Remove="Model\" />
     <None Remove="Service\ScratchCard\" />
     <None Remove="Repository\" />
-    <None Remove="Repository\ScratchCard\" />
-    <None Remove="Repository\ScratchCard\Implements\" />
-    <None Remove="Repository\ScratchCard\Interfaces\" />
+    <None Remove="Service\Ebay\" />
+    <None Remove="Repository\Implements\Ebay\" />
+    <None Remove="Repository\Interfaces\Ebay\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Service\" />
     <Folder Include="Model\" />
     <Folder Include="Service\ScratchCard\" />
     <Folder Include="Repository\" />
-    <Folder Include="Repository\ScratchCard\" />
-    <Folder Include="Repository\ScratchCard\Implements\" />
-    <Folder Include="Repository\ScratchCard\Interfaces\" />
+    <Folder Include="Service\Ebay\" />
+    <Folder Include="Repository\Implements\Ebay\" />
+    <Folder Include="Repository\Interfaces\Ebay\" />
   </ItemGroup>
 </Project>

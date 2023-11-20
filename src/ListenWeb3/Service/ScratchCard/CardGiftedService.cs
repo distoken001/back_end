@@ -22,7 +22,7 @@ using Microsoft.VisualBasic;
 using Nethereum.Contracts.Standards.ERC20.TokenList;
 using ListenWeb3.Repository.Interfaces;
 
-namespace ListenWeb3.Service.ScratchCard
+namespace ListenWeb3.Service
 {
     public class CardGiftedService : IHostedService
     {
