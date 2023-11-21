@@ -1,7 +1,7 @@
 module.exports = {
     apps: [
         {
-            name: "listen",
+            name: "listen_service",
             cmd: "dotnet",
             args: ["ListenService.dll", "--urls", "http://localhost:5007"],
             watch: false,
