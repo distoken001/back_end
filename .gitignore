@@ -170,6 +170,7 @@ DocProject/Help/html
 publish/
 publish_jobs/
 publish_telegram_service/
+publish_listen_service/
 
 # Publish Web Output
 *.[Pp]ublish.xml
