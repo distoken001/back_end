@@ -16,7 +16,7 @@ namespace Jobs
     {
         public static void Main(string[] args)
         {
-            Console.Title = "deMarketService";
+            Console.Title = "Jobs";
 
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
