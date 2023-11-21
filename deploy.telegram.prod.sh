@@ -14,7 +14,7 @@ dotnet publish --configuration Release ./src/TelegramService/TelegramService.csp
 
 # 复制 PM2 配置文件到发布目录
 echo "Copying PM2 config file to the publish directory..."
-cp  ./src/TelegramService/pm2.tg.config.js $publish_directory
+cp  ./src/TelegramService/pm2.telegram.config.js $publish_directory
 
 # 进入发布目录
 cd $publish_directory
