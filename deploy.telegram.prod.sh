@@ -21,4 +21,4 @@ cd $publish_directory
 
 # 使用 PM2 运行项目
 echo "Starting the application with PM2..."
-pm2 start pm2.tg.config.js --env development
+pm2 start pm2.telegram.config.js --env production
