@@ -171,6 +171,7 @@ publish/
 publish_jobs/
 publish_telegram_service/
 publish_listen_service/
+publish_demarket_api/
 
 # Publish Web Output
 *.[Pp]ublish.xml
