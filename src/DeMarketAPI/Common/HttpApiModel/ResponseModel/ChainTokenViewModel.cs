@@ -14,5 +14,7 @@ namespace DeMarketAPI.Common.Model.HttpApiModel.ResponseModel
         public string token_address { get; set; }
 
         public string icon { get; set; }
+
+        public int decimals { get; set; }
     }
 }
