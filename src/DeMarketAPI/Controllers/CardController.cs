@@ -106,9 +106,9 @@ namespace DeMarketAPI.Controllers
         /// </summary>
         /// <param name="req"></param>
         /// <returns></returns>
-        [HttpPost("cardtype")]
+        [HttpPost("card_type_list")]
         [ProducesResponseType(typeof(PagedModel<CardTypeResponse>), 200)]
-        public async Task<JsonResult> cardtype([FromBody] GetCardTypeListRequest req)
+        public async Task<JsonResult> card_type_list([FromBody] GetCardTypeListRequest req)
         {
             var queryEntities = _mySqlMasterDbContext.card_type.Where(a=>a.state==1).AsNoTracking();
             var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking();
