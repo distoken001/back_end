@@ -77,7 +77,7 @@ namespace DeMarketAPI.Controllers
         /// <param name = "req" ></ param >
         /// < returns ></ returns >
         [HttpPost("opened_list")]
-        [ProducesResponseType(typeof(PagedModel<CardNotOpenedResponse>), 200)]
+        [ProducesResponseType(typeof(PagedModel<CardOpenedResponse>), 200)]
         public async Task<JsonResult> opened_list([FromBody] GetOpenedCardListRequest req)
         {
             var queryEntities = _mySqlMasterDbContext.card_opened.AsNoTracking().AsQueryable();
