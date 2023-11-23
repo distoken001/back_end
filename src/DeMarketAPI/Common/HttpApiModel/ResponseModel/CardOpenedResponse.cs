@@ -24,5 +24,9 @@ namespace DeMarketAPI.Common.Model.HttpApiModel.ResponseModel
         public string token { get; set; }
         public string img { get; set; }
         public ChainTokenViewModel token_des { get; set; }
+        /// <summary>
+        /// 链名称
+        /// </summary>
+        public string chain_name { get { if (chain_id == ChainEnum.Bsc) { return "BNB Chain"; } else return chain_id.ToString(); } }
     }
 }
