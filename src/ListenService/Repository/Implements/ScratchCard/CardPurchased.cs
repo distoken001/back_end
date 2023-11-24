@@ -45,6 +45,7 @@ namespace ListenService.Repository.Implements
                 {
                     try
                     {
+                        Console.WriteLine("监听到了！");
                         // decode the log into a typed event log
                         var decoded = Event<CardPurchasedEventDTO>.DecodeEvent(log);
                         if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
