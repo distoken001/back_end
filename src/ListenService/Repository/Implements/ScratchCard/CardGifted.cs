@@ -61,9 +61,9 @@ namespace ListenService.Repository.Implements
                             var cardNotOpenedRecipient = _masterDbContext.card_not_opened.Where(a => a.buyer.Equals(decoded.Event.Recipient) && a.card_type.Equals(card.type) && a.contract.Equals(log.Address)).FirstOrDefault();
                             if (cardNotOpenedRecipient != null)
                             {
-                                cardNotOpenedSender.amount += (int)decoded.Event.NumberOfCards;
-                                cardNotOpenedSender.updater = "system";
-                                cardNotOpenedSender.update_time = DateTime.Now;
+                                cardNotOpenedRecipient.amount += (int)decoded.Event.NumberOfCards;
+                                cardNotOpenedRecipient.updater = "system";
+                                cardNotOpenedRecipient.update_time = DateTime.Now;
                             }
                             else
                             {
