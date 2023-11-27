@@ -48,17 +48,17 @@ namespace ListenService
             services.AddDirectoryBrowser();
             services.AddSingleton<IConfiguration>(Configuration);
 
-            services.AddHostedService<CardTypeAddedService>();
-            services.AddHostedService<CardPurchasedService>();
-            services.AddHostedService<PrizeClaimedService>();
-            services.AddHostedService<CardTypeRemovedService>();
-            services.AddHostedService<CardGiftedService>();
-
             services.AddSingleton<ICardPurchased, CardPurchased>();
             services.AddSingleton<ICardGifted, CardGifted>();
             services.AddSingleton<ICardTypeRemoved, CardTypeRemoved>();
             services.AddSingleton<ICardTypeAdded, CardTypeAdded>();
             services.AddSingleton<IPrizeClaimed, PrizeClaimed>();
+
+            services.AddHostedService<PrizeClaimedService>();
+            services.AddHostedService<CardTypeRemovedService>();
+            services.AddHostedService<CardGiftedService>();
+            services.AddHostedService<CardTypeAddedService>();
+            services.AddHostedService<CardPurchasedService>();
 
             services
                 .AddHttpClient()
