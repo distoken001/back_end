@@ -23,7 +23,7 @@ namespace ListenService
                 .MinimumLevel.Override("System", LogEventLevel.Warning)
                 .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
                 .Enrich.FromLogContext()
-                .WriteTo.File($"logs/listen_web3_{DateTime.Now.ToString("yyMMddHHmm")}.log")
+                .WriteTo.File($"logs/listen_service_{DateTime.Now.ToString("yyMMddHHmm")}.log")
                 .CreateLogger();
 
             var host = CreateWebHostBuilder(args);

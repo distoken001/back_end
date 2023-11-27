@@ -31,6 +31,7 @@ namespace ListenService.Service
             _configuration = configuration;
             _cardPurchased = cardPurchased;
         }
+
         public async Task StartAsync(CancellationToken cancellationToken)
         {
             try
@@ -40,6 +41,7 @@ namespace ListenService.Service
                 {
                     chain_id = ChainEnum.Optimism;
                 }
+                Console.WriteLine("CardPurchasedService启动啦！");
                 await _cardPurchased.StartAsync(_configuration["OP:WSS_URL"], _configuration["OP:Contract_ScratchCard"],chain_id);
             }
             catch (Exception ex)
@@ -47,6 +49,7 @@ namespace ListenService.Service
                 Console.WriteLine(ex.ToString());
             }
         }
+
         public Task StopAsync(CancellationToken cancellationToken)
         {
             return Task.CompletedTask;

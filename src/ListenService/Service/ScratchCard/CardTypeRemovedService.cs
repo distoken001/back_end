@@ -33,6 +33,7 @@ namespace ListenService.Service
             _configuration = configuration;
             _cardTypeRemoved = cardTypeRemoved;
         }
+
         public async Task StartAsync(CancellationToken cancellationToken)
         {
             try
@@ -49,6 +50,7 @@ namespace ListenService.Service
                 Console.WriteLine(ex.ToString());
             }
         }
+
         public Task StopAsync(CancellationToken cancellationToken)
         {
             return Task.CompletedTask;

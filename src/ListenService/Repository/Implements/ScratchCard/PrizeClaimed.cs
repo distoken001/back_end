@@ -54,6 +54,7 @@ namespace ListenService.Repository.Implements
                 {
                     try
                     {
+                        Console.WriteLine("PrizeClaimed监听到了！");
                         // decode the log into a typed event log
                         var decoded = Event<PrizeClaimedEventDTO>.DecodeEvent(log);
                         if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
