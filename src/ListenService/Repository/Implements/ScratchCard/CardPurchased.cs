@@ -3,19 +3,12 @@ using CommonLibrary.DbContext;
 using CommonLibrary.Model.DataEntityModel;
 using ListenService.Model;
 using ListenService.Repository.Interfaces;
-using Nethereum.ABI.FunctionEncoding.Attributes;
 using Nethereum.Contracts;
-using Nethereum.JsonRpc.Client.Streaming;
 using Nethereum.JsonRpc.WebSocketStreamingClient;
-using Nethereum.RPC.Eth.DTOs;
-using Nethereum.RPC.Eth.Subscriptions;
+using Nethereum.RPC.Reactive;
 using Nethereum.RPC.Reactive.Eth.Subscriptions;
-using Newtonsoft.Json;
-using System;
 using System.Net.WebSockets;
-using System.Numerics;
 using System.Reactive.Linq;
-using System.Threading.Tasks;
 
 namespace ListenService.Repository.Implements
 {
@@ -72,15 +65,13 @@ namespace ListenService.Repository.Implements
                     await _client.StartAsync();
                     await _subscription.SubscribeAsync(cardPurchased);
 
-                    //while (true)
+                    //while (_client.WebSocketState == WebSocketState.Open)
                     //{
-                    //    if (_client.WebSocketState == WebSocketState.Open)
+                      
+                    //    await Task.Delay(TimeSpan.FromSeconds(30)); // 例如：等待 30 秒后再次检查连接状态。
+                    //    if(_client.WebSocketState != WebSocketState.Open)
                     //    {
-
-                    //    }
-                    //    else
-                    //    {
-                    //        Console.WriteLine("状态" + _client.WebSocketState);
+                    //        Console.WriteLine("状态"+ _client.WebSocketState);
                     //        await _client.StartAsync();
                     //    }
                     //}
