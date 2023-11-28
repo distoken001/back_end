@@ -41,7 +41,10 @@ namespace ListenService.Service
                 {
                     chain_id = ChainEnum.Optimism;
                 }
-                await _cardTypeAdded.StartAsync(_configuration["OP:WSS_URL"], _configuration["OP:Contract_ScratchCard"],chain_id);
+                if (!string.IsNullOrEmpty(_configuration["OP:Contract_ScratchCard"]))
+                {
+                    await _cardTypeAdded.StartAsync(_configuration["OP:WSS_URL"], _configuration["OP:Contract_ScratchCard"], chain_id);
+                }
             }
             catch (Exception ex)
             {
