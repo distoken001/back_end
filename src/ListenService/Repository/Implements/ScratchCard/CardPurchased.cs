@@ -60,7 +60,6 @@ namespace ListenService.Repository.Implements
                 });
                 await _client.StartAsync();
                 await _subscription.SubscribeAsync(cardPurchased);
-                Console.WriteLine(_subscription.SubscriptionState);
                 while (true)
                 {
                     if (_client.WebSocketState == WebSocketState.Aborted)
