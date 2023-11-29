@@ -91,7 +91,7 @@ namespace ListenService.Repository.Implements
                         await subscription.UnsubscribeAsync();
                         client.Dispose();
                         await StartAsync(nodeUrl, contractAddress, chain_id);
-                        Console.WriteLine("我重启了");
+                        Console.WriteLine("CardGifted重启了");
                         break;
 
                     }
@@ -101,7 +101,7 @@ namespace ListenService.Repository.Implements
             catch (Exception ex)
             {
                 await StartAsync(nodeUrl, contractAddress, chain_id);
-                Console.WriteLine(ex.ToString());
+                Console.WriteLine($"CardGifted:{ex}");
             }
         }
 

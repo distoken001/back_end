@@ -27,11 +27,9 @@ namespace ListenService.Repository.Implements
             {
                 var _client = new StreamingWebSocketClient(nodeUrl);
 
-                Console.WriteLine("状态" + _client.WebSocketState);
                 var _subscription = new EthLogsObservableSubscription(_client);
                 var cardPurchased = Event<CardPurchasedEventDTO>.GetEventABI().CreateFilterInput();
 
-                Console.WriteLine(_subscription.SubscriptionState);
                 _subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(log =>
                 {
                     Console.WriteLine("CardPurchased监听到了！");
@@ -71,7 +69,7 @@ namespace ListenService.Repository.Implements
                         await _subscription.UnsubscribeAsync();
                         _client.Dispose();
                         await StartAsync(nodeUrl, contractAddress, chain_id);
-                        Console.WriteLine("我重启了");
+                        Console.WriteLine("CardPurchased重启了");
                         break;
 
                     }
@@ -82,7 +80,7 @@ namespace ListenService.Repository.Implements
             catch (Exception ex)
             {
                 await StartAsync(nodeUrl, contractAddress, chain_id);
-                Console.WriteLine($"WebSocket Error:{ex}");
+                Console.WriteLine($"CardPurchased:{ex}");
             }
         }
 
