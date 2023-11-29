@@ -43,6 +43,7 @@ namespace ListenService.Service
                 {
                     chain_id = ChainEnum.Optimism;
                 }
+                Console.WriteLine("CardTypeRemovedService启动啦！");
                 if (!string.IsNullOrEmpty(_configuration["OP:Contract_ScratchCard"]))
                 {
                     _cardTypeRemoved.StartAsync(_configuration["OP:WSS_URL"], _configuration["OP:Contract_ScratchCard"], chain_id);

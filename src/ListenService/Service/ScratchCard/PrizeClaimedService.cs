@@ -43,6 +43,7 @@ namespace ListenService.Service
                 {
                     chain_id = ChainEnum.Optimism;
                 }
+                Console.WriteLine("PrizeClaimedService启动啦！");
                 if (!string.IsNullOrEmpty(_configuration["OP:Contract_ScratchCard"]))
                 {
                     _prizeClaimed.StartAsync(_configuration["OP:WSS_URL"], _configuration["OP:Contract_ScratchCard"], chain_id);
