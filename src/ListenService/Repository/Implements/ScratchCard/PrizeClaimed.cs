@@ -21,6 +21,7 @@ using CommonLibrary.Common.Common;
 using Microsoft.VisualBasic;
 using Nethereum.Contracts.Standards.ERC20.TokenList;
 using ListenService.Repository.Interfaces;
+using System.Net.WebSockets;
 
 namespace ListenService.Repository.Implements
 {
@@ -87,7 +88,20 @@ namespace ListenService.Repository.Implements
                 // begin receiving subscription data
                 // data will be received on a background thread
                 await subscription.SubscribeAsync(prizeClaimed);
+                while (true)
+                {
+                    if (client.WebSocketState == WebSocketState.Aborted)
+                    {
 
+                        await subscription.UnsubscribeAsync();
+                        client.Dispose();
+                        await StartAsync(nodeUrl, contractAddress, chain_id);
+                        Console.WriteLine("我重启了");
+                        break;
+
+                    }
+                    await Task.Delay(1000);
+                }
 
             }
             catch (Exception ex)

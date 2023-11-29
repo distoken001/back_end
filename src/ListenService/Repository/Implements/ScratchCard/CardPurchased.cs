@@ -34,6 +34,7 @@ namespace ListenService.Repository.Implements
                     var _subscription = new EthLogsObservableSubscription(_client);
                     var cardPurchased = Event<CardPurchasedEventDTO>.GetEventABI().CreateFilterInput();
 
+                    Console.WriteLine(_subscription.SubscriptionState);
                     _subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(log =>
                     {
                         Console.WriteLine("CardPurchased监听到了！");
@@ -64,17 +65,21 @@ namespace ListenService.Repository.Implements
                     });
                     await _client.StartAsync();
                     await _subscription.SubscribeAsync(cardPurchased);
+                    Console.WriteLine(_subscription.SubscriptionState);
+                    while (true)
+                    {
+                        if (_client.WebSocketState == WebSocketState.Aborted)
+                        {
 
-                    //while (_client.WebSocketState == WebSocketState.Open)
-                    //{
-                      
-                    //    await Task.Delay(TimeSpan.FromSeconds(30)); // 例如：等待 30 秒后再次检查连接状态。
-                    //    if(_client.WebSocketState != WebSocketState.Open)
-                    //    {
-                    //        Console.WriteLine("状态"+ _client.WebSocketState);
-                    //        await _client.StartAsync();
-                    //    }
-                    //}
+                            await _subscription.UnsubscribeAsync();
+                            _client.Dispose();
+                            await StartAsync(nodeUrl, contractAddress, chain_id);
+                            Console.WriteLine("我重启了");
+                            break;
+
+                        }
+                        await Task.Delay(1000);
+                    }
                 }
                 catch (Exception ex)
                 {

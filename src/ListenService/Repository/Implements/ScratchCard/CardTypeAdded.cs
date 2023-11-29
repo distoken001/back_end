@@ -19,6 +19,7 @@ using Nethereum.JsonRpc.Client;
 using CommonLibrary.Model.DataEntityModel;
 using CommonLibrary.Common.Common;
 using ListenService.Repository.Interfaces;
+using System.Net.WebSockets;
 
 namespace ListenService.Repository.Implements
 {
@@ -94,14 +95,20 @@ namespace ListenService.Repository.Implements
                 // data will be received on a background thread
                 await subscription.SubscribeAsync(cardTypeAdded);
 
-                //// run for a while
-                //await Task.Delay(TimeSpan.FromMinutes(1));
+                while (true)
+                {
+                    if (client.WebSocketState == WebSocketState.Aborted)
+                    {
 
-                //// unsubscribe
-                //await subscription.UnsubscribeAsync();
+                        await subscription.UnsubscribeAsync();
+                        client.Dispose();
+                        await StartAsync(nodeUrl, contractAddress, chain_id);
+                        Console.WriteLine("我重启了");
+                        break;
 
-                //// allow time to unsubscribe
-                //await Task.Delay(TimeSpan.FromSeconds(5));
+                    }
+                    await Task.Delay(1000);
+                }
 
             }
             catch (Exception ex)
