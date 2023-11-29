@@ -53,34 +53,28 @@ namespace ListenService.Repository.Implements
                 // attach a handler for Transfer event logs
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(log =>
                 {
-                    try
+                    Console.WriteLine("PrizeClaimed监听到了！");
+                    // decode the log into a typed event log
+                    var decoded = Event<PrizeClaimedEventDTO>.DecodeEvent(log);
+                    if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
                     {
-                        Console.WriteLine("PrizeClaimed监听到了！");
-                        // decode the log into a typed event log
-                        var decoded = Event<PrizeClaimedEventDTO>.DecodeEvent(log);
-                        if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
-                        {
-                            var card = _masterDbContext.card_type.Where(a => a.type == decoded.Event.CardType&&a.chain_id==chain_id).FirstOrDefault();
-                            var chainToken = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(card.token) && a.chain_id == chain_id).FirstOrDefault();
-                            var decimals_num = (double)Math.Pow(10, chainToken.decimals);
-                            var prize = (double)decoded.Event.Prize / decimals_num;
-                            _masterDbContext.card_opened.Add(new card_opened() { buyer = decoded.Event.User, card_name = card.name, card_type = card.type, chain_id = chain_id, create_time = DateTime.Now, creator = "system", contract = log.Address, img = card.img, price = card.price, token = card.token, wining = prize });
-                            var cardNotOpened = _masterDbContext.card_not_opened.Where(a => a.buyer.Equals(decoded.Event.User) && a.card_type.Equals(card.type) && a.contract.Equals(log.Address) && a.token.Equals(chainToken.token_address)).FirstOrDefault();
-                            cardNotOpened.amount -= 1;
-                            cardNotOpened.updater = "system";
-                            cardNotOpened.update_time = DateTime.Now;
+                        var card = _masterDbContext.card_type.Where(a => a.type == decoded.Event.CardType && a.chain_id == chain_id).FirstOrDefault();
+                        var chainToken = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(card.token) && a.chain_id == chain_id).FirstOrDefault();
+                        var decimals_num = (double)Math.Pow(10, chainToken.decimals);
+                        var prize = (double)decoded.Event.Prize / decimals_num;
+                        _masterDbContext.card_opened.Add(new card_opened() { buyer = decoded.Event.User, card_name = card.name, card_type = card.type, chain_id = chain_id, create_time = DateTime.Now, creator = "system", contract = log.Address, img = card.img, price = card.price, token = card.token, wining = prize });
+                        var cardNotOpened = _masterDbContext.card_not_opened.Where(a => a.buyer.Equals(decoded.Event.User) && a.card_type.Equals(card.type) && a.contract.Equals(log.Address) && a.token.Equals(chainToken.token_address)).FirstOrDefault();
+                        cardNotOpened.amount -= 1;
+                        cardNotOpened.updater = "system";
+                        cardNotOpened.update_time = DateTime.Now;
 
-                            _masterDbContext.SaveChanges();
-                        }
-                        else
-                        {
-                            Console.WriteLine("PrizeClaimed:Found not standard log");
-                        }
+                        _masterDbContext.SaveChanges();
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        Console.WriteLine("PrizeClaimed: Log Address: " + log.Address + " is not a standard log:", ex.Message);
+                        Console.WriteLine("PrizeClaimed:Found not standard log");
                     }
+
                 });
                 // open the web socket connection
                 await client.StartAsync();
@@ -107,6 +101,7 @@ namespace ListenService.Repository.Implements
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
+                await StartAsync(nodeUrl, contractAddress, chain_id);
             }
         }
     }

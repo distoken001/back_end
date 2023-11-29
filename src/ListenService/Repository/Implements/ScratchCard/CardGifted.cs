@@ -44,44 +44,37 @@ namespace ListenService.Repository.Implements
                 // attach a handler for Transfer event logs
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(log =>
                 {
-                    try
+                    // decode the log into a typed event log
+                    var decoded = Event<CardGiftedEventDTO>.DecodeEvent(log);
+                    if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
                     {
-                        // decode the log into a typed event log
-                        var decoded = Event<CardGiftedEventDTO>.DecodeEvent(log);
-                        if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
+                        Console.WriteLine("CardGifted监听到了！");
+                        var card = _masterDbContext.card_type.Where(a => a.type == decoded.Event.CardType && a.chain_id == chain_id).FirstOrDefault();
+                        var token = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(card.token) && a.chain_id == card.chain_id).FirstOrDefault();
+                        var cardNotOpenedSender = _masterDbContext.card_not_opened.Where(a => a.buyer.Equals(decoded.Event.Sender) && a.card_type.Equals(card.type) && a.contract.Equals(log.Address)).FirstOrDefault();
+
+                        cardNotOpenedSender.amount -= (int)decoded.Event.NumberOfCards;
+                        cardNotOpenedSender.updater = "system";
+                        cardNotOpenedSender.update_time = DateTime.Now;
+
+
+                        var cardNotOpenedRecipient = _masterDbContext.card_not_opened.Where(a => a.buyer.Equals(decoded.Event.Recipient) && a.card_type.Equals(card.type) && a.contract.Equals(log.Address)).FirstOrDefault();
+                        if (cardNotOpenedRecipient != null)
                         {
-                            var card = _masterDbContext.card_type.Where(a => a.type == decoded.Event.CardType && a.chain_id == chain_id).FirstOrDefault();
-                            var token = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(card.token) && a.chain_id == card.chain_id).FirstOrDefault();
-                            var cardNotOpenedSender = _masterDbContext.card_not_opened.Where(a => a.buyer.Equals(decoded.Event.Sender) && a.card_type.Equals(card.type) && a.contract.Equals(log.Address)).FirstOrDefault();
-
-                            cardNotOpenedSender.amount -= (int)decoded.Event.NumberOfCards;
-                            cardNotOpenedSender.updater = "system";
-                            cardNotOpenedSender.update_time = DateTime.Now;
-
-
-                            var cardNotOpenedRecipient = _masterDbContext.card_not_opened.Where(a => a.buyer.Equals(decoded.Event.Recipient) && a.card_type.Equals(card.type) && a.contract.Equals(log.Address)).FirstOrDefault();
-                            if (cardNotOpenedRecipient != null)
-                            {
-                                cardNotOpenedRecipient.amount += (int)decoded.Event.NumberOfCards;
-                                cardNotOpenedRecipient.updater = "system";
-                                cardNotOpenedRecipient.update_time = DateTime.Now;
-                            }
-                            else
-                            {
-                                var notOpened = new card_not_opened() { card_type = card.type, card_name = card.name, amount = (int)decoded.Event.NumberOfCards, buyer = decoded.Event.Recipient, chain_id = chain_id, contract = log.Address, create_time = DateTime.Now, creator = "system", price = card.price, token = card.token, img = card.img };
-                                _masterDbContext.card_not_opened.Add(notOpened);
-                            }
-                            _masterDbContext.SaveChanges();
+                            cardNotOpenedRecipient.amount += (int)decoded.Event.NumberOfCards;
+                            cardNotOpenedRecipient.updater = "system";
+                            cardNotOpenedRecipient.update_time = DateTime.Now;
                         }
                         else
                         {
-
-                            Console.WriteLine("CardPurchased:Found not standard log");
+                            var notOpened = new card_not_opened() { card_type = card.type, card_name = card.name, amount = (int)decoded.Event.NumberOfCards, buyer = decoded.Event.Recipient, chain_id = chain_id, contract = log.Address, create_time = DateTime.Now, creator = "system", price = card.price, token = card.token, img = card.img };
+                            _masterDbContext.card_not_opened.Add(notOpened);
                         }
+                        _masterDbContext.SaveChanges();
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        Console.WriteLine("CardPurchased:Log Address: " + log.Address + " is not a standard log:", ex.Message);
+                        Console.WriteLine("CardPurchased:Found not standard log");
                     }
                 });
                 // open the web socket connection
@@ -107,6 +100,7 @@ namespace ListenService.Repository.Implements
             }
             catch (Exception ex)
             {
+                await StartAsync(nodeUrl, contractAddress, chain_id);
                 Console.WriteLine(ex.ToString());
             }
         }

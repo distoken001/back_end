@@ -48,8 +48,7 @@ namespace ListenService.Repository.Implements
                 // attach a handler for Transfer event logs
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(log =>
                 {
-                    try
-                    {
+                        Console.WriteLine("CardTypeAdded监听到了！");
                         // decode the log into a typed event log
                         var decoded = Event<CardTypeRemovedEventDTO>.DecodeEvent(log);
                         if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
@@ -63,11 +62,6 @@ namespace ListenService.Repository.Implements
 
                             Console.WriteLine("CardTypeAdded: Found not standard log");
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("CardTypeAdded:Log Address: " + log.Address + " is not a standard log:", ex.Message);
-                    }
                 });
                 // open the web socket connection
                 await client.StartAsync();
@@ -95,6 +89,8 @@ namespace ListenService.Repository.Implements
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
+                await StartAsync(nodeUrl, contractAddress, chain_id);
+               
             }
         }
     }

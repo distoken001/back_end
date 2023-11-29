@@ -27,64 +27,55 @@ namespace ListenService.Repository.Implements
             {
                 var _client = new StreamingWebSocketClient(nodeUrl);
 
-
                 Console.WriteLine("状态" + _client.WebSocketState);
-                try
-                {
-                    var _subscription = new EthLogsObservableSubscription(_client);
-                    var cardPurchased = Event<CardPurchasedEventDTO>.GetEventABI().CreateFilterInput();
+                var _subscription = new EthLogsObservableSubscription(_client);
+                var cardPurchased = Event<CardPurchasedEventDTO>.GetEventABI().CreateFilterInput();
 
-                    Console.WriteLine(_subscription.SubscriptionState);
-                    _subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(log =>
+                Console.WriteLine(_subscription.SubscriptionState);
+                _subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(log =>
+                {
+                    Console.WriteLine("CardPurchased监听到了！");
+                    // decode the log into a typed event log
+                    var decoded = Event<CardPurchasedEventDTO>.DecodeEvent(log);
+                    if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
                     {
-                        Console.WriteLine("CardPurchased监听到了！");
-                        // decode the log into a typed event log
-                        var decoded = Event<CardPurchasedEventDTO>.DecodeEvent(log);
-                        if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
+                        var card = _masterDbContext.card_type.Where(a => a.type == decoded.Event.CardType && a.chain_id == chain_id).FirstOrDefault();
+                        var token = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(card.token) && a.chain_id == card.chain_id).FirstOrDefault();
+                        var cardNotOpened = _masterDbContext.card_not_opened.Where(a => a.buyer.Equals(decoded.Event.User) && a.card_type.Equals(card.type) && a.contract.Equals(log.Address) && a.token.Equals(token.token_address)).FirstOrDefault();
+                        if (cardNotOpened != null)
                         {
-                            var card = _masterDbContext.card_type.Where(a => a.type == decoded.Event.CardType && a.chain_id == chain_id).FirstOrDefault();
-                            var token = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(card.token) && a.chain_id == card.chain_id).FirstOrDefault();
-                            var cardNotOpened = _masterDbContext.card_not_opened.Where(a => a.buyer.Equals(decoded.Event.User) && a.card_type.Equals(card.type) && a.contract.Equals(log.Address) && a.token.Equals(token.token_address)).FirstOrDefault();
-                            if (cardNotOpened != null)
-                            {
-                                cardNotOpened.amount += (int)decoded.Event.NumberOfCards;
-                                cardNotOpened.updater = "system";
-                                cardNotOpened.update_time = DateTime.Now;
-                            }
-                            else
-                            {
-                                var notOpened = new card_not_opened() { card_type = card.type, card_name = card.name, amount = (int)decoded.Event.NumberOfCards, buyer = decoded.Event.User, chain_id = chain_id, contract = log.Address, create_time = DateTime.Now, creator = "system", price = card.price, token = card.token, img = card.img };
-                                _masterDbContext.card_not_opened.Add(notOpened);
-                            }
-                            _masterDbContext.SaveChanges();
+                            cardNotOpened.amount += (int)decoded.Event.NumberOfCards;
+                            cardNotOpened.updater = "system";
+                            cardNotOpened.update_time = DateTime.Now;
                         }
                         else
                         {
-                            Console.WriteLine("CardPurchased:Found not standard log");
+                            var notOpened = new card_not_opened() { card_type = card.type, card_name = card.name, amount = (int)decoded.Event.NumberOfCards, buyer = decoded.Event.User, chain_id = chain_id, contract = log.Address, create_time = DateTime.Now, creator = "system", price = card.price, token = card.token, img = card.img };
+                            _masterDbContext.card_not_opened.Add(notOpened);
                         }
-                    });
-                    await _client.StartAsync();
-                    await _subscription.SubscribeAsync(cardPurchased);
-                    Console.WriteLine(_subscription.SubscriptionState);
-                    while (true)
-                    {
-                        if (_client.WebSocketState == WebSocketState.Aborted)
-                        {
-
-                            await _subscription.UnsubscribeAsync();
-                            _client.Dispose();
-                            await StartAsync(nodeUrl, contractAddress, chain_id);
-                            Console.WriteLine("我重启了");
-                            break;
-
-                        }
-                        await Task.Delay(1000);
+                        _masterDbContext.SaveChanges();
                     }
-                }
-                catch (Exception ex)
+                    else
+                    {
+                        Console.WriteLine("CardPurchased:Found not standard log");
+                    }
+                });
+                await _client.StartAsync();
+                await _subscription.SubscribeAsync(cardPurchased);
+                Console.WriteLine(_subscription.SubscriptionState);
+                while (true)
                 {
-                    await StartAsync(nodeUrl, contractAddress, chain_id);
-                    Console.WriteLine($"WebSocket Error: {ex}");
+                    if (_client.WebSocketState == WebSocketState.Aborted)
+                    {
+
+                        await _subscription.UnsubscribeAsync();
+                        _client.Dispose();
+                        await StartAsync(nodeUrl, contractAddress, chain_id);
+                        Console.WriteLine("我重启了");
+                        break;
+
+                    }
+                    await Task.Delay(1000);
                 }
             }
 
