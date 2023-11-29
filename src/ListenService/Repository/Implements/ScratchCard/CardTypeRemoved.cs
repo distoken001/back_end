@@ -90,7 +90,8 @@ namespace ListenService.Repository.Implements
             {
                 Console.WriteLine($"CardTypeRemoved:{ex}");
                 await StartAsync(nodeUrl, contractAddress, chain_id);
-               
+                Console.WriteLine("CardTypeRemoved重启了ex");
+
             }
         }
     }

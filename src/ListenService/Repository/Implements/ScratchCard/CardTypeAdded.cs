@@ -110,6 +110,7 @@ namespace ListenService.Repository.Implements
             {
                 Console.WriteLine($"CardTypeAdded:{ex}");
                 await StartAsync(nodeUrl, contractAddress, chain_id);
+                Console.WriteLine("CardTypeAdded重启了EX");
             }
         }
     }

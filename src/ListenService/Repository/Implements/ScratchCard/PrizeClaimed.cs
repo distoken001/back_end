@@ -102,6 +102,7 @@ namespace ListenService.Repository.Implements
             {
                 Console.WriteLine($"PrizeClaimed:{ex}");
                 await StartAsync(nodeUrl, contractAddress, chain_id);
+                Console.WriteLine("PrizeClaimed重启了EX");
             }
         }
     }

@@ -80,6 +80,7 @@ namespace ListenService.Repository.Implements
             {
                 await StartAsync(nodeUrl, contractAddress, chain_id);
                 Console.WriteLine($"CardPurchased:{ex}");
+                Console.WriteLine("CardPurchased重启了EX");
             }
         }
 
