@@ -45,7 +45,7 @@ namespace ListenService.Service
                 }
                 if (!string.IsNullOrEmpty(_configuration["OP:Contract_ScratchCard"]))
                 {
-                    await _cardTypeRemoved.StartAsync(_configuration["OP:WSS_URL"], _configuration["OP:Contract_ScratchCard"], chain_id);
+                    _cardTypeRemoved.StartAsync(_configuration["OP:WSS_URL"], _configuration["OP:Contract_ScratchCard"], chain_id);
                 }
             }
             catch (Exception ex)

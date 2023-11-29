@@ -44,7 +44,7 @@ namespace ListenService.Service
                 Console.WriteLine("CardPurchasedService启动啦！");
                 if (!string.IsNullOrEmpty(_configuration["OP:Contract_ScratchCard"]))
                 {
-                    await _cardPurchased.StartAsync(_configuration["OP:WSS_URL"], _configuration["OP:Contract_ScratchCard"], chain_id);
+                    _cardPurchased.StartAsync(_configuration["OP:WSS_URL"], _configuration["OP:Contract_ScratchCard"], chain_id);
                 }
             }
             catch (Exception ex)
