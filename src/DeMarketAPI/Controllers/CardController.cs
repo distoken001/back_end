@@ -51,7 +51,7 @@ namespace DeMarketAPI.Controllers
         {
             var queryEntities = _mySqlMasterDbContext.card_not_opened.AsNoTracking().AsQueryable();
             var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking();
-            queryEntities = queryEntities.Where(p => p.buyer.Equals(CurrentLoginAddress, StringComparison.OrdinalIgnoreCase));
+            queryEntities = queryEntities.Where(p => p.buyer.Equals(CurrentLoginAddress, StringComparison.OrdinalIgnoreCase) && p.amount != 0);
 
             if (req.chain_id != 0)
             {
@@ -61,7 +61,7 @@ namespace DeMarketAPI.Controllers
             queryEntities = queryEntities.OrderByDescending(p => p.create_time).Skip((req.pageIndex - 1) * req.pageSize).Take(req.pageSize);
             var list = await queryEntities.ToListAsync();
             var viewList = AutoMapperHelper.MapDbEntityToDTO<card_not_opened, CardNotOpenedResponse>(list);
-           
+
             foreach (var a in viewList)
             {
                 var token = chainTokens.FirstOrDefault(c => c.chain_id == a.chain_id && c.token_address.Equals(a.token));
@@ -110,7 +110,7 @@ namespace DeMarketAPI.Controllers
         [ProducesResponseType(typeof(PagedModel<CardTypeResponse>), 200)]
         public async Task<JsonResult> card_type_list([FromBody] GetCardTypeListRequest req)
         {
-            var queryEntities = _mySqlMasterDbContext.card_type.Where(a=>a.state==1).AsNoTracking();
+            var queryEntities = _mySqlMasterDbContext.card_type.Where(a => a.state == 1).AsNoTracking();
             var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking();
             if (req.chain_id != 0)
             {
