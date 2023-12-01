@@ -19,6 +19,7 @@ using Nethereum.JsonRpc.Client;
 using CommonLibrary.Model.DataEntityModel;
 using CommonLibrary.Common.Common;
 using ListenService.Repository.Interfaces;
+using ListenService.Repository.Implements;
 
 namespace ListenService.Service
 {
@@ -36,14 +37,28 @@ namespace ListenService.Service
         {
             try
             {
-                ChainEnum chain_id = ChainEnum.OptimisticGoerli;
-                if (_configuration["Env"] == "prod")
-                {
-                    chain_id = ChainEnum.Optimism;
-                }
                 Console.WriteLine("CardPurchasedService启动啦！");
+
+                if (!string.IsNullOrEmpty(_configuration["Polygon:Contract_ScratchCard"]))
+                {
+                    _cardPurchased.StartAsync(_configuration["Polygon:WSS_URL"], _configuration["Polygon:Contract_ScratchCard"], ChainEnum.Polygon);
+                }
+                if (!string.IsNullOrEmpty(_configuration["ARB:Contract_ScratchCard"]))
+                {
+                    _cardPurchased.StartAsync(_configuration["ARB:WSS_URL"], _configuration["ARB:Contract_ScratchCard"], ChainEnum.Arbitrum);
+                }
+                if (!string.IsNullOrEmpty(_configuration["BSC:Contract_ScratchCard"]))
+                {
+                    _cardPurchased.StartAsync(_configuration["BSC:WSS_URL"], _configuration["BSC:Contract_ScratchCard"], ChainEnum.Bsc);
+                }
+
                 if (!string.IsNullOrEmpty(_configuration["OP:Contract_ScratchCard"]))
                 {
+                    ChainEnum chain_id = ChainEnum.OptimisticGoerli;
+                    if (_configuration["Env"] == "prod")
+                    {
+                        chain_id = ChainEnum.Optimism;
+                    }
                     _cardPurchased.StartAsync(_configuration["OP:WSS_URL"], _configuration["OP:Contract_ScratchCard"], chain_id);
                 }
             }
