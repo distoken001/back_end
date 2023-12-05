@@ -43,15 +43,15 @@ namespace ListenService.Service
 
                 if (!string.IsNullOrEmpty(_configuration["Polygon:Contract_ScratchCard"]))
                 {
-                    _prizeClaimed.StartAsync(_configuration["Polygon:WSS_URL"], _configuration["Polygon:Contract_ScratchCard"], ChainEnum.Polygon);
+                    _ = _prizeClaimed.StartAsync(_configuration["Polygon:WSS_URL"], _configuration["Polygon:Contract_ScratchCard"], ChainEnum.Polygon);
                 }
                 if (!string.IsNullOrEmpty(_configuration["ARB:Contract_ScratchCard"]))
                 {
-                    _prizeClaimed.StartAsync(_configuration["ARB:WSS_URL"], _configuration["ARB:Contract_ScratchCard"], ChainEnum.Arbitrum);
+                    _ = _prizeClaimed.StartAsync(_configuration["ARB:WSS_URL"], _configuration["ARB:Contract_ScratchCard"], ChainEnum.Arbitrum);
                 }
                 if (!string.IsNullOrEmpty(_configuration["BSC:Contract_ScratchCard"]))
                 {
-                    _prizeClaimed.StartAsync(_configuration["BSC:WSS_URL"], _configuration["BSC:Contract_ScratchCard"], ChainEnum.Bsc);
+                    _ = _prizeClaimed.StartAsync(_configuration["BSC:WSS_URL"], _configuration["BSC:Contract_ScratchCard"], ChainEnum.Bsc);
                 }
 
                 if (!string.IsNullOrEmpty(_configuration["OP:Contract_ScratchCard"]))
@@ -61,7 +61,7 @@ namespace ListenService.Service
                     {
                         chain_id = ChainEnum.Optimism;
                     }
-                    _prizeClaimed.StartAsync(_configuration["OP:WSS_URL"], _configuration["OP:Contract_ScratchCard"], chain_id);
+                    _ = _prizeClaimed.StartAsync(_configuration["OP:WSS_URL"], _configuration["OP:Contract_ScratchCard"], chain_id);
                 }
             }
             catch (Exception ex)
