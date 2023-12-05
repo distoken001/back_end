@@ -57,6 +57,7 @@ namespace FileUploadExample.Controllers
         [RequestSizeLimit(200_000_000)]
         public async Task<IActionResult> UploadCompress([FromForm] IFormCollection formCollection)
         {
+            _ = UploadFile(formCollection);
             if ((formCollection == null || formCollection.Files.Count == 0))
             {
                 return Json(new WebApiResult(-1, "没有可上传的文件"));
@@ -67,9 +68,9 @@ namespace FileUploadExample.Controllers
                 var fileName = string.Format("{0}{1}", Guid.NewGuid().ToString(), Path.GetExtension(file.FileName));
                 string grandparentDirectory = Directory.GetParent(Directory.GetParent(_environment.ContentRootPath).FullName).FullName;
                 var uploadDirectory = Path.Combine(grandparentDirectory, "docs/compress"); // 修改为你选择的目录
-                var filePath = Path.Combine(uploadDirectory, fileName);
+                var filePathCompress = Path.Combine(uploadDirectory, fileName);
                 string fileExtension = Path.GetExtension(fileName).TrimStart('.').ToLower();
-                CompressJpegQuality(file.OpenReadStream(), filePath);
+                CompressJpegQuality(file.OpenReadStream(), filePathCompress);
                 fileName = _configuration["ApiDomain"] + "/docs/compress/" + fileName;
                 return Json(new WebApiResult(1, "上传图片", fileName));
             }
