@@ -74,8 +74,6 @@ namespace ListenService.Repository.Implements
                 {
                     if (client.WebSocketState == WebSocketState.Aborted)
                     {
-
-                        await subscription.UnsubscribeAsync();
                         client.Dispose();
                         await StartAsync(nodeUrl, contractAddress, chain_id);
                         Console.WriteLine("CardTypeRemoved重启了");
