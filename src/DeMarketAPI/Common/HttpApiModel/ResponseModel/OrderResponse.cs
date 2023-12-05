@@ -35,6 +35,10 @@ namespace DeMarketAPI.Common.Model.HttpApiModel.ResponseModel
         /// </summary>
         public string img { get; set; }
         /// <summary>
+        /// 原图片
+        /// </summary>
+        public string img_origin { get { if (!string.IsNullOrEmpty(img)) { return img.Replace("compress/", ""); } else return img; } }
+        /// <summary>
         /// 卖家质押
         /// </summary>
         public double seller_pledge { get; set; }
@@ -108,7 +112,7 @@ namespace DeMarketAPI.Common.Model.HttpApiModel.ResponseModel
         /// <summary>
         /// 买家比卖家额外多质押数量
         /// </summary>
-        public decimal buyer_ex_actual { get { return(decimal)( buyer_ex / (double)decimals_long); } }
+        public decimal buyer_ex_actual { get { return (decimal)(buyer_ex / (double)decimals_long); } }
         /// <summary>
         /// 卖家质押
         /// </summary>

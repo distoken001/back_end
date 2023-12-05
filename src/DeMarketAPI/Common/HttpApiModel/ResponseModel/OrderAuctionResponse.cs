@@ -36,6 +36,10 @@ namespace DeMarketAPI.Common.Model.HttpApiModel.ResponseModel
         /// </summary>
         public string img { get; set; }
         /// <summary>
+        /// 原图片
+        /// </summary>
+        public string img_origin { get { if (!string.IsNullOrEmpty(img)) { return img.Replace("compress/", ""); } else return img; } }
+        /// <summary>
         /// 卖家质押（包含decimals的，一般不用）
         /// </summary>
         public double seller_pledge { get; set; }
