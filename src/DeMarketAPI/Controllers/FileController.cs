@@ -36,7 +36,7 @@ namespace FileUploadExample.Controllers
             var file = formCollection.Files[0];
             if (file.Length > 0)
             {
-                var fileName = file.FileName;
+                var fileName = string.Format("{0}{1}", Guid.NewGuid().ToString(), Path.GetExtension(file.FileName));
                 string grandparentDirectory = Directory.GetParent(Directory.GetParent(_environment.ContentRootPath).FullName).FullName;
                 var uploadDirectory = Path.Combine(grandparentDirectory, "docs"); // 修改为你选择的目录
                 var filePath = Path.Combine(uploadDirectory, fileName);
@@ -64,7 +64,7 @@ namespace FileUploadExample.Controllers
             var file = formCollection.Files[0];
             if (file.Length > 0)
             {
-                var fileName = file.FileName;
+                var fileName = string.Format("{0}{1}", Guid.NewGuid().ToString(), Path.GetExtension(file.FileName));
                 string grandparentDirectory = Directory.GetParent(Directory.GetParent(_environment.ContentRootPath).FullName).FullName;
                 var uploadDirectory = Path.Combine(grandparentDirectory, "docs/compress"); // 修改为你选择的目录
                 var filePath = Path.Combine(uploadDirectory, fileName);
