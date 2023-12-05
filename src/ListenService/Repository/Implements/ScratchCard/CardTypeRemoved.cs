@@ -82,9 +82,8 @@ namespace ListenService.Repository.Implements
                         break;
 
                     }
-                    await Task.Delay(1000);
+                    await Task.Delay(500);
                 }
-
             }
             catch (Exception ex)
             {
