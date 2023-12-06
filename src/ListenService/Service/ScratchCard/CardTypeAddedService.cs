@@ -39,28 +39,28 @@ namespace ListenService.Service
             {
                 Console.WriteLine("CardTypeAddedService启动啦！");
 
-                //if (!string.IsNullOrEmpty(_configuration["Polygon:Contract_ScratchCard"]))
-                //{
-                //    _ = _cardTypeAdded.StartAsync(_configuration["Polygon:WSS_URL"], _configuration["Polygon:Contract_ScratchCard"], ChainEnum.Polygon);
-                //}
-                //if (!string.IsNullOrEmpty(_configuration["ARB:Contract_ScratchCard"]))
-                //{
-                //    _ = _cardTypeAdded.StartAsync(_configuration["ARB:WSS_URL"], _configuration["ARB:Contract_ScratchCard"], ChainEnum.Arbitrum);
-                //}
+                if (!string.IsNullOrEmpty(_configuration["Polygon:Contract_ScratchCard"]))
+                {
+                    _ = _cardTypeAdded.StartAsync(_configuration["Polygon:WSS_URL"], _configuration["Polygon:Contract_ScratchCard"], ChainEnum.Polygon);
+                }
+                if (!string.IsNullOrEmpty(_configuration["ARB:Contract_ScratchCard"]))
+                {
+                    _ = _cardTypeAdded.StartAsync(_configuration["ARB:WSS_URL"], _configuration["ARB:Contract_ScratchCard"], ChainEnum.Arbitrum);
+                }
                 if (!string.IsNullOrEmpty(_configuration["BSC:Contract_ScratchCard"]))
                 {
                     _ = _cardTypeAdded.StartAsync(_configuration["BSC:WSS_URL"], _configuration["BSC:Contract_ScratchCard"], ChainEnum.Bsc);
                 }
 
-                //if (!string.IsNullOrEmpty(_configuration["OP:Contract_ScratchCard"]))
-                //{
-                //    ChainEnum chain_id = ChainEnum.OptimisticGoerli;
-                //    if (_configuration["Env"] == "prod")
-                //    {
-                //        chain_id = ChainEnum.Optimism;
-                //    }
-                //    _ = _cardTypeAdded.StartAsync(_configuration["OP:WSS_URL"], _configuration["OP:Contract_ScratchCard"], chain_id);
-                //}
+                if (!string.IsNullOrEmpty(_configuration["OP:Contract_ScratchCard"]))
+                {
+                    ChainEnum chain_id = ChainEnum.OptimisticGoerli;
+                    if (_configuration["Env"] == "prod")
+                    {
+                        chain_id = ChainEnum.Optimism;
+                    }
+                    _ = _cardTypeAdded.StartAsync(_configuration["OP:WSS_URL"], _configuration["OP:Contract_ScratchCard"], chain_id);
+                }
             }
             catch (Exception ex)
             {
