@@ -51,6 +51,7 @@ namespace DeMarketAPI.Controllers
         {
             var queryEntities = _mySqlMasterDbContext.card_not_opened.AsNoTracking().AsQueryable();
             var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking();
+            var cardTypes = _mySqlMasterDbContext.card_type.AsNoTracking();
             queryEntities = queryEntities.Where(p => p.buyer.Equals(CurrentLoginAddress, StringComparison.OrdinalIgnoreCase) && p.amount != 0);
 
             if (req.chain_id != 0)
@@ -66,7 +67,10 @@ namespace DeMarketAPI.Controllers
             {
                 var token = chainTokens.FirstOrDefault(c => c.chain_id == a.chain_id && c.token_address.Equals(a.token));
                 var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
+                var cardType = cardTypes.FirstOrDefault(c => c.chain_id == a.chain_id && c.type.Equals(a.card_type));
+                var cardTypeView = AutoMapperHelper.MapDbEntityToDTO<card_type, CardTypeResponse>(cardType);
                 a.token_des = tokenView;
+                a.card_type_des = cardTypeView;
             }
             var res = new PagedModel<CardNotOpenedResponse>(totalCount, viewList);
             return Json(new WebApiResult(1, "刮刮卡未刮开列表" + CurrentLoginAddress, res));
