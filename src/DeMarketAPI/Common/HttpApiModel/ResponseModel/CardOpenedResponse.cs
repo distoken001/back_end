@@ -24,6 +24,7 @@ namespace DeMarketAPI.Common.Model.HttpApiModel.ResponseModel
         public string token { get; set; }
         public string img { get; set; }
         public ChainTokenViewModel token_des { get; set; }
+        public CardTypeResponse card_type_des { get; set; }
         /// <summary>
         /// 链名称
         /// </summary>
