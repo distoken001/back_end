@@ -101,9 +101,21 @@ namespace FileUploadExample.Controllers
             {
                 quality = 60;
             }
-            else 
+            else if (imageStream.Length < 3200 * 1024) // 将 KB 转换为字节进行比较
             {
                 quality = 50;
+            }
+            else if (imageStream.Length < 6400 * 1024) // 将 KB 转换为字节进行比较
+            {
+                quality = 40;
+            }
+            else if (imageStream.Length < 128000 * 1024) // 将 KB 转换为字节进行比较
+            {
+                quality = 30;
+            }
+            else 
+            {
+                quality = 20;
             }
             imageStream.Seek(0, SeekOrigin.Begin); // 将流的位置移回到开头
                                                    // 
