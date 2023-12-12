@@ -41,6 +41,12 @@ namespace ListenService.Repository.Implements
                 var cardGifted = Event<CardGiftedEventDTO>.GetEventABI().CreateFilterInput();
 
                 var subscription = new EthLogsObservableSubscription(client);
+                Action<Exception> onErrorAction = (ex) =>
+                {
+                    // 处理异常情况 ex
+                    // 例如：
+                    Console.WriteLine($"Error occurred: {ex.Message}");
+                };
                 // attach a handler for Transfer event logs
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(log =>
                 {
@@ -76,7 +82,7 @@ namespace ListenService.Repository.Implements
                     {
                         Console.WriteLine("CardPurchased:Found not standard log");
                     }
-                });
+                }, onErrorAction);
                 // open the web socket connection
                 await client.StartAsync();
 
