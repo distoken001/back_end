@@ -59,7 +59,13 @@ namespace ListenService.Repository.Implements
                 var client = new StreamingWebSocketClient(nodeUrl);
 
                 var cardTypeAdded = Event<CardTypeAddedEventDTO>.GetEventABI().CreateFilterInput();
-
+                Action<Exception> onErrorAction = async (ex) =>
+                {
+                    // 处理异常情况 ex
+                    // 例如：
+                    Console.WriteLine($"Error CardTypeAdded: {ex}");
+                    await StartAsync(nodeUrl, contractAddress, chain_id);
+                };
                 var subscription = new EthLogsObservableSubscription(client);
                 // attach a handler for Transfer event logs
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(log =>
@@ -82,7 +88,7 @@ namespace ListenService.Repository.Implements
 
                         Console.WriteLine("CardTypeAdded: Found not standard log");
                     }
-                });
+                }, onErrorAction);
                 // open the web socket connection
                 await client.StartAsync();
 
@@ -90,18 +96,18 @@ namespace ListenService.Repository.Implements
                 // data will be received on a background thread
                 await subscription.SubscribeAsync(cardTypeAdded);
 
-                while (true)
-                {
-                    if (client.WebSocketState == WebSocketState.Aborted)
-                    {
-                        client.Dispose();
-                        await StartAsync(nodeUrl, contractAddress, chain_id);
-                        Console.WriteLine("CardTypeAdded重启了");
-                        break;
+                //while (true)
+                //{
+                //    if (client.WebSocketState == WebSocketState.Aborted)
+                //    {
+                //        client.Dispose();
+                //        await StartAsync(nodeUrl, contractAddress, chain_id);
+                //        Console.WriteLine("CardTypeAdded重启了");
+                //        break;
 
-                    }
-                    await Task.Delay(500);
-                }
+                //    }
+                //    await Task.Delay(500);
+                //}
 
             }
             catch (Exception ex)

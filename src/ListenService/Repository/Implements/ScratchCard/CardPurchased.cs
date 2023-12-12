@@ -29,7 +29,13 @@ namespace ListenService.Repository.Implements
 
                 var _subscription = new EthLogsObservableSubscription(_client);
                 var cardPurchased = Event<CardPurchasedEventDTO>.GetEventABI().CreateFilterInput();
-
+                Action<Exception> onErrorAction = async (ex) =>
+                {
+                    // 处理异常情况 ex
+                    // 例如：
+                    Console.WriteLine($"Error CardPurchased: {ex}");
+                    await StartAsync(nodeUrl, contractAddress, chain_id);
+                };
                 _subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(log =>
                 {
                     Console.WriteLine("CardPurchased监听到了！");
@@ -57,21 +63,21 @@ namespace ListenService.Repository.Implements
                     {
                         Console.WriteLine("CardPurchased:Found not standard log");
                     }
-                });
+                }, onErrorAction);
                 await _client.StartAsync();
                 await _subscription.SubscribeAsync(cardPurchased);
-                while (true)
-                {
-                    if (_client.WebSocketState == WebSocketState.Aborted)
-                    {
-                        _client.Dispose();
-                        await StartAsync(nodeUrl, contractAddress, chain_id);
-                        Console.WriteLine("CardPurchased重启了");
-                        break;
+                //while (true)
+                //{
+                //    if (_client.WebSocketState == WebSocketState.Aborted)
+                //    {
+                //        _client.Dispose();
+                //        await StartAsync(nodeUrl, contractAddress, chain_id);
+                //        Console.WriteLine("CardPurchased重启了");
+                //        break;
 
-                    }
-                    await Task.Delay(500);
-                }
+                //    }
+                //    await Task.Delay(500);
+                //}
             }
 
             catch (Exception ex)

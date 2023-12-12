@@ -50,6 +50,13 @@ namespace ListenService.Repository.Implements
                 var prizeClaimed = Event<PrizeClaimedEventDTO>.GetEventABI().CreateFilterInput();
 
                 var subscription = new EthLogsObservableSubscription(client);
+                Action<Exception> onErrorAction = async (ex) =>
+                {
+                    // 处理异常情况 ex
+                    // 例如：
+                    Console.WriteLine($"Error PrizeClaimed: {ex}");
+                    await StartAsync(nodeUrl, contractAddress, chain_id);
+                };
                 // attach a handler for Transfer event logs
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(log =>
                 {
@@ -75,25 +82,25 @@ namespace ListenService.Repository.Implements
                         Console.WriteLine("PrizeClaimed:Found not standard log");
                     }
 
-                });
+                }, onErrorAction);
                 // open the web socket connection
                 await client.StartAsync();
 
                 // begin receiving subscription data
                 // data will be received on a background thread
                 await subscription.SubscribeAsync(prizeClaimed);
-                while (true)
-                {
-                    if (client.WebSocketState == WebSocketState.Aborted)
-                    {
-                        client.Dispose();
-                        await StartAsync(nodeUrl, contractAddress, chain_id);
-                        Console.WriteLine("PrizeClaimed重启了");
-                        break;
+                //while (true)
+                //{
+                //    if (client.WebSocketState == WebSocketState.Aborted)
+                //    {
+                //        client.Dispose();
+                //        await StartAsync(nodeUrl, contractAddress, chain_id);
+                //        Console.WriteLine("PrizeClaimed重启了");
+                //        break;
 
-                    }
-                    await Task.Delay(500);
-                }
+                //    }
+                //    await Task.Delay(500);
+                //}
             }
             catch (Exception ex)
             {

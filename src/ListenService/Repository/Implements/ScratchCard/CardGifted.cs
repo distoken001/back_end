@@ -45,7 +45,7 @@ namespace ListenService.Repository.Implements
                 {
                     // 处理异常情况 ex
                     // 例如：
-                    Console.WriteLine($"Error occurred: {ex}");
+                    Console.WriteLine($"Error CardGifted: {ex}");
                     await StartAsync(nodeUrl, contractAddress, chain_id);
                 };
                 // attach a handler for Transfer event logs
