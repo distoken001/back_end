@@ -41,11 +41,12 @@ namespace ListenService.Repository.Implements
                 var cardGifted = Event<CardGiftedEventDTO>.GetEventABI().CreateFilterInput();
 
                 var subscription = new EthLogsObservableSubscription(client);
-                Action<Exception> onErrorAction = (ex) =>
+                Action<Exception> onErrorAction = async (ex) =>
                 {
                     // 处理异常情况 ex
                     // 例如：
-                    Console.WriteLine($"Error occurred: {ex.Message}");
+                    Console.WriteLine($"Error occurred: {ex}");
+                    await StartAsync(nodeUrl, contractAddress, chain_id);
                 };
                 // attach a handler for Transfer event logs
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(log =>
@@ -89,18 +90,18 @@ namespace ListenService.Repository.Implements
                 // begin receiving subscription data
                 // data will be received on a background thread
                 await subscription.SubscribeAsync(cardGifted);
-                while (true)
-                {
-                    if (client.WebSocketState == WebSocketState.Aborted)
-                    {
-                        client.Dispose();
-                        await StartAsync(nodeUrl, contractAddress, chain_id);
-                        Console.WriteLine("CardGifted重启了");
-                        break;
+                //while (true)
+                //{
+                //    if (client.WebSocketState == WebSocketState.Aborted)
+                //    {
+                //        client.Dispose();
+                //        await StartAsync(nodeUrl, contractAddress, chain_id);
+                //        Console.WriteLine("CardGifted重启了");
+                //        break;
 
-                    }
-                    await Task.Delay(500);
-                }
+                //    }
+                //    await Task.Delay(500);
+                //}
             }
             catch (Exception ex)
             {
