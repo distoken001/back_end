@@ -62,8 +62,6 @@ namespace ListenService
 
             services
                 .AddHttpClient()
-                //.AddSingleton(Configuration)
-                //.AddSingleton<ApolloConfigs>()
                 .AddCors(options =>
                 {
                     options.AddPolicy("CorsPolicy", builder =>

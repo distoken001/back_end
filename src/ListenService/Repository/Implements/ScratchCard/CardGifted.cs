@@ -36,15 +36,15 @@ namespace ListenService.Repository.Implements
         {
             try
             {
+                StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
+                StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
                 var client = new StreamingWebSocketClient(nodeUrl);
-
+                
                 var cardGifted = Event<CardGiftedEventDTO>.GetEventABI().CreateFilterInput();
-
                 var subscription = new EthLogsObservableSubscription(client);
                 Action<Exception> onErrorAction = async (ex) =>
                 {
                     // 处理异常情况 ex
-                    // 例如：
                     Console.WriteLine($"Error CardGifted: {ex}");
                     await StartAsync(nodeUrl, contractAddress, chain_id);
                 };

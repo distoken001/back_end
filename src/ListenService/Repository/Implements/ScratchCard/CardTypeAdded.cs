@@ -55,7 +55,8 @@ namespace ListenService.Repository.Implements
 
                 // 获取abi节点的值
                 string abi = jsonObject["abi"]?.ToString();
-
+                StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
+                StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
                 var client = new StreamingWebSocketClient(nodeUrl);
 
                 var cardTypeAdded = Event<CardTypeAddedEventDTO>.GetEventABI().CreateFilterInput();
