@@ -7,7 +7,7 @@ using CommonLibrary.Common.Common;
 namespace ListenService.Model
 {
     [FunctionOutput]
-    public class OrderDTO
+    public class EbayOrderDTO
     {
         [Parameter("address", "seller", 1)]
         public string Seller { get; set; } // 卖家
