@@ -5,7 +5,7 @@ namespace ListenService.Repository.Interfaces
 {
 	public interface IAddOrder
     {
-        Task StartAsync(string nodeUrl, string contractAddress, ChainEnum chain_id);
+        Task StartAsync(string nodeWss, string nodeHttps,string contractAddress, ChainEnum chain_id);
     }
 }
 

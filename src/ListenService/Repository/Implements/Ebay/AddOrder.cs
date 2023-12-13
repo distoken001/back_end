@@ -28,12 +28,12 @@ namespace ListenService.Repository.Implements
             _configuration = configuration;
             _masterDbContext = mySqlMasterDbContext;
         }
-        public async Task StartAsync(string nodeUrl, string contractAddress, ChainEnum chain_id)
+        public async Task StartAsync(string nodeWss,string nodeHttps string contractAddress, ChainEnum chain_id)
         {
             try
             {
                 // 连接到以太坊区块链网络
-                var web3 = new Web3(_configuration["BSC:HTTPS_URL"]);
+                var web3 = new Web3(nodeHttps);
                 // 读取JSON文件内容
                 string jsonFilePath = "Ebay.json"; // 替换为正确的JSON文件路径
 
@@ -49,7 +49,7 @@ namespace ListenService.Repository.Implements
 
                 StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
                 //StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
-                var client = new StreamingWebSocketClient(nodeUrl);
+                var client = new StreamingWebSocketClient(nodeWss);
 
                 var addOrder = Event<AddOrderEventDTO>.GetEventABI().CreateFilterInput();
                 var subscription = new EthLogsObservableSubscription(client);
@@ -57,7 +57,7 @@ namespace ListenService.Repository.Implements
                 {
                     // 处理异常情况 ex
                     Console.WriteLine($"Error AddOrder: {ex}");
-                    await StartAsync(nodeUrl, contractAddress, chain_id);
+                    await StartAsync(nodeWss, contractAddress, chain_id);
                 };
                 // attach a handler for Transfer event logs
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(log =>
@@ -84,7 +84,7 @@ namespace ListenService.Repository.Implements
             }
             catch (Exception ex)
             {
-                await StartAsync(nodeUrl, contractAddress, chain_id);
+                await StartAsync(nodeWss, contractAddress, chain_id);
                 Console.WriteLine($"AddOrder:{ex}");
                 Console.WriteLine("AddOrder重启了EX");
             }
