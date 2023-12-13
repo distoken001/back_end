@@ -27,7 +27,7 @@ namespace CommonLibrary.Model.DataEntityModel
         /// <summary>
         /// 商品数量
         /// </summary>
-        public decimal amount { get; set; }
+        public double amount { get; set; }
         /// <summary>
         /// 商品价格
         /// </summary>
@@ -89,10 +89,6 @@ namespace CommonLibrary.Model.DataEntityModel
         /// 合约地址
         /// </summary>
         public string contract { get; set; }
-        /// <summary>
-        /// 小时点
-        /// </summary>
-        public int decimals { get; set; }
         /// <summary>
         /// 开始时间（时间戳）
         /// </summary>

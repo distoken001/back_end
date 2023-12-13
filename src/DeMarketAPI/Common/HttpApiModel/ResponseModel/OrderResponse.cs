@@ -92,10 +92,6 @@ namespace DeMarketAPI.Common.Model.HttpApiModel.ResponseModel
         /// </summary>
         public string contract { get; set; }
         /// <summary>
-        /// 小时点
-        /// </summary>
-        public int decimals { get; set; }
-        /// <summary>
         /// 链名称
         /// </summary>
         public string chain_name { get { if (chain_id == ChainEnum.Bsc) { return "BNB Chain"; } else return chain_id.ToString(); } }
