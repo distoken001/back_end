@@ -63,7 +63,7 @@ namespace ListenService.Repository.Implements
                 Action<Exception> onErrorAction = async (ex) =>
                 {
                     // 处理异常情况 ex
-                    Console.WriteLine($"Error AddOrder: {ex}");
+                    Console.WriteLine($"Error EbaySetStatus: {ex}");
                     await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
                 };
                 // attach a handler for Transfer event logs
@@ -73,7 +73,7 @@ namespace ListenService.Repository.Implements
                     var decoded = Event<AddOrderEventDTO>.DecodeEvent(log);
                     if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
                     {
-                        Console.WriteLine("AddOrder监听到了！");
+                        Console.WriteLine("EbaySetStatus监听到了！");
                         // 调用智能合约函数并获取返回结果
                         var orderResult = await function.CallDeserializingToObjectAsync<EbayOrderDTO>((int)decoded.Event.OrderId);
                         var chainToken = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(orderResult.Token) && a.chain_id == chain_id).FirstOrDefault();
@@ -87,7 +87,7 @@ namespace ListenService.Repository.Implements
                     }
                     else
                     {
-                        Console.WriteLine("CardPurchased:Found not standard log");
+                        Console.WriteLine("EbaySetStatus:Found not standard log");
                     }
 
                 }, onErrorAction);
@@ -100,8 +100,8 @@ namespace ListenService.Repository.Implements
             catch (Exception ex)
             {
                 await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
-                Console.WriteLine($"AddOrder:{ex}");
-                Console.WriteLine("AddOrder重启了EX");
+                Console.WriteLine($"EbaySetStatus:{ex}");
+                Console.WriteLine("EbaySetStatus重启了EX");
             }
         }
 

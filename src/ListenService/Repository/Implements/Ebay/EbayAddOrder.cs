@@ -88,7 +88,7 @@ namespace ListenService.Repository.Implements
                     }
                     else
                     {
-                        Console.WriteLine("CardPurchased:Found not standard log");
+                        Console.WriteLine("EbayAddOrder:Found not standard log");
                     }
 
                 }, onErrorAction);
