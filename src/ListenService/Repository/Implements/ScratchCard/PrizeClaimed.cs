@@ -44,7 +44,7 @@ namespace ListenService.Repository.Implements
 
                 //// 你的以太坊智能合约地址
                 //string contractAddress = _configuration["OP:Contract_ScratchCard"];
-                StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
+                //StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
                 StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
                 var client = new StreamingWebSocketClient(nodeUrl);
 
