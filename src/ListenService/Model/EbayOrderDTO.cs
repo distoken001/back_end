@@ -3,6 +3,7 @@ using Grpc.Core;
 using System.Numerics;
 using Nethereum.ABI.FunctionEncoding.Attributes;
 using CommonLibrary.Common.Common;
+using Nethereum.Util;
 
 namespace ListenService.Model
 {

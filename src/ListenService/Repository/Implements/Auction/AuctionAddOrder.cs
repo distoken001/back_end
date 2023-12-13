@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.Mvc;
 using Telegram.Bot;
 using Microsoft.EntityFrameworkCore;
 using Org.BouncyCastle.Asn1.Ocsp;
+using Nethereum.Util;
 
 namespace ListenService.Repository.Implements
 {
@@ -30,7 +31,7 @@ namespace ListenService.Repository.Implements
         private readonly IConfiguration _configuration;
         private readonly MySqlMasterDbContext _masterDbContext;
         private readonly ISendMessage _sendMessage;
-        public AuctionAddOrder(IConfiguration configuration, MySqlMasterDbContext mySqlMasterDbContext,ISendMessage sendMessage)
+        public AuctionAddOrder(IConfiguration configuration, MySqlMasterDbContext mySqlMasterDbContext, ISendMessage sendMessage)
         {
             _configuration = configuration;
             _masterDbContext = mySqlMasterDbContext;
@@ -81,10 +82,10 @@ namespace ListenService.Repository.Implements
                         // 调用智能合约函数并获取返回结果
                         var orderResult = await function.CallDeserializingToObjectAsync<AuctionOrderDTO>((int)decoded.Event.OrderId);
                         var dateTime = await function2.CallDeserializingToObjectAsync<AuctionDateTimeDTO>((int)decoded.Event.OrderId);
-                        
+
                         var chainToken = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(orderResult.Token) && a.chain_id == chain_id).FirstOrDefault();
-                        var decimals_num = (double)Math.Pow(10, chainToken.decimals);
-                        var order = new orders_auction() { amount = (double)orderResult.Amount, buyer = orderResult.Buyer, buyer_contact = null, buyer_ex = (double)orderResult.BuyerEx / decimals_num, buyer_pledge = (double)orderResult.BuyerPledge, chain_id = chain_id, contract = contractAddress, create_time = DateTime.Now, creator = "system", description = orderResult.Description, img = orderResult.Img, name = orderResult.Name, seller = orderResult.Seller, order_id = (int)decoded.Event.OrderId, price = (double)orderResult.Price / decimals_num, seller_contact = null, seller_pledge = (double)orderResult.SellerPledge / decimals_num, status = orderResult.Status, token = orderResult.Token, updater = null, update_time = DateTime.Now,start_time=(long)dateTime.StartTime,end_time=(long)dateTime.EndTime,count=0 };
+                        var decimals_num = new BigDecimal(Math.Pow(10, chainToken.decimals));
+                        var order = new orders_auction() { amount = (double)orderResult.Amount, buyer = orderResult.Buyer, buyer_contact = null, buyer_ex = (double)(new BigDecimal(orderResult.BuyerEx) / decimals_num), buyer_pledge = (double)(new BigDecimal(orderResult.BuyerPledge) / decimals_num), chain_id = chain_id, contract = contractAddress, create_time = DateTime.Now, creator = "system", description = orderResult.Description, img = orderResult.Img, name = orderResult.Name, seller = orderResult.Seller, order_id = (int)decoded.Event.OrderId, price = (double)(new BigDecimal(orderResult.Price) / decimals_num), seller_contact = null, seller_pledge = (double)(new BigDecimal(orderResult.SellerPledge) / decimals_num), status = orderResult.Status, token = orderResult.Token, updater = null, update_time = DateTime.Now, start_time = (long)dateTime.StartTime, end_time = (long)dateTime.EndTime, count = 0 };
                         _masterDbContext.orders_auction.Add(order);
                         _masterDbContext.SaveChanges();
                         _ = _sendMessage.SendMessageAuction((int)decoded.Event.OrderId, chain_id, contractAddress);

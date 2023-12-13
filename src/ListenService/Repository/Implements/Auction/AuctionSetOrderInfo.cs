@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.Mvc;
 using Telegram.Bot;
 using Microsoft.EntityFrameworkCore;
 using Org.BouncyCastle.Asn1.Ocsp;
+using Nethereum.Util;
 
 namespace ListenService.Repository.Implements
 {
@@ -30,7 +31,7 @@ namespace ListenService.Repository.Implements
         private readonly IConfiguration _configuration;
         private readonly MySqlMasterDbContext _masterDbContext;
         private readonly ISendMessage _sendMessage;
-        public AuctionSetOrderInfo(IConfiguration configuration, MySqlMasterDbContext mySqlMasterDbContext,ISendMessage sendMessage)
+        public AuctionSetOrderInfo(IConfiguration configuration, MySqlMasterDbContext mySqlMasterDbContext, ISendMessage sendMessage)
         {
             _configuration = configuration;
             _masterDbContext = mySqlMasterDbContext;
@@ -82,21 +83,20 @@ namespace ListenService.Repository.Implements
                         // 调用智能合约函数并获取返回结果
                         var orderResult = await function.CallDeserializingToObjectAsync<AuctionOrderDTO>((int)decoded.Event.OrderId);
                         var dateTime = await function2.CallDeserializingToObjectAsync<AuctionDateTimeDTO>((int)decoded.Event.OrderId);
-                        var bidCount= await function3.CallAsync<int>((int)decoded.Event.OrderId);
+                        var bidCount = await function3.CallAsync<int>((int)decoded.Event.OrderId);
                         var chainToken = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(orderResult.Token) && a.chain_id == chain_id).FirstOrDefault();
-                        var decimals_num = (double)Math.Pow(10, chainToken.decimals);
+                        var decimals_num = new BigDecimal(Math.Pow(10, chainToken.decimals));
 
                         var order = _masterDbContext.orders_auction.Where(a => a.order_id == (int)decoded.Event.OrderId && a.chain_id == chain_id && a.contract.Equals(contractAddress)).FirstOrDefault();
 
-                        order.status= orderResult.Status;
                         order.status = orderResult.Status;
-                        order.buyer_ex = (double)orderResult.BuyerEx / decimals_num;
+                        order.buyer_ex = (double)(new BigDecimal(orderResult.BuyerEx) / decimals_num);
                         order.update_time = DateTime.Now;
                         order.buyer = orderResult.Buyer;
-                        order.buyer_pledge = (double)orderResult.BuyerPledge / decimals_num;
-                        order.seller_pledge = (double)orderResult.SellerPledge / decimals_num;
+                        order.buyer_pledge = (double)(new BigDecimal(orderResult.BuyerPledge) / decimals_num);
+                        order.seller_pledge = (double)(new BigDecimal(orderResult.SellerPledge) / decimals_num);
                         order.amount = (double)orderResult.Amount;
-                        order.price = (double)orderResult.Price / decimals_num;
+                        order.price = (double)(new BigDecimal(orderResult.Price) / decimals_num);
                         order.end_time = (long)dateTime.EndTime;
                         order.count = bidCount;
                         order.updater = "system";
