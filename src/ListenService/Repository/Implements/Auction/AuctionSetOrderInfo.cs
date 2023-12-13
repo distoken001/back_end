@@ -99,6 +99,7 @@ namespace ListenService.Repository.Implements
                         order.price = (double)orderResult.Price / decimals_num;
                         order.end_time = (long)dateTime.EndTime;
                         order.count = bidCount;
+                        order.updater = "system";
 
                         _masterDbContext.SaveChanges();
                         _ = _sendMessage.SendMessageAuction((int)decoded.Event.OrderId, chain_id, contractAddress);
