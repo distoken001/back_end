@@ -69,10 +69,10 @@ namespace ListenService
             services.AddHostedService<CardPurchasedService>();
 
             services.AddHostedService<AuctionAddOrderService>();
-            //services.AddHostedService<AuctionSetOrderInfoService>();
+            services.AddHostedService<AuctionSetOrderInfoService>();
 
-            //services.AddHostedService<EbayAddOrderService>();
-            //services.AddHostedService<EbaySetStatusService>();
+            services.AddHostedService<EbayAddOrderService>();
+            services.AddHostedService<EbaySetStatusService>();
 
 
 
