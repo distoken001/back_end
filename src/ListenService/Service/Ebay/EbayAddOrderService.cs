@@ -61,6 +61,10 @@ namespace ListenService.Service
                 }
                 else
                 {
+                    if (!string.IsNullOrEmpty(_configuration["BSC:Contract_Ebay"]))
+                    {
+                        _ = _addOrder.StartAsync(_configuration["BSC:WSS_URL"], _configuration["BSC:HTTPS_URL"], _configuration["BSC:Contract_Ebay"], ChainEnum.Bsc);
+                    }
                     if (!string.IsNullOrEmpty(_configuration["OPGoerli:Contract_Ebay"]))
                     {
                         _ = _addOrder.StartAsync(_configuration["OPGoerli:WSS_URL"], _configuration["OPGoerli:HTTPS_URL"], _configuration["OPGoerli:Contract_Ebay"], ChainEnum.OptimisticGoerli);
