@@ -16,14 +16,15 @@ using System.Net.WebSockets;
 using Newtonsoft.Json.Linq;
 using Nethereum.Web3;
 using Nethereum.RPC;
+using Org.BouncyCastle.Asn1.X509;
 
 namespace ListenService.Repository.Implements
 {
-    public class AddOrder : IAddOrder
+    public class EbayAddOrder : IEbayAddOrder
     {
         private readonly IConfiguration _configuration;
         private readonly MySqlMasterDbContext _masterDbContext;
-        public AddOrder(IConfiguration configuration, MySqlMasterDbContext mySqlMasterDbContext)
+        public EbayAddOrder(IConfiguration configuration, MySqlMasterDbContext mySqlMasterDbContext)
         {
             _configuration = configuration;
             _masterDbContext = mySqlMasterDbContext;
@@ -46,6 +47,7 @@ namespace ListenService.Repository.Implements
                 string abi = jsonObject["abi"]?.ToString();
 
                 var contract = new Contract(new EthApiService(web3.Client), abi, contractAddress);
+                var function = contract.GetFunction("orders");
 
                 StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
                 //StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
@@ -53,6 +55,7 @@ namespace ListenService.Repository.Implements
 
                 var addOrder = Event<AddOrderEventDTO>.GetEventABI().CreateFilterInput();
                 var subscription = new EthLogsObservableSubscription(client);
+
                 Action<Exception> onErrorAction = async (ex) =>
                 {
                     // 处理异常情况 ex
@@ -60,15 +63,17 @@ namespace ListenService.Repository.Implements
                     await StartAsync(nodeWss, nodeHttps,contractAddress, chain_id);
                 };
                 // attach a handler for Transfer event logs
-                subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(log =>
+                subscription.GetSubscriptionDataResponsesAsObservable().Subscribe( async log =>
                 {
                     // decode the log into a typed event log
                     var decoded = Event<AddOrderEventDTO>.DecodeEvent(log);
                     if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
                     {
                         Console.WriteLine("AddOrder监听到了！");
+                        // 调用智能合约函数并获取返回结果
+                        var orderResult = await function.CallDeserializingToObjectAsync<OrderDTO>((int)decoded.Event.OrderId);
 
-                        _masterDbContext.SaveChanges();
+                        //_masterDbContext.SaveChanges();
                     }
                     else
                     {

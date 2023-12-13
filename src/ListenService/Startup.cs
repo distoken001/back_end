@@ -54,11 +54,15 @@ namespace ListenService
             services.AddSingleton<ICardTypeAdded, CardTypeAdded>();
             services.AddSingleton<IPrizeClaimed, PrizeClaimed>();
 
+            services.AddSingleton<IEbayAddOrder, EbayAddOrder>();
+            
             services.AddHostedService<PrizeClaimedService>();
             services.AddHostedService<CardTypeRemovedService>();
             services.AddHostedService<CardGiftedService>();
             services.AddHostedService<CardTypeAddedService>();
             services.AddHostedService<CardPurchasedService>();
+
+            services.AddHostedService<EbayAddOrderService>();
 
             services
                 .AddHttpClient()

@@ -26,11 +26,11 @@ using ListenService.Repository.Implements;
 namespace ListenService.Service
 {
 
-    public class AddOrderService : IHostedService
+    public class EbayAddOrderService : IHostedService
     {
         private readonly IConfiguration _configuration;
-        private readonly IAddOrder _addOrder;
-        public AddOrderService(IConfiguration configuration, IAddOrder addOrder)
+        private readonly IEbayAddOrder _addOrder;
+        public EbayAddOrderService(IConfiguration configuration, IEbayAddOrder addOrder)
         {
             _configuration = configuration;
             _addOrder = addOrder;
