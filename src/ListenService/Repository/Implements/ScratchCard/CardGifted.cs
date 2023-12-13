@@ -36,7 +36,7 @@ namespace ListenService.Repository.Implements
         {
             try
             {
-                //StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
+                StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
                 StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
                 var client = new StreamingWebSocketClient(nodeUrl);
                 
