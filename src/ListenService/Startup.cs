@@ -55,7 +55,8 @@ namespace ListenService
             services.AddSingleton<IPrizeClaimed, PrizeClaimed>();
 
             services.AddSingleton<IEbayAddOrder, EbayAddOrder>();
-            
+            services.AddSingleton<ISendMessage, SendMessage>();
+
             services.AddHostedService<PrizeClaimedService>();
             services.AddHostedService<CardTypeRemovedService>();
             services.AddHostedService<CardGiftedService>();

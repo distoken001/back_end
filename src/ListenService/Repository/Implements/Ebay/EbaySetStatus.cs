@@ -28,10 +28,13 @@ namespace ListenService.Repository.Implements
     {
         private readonly IConfiguration _configuration;
         private readonly MySqlMasterDbContext _masterDbContext;
-        public EbaySetStatus(IConfiguration configuration, MySqlMasterDbContext mySqlMasterDbContext)
+        private readonly ISendMessage _sendMessage;
+        public EbaySetStatus(IConfiguration configuration, MySqlMasterDbContext mySqlMasterDbContext, ISendMessage sendMessage)
         {
             _configuration = configuration;
             _masterDbContext = mySqlMasterDbContext;
+            _sendMessage = sendMessage;
+
         }
         public async Task StartAsync(string nodeWss, string nodeHttps, string contractAddress, ChainEnum chain_id)
         {
@@ -66,11 +69,11 @@ namespace ListenService.Repository.Implements
                     Console.WriteLine($"Error EbaySetStatus: {ex}");
                     await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
                 };
-                // attach a handler for Transfer event logs
+
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
                 {
-                    // decode the log into a typed event log
-                    var decoded = Event<AddOrderEventDTO>.DecodeEvent(log);
+
+                    var decoded = Event<SetStatusEventDTO>.DecodeEvent(log);
                     if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
                     {
                         Console.WriteLine("EbaySetStatus监听到了！");
@@ -78,12 +81,23 @@ namespace ListenService.Repository.Implements
                         var orderResult = await function.CallDeserializingToObjectAsync<EbayOrderDTO>((int)decoded.Event.OrderId);
                         var chainToken = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(orderResult.Token) && a.chain_id == chain_id).FirstOrDefault();
                         var decimals_num = (double)Math.Pow(10, chainToken.decimals);
-                        var order = new orders() { amount = (double)orderResult.Amount, buyer = orderResult.Buyer, buyer_contact = null, buyer_ex = (double)orderResult.BuyerEx / decimals_num, buyer_pledge = (double)orderResult.BuyerPledge, chain_id = chain_id, contract = contractAddress, create_time = DateTime.Now, creator = "system", description = orderResult.Description, img = orderResult.Img, name = orderResult.Name, seller = orderResult.Seller, order_id = (int)decoded.Event.OrderId, price = (double)orderResult.Price / decimals_num, seller_contact = null, seller_pledge = (double)orderResult.SellerPledge / decimals_num, status = orderResult.Status, token = orderResult.Token, updater = null, update_time = DateTime.Now, weight = 10000 };
-                        _masterDbContext.orders.Add(order);
+                        var order = _masterDbContext.orders.Where(a => a.order_id == (int)decoded.Event.OrderId && a.chain_id == chain_id && a.contract.Equals(contractAddress)).FirstOrDefault();
+
+                        if (orderResult.Status == OrderStatus.Ordered)
+                        {
+                            order.create_time = DateTime.Now;
+                        }
+                        order.status = orderResult.Status;
+                        order.buyer_ex = (double)orderResult.BuyerEx / decimals_num;
+                        order.update_time = DateTime.Now;
+                        order.buyer = orderResult.Buyer;
+                        order.buyer_pledge = (double)orderResult.BuyerPledge / decimals_num;
+                        order.seller_pledge = (double)orderResult.SellerPledge / decimals_num;
+                        order.amount = (double)orderResult.Amount;
+                        order.price = (double)orderResult.Price / decimals_num;
+
                         _masterDbContext.SaveChanges();
-
-
-
+                        _ = _sendMessage.SendMessageEbay((int)decoded.Event.OrderId, chain_id, contractAddress);
                     }
                     else
                     {
