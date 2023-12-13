@@ -65,7 +65,7 @@ namespace ListenService
             services.AddHostedService<CardTypeAddedService>();
             services.AddHostedService<CardPurchasedService>();
 
-            services.AddHostedService<EbayAddOrderService>();
+            //services.AddHostedService<EbayAddOrderService>();
             services.AddHostedService<EbaySetStatusService>();
 
             services.AddSingleton<IAuctionAddOrder, AuctionAddOrder>();
