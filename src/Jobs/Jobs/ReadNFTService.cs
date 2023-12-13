@@ -42,7 +42,7 @@ namespace Jobs.Jobs
                 {
                     _logger.LogDebug($"ReadNFTService task start {DateTime.Now}");
                     // 连接到以太坊区块链网络
-                    var web3 = new Web3(_config["BSCRPC"]);
+                    var web3 = new Web3(_config["BSC:HTTPS_URL"]);
 
                     // 合约地址和ABI定义
                     var contractAddress = _config["NFTContract"]; // 合约地址

@@ -47,18 +47,16 @@ namespace ListenService.Service
                 //{
                 //    _ = _cardPurchased.StartAsync(_configuration["ARB:WSS_URL"], _configuration["ARB:Contract_ScratchCard"], ChainEnum.Arbitrum);
                 //}
-                if (!string.IsNullOrEmpty(_configuration["BSC:Contract_ScratchCard"]))
+                if (_configuration["Env"] == "prod")
                 {
-                    _ = _cardPurchased.StartAsync(_configuration["BSC:WSS_URL"], _configuration["BSC:Contract_ScratchCard"], ChainEnum.Bsc);
+                    if (!string.IsNullOrEmpty(_configuration["BSC:Contract_ScratchCard"]))
+                    {
+                        _ = _cardPurchased.StartAsync(_configuration["BSC:WSS_URL"], _configuration["BSC:Contract_ScratchCard"], ChainEnum.Bsc);
+                    }
                 }
-
-                if (!string.IsNullOrEmpty(_configuration["OP:Contract_ScratchCard"]))
+                else
                 {
                     ChainEnum chain_id = ChainEnum.OptimisticGoerli;
-                    if (_configuration["Env"] == "prod")
-                    {
-                        chain_id = ChainEnum.Optimism;
-                    }
                     _ = _cardPurchased.StartAsync(_configuration["OP:WSS_URL"], _configuration["OP:Contract_ScratchCard"], chain_id);
                 }
             }
