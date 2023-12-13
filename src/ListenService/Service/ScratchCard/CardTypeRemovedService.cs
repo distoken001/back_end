@@ -57,10 +57,10 @@ namespace ListenService.Service
                 }
                 else
                 {
-                    if (!string.IsNullOrEmpty(_configuration["OP:Contract_ScratchCard"]))
+                    if (!string.IsNullOrEmpty(_configuration["OPGoerli:Contract_ScratchCard"]))
                     {
                         ChainEnum chain_id = ChainEnum.OptimisticGoerli;
-                        _ = _cardTypeRemoved.StartAsync(_configuration["OP:WSS_URL"], _configuration["OP:Contract_ScratchCard"], chain_id);
+                        _ = _cardTypeRemoved.StartAsync(_configuration["OPGoerli:WSS_URL"], _configuration["OPGoerli:Contract_ScratchCard"], chain_id);
                     }
                 }
             }
