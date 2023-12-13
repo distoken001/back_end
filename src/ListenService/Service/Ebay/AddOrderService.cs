@@ -39,43 +39,33 @@ namespace ListenService.Service
         {
             try
             {
-                ChainEnum chain_id = ChainEnum.Bsc;
-                if (!string.IsNullOrEmpty(_configuration["Polygon:Contract_Ebay"]))
+               
+                if (_configuration["Env"] == "prod")
                 {
-                    chain_id = ChainEnum.OptimisticGoerli;
-                    if (_configuration["Env"] == "prod")
+                    if (!string.IsNullOrEmpty(_configuration["Polygon:Contract_Ebay"]))
                     {
-                        chain_id = ChainEnum.Optimism;
+                        _ = _addOrder.StartAsync(_configuration["Polygon:WSS_URL"], _configuration["Polygon:Contract_Ebay"], ChainEnum.Polygon);
                     }
-                    _ = _addOrder.StartAsync(_configuration["Polygon:WSS_URL"], _configuration["Polygon:Contract_Ebay"], chain_id);
-                }
-                if (!string.IsNullOrEmpty(_configuration["ARB:Contract_Ebay"]))
-                {
-                    chain_id = ChainEnum.ArbitrumGoerli;
-                    if (_configuration["Env"] == "prod")
+                    if (!string.IsNullOrEmpty(_configuration["ARB:Contract_Ebay"]))
                     {
-                        chain_id = ChainEnum.Arbitrum;
+                        _ = _addOrder.StartAsync(_configuration["ARB:WSS_URL"], _configuration["ARB:Contract_Ebay"], ChainEnum.Arbitrum);
                     }
-                    _ = _addOrder.StartAsync(_configuration["ARB:WSS_URL"], _configuration["ARB:Contract_Ebay"], chain_id);
-                }
-                if (!string.IsNullOrEmpty(_configuration["BSC:Contract_Ebay"]))
-                {
-                    chain_id = ChainEnum.BscTestnet;
-                    if (_configuration["Env"] == "prod")
+                    if (!string.IsNullOrEmpty(_configuration["BSC:Contract_Ebay"]))
                     {
-                        chain_id = ChainEnum.Bsc;
+                        _ = _addOrder.StartAsync(_configuration["BSC:WSS_URL"], _configuration["BSC:Contract_Ebay"], ChainEnum.Bsc);
                     }
-                    _ = _addOrder.StartAsync(_configuration["BSC:WSS_URL"], _configuration["BSC:Contract_Ebay"], chain_id);
-                }
 
-                if (!string.IsNullOrEmpty(_configuration["OP:Contract_Ebay"]))
-                {
-                    chain_id = ChainEnum.OptimisticGoerli;
-                    if (_configuration["Env"] == "prod")
+                    if (!string.IsNullOrEmpty(_configuration["OP:Contract_Ebay"]))
                     {
-                        chain_id = ChainEnum.Optimism;
+                        _ = _addOrder.StartAsync(_configuration["OP:WSS_URL"], _configuration["OP:Contract_Ebay"], ChainEnum.Optimism);
                     }
-                    _ = _addOrder.StartAsync(_configuration["OP:WSS_URL"], _configuration["OP:Contract_Ebay"], chain_id);
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(_configuration["OP:Contract_Ebay"]))
+                    {
+                        _ = _addOrder.StartAsync(_configuration["OP:WSS_URL"], _configuration["OP:Contract_Ebay"], ChainEnum.OptimisticGoerli);
+                    }
                 }
             }
             catch (Exception ex)
