@@ -68,11 +68,11 @@ namespace ListenService
             services.AddHostedService<CardTypeAddedService>();
             services.AddHostedService<CardPurchasedService>();
 
-            services.AddHostedService<AuctionAddOrderService>();
-            services.AddHostedService<AuctionSetOrderInfoService>();
+            //services.AddHostedService<AuctionAddOrderService>();
+            //services.AddHostedService<AuctionSetOrderInfoService>();
 
-            services.AddHostedService<EbayAddOrderService>();
-            services.AddHostedService<EbaySetStatusService>();
+            //services.AddHostedService<EbayAddOrderService>();
+            //services.AddHostedService<EbaySetStatusService>();
 
 
 
