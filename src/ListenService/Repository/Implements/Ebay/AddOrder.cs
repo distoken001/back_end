@@ -17,6 +17,7 @@ using Newtonsoft.Json.Linq;
 using Nethereum.Web3;
 using Nethereum.RPC;
 using Org.BouncyCastle.Asn1.X509;
+using Microsoft.VisualBasic;
 
 namespace ListenService.Repository.Implements
 {
@@ -29,7 +30,7 @@ namespace ListenService.Repository.Implements
             _configuration = configuration;
             _masterDbContext = mySqlMasterDbContext;
         }
-        public async Task StartAsync(string nodeWss,string nodeHttps ,string contractAddress, ChainEnum chain_id)
+        public async Task StartAsync(string nodeWss, string nodeHttps, string contractAddress, ChainEnum chain_id)
         {
             try
             {
@@ -60,10 +61,10 @@ namespace ListenService.Repository.Implements
                 {
                     // 处理异常情况 ex
                     Console.WriteLine($"Error AddOrder: {ex}");
-                    await StartAsync(nodeWss, nodeHttps,contractAddress, chain_id);
+                    await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
                 };
                 // attach a handler for Transfer event logs
-                subscription.GetSubscriptionDataResponsesAsObservable().Subscribe( async log =>
+                subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
                 {
                     // decode the log into a typed event log
                     var decoded = Event<AddOrderEventDTO>.DecodeEvent(log);
@@ -72,8 +73,12 @@ namespace ListenService.Repository.Implements
                         Console.WriteLine("AddOrder监听到了！");
                         // 调用智能合约函数并获取返回结果
                         var orderResult = await function.CallDeserializingToObjectAsync<OrderDTO>((int)decoded.Event.OrderId);
-
-                        //_masterDbContext.SaveChanges();
+                        var chainToken = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(orderResult.Token) && a.chain_id == chain_id).FirstOrDefault();
+                        var decimals_num = (double)Math.Pow(10, chainToken.decimals);
+                        var order = new orders() { amount = (double)orderResult.Amount, buyer = orderResult.Buyer, buyer_contact = null, buyer_ex = (double)orderResult.BuyerEx/decimals_num, buyer_pledge = (double)orderResult.BuyerPledge, chain_id = chain_id, contract = contractAddress, create_time = DateTime.Now, creator = "system", description = orderResult.Description, img = orderResult.Img, name = orderResult.Name, seller = orderResult.Seller, order_id = (int)decoded.Event.OrderId, price = (double)orderResult.Price / decimals_num, seller_contact = null, seller_pledge = (double)orderResult.SellerPledge/decimals_num, status = orderResult.Status, token = orderResult.Token, updater = null, update_time = DateTime.Now, weight = 10000 };
+                        _masterDbContext.orders.Add(order);
+                        _masterDbContext.SaveChanges();
+                     
                     }
                     else
                     {
@@ -89,7 +94,7 @@ namespace ListenService.Repository.Implements
             }
             catch (Exception ex)
             {
-                await StartAsync(nodeWss, nodeHttps,contractAddress, chain_id);
+                await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
                 Console.WriteLine($"AddOrder:{ex}");
                 Console.WriteLine("AddOrder重启了EX");
             }
