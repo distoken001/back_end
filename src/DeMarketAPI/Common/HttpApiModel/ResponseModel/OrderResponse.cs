@@ -25,7 +25,7 @@ namespace DeMarketAPI.Common.Model.HttpApiModel.ResponseModel
         /// <summary>
         /// 商品数量
         /// </summary>
-        public decimal amount { get; set; }
+        public double amount { get; set; }
         /// <summary>
         /// 商品价格
         /// </summary>
@@ -99,50 +99,22 @@ namespace DeMarketAPI.Common.Model.HttpApiModel.ResponseModel
         /// 链名称
         /// </summary>
         public string chain_name { get { if (chain_id == ChainEnum.Bsc) { return "BNB Chain"; } else return chain_id.ToString(); } }
-        /// <summary>
-        /// 算数
-        /// </summary>
-        public decimal decimals_long
-        {
-            get
-            {
-                return (decimal)Math.Pow(10, decimals);
-            }
-        }
-        /// <summary>
-        /// 买家比卖家额外多质押数量
-        /// </summary>
-        public decimal buyer_ex_actual { get { return (decimal)(buyer_ex / (double)decimals_long); } }
-        /// <summary>
-        /// 卖家质押
-        /// </summary>
-        public decimal seller_pledge_actual { get { return (decimal)(seller_pledge / (double)decimals_long); } }
-        /// <summary>
-        /// 买家质押
-        /// </summary>
-        public decimal buyer_pledge_actual { get { return (decimal)(buyer_pledge / (double)decimals_long); } }
-        /// <summary>
-        /// 商品价格
-        /// </summary>
-        public decimal price_actual
-        {
-            get { return (decimal)(price / (double)decimals_long); }
-        }
+
         /// <summary>
         /// 订单总价
         /// </summary>
-        public decimal total_price
+        public double total_price
         {
             get
             {
-                return price_actual * amount;
+                return price * amount;
             }
         }
         public string seller_ratio
         {
             get
             {
-                decimal ratio = seller_pledge_actual / total_price * 100; // 计算比例并转化为百分比
+                double ratio = seller_pledge / total_price * 100; // 计算比例并转化为百分比
                 string percentage = string.Format("{0:0.00}%", ratio); // 转化为字符串，并保留两位小数
                 return percentage;
             }

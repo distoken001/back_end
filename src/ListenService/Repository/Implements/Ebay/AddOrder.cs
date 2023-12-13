@@ -13,6 +13,9 @@ using CommonLibrary.Model.DataEntityModel;
 using CommonLibrary.Common.Common;
 using ListenService.Repository.Interfaces;
 using System.Net.WebSockets;
+using Newtonsoft.Json.Linq;
+using Nethereum.Web3;
+using Nethereum.RPC;
 
 namespace ListenService.Repository.Implements
 {
@@ -29,6 +32,21 @@ namespace ListenService.Repository.Implements
         {
             try
             {
+                // 连接到以太坊区块链网络
+                var web3 = new Web3(_configuration["BSC:HTTPS_URL"]);
+                // 读取JSON文件内容
+                string jsonFilePath = "Ebay.json"; // 替换为正确的JSON文件路径
+
+                string jsonString = File.ReadAllText(jsonFilePath);
+
+                // 解析JSON
+                JObject jsonObject = JObject.Parse(jsonString);
+
+                // 获取abi节点的值
+                string abi = jsonObject["abi"]?.ToString();
+
+                var contract = new Contract(new EthApiService(web3.Client), abi, contractAddress);
+
                 StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
                 //StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
                 var client = new StreamingWebSocketClient(nodeUrl);
@@ -45,13 +63,24 @@ namespace ListenService.Repository.Implements
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(log =>
                 {
                     // decode the log into a typed event log
-                   
+                    var decoded = Event<AddOrderEventDTO>.DecodeEvent(log);
+                    if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
+                    {
+                        Console.WriteLine("AddOrder监听到了！");
+
+                        _masterDbContext.SaveChanges();
+                    }
+                    else
+                    {
+                        Console.WriteLine("CardPurchased:Found not standard log");
+                    }
+
                 }, onErrorAction);
 
                 await client.StartAsync();
 
                 await subscription.SubscribeAsync(addOrder);
-              
+
             }
             catch (Exception ex)
             {
