@@ -28,7 +28,7 @@ namespace ListenService.Repository.Implements
             _configuration = configuration;
             _masterDbContext = mySqlMasterDbContext;
         }
-        public async Task StartAsync(string nodeWss,string nodeHttps string contractAddress, ChainEnum chain_id)
+        public async Task StartAsync(string nodeWss,string nodeHttps ,string contractAddress, ChainEnum chain_id)
         {
             try
             {
@@ -57,7 +57,7 @@ namespace ListenService.Repository.Implements
                 {
                     // 处理异常情况 ex
                     Console.WriteLine($"Error AddOrder: {ex}");
-                    await StartAsync(nodeWss, contractAddress, chain_id);
+                    await StartAsync(nodeWss, nodeHttps,contractAddress, chain_id);
                 };
                 // attach a handler for Transfer event logs
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(log =>
@@ -84,7 +84,7 @@ namespace ListenService.Repository.Implements
             }
             catch (Exception ex)
             {
-                await StartAsync(nodeWss, contractAddress, chain_id);
+                await StartAsync(nodeWss, nodeHttps,contractAddress, chain_id);
                 Console.WriteLine($"AddOrder:{ex}");
                 Console.WriteLine("AddOrder重启了EX");
             }
