@@ -4,7 +4,7 @@ using Nethereum.ABI.FunctionEncoding.Attributes;
 namespace ListenService.Model
 {
     [Event("AddOrder")]
-    public class AddOrderEventDTO : IEventDTO
+    public class AuctionAddOrderEventDTO : IEventDTO
     {
         [Parameter("address", "defaulter", 1, true)]
         public string Defaulter { get; set; }

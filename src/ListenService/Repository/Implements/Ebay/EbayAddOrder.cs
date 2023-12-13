@@ -60,7 +60,7 @@ namespace ListenService.Repository.Implements
                 //StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
                 var client = new StreamingWebSocketClient(nodeWss);
 
-                var addOrder = Event<AddOrderEventDTO>.GetEventABI().CreateFilterInput();
+                var addOrder = Event<EbayAddOrderEventDTO>.GetEventABI().CreateFilterInput();
                 var subscription = new EthLogsObservableSubscription(client);
 
                 Action<Exception> onErrorAction = async (ex) =>
@@ -73,7 +73,7 @@ namespace ListenService.Repository.Implements
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
                 {
                     // decode the log into a typed event log
-                    var decoded = Event<AddOrderEventDTO>.DecodeEvent(log);
+                    var decoded = Event<EbayAddOrderEventDTO>.DecodeEvent(log);
                     if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
                     {
                         Console.WriteLine("EbayAddOrder监听到了！");
