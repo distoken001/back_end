@@ -26,6 +26,7 @@
     <None Remove="Repository\Interfaces\Ebay\" />
     <None Remove="Repository\Implements\Auction\" />
     <None Remove="Repository\Interfaces\Auction\" />
+    <None Remove="Service\Auction\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Service\" />
@@ -37,5 +38,6 @@
     <Folder Include="Repository\Interfaces\Ebay\" />
     <Folder Include="Repository\Implements\Auction\" />
     <Folder Include="Repository\Interfaces\Auction\" />
+    <Folder Include="Service\Auction\" />
   </ItemGroup>
 </Project>

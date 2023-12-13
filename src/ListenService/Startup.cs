@@ -56,6 +56,9 @@ namespace ListenService
 
             services.AddSingleton<IEbayAddOrder, EbayAddOrder>();
             services.AddSingleton<IEbaySetStatus, EbaySetStatus>();
+
+            services.AddSingleton<IAuctionAddOrder, AuctionAddOrder>();
+            
             services.AddSingleton<ISendMessage, SendMessage>();
 
             services.AddHostedService<PrizeClaimedService>();
@@ -67,6 +70,8 @@ namespace ListenService
             services.AddHostedService<EbayAddOrderService>();
             services.AddHostedService<EbaySetStatusService>();
 
+            services.AddHostedService<AuctionAddOrderService>();
+            
             services
                 .AddHttpClient()
                 .AddCors(options =>
