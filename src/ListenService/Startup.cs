@@ -56,7 +56,10 @@ namespace ListenService
 
             services.AddSingleton<IEbayAddOrder, EbayAddOrder>();
             services.AddSingleton<IEbaySetStatus, EbaySetStatus>();
-            
+
+            services.AddSingleton<IAuctionAddOrder, AuctionAddOrder>();
+            services.AddSingleton<IAuctionSetOrderInfo, AuctionSetOrderInfo>();
+
             services.AddSingleton<ISendMessage, SendMessage>();
 
             services.AddHostedService<PrizeClaimedService>();
@@ -65,15 +68,12 @@ namespace ListenService
             services.AddHostedService<CardTypeAddedService>();
             services.AddHostedService<CardPurchasedService>();
 
+            services.AddHostedService<AuctionAddOrderService>();
+            //services.AddHostedService<AuctionSetOrderInfoService>();
+
             //services.AddHostedService<EbayAddOrderService>();
             //services.AddHostedService<EbaySetStatusService>();
 
-            services.AddSingleton<IAuctionAddOrder, AuctionAddOrder>();
-            services.AddSingleton<IAuctionSetOrderInfo, AuctionSetOrderInfo>();
-
-            services.AddHostedService<AuctionAddOrderService>();
-            services.AddHostedService<AuctionSetOrderInfoService>();
-            
 
 
             services
