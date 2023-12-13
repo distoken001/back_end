@@ -26,7 +26,7 @@ namespace ListenService.Repository.Implements
             try
             {
                 StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
-                StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
+                //StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
                 var _client = new StreamingWebSocketClient(nodeUrl);
 
                 var _subscription = new EthLogsObservableSubscription(_client);
