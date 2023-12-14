@@ -7,7 +7,7 @@ module.exports = {
             watch: false,
             autorestart: true,
             cron_restart: '0 0 * * *', // 每天午夜重启一次
-            max_memory_restart: '500M',
+            max_memory_restart: '1024M',
             env_development: {
                 ASPNETCORE_ENVIRONMENT: "Development",
             },
