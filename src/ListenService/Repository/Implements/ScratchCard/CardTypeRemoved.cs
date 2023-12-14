@@ -61,7 +61,7 @@ namespace ListenService.Repository.Implements
                         var decoded = Event<CardTypeRemovedEventDTO>.DecodeEvent(log);
                         if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
                         {
-                            var card = _masterDbContext.card_type.Where(a => a.type == decoded.Event.CardType && a.chain_id == chain_id).FirstOrDefault();
+                            var card = _masterDbContext.card_type.Where(a => a.type == decoded.Event.CardType && a.chain_id == chain_id && a.state == 1).FirstOrDefault();
                             card.state = 0;
                             _masterDbContext.SaveChanges();
                         }
