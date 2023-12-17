@@ -136,7 +136,7 @@ namespace TelegramService
                             case MessageType.Text:
                                 if (update.Message.Chat.Id < 0)
                                 {
-                                    if (update.Message.Text.Contains(_configuration["BotUserName"])|| update.Message.Text.Contains("验证码"))
+                                    if (update.Message.Text.Contains(_configuration["BotUserName"])|| update.Message.Text.Contains("验证码")||update.Message.Text.Contains("绑定"))
                                     {
                                         if (string.IsNullOrEmpty(update.Message.From.Username))
                                         {
