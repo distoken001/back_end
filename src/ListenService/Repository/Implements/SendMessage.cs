@@ -55,7 +55,7 @@ namespace ListenService.Repository.Implements
                     if (seller?.telegram_id != null)
                     {
                         mailMessageSeller = $"您在{order.chain_id.ToString()}链上发布了商品：{order.name}。";
-                        var chatMessage = $"市场订单：用户 @{seller?.nick_name} 在{order.chain_id.ToString()}链上发布了新商品：{order.name}，单价：{order.price} {token.token_name}, 数量：{order.amount}，订单链接:{_configuration["Domain"]}/market/detail/{order.contract}/{(int)order.chain_id}/{order.order_id}";
+                        var chatMessage = $"担保订单：用户 @{seller?.nick_name} 在{order.chain_id.ToString()}链上发布了新商品：{order.name}，单价：{order.price} {token.token_name}, 数量：{order.amount}，订单链接:{_configuration["Domain"]}/market/detail/{order.contract}/{(int)order.chain_id}/{order.order_id}";
 
                         await botClient.SendTextMessageAsync(_configuration["GroupChatID"], chatMessage);
 
