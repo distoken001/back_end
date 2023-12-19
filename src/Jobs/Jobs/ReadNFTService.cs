@@ -36,6 +36,7 @@ namespace Jobs.Jobs
 
         public override Task ExecuteMethod(IJobExecutionContext context)
         {
+            Console.WriteLine("读取NFT开始");
             return Task.Run(async () =>
             {
                 try
