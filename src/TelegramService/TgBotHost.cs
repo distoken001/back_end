@@ -84,7 +84,7 @@ namespace TelegramService
                     {
                 new []
                 {
-                    InlineKeyboardButton.WithUrl(text: "DeMarket德玛市场", url: "https://demarket.io/"),
+                    InlineKeyboardButton.WithUrl(text: "DeMarket德玛", url: "https://demarket.io/"),
                 },
                 new []
                 {
@@ -159,7 +159,7 @@ namespace TelegramService
                                                 sb.AppendLine("Hey！靓仔！@" + update.Message.From.Username.Replace("_", @"\_"));
                                                 var obj = new[]
                                       {                new []
-                {                    InlineKeyboardButton.WithUrl(text: "DeMarket德玛市场", url: "https://demarket.io/"),
+                {                    InlineKeyboardButton.WithUrl(text: "DeMarket德玛", url: "https://demarket.io/"),
                 },
                 new []
                 {
@@ -227,7 +227,7 @@ namespace TelegramService
                                     sb.AppendLine("");
                                     var obj = new[]
                                     {                new []
-                {                    InlineKeyboardButton.WithUrl(text: "DeMarket德玛市场", url: "https://demarket.io/"),
+                {                    InlineKeyboardButton.WithUrl(text: "DeMarket德玛", url: "https://demarket.io/"),
                 },
                 new []
                 {
