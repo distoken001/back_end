@@ -15,6 +15,7 @@ dotnet publish --configuration Release ./src/Jobs/Jobs.csproj --output $publish_
 # 复制 PM2 配置文件到发布目录
 echo "Copying PM2 config file to the publish directory..."
 cp  ./src/Jobs/pm2.jobs.config.js $publish_directory
+cp  ./src/Jobs/Jobs.xml $publish_directory
 
 # 进入发布目录
 cd $publish_directory
