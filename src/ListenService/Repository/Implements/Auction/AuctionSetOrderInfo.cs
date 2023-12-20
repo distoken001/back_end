@@ -39,11 +39,11 @@ namespace ListenService.Repository.Implements
         }
         public async Task StartAsync(string nodeWss, string nodeHttps, string contractAddress, ChainEnum chain_id)
         {
+            StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
+            //StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
+            var client = new StreamingWebSocketClient(nodeWss);
             try
             {
-                StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
-                //StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
-                var client = new StreamingWebSocketClient(nodeWss);
                 // 连接到以太坊区块链网络
                 var web3 = new Web3(nodeHttps);
                 // 读取JSON文件内容
