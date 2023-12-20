@@ -23,12 +23,11 @@ namespace ListenService.Repository.Implements
         }
         public async Task StartAsync(string nodeUrl, string contractAddress, ChainEnum chain_id)
         {
+            StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
+            //StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
+            var _client = new StreamingWebSocketClient(nodeUrl);
             try
             {
-                StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
-                //StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
-                var _client = new StreamingWebSocketClient(nodeUrl);
-
                 var _subscription = new EthLogsObservableSubscription(_client);
                 var cardPurchased = Event<CardPurchasedEventDTO>.GetEventABI().CreateFilterInput();
                 Action<Exception> onErrorAction = async (ex) =>
@@ -36,6 +35,7 @@ namespace ListenService.Repository.Implements
                     // 处理异常情况 ex
                     // 例如：
                     Console.WriteLine($"Error CardPurchased: {ex}");
+                    _client.Dispose();
                     await StartAsync(nodeUrl, contractAddress, chain_id);
                 };
                 _subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(log =>
@@ -84,6 +84,7 @@ namespace ListenService.Repository.Implements
 
             catch (Exception ex)
             {
+                _client.Dispose();
                 await StartAsync(nodeUrl, contractAddress, chain_id);
                 Console.WriteLine($"CardPurchased:{ex}");
                 Console.WriteLine("CardPurchased重启了EX");

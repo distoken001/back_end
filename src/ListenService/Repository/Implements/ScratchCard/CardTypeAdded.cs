@@ -36,7 +36,9 @@ namespace ListenService.Repository.Implements
 
         public async Task StartAsync(string nodeUrl, string contractAddress, ChainEnum chain_id)
         {
-
+            StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
+            //StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
+            var client = new StreamingWebSocketClient(nodeUrl);
             try
             {
                 //// Infura 提供的以太坊节点 WebSocket 地址
@@ -55,15 +57,13 @@ namespace ListenService.Repository.Implements
 
                 // 获取abi节点的值
                 string abi = jsonObject["abi"]?.ToString();
-                StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
-                //StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
-                var client = new StreamingWebSocketClient(nodeUrl);
+
 
                 var cardTypeAdded = Event<CardTypeAddedEventDTO>.GetEventABI().CreateFilterInput();
                 Action<Exception> onErrorAction = async (ex) =>
                 {
                     // 处理异常情况 ex
-                    // 例如：
+                    client.Dispose();
                     Console.WriteLine($"Error CardTypeAdded: {ex}");
                     await StartAsync(nodeUrl, contractAddress, chain_id);
                 };
@@ -113,6 +113,7 @@ namespace ListenService.Repository.Implements
             }
             catch (Exception ex)
             {
+                client.Dispose();
                 Console.WriteLine($"CardTypeAdded:{ex}");
                 await StartAsync(nodeUrl, contractAddress, chain_id);
                 Console.WriteLine("CardTypeAdded重启了EX");

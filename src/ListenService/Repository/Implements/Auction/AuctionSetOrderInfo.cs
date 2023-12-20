@@ -41,6 +41,9 @@ namespace ListenService.Repository.Implements
         {
             try
             {
+                StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
+                //StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
+                var client = new StreamingWebSocketClient(nodeWss);
                 // 连接到以太坊区块链网络
                 var web3 = new Web3(nodeHttps);
                 // 读取JSON文件内容
@@ -58,11 +61,6 @@ namespace ListenService.Repository.Implements
                 var function = contract.GetFunction("orders");
                 var function2 = contract.GetFunction("orderTime");
                 var function3 = contract.GetFunction("orderBidCount");
-
-                StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
-                //StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
-                var client = new StreamingWebSocketClient(nodeWss);
-
                 var addOrder = Event<AuctionSetOrderInfoEventDTO>.GetEventABI().CreateFilterInput();
                 var subscription = new EthLogsObservableSubscription(client);
 
@@ -70,6 +68,7 @@ namespace ListenService.Repository.Implements
                 {
                     // 处理异常情况 ex
                     Console.WriteLine($"Error AuctionSetOrderInfo: {ex}");
+                    client.Dispose();
                     await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
                 };
                 // attach a handler for Transfer event logs
@@ -119,6 +118,7 @@ namespace ListenService.Repository.Implements
             }
             catch (Exception ex)
             {
+                client.Dispose();
                 await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
                 Console.WriteLine($"AuctionSetOrderInfo:{ex}");
                 Console.WriteLine("AuctionSetOrderInfo重启了EX");

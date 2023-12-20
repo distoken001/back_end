@@ -39,6 +39,9 @@ namespace ListenService.Repository.Implements
         }
         public async Task StartAsync(string nodeWss, string nodeHttps, string contractAddress, ChainEnum chain_id)
         {
+            StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
+            //StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
+            var client = new StreamingWebSocketClient(nodeWss);
             try
             {
                 // 连接到以太坊区块链网络
@@ -58,9 +61,7 @@ namespace ListenService.Repository.Implements
                 var function = contract.GetFunction("orders");
                 var function2 = contract.GetFunction("orderTime");
 
-                StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
-                //StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
-                var client = new StreamingWebSocketClient(nodeWss);
+             
 
                 var addOrder = Event<AuctionAddOrderEventDTO>.GetEventABI().CreateFilterInput();
                 var subscription = new EthLogsObservableSubscription(client);
@@ -69,6 +70,7 @@ namespace ListenService.Repository.Implements
                 {
                     // 处理异常情况 ex
                     Console.WriteLine($"Error AuctionAddOrder: {ex}");
+                    client.Dispose();
                     await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
                 };
                 // attach a handler for Transfer event logs
@@ -105,6 +107,7 @@ namespace ListenService.Repository.Implements
             }
             catch (Exception ex)
             {
+                client.Dispose();
                 await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
                 Console.WriteLine($"AuctionAddOrder:{ex}");
                 Console.WriteLine("AuctionAddOrder重启了EX");

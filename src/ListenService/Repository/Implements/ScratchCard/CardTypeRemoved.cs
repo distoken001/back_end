@@ -36,20 +36,19 @@ namespace ListenService.Repository.Implements
 
         public async Task StartAsync(string nodeUrl, string contractAddress, ChainEnum chain_id)
         {
+            StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
+            //StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
+            var client = new StreamingWebSocketClient(nodeUrl);
 
             try
             {
-                StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
-                //StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
-                var client = new StreamingWebSocketClient(nodeUrl);
-
                 var cardTypeAdded = Event<CardTypeRemovedEventDTO>.GetEventABI().CreateFilterInput();
 
                 var subscription = new EthLogsObservableSubscription(client);
                 Action<Exception> onErrorAction = async (ex) =>
                 {
                     // 处理异常情况 ex
-                    // 例如：
+                    client.Dispose();
                     Console.WriteLine($"Error CardTypeRemoved: {ex}");
                     await StartAsync(nodeUrl, contractAddress, chain_id);
                 };
@@ -93,6 +92,7 @@ namespace ListenService.Repository.Implements
             }
             catch (Exception ex)
             {
+                client.Dispose();
                 Console.WriteLine($"CardTypeRemoved:{ex}");
                 await StartAsync(nodeUrl, contractAddress, chain_id);
                 Console.WriteLine("CardTypeRemoved重启了ex");

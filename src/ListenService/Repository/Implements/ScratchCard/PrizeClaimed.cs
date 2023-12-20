@@ -36,6 +36,10 @@ namespace ListenService.Repository.Implements
         }
         public async Task StartAsync(string nodeUrl, string contractAddress, ChainEnum chain_id)
         {
+            //string contractAddress = _configuration["OP:Contract_ScratchCard"];
+            StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
+            //StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
+            var client = new StreamingWebSocketClient(nodeUrl);
 
             try
             {
@@ -43,18 +47,14 @@ namespace ListenService.Repository.Implements
                 //string nodeUrl = _configuration["OP:WSS_URL"];
 
                 //// 你的以太坊智能合约地址
-                //string contractAddress = _configuration["OP:Contract_ScratchCard"];
-                StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
-                //StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
-                var client = new StreamingWebSocketClient(nodeUrl);
-
+          
                 var prizeClaimed = Event<PrizeClaimedEventDTO>.GetEventABI().CreateFilterInput();
 
                 var subscription = new EthLogsObservableSubscription(client);
                 Action<Exception> onErrorAction = async (ex) =>
                 {
                     // 处理异常情况 ex
-                    // 例如：
+                    client.Dispose();
                     Console.WriteLine($"Error PrizeClaimed: {ex}");
                     await StartAsync(nodeUrl, contractAddress, chain_id);
                 };
@@ -105,6 +105,7 @@ namespace ListenService.Repository.Implements
             }
             catch (Exception ex)
             {
+                client.Dispose();
                 Console.WriteLine($"PrizeClaimed:{ex}");
                 await StartAsync(nodeUrl, contractAddress, chain_id);
                 Console.WriteLine("PrizeClaimed重启了EX");

@@ -34,18 +34,18 @@ namespace ListenService.Repository.Implements
         }
         public async Task StartAsync(string nodeUrl, string contractAddress, ChainEnum chain_id)
         {
+            StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
+            //StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
+            var client = new StreamingWebSocketClient(nodeUrl);
             try
             {
-                StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
-                //StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
-                var client = new StreamingWebSocketClient(nodeUrl);
-                
                 var cardGifted = Event<CardGiftedEventDTO>.GetEventABI().CreateFilterInput();
                 var subscription = new EthLogsObservableSubscription(client);
                 Action<Exception> onErrorAction = async (ex) =>
                 {
                     // 处理异常情况 ex
                     Console.WriteLine($"Error CardGifted: {ex}");
+                    client.Dispose();
                     await StartAsync(nodeUrl, contractAddress, chain_id);
                 };
                 // attach a handler for Transfer event logs
@@ -86,7 +86,7 @@ namespace ListenService.Repository.Implements
                 }, onErrorAction);
                 // open the web socket connection
                 await client.StartAsync();
-
+                
                 // begin receiving subscription data
                 // data will be received on a background thread
                 await subscription.SubscribeAsync(cardGifted);
@@ -105,6 +105,7 @@ namespace ListenService.Repository.Implements
             }
             catch (Exception ex)
             {
+                client.Dispose();
                 await StartAsync(nodeUrl, contractAddress, chain_id);
                 Console.WriteLine($"CardGifted:{ex}");
                 Console.WriteLine("CardGifted重启了EX");

@@ -39,6 +39,10 @@ namespace ListenService.Repository.Implements
         }
         public async Task StartAsync(string nodeWss, string nodeHttps, string contractAddress, ChainEnum chain_id)
         {
+
+            StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
+            //StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
+            var client = new StreamingWebSocketClient(nodeWss);
             try
             {
                 // 连接到以太坊区块链网络
@@ -57,9 +61,6 @@ namespace ListenService.Repository.Implements
                 var contract = new Contract(new EthApiService(web3.Client), abi, contractAddress);
                 var function = contract.GetFunction("orders");
 
-                StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
-                //StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
-                var client = new StreamingWebSocketClient(nodeWss);
 
                 var addOrder = Event<SetStatusEventDTO>.GetEventABI().CreateFilterInput();
                 var subscription = new EthLogsObservableSubscription(client);
@@ -68,6 +69,7 @@ namespace ListenService.Repository.Implements
                 {
                     // 处理异常情况 ex
                     Console.WriteLine($"Error EbaySetStatus: {ex}");
+                    client.Dispose();
                     await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
                 };
 
@@ -114,6 +116,7 @@ namespace ListenService.Repository.Implements
             }
             catch (Exception ex)
             {
+                client.Dispose();
                 await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
                 Console.WriteLine($"EbaySetStatus:{ex}");
                 Console.WriteLine("EbaySetStatus重启了EX");
