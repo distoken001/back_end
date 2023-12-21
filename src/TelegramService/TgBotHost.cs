@@ -84,11 +84,11 @@ namespace TelegramService
                     {
                 new []
                 {
-                    InlineKeyboardButton.WithUrl(text: "DeMarket德玛", url: "https://demarket.io/"),
+                    InlineKeyboardButton.WithUrl(text: "DeMarket", url: "https://demarket.io/"),
                 },
                 new []
                 {
-                    InlineKeyboardButton.WithUrl(text: "Twitter推特", url: "https://twitter.com/demarket_io"),
+                    InlineKeyboardButton.WithUrl(text: "Twitter", url: "https://twitter.com/demarket_io"),
                 },
                   new[]
                 {
@@ -159,11 +159,11 @@ namespace TelegramService
                                                 sb.AppendLine("Hey！靓仔！@" + update.Message.From.Username.Replace("_", @"\_"));
                                                 var obj = new[]
                                       {                new []
-                {                    InlineKeyboardButton.WithUrl(text: "DeMarket德玛", url: "https://demarket.io/"),
+                {                    InlineKeyboardButton.WithUrl(text: "DeMarket", url: "https://demarket.io/"),
                 },
                 new []
                 {
-                    InlineKeyboardButton.WithUrl(text: "Twitter推特", url: "https://twitter.com/demarket_io"),
+                    InlineKeyboardButton.WithUrl(text: "Twitter", url: "https://twitter.com/demarket_io"),
                 },
 
                 //  new[]
@@ -227,11 +227,11 @@ namespace TelegramService
                                     sb.AppendLine("");
                                     var obj = new[]
                                     {                new []
-                {                    InlineKeyboardButton.WithUrl(text: "DeMarket德玛", url: "https://demarket.io/"),
+                {                    InlineKeyboardButton.WithUrl(text: "DeMarket", url: "https://demarket.io/"),
                 },
                 new []
                 {
-                    InlineKeyboardButton.WithUrl(text: "Twitter推特", url: "https://twitter.com/demarket_io"),
+                    InlineKeyboardButton.WithUrl(text: "Twitter", url: "https://twitter.com/demarket_io"),
                 },
 
                   new[]
