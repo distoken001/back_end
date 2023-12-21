@@ -36,11 +36,12 @@ namespace Jobs.Jobs
 
         public override Task ExecuteMethod(IJobExecutionContext context)
         {
+            //Console.WriteLine("读取NFT开始");
             return Task.Run(async () =>
             {
                 try
                 {
-                    _logger.LogDebug($"ReadNFTService task start {DateTime.Now}");
+                    //_logger.LogDebug($"ReadNFTService task start {DateTime.Now}");
                     // 连接到以太坊区块链网络
                     var web3 = new Web3(_config["BSC:HTTPS_URL"]);
 
@@ -99,12 +100,12 @@ namespace Jobs.Jobs
                         }
                     }
                     _masterDbContext.SaveChanges();
-                    _logger.LogDebug($"ReadNFTService task end {DateTime.Now}");
+                    //_logger.LogDebug($"ReadNFTService task end {DateTime.Now}");
                 }
                 catch (Exception ex)
                 {
                     _masterDbContext.SaveChanges();
-                    _logger.LogDebug($"ReadNFTService task 异常 {ex.InnerException.GetBaseException().Message}");
+                    //_logger.LogDebug($"ReadNFTService task 异常 {ex.InnerException.GetBaseException().Message}");
                 }
             });
         }
