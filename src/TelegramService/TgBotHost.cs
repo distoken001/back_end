@@ -289,7 +289,8 @@ namespace TelegramService
                             int randomNumber = random.Next(10000000, 99999999); // 生成8位随机数字
                             sb.Append(randomNumber.ToString());
                             sb.Append("*");
-                            sb.Append("  有效期五分钟");
+                            sb.Append("  有效期五分钟，");
+                            sb.Append("验证码属于个人隐私，为了防止被其他人冒用，切记不要泄露。如若您修改了Telegram用户名，务必重新绑定！");
                             telegramUserChat = _masterDbContext.telegram_user_chat.Where(a => a.chat_id == update.CallbackQuery.Message.Chat.Id).FirstOrDefault();
                             if (telegramUserChat == null)
                             {
