@@ -29,7 +29,7 @@ namespace CommonLibrary.Common.Common
                 Subject = new ClaimsIdentity(claims),
                 Issuer = issuer,
                 Audience = audience,
-                Expires = now.AddDays(expire),
+                Expires = now.AddHours(expire),
                 SigningCredentials = credentials,
                 NotBefore = now
             };
