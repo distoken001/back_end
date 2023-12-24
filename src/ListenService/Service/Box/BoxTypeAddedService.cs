@@ -39,27 +39,27 @@ namespace ListenService.Service
             {
                 Console.WriteLine("BoxTypeAddedService启动啦！");
 
-                //if (!string.IsNullOrEmpty(_configuration["Polygon:Contract_ScratchBox"]))
+                //if (!string.IsNullOrEmpty(_configuration["Polygon:Contract_Box"]))
                 //{
-                //    _ = _cardTypeAdded.StartAsync(_configuration["Polygon:WSS_URL"], _configuration["Polygon:Contract_ScratchBox"], ChainEnum.Polygon);
+                //    _ = _cardTypeAdded.StartAsync(_configuration["Polygon:WSS_URL"], _configuration["Polygon:Contract_Box"], ChainEnum.Polygon);
                 //}
-                //if (!string.IsNullOrEmpty(_configuration["ARB:Contract_ScratchBox"]))
+                //if (!string.IsNullOrEmpty(_configuration["ARB:Contract_Box"]))
                 //{
-                //    _ = _cardTypeAdded.StartAsync(_configuration["ARB:WSS_URL"], _configuration["ARB:Contract_ScratchBox"], ChainEnum.Arbitrum);
+                //    _ = _cardTypeAdded.StartAsync(_configuration["ARB:WSS_URL"], _configuration["ARB:Contract_Box"], ChainEnum.Arbitrum);
                 //}
                 if (_configuration["Env"] == "prod")
                 {
-                    if (!string.IsNullOrEmpty(_configuration["BSC:Contract_ScratchBox"]))
+                    if (!string.IsNullOrEmpty(_configuration["BSC:Contract_Box"]))
                     {
-                        _ = _cardTypeAdded.StartAsync(_configuration["BSC:WSS_URL"], _configuration["BSC:Contract_ScratchBox"], ChainEnum.Bsc);
+                        _ = _cardTypeAdded.StartAsync(_configuration["BSC:WSS_URL"], _configuration["BSC:Contract_Box"], ChainEnum.Bsc);
                     }
                 }
                 else
                 {
-                    if (!string.IsNullOrEmpty(_configuration["OPGoerli:Contract_ScratchBox"]))
+                    if (!string.IsNullOrEmpty(_configuration["OPGoerli:Contract_Box"]))
                     {
                         ChainEnum chain_id = ChainEnum.OptimisticGoerli;
-                        _ = _cardTypeAdded.StartAsync(_configuration["OPGoerli:WSS_URL"], _configuration["OPGoerli:Contract_ScratchBox"], chain_id);
+                        _ = _cardTypeAdded.StartAsync(_configuration["OPGoerli:WSS_URL"], _configuration["OPGoerli:Contract_Box"], chain_id);
                     }
                 }
             }

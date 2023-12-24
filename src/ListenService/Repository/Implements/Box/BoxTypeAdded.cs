@@ -45,7 +45,7 @@ namespace ListenService.Repository.Implements
                 //string nodeUrl = _configuration["OP:WSS_URL"];
 
                 //// 你的以太坊智能合约地址
-                //string contractAddress = _configuration["OP:Contract_ScratchBox"];
+                //string contractAddress = _configuration["OP:Contract_Box"];
 
                 // 读取JSON文件内容
                 string jsonFilePath = "DeMarketBox.json"; // 替换为正确的JSON文件路径

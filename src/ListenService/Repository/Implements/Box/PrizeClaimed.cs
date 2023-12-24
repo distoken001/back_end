@@ -36,7 +36,7 @@ namespace ListenService.Repository.Implements
         }
         public async Task StartAsync(string nodeUrl, string contractAddress, ChainEnum chain_id)
         {
-            //string contractAddress = _configuration["OP:Contract_ScratchBox"];
+            //string contractAddress = _configuration["OP:Contract_Box"];
             StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
             //StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
             var client = new StreamingWebSocketClient(nodeUrl);
