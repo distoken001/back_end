@@ -58,6 +58,10 @@ namespace ListenService.Service
                 }
                 else
                 {
+                    if (!string.IsNullOrEmpty(_configuration["BSC:Contract_Box"]))
+                    {
+                        _ = _prizeClaimed.StartAsync(_configuration["BSC:WSS_URL"], _configuration["BSC:Contract_Box"], ChainEnum.Bsc);
+                    }
                     if (!string.IsNullOrEmpty(_configuration["OPGoerli:Contract_Box"]))
                     {
                         ChainEnum chain_id = ChainEnum.OptimisticGoerli;
