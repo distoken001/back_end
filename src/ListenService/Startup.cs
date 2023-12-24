@@ -48,10 +48,10 @@ namespace ListenService
             services.AddDirectoryBrowser();
             services.AddSingleton<IConfiguration>(Configuration);
 
-            services.AddSingleton<ICardPurchased, CardPurchased>();
-            services.AddSingleton<ICardGifted, CardGifted>();
-            services.AddSingleton<ICardTypeRemoved, CardTypeRemoved>();
-            services.AddSingleton<ICardTypeAdded, CardTypeAdded>();
+            services.AddSingleton<IBoxMinted, BoxMinted>();
+            services.AddSingleton<IBoxGifted, BoxGifted>();
+            services.AddSingleton<IBoxTypeRemoved, BoxTypeRemoved>();
+            services.AddSingleton<IBoxTypeAdded, BoxTypeAdded>();
             services.AddSingleton<IPrizeClaimed, PrizeClaimed>();
 
             services.AddSingleton<IEbayAddOrder, EbayAddOrder>();
@@ -63,10 +63,10 @@ namespace ListenService
             services.AddSingleton<ISendMessage, SendMessage>();
 
             services.AddHostedService<PrizeClaimedService>();
-            services.AddHostedService<CardTypeRemovedService>();
-            services.AddHostedService<CardGiftedService>();
-            services.AddHostedService<CardTypeAddedService>();
-            services.AddHostedService<CardPurchasedService>();
+            services.AddHostedService<BoxTypeRemovedService>();
+            services.AddHostedService<BoxGiftedService>();
+            services.AddHostedService<BoxTypeAddedService>();
+            services.AddHostedService<BoxMintService>();
 
             services.AddHostedService<AuctionAddOrderService>();
             services.AddHostedService<AuctionSetOrderInfoService>();

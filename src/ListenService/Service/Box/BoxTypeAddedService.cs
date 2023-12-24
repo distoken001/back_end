@@ -18,50 +18,48 @@ using ListenService.Model;
 using Nethereum.JsonRpc.Client;
 using CommonLibrary.Model.DataEntityModel;
 using CommonLibrary.Common.Common;
-using Microsoft.VisualBasic;
-using Nethereum.Contracts.Standards.ERC20.TokenList;
 using ListenService.Repository.Interfaces;
 using ListenService.Repository.Implements;
 
 namespace ListenService.Service
 {
-    public class PrizeClaimedService : IHostedService
+    public class BoxTypeAddedService : IHostedService
     {
         private readonly IConfiguration _configuration;
-        private readonly IPrizeClaimed _prizeClaimed;
-        public PrizeClaimedService(IConfiguration configuration, IPrizeClaimed prizeClaimed)
+        private readonly IBoxTypeAdded _cardTypeAdded;
+        public BoxTypeAddedService(IConfiguration configuration, IBoxTypeAdded cardTypeAdded)
         {
             _configuration = configuration;
-            _prizeClaimed = prizeClaimed;
+            _cardTypeAdded = cardTypeAdded;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
             try
             {
-                Console.WriteLine("PrizeClaimedService启动啦！");
+                Console.WriteLine("BoxTypeAddedService启动啦！");
 
-                //if (!string.IsNullOrEmpty(_configuration["Polygon:Contract_ScratchCard"]))
+                //if (!string.IsNullOrEmpty(_configuration["Polygon:Contract_ScratchBox"]))
                 //{
-                //    _ = _prizeClaimed.StartAsync(_configuration["Polygon:WSS_URL"], _configuration["Polygon:Contract_ScratchCard"], ChainEnum.Polygon);
+                //    _ = _cardTypeAdded.StartAsync(_configuration["Polygon:WSS_URL"], _configuration["Polygon:Contract_ScratchBox"], ChainEnum.Polygon);
                 //}
-                //if (!string.IsNullOrEmpty(_configuration["ARB:Contract_ScratchCard"]))
+                //if (!string.IsNullOrEmpty(_configuration["ARB:Contract_ScratchBox"]))
                 //{
-                //    _ = _prizeClaimed.StartAsync(_configuration["ARB:WSS_URL"], _configuration["ARB:Contract_ScratchCard"], ChainEnum.Arbitrum);
+                //    _ = _cardTypeAdded.StartAsync(_configuration["ARB:WSS_URL"], _configuration["ARB:Contract_ScratchBox"], ChainEnum.Arbitrum);
                 //}
                 if (_configuration["Env"] == "prod")
                 {
-                    if (!string.IsNullOrEmpty(_configuration["BSC:Contract_ScratchCard"]))
+                    if (!string.IsNullOrEmpty(_configuration["BSC:Contract_ScratchBox"]))
                     {
-                        _ = _prizeClaimed.StartAsync(_configuration["BSC:WSS_URL"], _configuration["BSC:Contract_ScratchCard"], ChainEnum.Bsc);
+                        _ = _cardTypeAdded.StartAsync(_configuration["BSC:WSS_URL"], _configuration["BSC:Contract_ScratchBox"], ChainEnum.Bsc);
                     }
                 }
                 else
                 {
-                    if (!string.IsNullOrEmpty(_configuration["OPGoerli:Contract_ScratchCard"]))
+                    if (!string.IsNullOrEmpty(_configuration["OPGoerli:Contract_ScratchBox"]))
                     {
                         ChainEnum chain_id = ChainEnum.OptimisticGoerli;
-                        _ = _prizeClaimed.StartAsync(_configuration["OPGoerli:WSS_URL"], _configuration["OPGoerli:Contract_ScratchCard"], chain_id);
+                        _ = _cardTypeAdded.StartAsync(_configuration["OPGoerli:WSS_URL"], _configuration["OPGoerli:Contract_ScratchBox"], chain_id);
                     }
                 }
             }
@@ -77,4 +75,3 @@ namespace ListenService.Service
         }
     }
 }
-

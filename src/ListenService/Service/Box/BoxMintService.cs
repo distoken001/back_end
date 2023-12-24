@@ -23,43 +23,43 @@ using ListenService.Repository.Implements;
 
 namespace ListenService.Service
 {
-    public class CardTypeAddedService : IHostedService
+    public class BoxMintService : IHostedService
     {
         private readonly IConfiguration _configuration;
-        private readonly ICardTypeAdded _cardTypeAdded;
-        public CardTypeAddedService(IConfiguration configuration, ICardTypeAdded cardTypeAdded)
+        private readonly IBoxMinted _cardPurchased;
+        public BoxMintService(IConfiguration configuration, IBoxMinted cardPurchased)
         {
             _configuration = configuration;
-            _cardTypeAdded = cardTypeAdded;
+            _cardPurchased = cardPurchased;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
             try
             {
-                Console.WriteLine("CardTypeAddedService启动啦！");
+                Console.WriteLine("BoxPurchasedService启动啦！");
 
-                //if (!string.IsNullOrEmpty(_configuration["Polygon:Contract_ScratchCard"]))
+                //if (!string.IsNullOrEmpty(_configuration["Polygon:Contract_ScratchBox"]))
                 //{
-                //    _ = _cardTypeAdded.StartAsync(_configuration["Polygon:WSS_URL"], _configuration["Polygon:Contract_ScratchCard"], ChainEnum.Polygon);
+                //    _ = _cardPurchased.StartAsync(_configuration["Polygon:WSS_URL"], _configuration["Polygon:Contract_ScratchBox"], ChainEnum.Polygon);
                 //}
-                //if (!string.IsNullOrEmpty(_configuration["ARB:Contract_ScratchCard"]))
+                //if (!string.IsNullOrEmpty(_configuration["ARB:Contract_ScratchBox"]))
                 //{
-                //    _ = _cardTypeAdded.StartAsync(_configuration["ARB:WSS_URL"], _configuration["ARB:Contract_ScratchCard"], ChainEnum.Arbitrum);
+                //    _ = _cardPurchased.StartAsync(_configuration["ARB:WSS_URL"], _configuration["ARB:Contract_ScratchBox"], ChainEnum.Arbitrum);
                 //}
                 if (_configuration["Env"] == "prod")
                 {
-                    if (!string.IsNullOrEmpty(_configuration["BSC:Contract_ScratchCard"]))
+                    if (!string.IsNullOrEmpty(_configuration["BSC:Contract_ScratchBox"]))
                     {
-                        _ = _cardTypeAdded.StartAsync(_configuration["BSC:WSS_URL"], _configuration["BSC:Contract_ScratchCard"], ChainEnum.Bsc);
+                        _ = _cardPurchased.StartAsync(_configuration["BSC:WSS_URL"], _configuration["BSC:Contract_ScratchBox"], ChainEnum.Bsc);
                     }
                 }
                 else
                 {
-                    if (!string.IsNullOrEmpty(_configuration["OPGoerli:Contract_ScratchCard"]))
+                    if (!string.IsNullOrEmpty(_configuration["OPGoerli:Contract_ScratchBox"]))
                     {
                         ChainEnum chain_id = ChainEnum.OptimisticGoerli;
-                        _ = _cardTypeAdded.StartAsync(_configuration["OPGoerli:WSS_URL"], _configuration["OPGoerli:Contract_ScratchCard"], chain_id);
+                        _ = _cardPurchased.StartAsync(_configuration["OPGoerli:WSS_URL"], _configuration["OPGoerli:Contract_ScratchBox"], chain_id);
                     }
                 }
             }
@@ -73,5 +73,7 @@ namespace ListenService.Service
         {
             return Task.CompletedTask;
         }
+
     }
 }
+

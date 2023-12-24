@@ -3,7 +3,7 @@ using CommonLibrary.Common.Common;
 
 namespace ListenService.Repository.Interfaces
 {
-    public interface ICardTypeRemoved
+	public interface IBoxMinted
     {
         Task StartAsync(string nodeUrl, string contractAddress, ChainEnum chain_id);
     }

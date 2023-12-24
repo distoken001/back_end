@@ -25,14 +25,14 @@ namespace DeMarketAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CardController : BaseController
+    public class BoxController : BaseController
     {
         MySqlMasterDbContext _mySqlMasterDbContext;
         private readonly ITxCosUploadeService txCosUploadeService;
         private readonly IHostEnvironment _environment;
         private readonly IConfiguration _configuration;
 
-        public CardController(MySqlMasterDbContext mySqlMasterDbContext, ITxCosUploadeService txCosUploadeService, IHostEnvironment environment, IConfiguration configuration)
+        public BoxController(MySqlMasterDbContext mySqlMasterDbContext, ITxCosUploadeService txCosUploadeService, IHostEnvironment environment, IConfiguration configuration)
         {
             _mySqlMasterDbContext = mySqlMasterDbContext;
             this.txCosUploadeService = txCosUploadeService;
@@ -46,8 +46,8 @@ namespace DeMarketAPI.Controllers
         /// <param name = "req" ></ param >
         /// < returns ></ returns >
         [HttpPost("not_opened_list")]
-        [ProducesResponseType(typeof(PagedModel<CardNotOpenedResponse>), 200)]
-        public async Task<JsonResult> not_opened_list([FromBody] GetNotOpenedCardListRequest req)
+        [ProducesResponseType(typeof(PagedModel<BoxNotOpenedResponse>), 200)]
+        public async Task<JsonResult> not_opened_list([FromBody] GetNotOpenedBoxListRequest req)
         {
             var queryEntities = _mySqlMasterDbContext.card_not_opened.AsNoTracking().AsQueryable();
             var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking();
@@ -61,18 +61,18 @@ namespace DeMarketAPI.Controllers
             var totalCount = await queryEntities.CountAsync();
             queryEntities = queryEntities.OrderByDescending(p => p.create_time).Skip((req.pageIndex - 1) * req.pageSize).Take(req.pageSize);
             var list = await queryEntities.ToListAsync();
-            var viewList = AutoMapperHelper.MapDbEntityToDTO<card_not_opened, CardNotOpenedResponse>(list);
+            var viewList = AutoMapperHelper.MapDbEntityToDTO<card_not_opened, BoxNotOpenedResponse>(list);
 
             foreach (var a in viewList)
             {
                 var token = chainTokens.FirstOrDefault(c => c.chain_id == a.chain_id && c.token_address.Equals(a.token));
                 var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
                 var cardType = cardTypes.FirstOrDefault(c => c.chain_id == a.chain_id && c.type.Equals(a.card_type));
-                var cardTypeView = AutoMapperHelper.MapDbEntityToDTO<card_type, CardTypeResponse>(cardType);
+                var cardTypeView = AutoMapperHelper.MapDbEntityToDTO<card_type, BoxTypeResponse>(cardType);
                 a.token_des = tokenView;
                 a.card_type_des = cardTypeView;
             }
-            var res = new PagedModel<CardNotOpenedResponse>(totalCount, viewList);
+            var res = new PagedModel<BoxNotOpenedResponse>(totalCount, viewList);
             return Json(new WebApiResult(1, "刮刮卡未刮开列表" + CurrentLoginAddress, res));
         }
         /// <summary>
@@ -81,8 +81,8 @@ namespace DeMarketAPI.Controllers
         /// <param name = "req" ></ param >
         /// < returns ></ returns >
         [HttpPost("opened_list")]
-        [ProducesResponseType(typeof(PagedModel<CardOpenedResponse>), 200)]
-        public async Task<JsonResult> opened_list([FromBody] GetOpenedCardListRequest req)
+        [ProducesResponseType(typeof(PagedModel<BoxOpenedResponse>), 200)]
+        public async Task<JsonResult> opened_list([FromBody] GetOpenedBoxListRequest req)
         {
             var queryEntities = _mySqlMasterDbContext.card_opened.AsNoTracking().AsQueryable();
             var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking();
@@ -95,18 +95,18 @@ namespace DeMarketAPI.Controllers
             var totalCount = await queryEntities.CountAsync();
             queryEntities = queryEntities.OrderByDescending(p => p.create_time).Skip((req.pageIndex - 1) * req.pageSize).Take(req.pageSize);
             var list = await queryEntities.ToListAsync();
-            var viewList = AutoMapperHelper.MapDbEntityToDTO<card_opened, CardOpenedResponse>(list);
+            var viewList = AutoMapperHelper.MapDbEntityToDTO<card_opened, BoxOpenedResponse>(list);
 
             foreach (var a in viewList)
             {
                 var token = chainTokens.FirstOrDefault(c => c.chain_id == a.chain_id && c.token_address.Equals(a.token));
                 var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
                 var cardType=  cardTypes.FirstOrDefault(c => c.chain_id == a.chain_id && c.type.Equals(a.card_type));
-                var cardTypeView = AutoMapperHelper.MapDbEntityToDTO<card_type, CardTypeResponse>(cardType);
+                var cardTypeView = AutoMapperHelper.MapDbEntityToDTO<card_type, BoxTypeResponse>(cardType);
                 a.token_des = tokenView;
                 a.card_type_des = cardTypeView;
             }
-            var res = new PagedModel<CardOpenedResponse>(totalCount, viewList);
+            var res = new PagedModel<BoxOpenedResponse>(totalCount, viewList);
             return Json(new WebApiResult(1, "刮刮卡已刮开列表" + CurrentLoginAddress, res));
         }
         /// <summary>
@@ -115,8 +115,8 @@ namespace DeMarketAPI.Controllers
         /// <param name="req"></param>
         /// <returns></returns>
         [HttpPost("card_type_list")]
-        [ProducesResponseType(typeof(PagedModel<CardTypeResponse>), 200)]
-        public async Task<JsonResult> card_type_list([FromBody] GetCardTypeListRequest req)
+        [ProducesResponseType(typeof(PagedModel<BoxTypeResponse>), 200)]
+        public async Task<JsonResult> card_type_list([FromBody] GetBoxTypeListRequest req)
         {
             var queryEntities = _mySqlMasterDbContext.card_type.Where(a => a.state == 1).AsNoTracking();
             var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking();
@@ -128,7 +128,7 @@ namespace DeMarketAPI.Controllers
             var totalCount = await queryEntities.CountAsync();
             queryEntities = queryEntities.OrderByDescending(p => p.create_time).Skip((req.pageIndex - 1) * req.pageSize).Take(req.pageSize);
             var list = await queryEntities.ToListAsync();
-            var viewList = AutoMapperHelper.MapDbEntityToDTO<card_type, CardTypeResponse>(list);
+            var viewList = AutoMapperHelper.MapDbEntityToDTO<card_type, BoxTypeResponse>(list);
 
             foreach (var a in viewList)
             {
@@ -136,7 +136,7 @@ namespace DeMarketAPI.Controllers
                 var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
                 a.token_des = tokenView;
             }
-            var res = new PagedModel<CardTypeResponse>(totalCount, viewList);
+            var res = new PagedModel<BoxTypeResponse>(totalCount, viewList);
             return Json(new WebApiResult(1, "获取卡类型列表" + CurrentLoginAddress, res));
         }
     }

@@ -3,14 +3,14 @@ using System.Numerics;
 using Nethereum.ABI.FunctionEncoding.Attributes;
 namespace ListenService.Model
 {
-    [Event("CardTypeAdded")]
-    public class CardTypeAddedEventDTO : IEventDTO
+    [Event("BoxTypeAdded")]
+    public class BoxTypeAddedEventDTO : IEventDTO
     {
         [Parameter("string", "cardType", 1, false)]
-        public string CardType { get; set; }
+        public string BoxType { get; set; }
 
         [Parameter("string", "cardName", 2, false)]
-        public string CardName { get; set; }
+        public string BoxName { get; set; }
 
         [Parameter("address", "tokenAddress", 3, false)]
         public string TokenAddress { get; set; }

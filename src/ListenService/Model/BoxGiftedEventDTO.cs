@@ -3,8 +3,8 @@ using System.Numerics;
 using Nethereum.ABI.FunctionEncoding.Attributes;
 namespace ListenService.Model
 {
-    [Event("CardGifted")]
-    public class CardGiftedEventDTO : IEventDTO
+    [Event("BoxGifted")]
+    public class BoxGiftedEventDTO : IEventDTO
     {
         [Parameter("address", "sender", 1, true)]
         public string Sender { get; set; }
@@ -13,9 +13,9 @@ namespace ListenService.Model
         public string Recipient { get; set; }
 
         [Parameter("string", "cardType", 3, false)]
-        public string CardType { get; set; }
-        [Parameter("uint256", "numberOfCards", 4, false)]
-        public BigInteger NumberOfCards { get; set; }
+        public string BoxType { get; set; }
+        [Parameter("uint256", "numberOfBoxs", 4, false)]
+        public BigInteger NumberOfBoxs { get; set; }
     }
 }
 

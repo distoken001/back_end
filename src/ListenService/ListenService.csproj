@@ -19,7 +19,6 @@
   <ItemGroup>
     <None Remove="Service\" />
     <None Remove="Model\" />
-    <None Remove="Service\ScratchCard\" />
     <None Remove="Repository\" />
     <None Remove="Service\Ebay\" />
     <None Remove="Repository\Implements\Ebay\" />
@@ -27,11 +26,11 @@
     <None Remove="Repository\Implements\Auction\" />
     <None Remove="Repository\Interfaces\Auction\" />
     <None Remove="Service\Auction\" />
+    <None Remove="Service\Box\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Service\" />
     <Folder Include="Model\" />
-    <Folder Include="Service\ScratchCard\" />
     <Folder Include="Repository\" />
     <Folder Include="Service\Ebay\" />
     <Folder Include="Repository\Implements\Ebay\" />
@@ -39,5 +38,6 @@
     <Folder Include="Repository\Implements\Auction\" />
     <Folder Include="Repository\Interfaces\Auction\" />
     <Folder Include="Service\Auction\" />
+    <Folder Include="Service\Box\" />
   </ItemGroup>
 </Project>

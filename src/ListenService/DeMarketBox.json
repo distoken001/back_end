@@ -1,7 +1,7 @@
 {
   "_format": "hh-sol-artifact-1",
-  "contractName": "ScratchCard",
-  "sourceName": "contracts/ScratchCard.sol",
+  "contractName": "ScratchBox",
+  "sourceName": "contracts/ScratchBox.sol",
   "abi": [
     {
       "inputs": [],
@@ -32,11 +32,11 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "numberOfCards",
+          "name": "numberOfBoxs",
           "type": "uint256"
         }
       ],
-      "name": "CardGifted",
+      "name": "BoxGifted",
       "type": "event"
     },
     {
@@ -57,11 +57,11 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "numberOfCards",
+          "name": "numberOfBoxs",
           "type": "uint256"
         }
       ],
-      "name": "CardPurchased",
+      "name": "BoxPurchased",
       "type": "event"
     },
     {
@@ -110,7 +110,7 @@
           "type": "uint256"
         }
       ],
-      "name": "CardTypeAdded",
+      "name": "BoxTypeAdded",
       "type": "event"
     },
     {
@@ -123,7 +123,7 @@
           "type": "string"
         }
       ],
-      "name": "CardTypeRemoved",
+      "name": "BoxTypeRemoved",
       "type": "event"
     },
     {
@@ -221,7 +221,7 @@
           "type": "uint256"
         }
       ],
-      "name": "addCardType",
+      "name": "addBoxType",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -234,7 +234,7 @@
           "type": "uint256"
         }
       ],
-      "name": "availableCards",
+      "name": "availableBoxs",
       "outputs": [
         {
           "internalType": "string",
@@ -332,11 +332,11 @@
         },
         {
           "internalType": "uint256",
-          "name": "numberOfCards",
+          "name": "numberOfBoxs",
           "type": "uint256"
         }
       ],
-      "name": "giftCards",
+      "name": "giftBoxs",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -376,11 +376,11 @@
         },
         {
           "internalType": "uint256",
-          "name": "numberOfCards",
+          "name": "numberOfBoxs",
           "type": "uint256"
         }
       ],
-      "name": "purchaseCards",
+      "name": "purchaseBoxs",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -393,7 +393,7 @@
           "type": "string"
         }
       ],
-      "name": "removeCardType",
+      "name": "removeBoxType",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -413,7 +413,7 @@
           "type": "string"
         }
       ],
-      "name": "scratchCard",
+      "name": "scratchBox",
       "outputs": [
         {
           "internalType": "uint256",

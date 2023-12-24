@@ -24,11 +24,11 @@ using ListenService.Repository.Interfaces;
 
 namespace ListenService.Service
 {
-    public class CardGiftedService : IHostedService
+    public class BoxGiftedService : IHostedService
     {
         private readonly IConfiguration _configuration;
-        private readonly ICardGifted _cardGifted;
-        public CardGiftedService(IConfiguration configuration, ICardGifted cardGifted)
+        private readonly IBoxGifted _cardGifted;
+        public BoxGiftedService(IConfiguration configuration, IBoxGifted cardGifted)
         {
             _configuration = configuration;
             _cardGifted = cardGifted;
@@ -38,29 +38,29 @@ namespace ListenService.Service
         {
             try
             {
-                Console.WriteLine("CardGiftedService启动啦！");
+                Console.WriteLine("BoxGiftedService启动啦！");
 
-                //if (!string.IsNullOrEmpty(_configuration["Polygon:Contract_ScratchCard"]))
+                //if (!string.IsNullOrEmpty(_configuration["Polygon:Contract_ScratchBox"]))
                 //{
-                //    _ = _cardGifted.StartAsync(_configuration["Polygon:WSS_URL"], _configuration["Polygon:Contract_ScratchCard"], ChainEnum.Polygon);
+                //    _ = _cardGifted.StartAsync(_configuration["Polygon:WSS_URL"], _configuration["Polygon:Contract_ScratchBox"], ChainEnum.Polygon);
                 //}
-                //if (!string.IsNullOrEmpty(_configuration["ARB:Contract_ScratchCard"]))
+                //if (!string.IsNullOrEmpty(_configuration["ARB:Contract_ScratchBox"]))
                 //{
-                //    _ = _cardGifted.StartAsync(_configuration["ARB:WSS_URL"], _configuration["ARB:Contract_ScratchCard"], ChainEnum.Arbitrum);
+                //    _ = _cardGifted.StartAsync(_configuration["ARB:WSS_URL"], _configuration["ARB:Contract_ScratchBox"], ChainEnum.Arbitrum);
                 //}
                 if (_configuration["Env"] == "prod")
                 {
-                    if (!string.IsNullOrEmpty(_configuration["BSC:Contract_ScratchCard"]))
+                    if (!string.IsNullOrEmpty(_configuration["BSC:Contract_ScratchBox"]))
                     {
-                        _ = _cardGifted.StartAsync(_configuration["BSC:WSS_URL"], _configuration["BSC:Contract_ScratchCard"], ChainEnum.Bsc);
+                        _ = _cardGifted.StartAsync(_configuration["BSC:WSS_URL"], _configuration["BSC:Contract_ScratchBox"], ChainEnum.Bsc);
                     }
                 }
                 else
                 {
-                    if (!string.IsNullOrEmpty(_configuration["OPGoerli:Contract_ScratchCard"]))
+                    if (!string.IsNullOrEmpty(_configuration["OPGoerli:Contract_ScratchBox"]))
                     {
                         ChainEnum chain_id = ChainEnum.OptimisticGoerli;
-                        _ = _cardGifted.StartAsync(_configuration["OPGoerli:WSS_URL"], _configuration["OPGoerli:Contract_ScratchCard"], chain_id);
+                        _ = _cardGifted.StartAsync(_configuration["OPGoerli:WSS_URL"], _configuration["OPGoerli:Contract_ScratchBox"], chain_id);
                     }
                 }
             }

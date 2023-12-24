@@ -4,11 +4,11 @@ using Nethereum.ABI.FunctionEncoding.Attributes;
 namespace ListenService.Model
 
 {
-    [Event("CardTypeRemoved")]
-    public class CardTypeRemovedEventDTO :IEventDTO
+    [Event("BoxTypeRemoved")]
+    public class BoxTypeRemovedEventDTO :IEventDTO
 	{
         [Parameter("string", "cardType", 1, false)]
-        public string CardType { get; set; }
+        public string BoxType { get; set; }
     }
 }
 

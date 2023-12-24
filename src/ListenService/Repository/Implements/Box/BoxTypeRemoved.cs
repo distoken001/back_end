@@ -23,11 +23,11 @@ using System.Net.WebSockets;
 
 namespace ListenService.Repository.Implements
 {
-    public class CardTypeRemoved : ICardTypeRemoved
+    public class BoxTypeRemoved : IBoxTypeRemoved
     {
         private readonly IConfiguration _configuration;
         private readonly MySqlMasterDbContext _masterDbContext;
-        public CardTypeRemoved(IConfiguration configuration, MySqlMasterDbContext mySqlMasterDbContext)
+        public BoxTypeRemoved(IConfiguration configuration, MySqlMasterDbContext mySqlMasterDbContext)
         {
             _configuration = configuration;
             _masterDbContext = mySqlMasterDbContext;
@@ -42,32 +42,32 @@ namespace ListenService.Repository.Implements
 
             try
             {
-                var cardTypeAdded = Event<CardTypeRemovedEventDTO>.GetEventABI().CreateFilterInput();
+                var cardTypeAdded = Event<BoxTypeRemovedEventDTO>.GetEventABI().CreateFilterInput();
 
                 var subscription = new EthLogsObservableSubscription(client);
                 Action<Exception> onErrorAction = async (ex) =>
                 {
                     // 处理异常情况 ex
                     client.Dispose();
-                    Console.WriteLine($"Error CardTypeRemoved: {ex}");
+                    Console.WriteLine($"Error BoxTypeRemoved: {ex}");
                     await StartAsync(nodeUrl, contractAddress, chain_id);
                 };
                 // attach a handler for Transfer event logs
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(log =>
                 {
-                        Console.WriteLine("CardTypeAdded监听到了！");
+                        Console.WriteLine("BoxTypeAdded监听到了！");
                         // decode the log into a typed event log
-                        var decoded = Event<CardTypeRemovedEventDTO>.DecodeEvent(log);
+                        var decoded = Event<BoxTypeRemovedEventDTO>.DecodeEvent(log);
                         if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
                         {
-                            var card = _masterDbContext.card_type.Where(a => a.type == decoded.Event.CardType && a.chain_id == chain_id && a.state == 1).FirstOrDefault();
+                            var card = _masterDbContext.card_type.Where(a => a.type == decoded.Event.BoxType && a.chain_id == chain_id && a.state == 1).FirstOrDefault();
                             card.state = 0;
                             _masterDbContext.SaveChanges();
                         }
                         else
                         {
 
-                            Console.WriteLine("CardTypeAdded: Found not standard log");
+                            Console.WriteLine("BoxTypeAdded: Found not standard log");
                         }
                 }, onErrorAction);
                 // open the web socket connection
@@ -83,7 +83,7 @@ namespace ListenService.Repository.Implements
                 //    {
                 //        client.Dispose();
                 //        await StartAsync(nodeUrl, contractAddress, chain_id);
-                //        Console.WriteLine("CardTypeRemoved重启了");
+                //        Console.WriteLine("BoxTypeRemoved重启了");
                 //        break;
 
                 //    }
@@ -93,9 +93,9 @@ namespace ListenService.Repository.Implements
             catch (Exception ex)
             {
                 client.Dispose();
-                Console.WriteLine($"CardTypeRemoved:{ex}");
+                Console.WriteLine($"BoxTypeRemoved:{ex}");
                 await StartAsync(nodeUrl, contractAddress, chain_id);
-                Console.WriteLine("CardTypeRemoved重启了ex");
+                Console.WriteLine("BoxTypeRemoved重启了ex");
 
             }
         }

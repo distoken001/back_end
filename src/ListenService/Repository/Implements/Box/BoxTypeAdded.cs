@@ -18,99 +18,106 @@ using ListenService.Model;
 using Nethereum.JsonRpc.Client;
 using CommonLibrary.Model.DataEntityModel;
 using CommonLibrary.Common.Common;
-using Microsoft.VisualBasic;
-using Nethereum.Contracts.Standards.ERC20.TokenList;
 using ListenService.Repository.Interfaces;
 using System.Net.WebSockets;
 
 namespace ListenService.Repository.Implements
 {
-    public class PrizeClaimed : IPrizeClaimed
+    public class BoxTypeAdded : IBoxTypeAdded
     {
         private readonly IConfiguration _configuration;
         private readonly MySqlMasterDbContext _masterDbContext;
-        public PrizeClaimed(IConfiguration configuration, MySqlMasterDbContext mySqlMasterDbContext)
+        public BoxTypeAdded(IConfiguration configuration, MySqlMasterDbContext mySqlMasterDbContext)
         {
             _configuration = configuration;
             _masterDbContext = mySqlMasterDbContext;
         }
+
+
         public async Task StartAsync(string nodeUrl, string contractAddress, ChainEnum chain_id)
         {
-            //string contractAddress = _configuration["OP:Contract_ScratchCard"];
             StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
             //StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
             var client = new StreamingWebSocketClient(nodeUrl);
-
             try
             {
                 //// Infura 提供的以太坊节点 WebSocket 地址
                 //string nodeUrl = _configuration["OP:WSS_URL"];
 
                 //// 你的以太坊智能合约地址
-          
-                var prizeClaimed = Event<PrizeClaimedEventDTO>.GetEventABI().CreateFilterInput();
+                //string contractAddress = _configuration["OP:Contract_ScratchBox"];
 
-                var subscription = new EthLogsObservableSubscription(client);
+                // 读取JSON文件内容
+                string jsonFilePath = "DeMarketBox.json"; // 替换为正确的JSON文件路径
+
+                string jsonString = System.IO.File.ReadAllText(jsonFilePath);
+
+                // 解析JSON
+                JObject jsonObject = JObject.Parse(jsonString);
+
+                // 获取abi节点的值
+                string abi = jsonObject["abi"]?.ToString();
+
+
+                var cardTypeAdded = Event<BoxTypeAddedEventDTO>.GetEventABI().CreateFilterInput();
                 Action<Exception> onErrorAction = async (ex) =>
                 {
                     // 处理异常情况 ex
                     client.Dispose();
-                    Console.WriteLine($"Error PrizeClaimed: {ex}");
+                    Console.WriteLine($"Error BoxTypeAdded: {ex}");
                     await StartAsync(nodeUrl, contractAddress, chain_id);
                 };
+                var subscription = new EthLogsObservableSubscription(client);
                 // attach a handler for Transfer event logs
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(log =>
                 {
-                    Console.WriteLine("PrizeClaimed监听到了！");
+
                     // decode the log into a typed event log
-                    var decoded = Event<PrizeClaimedEventDTO>.DecodeEvent(log);
+                    var decoded = Event<BoxTypeAddedEventDTO>.DecodeEvent(log);
                     if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
                     {
-                        var card = _masterDbContext.card_type.Where(a => a.type == decoded.Event.CardType && a.chain_id == chain_id && a.state == 1).FirstOrDefault();
-                        var chainToken = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(card.token) && a.chain_id == chain_id).FirstOrDefault();
+                        Console.WriteLine("BoxTypeAdded监听到了！");
+                        var chainToken = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(decoded.Event.TokenAddress) && a.chain_id == chain_id).FirstOrDefault();
                         var decimals_num = (double)Math.Pow(10, chainToken.decimals);
-                        var prize = (double)decoded.Event.Prize / decimals_num;
-                        _masterDbContext.card_opened.Add(new card_opened() { buyer = decoded.Event.User, card_name = card.name, card_type = card.type, chain_id = chain_id, create_time = DateTime.Now, creator = "system", contract = log.Address, img = card.img, price = card.price, token = card.token, wining = prize });
-                        var cardNotOpened = _masterDbContext.card_not_opened.Where(a => a.buyer.Equals(decoded.Event.User) && a.card_type.Equals(card.type) && a.contract.Equals(log.Address) && a.token.Equals(chainToken.token_address)).FirstOrDefault();
-                        cardNotOpened.amount -= 1;
-                        cardNotOpened.updater = "system";
-                        cardNotOpened.update_time = DateTime.Now;
-
+                        var cardType = new card_type() { type = decoded.Event.BoxType, max_prize = (double)decoded.Event.MaxPrize / decimals_num, max_prize_probability = (int)decoded.Event.MaxPrizeProbability, name = decoded.Event.BoxName, price = (double)decoded.Event.Price / decimals_num, token = decoded.Event.TokenAddress, winning_probability = (int)decoded.Event.WinningProbability, chain_id = chain_id, state = 1, create_time = DateTime.Now };
+                        _masterDbContext.card_type.Add(cardType);
                         _masterDbContext.SaveChanges();
+                        Console.WriteLine("Contract address: " + log.Address + " Log Transfer from:" + decoded.Event.BoxName);
                     }
                     else
                     {
-                        Console.WriteLine("PrizeClaimed:Found not standard log");
-                    }
 
+                        Console.WriteLine("BoxTypeAdded: Found not standard log");
+                    }
                 }, onErrorAction);
                 // open the web socket connection
                 await client.StartAsync();
 
                 // begin receiving subscription data
                 // data will be received on a background thread
-                await subscription.SubscribeAsync(prizeClaimed);
+                await subscription.SubscribeAsync(cardTypeAdded);
+
                 //while (true)
                 //{
                 //    if (client.WebSocketState == WebSocketState.Aborted)
                 //    {
                 //        client.Dispose();
                 //        await StartAsync(nodeUrl, contractAddress, chain_id);
-                //        Console.WriteLine("PrizeClaimed重启了");
+                //        Console.WriteLine("BoxTypeAdded重启了");
                 //        break;
 
                 //    }
                 //    await Task.Delay(500);
                 //}
+
             }
             catch (Exception ex)
             {
                 client.Dispose();
-                Console.WriteLine($"PrizeClaimed:{ex}");
+                Console.WriteLine($"BoxTypeAdded:{ex}");
                 await StartAsync(nodeUrl, contractAddress, chain_id);
-                Console.WriteLine("PrizeClaimed重启了EX");
+                Console.WriteLine("BoxTypeAdded重启了EX");
             }
         }
     }
 }
-

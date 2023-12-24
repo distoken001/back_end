@@ -10,11 +10,11 @@ using ListenService.Repository.Interfaces;
 
 namespace ListenService.Repository.Implements
 {
-    public class CardGifted : ICardGifted
+    public class BoxGifted : IBoxGifted
     {
         private readonly IConfiguration _configuration;
         private readonly MySqlMasterDbContext _masterDbContext;
-        public CardGifted(IConfiguration configuration, MySqlMasterDbContext mySqlMasterDbContext)
+        public BoxGifted(IConfiguration configuration, MySqlMasterDbContext mySqlMasterDbContext)
         {
             _configuration = configuration;
             _masterDbContext = mySqlMasterDbContext;
@@ -26,12 +26,12 @@ namespace ListenService.Repository.Implements
             var client = new StreamingWebSocketClient(nodeUrl);
             try
             {
-                var cardGifted = Event<CardGiftedEventDTO>.GetEventABI().CreateFilterInput();
+                var cardGifted = Event<BoxGiftedEventDTO>.GetEventABI().CreateFilterInput();
                 var subscription = new EthLogsObservableSubscription(client);
                 Action<Exception> onErrorAction = async (ex) =>
                 {
                     // 处理异常情况 ex
-                    Console.WriteLine($"Error CardGifted: {ex}");
+                    Console.WriteLine($"Error BoxGifted: {ex}");
                     client.Dispose();
                     await StartAsync(nodeUrl, contractAddress, chain_id);
                 };
@@ -39,15 +39,15 @@ namespace ListenService.Repository.Implements
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(log =>
                 {
                     // decode the log into a typed event log
-                    var decoded = Event<CardGiftedEventDTO>.DecodeEvent(log);
+                    var decoded = Event<BoxGiftedEventDTO>.DecodeEvent(log);
                     if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
                     {
-                        Console.WriteLine("CardGifted监听到了！");
-                        var card = _masterDbContext.card_type.Where(a => a.type == decoded.Event.CardType && a.chain_id == chain_id && a.state == 1).FirstOrDefault();
+                        Console.WriteLine("BoxGifted监听到了！");
+                        var card = _masterDbContext.card_type.Where(a => a.type == decoded.Event.BoxType && a.chain_id == chain_id && a.state == 1).FirstOrDefault();
                         var token = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(card.token) && a.chain_id == card.chain_id).FirstOrDefault();
                         var cardNotOpenedSender = _masterDbContext.card_not_opened.Where(a => a.buyer.Equals(decoded.Event.Sender) && a.card_type.Equals(card.type) && a.contract.Equals(log.Address)).FirstOrDefault();
 
-                        cardNotOpenedSender.amount -= (int)decoded.Event.NumberOfCards;
+                        cardNotOpenedSender.amount -= (int)decoded.Event.NumberOfBoxs;
                         cardNotOpenedSender.updater = "system";
                         cardNotOpenedSender.update_time = DateTime.Now;
 
@@ -55,20 +55,20 @@ namespace ListenService.Repository.Implements
                         var cardNotOpenedRecipient = _masterDbContext.card_not_opened.Where(a => a.buyer.Equals(decoded.Event.Recipient) && a.card_type.Equals(card.type) && a.contract.Equals(log.Address)).FirstOrDefault();
                         if (cardNotOpenedRecipient != null)
                         {
-                            cardNotOpenedRecipient.amount += (int)decoded.Event.NumberOfCards;
+                            cardNotOpenedRecipient.amount += (int)decoded.Event.NumberOfBoxs;
                             cardNotOpenedRecipient.updater = "system";
                             cardNotOpenedRecipient.update_time = DateTime.Now;
                         }
                         else
                         {
-                            var notOpened = new card_not_opened() { card_type = card.type, card_name = card.name, amount = (int)decoded.Event.NumberOfCards, buyer = decoded.Event.Recipient, chain_id = chain_id, contract = log.Address, create_time = DateTime.Now, creator = "system", price = card.price, token = card.token, img = card.img };
+                            var notOpened = new card_not_opened() { card_type = card.type, card_name = card.name, amount = (int)decoded.Event.NumberOfBoxs, buyer = decoded.Event.Recipient, chain_id = chain_id, contract = log.Address, create_time = DateTime.Now, creator = "system", price = card.price, token = card.token, img = card.img };
                             _masterDbContext.card_not_opened.Add(notOpened);
                         }
                         _masterDbContext.SaveChanges();
                     }
                     else
                     {
-                        Console.WriteLine("CardPurchased:Found not standard log");
+                        Console.WriteLine("BoxPurchased:Found not standard log");
                     }
                 }, onErrorAction);
                 // open the web socket connection
@@ -83,7 +83,7 @@ namespace ListenService.Repository.Implements
                 //    {
                 //        client.Dispose();
                 //        await StartAsync(nodeUrl, contractAddress, chain_id);
-                //        Console.WriteLine("CardGifted重启了");
+                //        Console.WriteLine("BoxGifted重启了");
                 //        break;
 
                 //    }
@@ -94,8 +94,8 @@ namespace ListenService.Repository.Implements
             {
                 client.Dispose();
                 await StartAsync(nodeUrl, contractAddress, chain_id);
-                Console.WriteLine($"CardGifted:{ex}");
-                Console.WriteLine("CardGifted重启了EX");
+                Console.WriteLine($"BoxGifted:{ex}");
+                Console.WriteLine("BoxGifted重启了EX");
             }
         }
 

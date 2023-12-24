@@ -10,7 +10,7 @@ namespace ListenService.Model
         public string User { get; set; }
 
         [Parameter("string", "cardType", 2, false)]
-        public string CardType { get; set; }
+        public string BoxType { get; set; }
 
         [Parameter("uint256", "prize", 3, false)]
         public BigInteger Prize { get; set; }
