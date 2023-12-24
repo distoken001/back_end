@@ -16,7 +16,7 @@
         /// <summary>
         /// 银行卡验证
         /// </summary>
-        BankBoxNum = 3,
+        BankCardNum = 3,
         /// <summary>
         /// 银行卡归属地
         /// </summary>
@@ -28,7 +28,7 @@
         /// <summary>
         /// 姓名、身份证号、银行卡和手机号验证
         /// </summary>
-        BankBoxNumMobile = 6,
+        BankCardNumMobile = 6,
     }
 
     /// <summary>

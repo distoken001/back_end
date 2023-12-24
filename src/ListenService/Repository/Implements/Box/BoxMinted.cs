@@ -40,7 +40,7 @@ namespace ListenService.Repository.Implements
                 };
                 _subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(log =>
                 {
-                    Console.WriteLine("BoxPurchased监听到了！");
+                    Console.WriteLine("BoxMinted监听到了！");
                     // decode the log into a typed event log
                     var decoded = Event<BoxMintedEventDTO>.DecodeEvent(log);
                     if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
@@ -63,7 +63,7 @@ namespace ListenService.Repository.Implements
                     }
                     else
                     {
-                        Console.WriteLine("BoxPurchased:Found not standard log");
+                        Console.WriteLine("BoxMinted:Found not standard log");
                     }
                 }, onErrorAction);
                 await _client.StartAsync();
@@ -86,8 +86,8 @@ namespace ListenService.Repository.Implements
             {
                 _client.Dispose();
                 await StartAsync(nodeUrl, contractAddress, chain_id);
-                Console.WriteLine($"BoxPurchased:{ex}");
-                Console.WriteLine("BoxPurchased重启了EX");
+                Console.WriteLine($"BoxMinted:{ex}");
+                Console.WriteLine("BoxMinted重启了EX");
             }
         }
 
