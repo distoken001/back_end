@@ -32,7 +32,7 @@
         {
           "indexed": false,
           "internalType": "string",
-          "name": "BoxType",
+          "name": "boxType",
           "type": "string"
         },
         {
@@ -76,13 +76,13 @@
         {
           "indexed": false,
           "internalType": "string",
-          "name": "BoxType",
+          "name": "boxType",
           "type": "string"
         },
         {
           "indexed": false,
           "internalType": "string",
-          "name": "BoxName",
+          "name": "boxName",
           "type": "string"
         },
         {
@@ -125,7 +125,7 @@
         {
           "indexed": false,
           "internalType": "string",
-          "name": "BoxType",
+          "name": "boxType",
           "type": "string"
         }
       ],
@@ -223,12 +223,12 @@
       "inputs": [
         {
           "internalType": "string",
-          "name": "BoxType",
+          "name": "boxType",
           "type": "string"
         },
         {
           "internalType": "string",
-          "name": "BoxName",
+          "name": "boxName",
           "type": "string"
         },
         {
@@ -274,12 +274,12 @@
       "outputs": [
         {
           "internalType": "string",
-          "name": "BoxType",
+          "name": "boxType",
           "type": "string"
         },
         {
           "internalType": "string",
-          "name": "BoxName",
+          "name": "boxName",
           "type": "string"
         },
         {
@@ -333,7 +333,7 @@
         },
         {
           "internalType": "string",
-          "name": "BoxType",
+          "name": "boxType",
           "type": "string"
         },
         {
@@ -377,7 +377,7 @@
       "inputs": [
         {
           "internalType": "string",
-          "name": "BoxType",
+          "name": "boxType",
           "type": "string"
         },
         {
@@ -395,7 +395,7 @@
       "inputs": [
         {
           "internalType": "string",
-          "name": "BoxType",
+          "name": "boxType",
           "type": "string"
         }
       ],
@@ -440,7 +440,7 @@
       "inputs": [
         {
           "internalType": "string",
-          "name": "BoxType",
+          "name": "boxType",
           "type": "string"
         }
       ],
