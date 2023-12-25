@@ -29,37 +29,136 @@ namespace ListenService.Repository.Implements
     public class SendMessage : ISendMessage
     {
         private readonly IConfiguration _configuration;
-        private readonly MySqlMasterDbContext _masterDbContext;
-        public SendMessage(IConfiguration configuration, MySqlMasterDbContext mySqlMasterDbContext)
+        private readonly IServiceProvider _serviceProvider;
+        public SendMessage(IConfiguration configuration, IServiceProvider serviceProvider)
         {
             _configuration = configuration;
-            _masterDbContext = mySqlMasterDbContext;
+            _serviceProvider = serviceProvider;
         }
-     
+
         public async Task SendMessageEbay(long order_id, ChainEnum chain_id, string contract)
         {
 
             try
             {
-                List<long> ls = new List<long>();
-                var order = await _masterDbContext.orders.FirstOrDefaultAsync(p => p.order_id == order_id && p.chain_id == chain_id && p.contract == contract);
-                OrderStatus status = order.status;
-                var seller = await _masterDbContext.users.FirstOrDefaultAsync(u => u.address == order.seller);
-                var buyer = await _masterDbContext.users.FirstOrDefaultAsync(u => u.address == order.buyer);
-                var token = _masterDbContext.chain_tokens.AsNoTracking().FirstOrDefault(c => c.chain_id == order.chain_id && c.token_address.Equals(order.token, StringComparison.OrdinalIgnoreCase));
-                var botClient = new TelegramBotClient(_configuration["BotToken"]);
-                string mailMessageSeller = "";
-                string mailMessageBuyer = "";
-                if (status == OrderStatus.Initial)
+                using (var scope = _serviceProvider.CreateScope())
                 {
-                    if (seller?.telegram_id != null)
+                    var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
+                    List<long> ls = new List<long>();
+                    var order = await _masterDbContext.orders.FirstOrDefaultAsync(p => p.order_id == order_id && p.chain_id == chain_id && p.contract == contract);
+                    OrderStatus status = order.status;
+                    var seller = await _masterDbContext.users.FirstOrDefaultAsync(u => u.address == order.seller);
+                    var buyer = await _masterDbContext.users.FirstOrDefaultAsync(u => u.address == order.buyer);
+                    var token = _masterDbContext.chain_tokens.AsNoTracking().FirstOrDefault(c => c.chain_id == order.chain_id && c.token_address.Equals(order.token, StringComparison.OrdinalIgnoreCase));
+                    var botClient = new TelegramBotClient(_configuration["BotToken"]);
+                    string mailMessageSeller = "";
+                    string mailMessageBuyer = "";
+                    if (status == OrderStatus.Initial)
                     {
-                        mailMessageSeller = $"您在{order.chain_id.ToString()}链上发布了商品：{order.name}。";
-                        var chatMessage = $"担保订单：用户 @{seller?.nick_name} 在{order.chain_id.ToString()}链上发布了新商品：{order.name}，单价：{order.price} {token.token_name}, 数量：{order.amount}，订单链接:{_configuration["Domain"]}/market/detail/{order.contract}/{(int)order.chain_id}/{order.order_id}";
+                        if (seller?.telegram_id != null)
+                        {
+                            mailMessageSeller = $"您在{order.chain_id.ToString()}链上发布了商品：{order.name}。";
+                            var chatMessage = $"担保订单：用户 @{seller?.nick_name} 在{order.chain_id.ToString()}链上发布了新商品：{order.name}，单价：{order.price} {token.token_name}, 数量：{order.amount}，订单链接:{_configuration["Domain"]}/market/detail/{order.contract}/{(int)order.chain_id}/{order.order_id}";
 
+                            await botClient.SendTextMessageAsync(_configuration["GroupChatID"], chatMessage);
+
+                            var chatIDs = _configuration["GroupChatIDs"].Split(',');
+                            foreach (var chatID in chatIDs)
+                            {
+                                if (chatID == _configuration["GroupChatID"])
+                                {
+                                    continue;
+                                }
+                                if (_configuration[chatID] == token.token_name || token.token_name == "USDT")
+                                {
+                                    var message = await botClient.SendTextMessageAsync(long.Parse(chatID), chatMessage);
+                                }
+                            }
+
+                        }
+                        if (buyer?.telegram_id != null)
+                        {
+                            mailMessageBuyer = $"卖家(@{seller?.nick_name})在{order.chain_id.ToString()}链上发布的商品({order.name})指定您为唯一购买人。";
+                        }
+                    }
+                    else if (status == OrderStatus.SellerCancelWithoutDuty)
+                    {
+                        if (seller?.telegram_id != null)
+                        {
+                            mailMessageSeller = $"您在{order.chain_id.ToString()}链上发布的商品({order.name})已取消。";
+                        }
+                        if (buyer?.telegram_id != null)
+                        {
+                            mailMessageBuyer = $"卖家(@{seller?.nick_name})在{order.chain_id.ToString()}链上发布的商品({order.name})已取消，该商品曾指定您为唯一购买人。";
+                        }
+                    }
+                    else if (status == OrderStatus.Completed)
+                    {
+                        mailMessageSeller = $"您在{order.chain_id.ToString()}链上的发布的商品({order.name})交易已完成。";
+                        mailMessageBuyer = $"您在{order.chain_id.ToString()}链上购买的商品({order.name})交易已完成。";
+                    }
+                    else if (status == OrderStatus.ConsultCancelCompleted)
+                    {
+                        mailMessageSeller = $"您在{order.chain_id.ToString()}链上的发布的商品({order.name})协商取消已完成。";
+                        mailMessageBuyer = $"您在{order.chain_id.ToString()}链上购买的商品({order.name})协商取消已完成。";
+                    }
+                    else
+                    {
+                        mailMessageSeller = $"您在{order.chain_id.ToString()}链上发布的商品（{order.name}）有新动态，请及时查看。\n对方Telegram：@" + buyer?.nick_name;
+                        mailMessageBuyer = $"您在{order.chain_id.ToString()}链上购买的商品（{order.name}）有新动态，请及时查看。\n对方Telegram： @" + seller?.nick_name;
+                    }
+
+                    if (!string.IsNullOrEmpty(mailMessageSeller))
+                    {
+
+                        var chatId = seller?.telegram_id; // 替换为您要发送消息的聊天ID
+                        if (chatId != null)
+                        {
+                            var message = await botClient.SendTextMessageAsync(chatId, mailMessageSeller);
+                        }
+                    }
+                    if (!string.IsNullOrEmpty(mailMessageBuyer))
+                    {
+                        var chatId = buyer?.telegram_id; // 替换为您要发送消息的聊天ID
+                        if (chatId != null)
+                        {
+                            var message = await botClient.SendTextMessageAsync(chatId, mailMessageBuyer);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception caught in sendBot(): {0}", ex.ToString());
+
+            }
+        }
+        public async Task SendMessageAuction(long order_id, ChainEnum chain_id, string contract)
+        {
+            try
+            {
+                using (var scope = _serviceProvider.CreateScope())
+                {
+                    var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
+                    List<long> ls = new List<long>();
+                    var order = await _masterDbContext.orders_auction.FirstOrDefaultAsync(p => p.order_id == order_id && p.chain_id == chain_id && p.contract == contract);
+                    OrderAuctionStatus status = order.status;
+                    var seller = await _masterDbContext.users.FirstOrDefaultAsync(u => u.address == order.seller);
+                    var buyer = await _masterDbContext.users.FirstOrDefaultAsync(u => u.address == order.buyer);
+
+                    var token = _masterDbContext.chain_tokens.AsNoTracking().FirstOrDefault(c => c.chain_id == order.chain_id && c.token_address.Equals(order.token, StringComparison.OrdinalIgnoreCase));
+
+                    var botClient = new TelegramBotClient(_configuration["BotToken"]);
+                    string mailMessageSeller = "";
+                    string mailMessageBuyer = "";
+                    if (status == OrderAuctionStatus.Initial)
+                    {
+                        mailMessageSeller = $"您在{order.chain_id.ToString()}链上发布了拍卖商品：{order.name}。";
+                        var chatMessage = $"拍卖订单：用户 @{seller?.nick_name} 在{order.chain_id.ToString()}链上发布了新商品：{order.name}，起拍单价：{order.price} {token.token_name}, 数量：{order.amount}，订单链接:{_configuration["Domain"]}/auction/detail/{order.contract}/{(int)order.chain_id}/{order.order_id}"; ;
                         await botClient.SendTextMessageAsync(_configuration["GroupChatID"], chatMessage);
 
                         var chatIDs = _configuration["GroupChatIDs"].Split(',');
+
                         foreach (var chatID in chatIDs)
                         {
                             if (chatID == _configuration["GroupChatID"])
@@ -71,138 +170,46 @@ namespace ListenService.Repository.Implements
                                 var message = await botClient.SendTextMessageAsync(long.Parse(chatID), chatMessage);
                             }
                         }
-
                     }
-                    if (buyer?.telegram_id != null)
+                    else if (status == OrderAuctionStatus.SellerCancelWithoutDuty)
                     {
-                        mailMessageBuyer = $"卖家(@{seller?.nick_name})在{order.chain_id.ToString()}链上发布的商品({order.name})指定您为唯一购买人。";
-                    }
-                }
-                else if (status == OrderStatus.SellerCancelWithoutDuty)
-                {
-                    if (seller?.telegram_id != null)
-                    {
-                        mailMessageSeller = $"您在{order.chain_id.ToString()}链上发布的商品({order.name})已取消。";
-                    }
-                    if (buyer?.telegram_id != null)
-                    {
-                        mailMessageBuyer = $"卖家(@{seller?.nick_name})在{order.chain_id.ToString()}链上发布的商品({order.name})已取消，该商品曾指定您为唯一购买人。";
-                    }
-                }
-                else if (status == OrderStatus.Completed)
-                {
-                    mailMessageSeller = $"您在{order.chain_id.ToString()}链上的发布的商品({order.name})交易已完成。";
-                    mailMessageBuyer = $"您在{order.chain_id.ToString()}链上购买的商品({order.name})交易已完成。";
-                }
-                else if (status == OrderStatus.ConsultCancelCompleted)
-                {
-                    mailMessageSeller = $"您在{order.chain_id.ToString()}链上的发布的商品({order.name})协商取消已完成。";
-                    mailMessageBuyer = $"您在{order.chain_id.ToString()}链上购买的商品({order.name})协商取消已完成。";
-                }
-                else
-                {
-                    mailMessageSeller = $"您在{order.chain_id.ToString()}链上发布的商品（{order.name}）有新动态，请及时查看。\n对方Telegram：@" + buyer?.nick_name;
-                    mailMessageBuyer = $"您在{order.chain_id.ToString()}链上购买的商品（{order.name}）有新动态，请及时查看。\n对方Telegram： @" + seller?.nick_name;
-                }
-
-                if (!string.IsNullOrEmpty(mailMessageSeller))
-                {
-
-                    var chatId = seller?.telegram_id; // 替换为您要发送消息的聊天ID
-                    if (chatId != null)
-                    {
-                        var message = await botClient.SendTextMessageAsync(chatId, mailMessageSeller);
-                    }
-                }
-                if (!string.IsNullOrEmpty(mailMessageBuyer))
-                {
-                    var chatId = buyer?.telegram_id; // 替换为您要发送消息的聊天ID
-                    if (chatId != null)
-                    {
-                        var message = await botClient.SendTextMessageAsync(chatId, mailMessageBuyer);
-                    }
-                }
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Exception caught in sendBot(): {0}", ex.ToString());
-             
-            }
-        }
-        public async Task SendMessageAuction(long order_id, ChainEnum chain_id, string contract)
-        {
-            try
-            {
-                List<long> ls = new List<long>();
-                var order = await _masterDbContext.orders_auction.FirstOrDefaultAsync(p => p.order_id == order_id && p.chain_id == chain_id && p.contract == contract);
-                OrderAuctionStatus status = order.status;
-                var seller = await _masterDbContext.users.FirstOrDefaultAsync(u => u.address == order.seller);
-                var buyer = await _masterDbContext.users.FirstOrDefaultAsync(u => u.address == order.buyer);
-             
-                var token = _masterDbContext.chain_tokens.AsNoTracking().FirstOrDefault(c => c.chain_id == order.chain_id && c.token_address.Equals(order.token, StringComparison.OrdinalIgnoreCase));
-              
-                var botClient = new TelegramBotClient(_configuration["BotToken"]);
-                string mailMessageSeller = "";
-                string mailMessageBuyer = "";
-                if (status == OrderAuctionStatus.Initial)
-                {
-                    mailMessageSeller = $"您在{order.chain_id.ToString()}链上发布了拍卖商品：{order.name}。";
-                    var chatMessage = $"拍卖订单：用户 @{seller?.nick_name} 在{order.chain_id.ToString()}链上发布了新商品：{order.name}，起拍单价：{order.price} {token.token_name}, 数量：{order.amount}，订单链接:{_configuration["Domain"]}/auction/detail/{order.contract}/{(int)order.chain_id}/{order.order_id}"; ;
-                    await botClient.SendTextMessageAsync(_configuration["GroupChatID"], chatMessage);
-
-                    var chatIDs = _configuration["GroupChatIDs"].Split(',');
-
-                    foreach (var chatID in chatIDs)
-                    {
-                        if (chatID == _configuration["GroupChatID"])
+                        if (seller?.telegram_id != null)
                         {
-                            continue;
+                            mailMessageSeller = $"您在{order.chain_id.ToString()}链上发布的拍卖商品({order.name})已取消。";
                         }
-                        if (_configuration[chatID] == token.token_name || token.token_name == "USDT")
+
+                    }
+                    else if (status == OrderAuctionStatus.Completed)
+                    {
+                        mailMessageSeller = $"您在{order.chain_id.ToString()}链上的发布的拍卖商品({order.name})交易已完成。";
+                        mailMessageBuyer = $"您在{order.chain_id.ToString()}链上拍下的商品({order.name})交易已完成。";
+                    }
+                    else if (status == OrderAuctionStatus.ConsultCancelCompleted)
+                    {
+                        mailMessageSeller = $"您在{order.chain_id.ToString()}链上的发布的拍卖商品({order.name})协商取消已完成。";
+                        mailMessageBuyer = $"您在{order.chain_id.ToString()}链上拍下的商品({order.name})协商取消已完成。";
+                    }
+                    else
+                    {
+                        mailMessageSeller = $"您在{order.chain_id.ToString()}链上发布的拍卖商品（{order.name}）有新动态，请及时查看。\n对方Telegram：@" + buyer?.nick_name;
+                        mailMessageBuyer = $"您在{order.chain_id.ToString()}链上拍下的商品（{order.name}）有新动态，请及时查看。\n对方Telegram： @" + seller?.nick_name;
+                    }
+                    if (!string.IsNullOrEmpty(mailMessageSeller))
+                    {
+
+                        var chatId = seller?.telegram_id; // 替换为您要发送消息的聊天ID
+                        if (chatId != null)
                         {
-                            var message = await botClient.SendTextMessageAsync(long.Parse(chatID), chatMessage);
+                            var message = await botClient.SendTextMessageAsync(chatId, mailMessageSeller);
                         }
                     }
-                }
-                else if (status == OrderAuctionStatus.SellerCancelWithoutDuty)
-                {
-                    if (seller?.telegram_id != null)
+                    if (!string.IsNullOrEmpty(mailMessageBuyer))
                     {
-                        mailMessageSeller = $"您在{order.chain_id.ToString()}链上发布的拍卖商品({order.name})已取消。";
-                    }
-
-                }
-                else if (status == OrderAuctionStatus.Completed)
-                {
-                    mailMessageSeller = $"您在{order.chain_id.ToString()}链上的发布的拍卖商品({order.name})交易已完成。";
-                    mailMessageBuyer = $"您在{order.chain_id.ToString()}链上拍下的商品({order.name})交易已完成。";
-                }
-                else if (status == OrderAuctionStatus.ConsultCancelCompleted)
-                {
-                    mailMessageSeller = $"您在{order.chain_id.ToString()}链上的发布的拍卖商品({order.name})协商取消已完成。";
-                    mailMessageBuyer = $"您在{order.chain_id.ToString()}链上拍下的商品({order.name})协商取消已完成。";
-                }
-                else
-                {
-                    mailMessageSeller = $"您在{order.chain_id.ToString()}链上发布的拍卖商品（{order.name}）有新动态，请及时查看。\n对方Telegram：@" + buyer?.nick_name;
-                    mailMessageBuyer = $"您在{order.chain_id.ToString()}链上拍下的商品（{order.name}）有新动态，请及时查看。\n对方Telegram： @" + seller?.nick_name;
-                }
-                if (!string.IsNullOrEmpty(mailMessageSeller))
-                {
-
-                    var chatId = seller?.telegram_id; // 替换为您要发送消息的聊天ID
-                    if (chatId != null)
-                    {
-                        var message = await botClient.SendTextMessageAsync(chatId, mailMessageSeller);
-                    }
-                }
-                if (!string.IsNullOrEmpty(mailMessageBuyer))
-                {
-                    var chatId = buyer?.telegram_id; // 替换为您要发送消息的聊天ID
-                    if (chatId != null)
-                    {
-                        var message = await botClient.SendTextMessageAsync(chatId, mailMessageBuyer);
+                        var chatId = buyer?.telegram_id; // 替换为您要发送消息的聊天ID
+                        if (chatId != null)
+                        {
+                            var message = await botClient.SendTextMessageAsync(chatId, mailMessageBuyer);
+                        }
                     }
                 }
             }
@@ -210,7 +217,7 @@ namespace ListenService.Repository.Implements
             {
                 Console.WriteLine("Exception caught in sendBotAuction(): {0}", ex.ToString());
             }
-          
+
 
         }
     }
