@@ -301,6 +301,7 @@ namespace TelegramService
                                 }
                                 else
                                 {
+                                    Console.WriteLine("获取" + randomNumber);
                                     telegramUserChat.user_name = update.CallbackQuery.Message.Chat.Username;
                                     telegramUserChat.update_time = DateTime.Now;
                                     telegramUserChat.verify_code = randomNumber.ToString();
