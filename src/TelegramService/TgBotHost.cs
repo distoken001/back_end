@@ -268,7 +268,7 @@ namespace TelegramService
                                             telegramUserChat.user_name = update.Message.From.Username;
                                             telegramUserChat.user_id = update.Message.From.Id;
                                         }
-                                        _masterDbContext.SaveChanges();
+                                        await _masterDbContext.SaveChangesAsync();
                                         result = await botClient.SendTextMessageAsync(
                                               chatId: new ChatId(update.Message.Chat.Id),
                                               text: sb.ToString(),
@@ -306,7 +306,7 @@ namespace TelegramService
                                     telegramUserChat.verify_code = randomNumber.ToString();
                                     telegramUserChat.state = 1;
                                 }
-                                _masterDbContext.SaveChanges();
+                                await _masterDbContext.SaveChangesAsync();
                                 if (_configuration["GroupChatID"] == update.CallbackQuery.Message.Chat.Id.ToString())
                                 {
                                     await botClient.SendTextMessageAsync(
@@ -366,7 +366,7 @@ namespace TelegramService
                                 list.ForEach(a => { a.nick_name = null; a.telegram_id = null; });
                             }
 
-                            _masterDbContext.SaveChanges();
+                            await _masterDbContext.SaveChangesAsync();
                             break;
                         case UpdateType.ChatMember:
                             break;
