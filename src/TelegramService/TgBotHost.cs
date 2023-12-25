@@ -301,10 +301,11 @@ namespace TelegramService
                                 }
                                 else
                                 {
+                                    telegramUserChat.state = 1;
                                     telegramUserChat.user_name = update.CallbackQuery.Message.Chat.Username;
                                     telegramUserChat.update_time = DateTime.Now;
                                     telegramUserChat.verify_code = randomNumber.ToString();
-                                    telegramUserChat.state = 1;
+                                   
                                 }
                                 await _masterDbContext.SaveChangesAsync();
                                 if (_configuration["GroupChatID"] == update.CallbackQuery.Message.Chat.Id.ToString())
