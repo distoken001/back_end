@@ -88,8 +88,8 @@ namespace ListenService
                    .AllowAnyMethod();
                     });
                 })
-                //.AddDbContext<MySqlMasterDbContext>(options => options.UseMySql(identityConn))
-                .AddDbContext<MySqlMasterDbContext>(options => { options.UseMySql(deMarketConn, builder => builder.EnableRetryOnFailure()); }, ServiceLifetime.Singleton);
+                 //.AddDbContext<MySqlMasterDbContext>(options => options.UseMySql(identityConn))
+                 .AddDbContext<MySqlMasterDbContext>(options => options.UseMySql(deMarketConn, builder => builder.EnableRetryOnFailure()));
             privider = services.BuildServiceProvider();
 
         }
