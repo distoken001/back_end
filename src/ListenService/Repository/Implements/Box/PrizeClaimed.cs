@@ -28,11 +28,11 @@ namespace ListenService.Repository.Implements
     public class PrizeClaimed : IPrizeClaimed
     {
         private readonly IConfiguration _configuration;
-        private readonly MySqlMasterDbContext _masterDbContext;
-        public PrizeClaimed(IConfiguration configuration, MySqlMasterDbContext mySqlMasterDbContext)
+        private readonly IServiceProvider _serviceProvider;
+        public PrizeClaimed(IConfiguration configuration, IServiceProvider serviceProvider)
         {
             _configuration = configuration;
-            _masterDbContext = mySqlMasterDbContext;
+            _serviceProvider = serviceProvider;
         }
         public async Task StartAsync(string nodeUrl, string contractAddress, ChainEnum chain_id)
         {
@@ -47,7 +47,7 @@ namespace ListenService.Repository.Implements
                 //string nodeUrl = _configuration["OP:WSS_URL"];
 
                 //// 你的以太坊智能合约地址
-          
+
                 var prizeClaimed = Event<PrizeClaimedEventDTO>.GetEventABI().CreateFilterInput();
 
                 var subscription = new EthLogsObservableSubscription(client);
@@ -66,17 +66,21 @@ namespace ListenService.Repository.Implements
                     var decoded = Event<PrizeClaimedEventDTO>.DecodeEvent(log);
                     if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
                     {
-                        var card = _masterDbContext.card_type.Where(a => a.type == decoded.Event.BoxType && a.chain_id == chain_id && a.state == 1).FirstOrDefault();
-                        var chainToken = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(card.token) && a.chain_id == chain_id).FirstOrDefault();
-                        var decimals_num = (double)Math.Pow(10, chainToken.decimals);
-                        var prize = (double)decoded.Event.Prize / decimals_num;
-                        _masterDbContext.card_opened.Add(new card_opened() { buyer = decoded.Event.User, card_name = card.name, card_type = card.type, chain_id = chain_id, create_time = DateTime.Now, creator = "system", contract = log.Address, img = card.img, price = card.price, token = card.token, wining = prize });
-                        var cardNotOpened = _masterDbContext.card_not_opened.Where(a => a.buyer.Equals(decoded.Event.User) && a.card_type.Equals(card.type) && a.contract.Equals(log.Address) && a.token.Equals(chainToken.token_address)).FirstOrDefault();
-                        cardNotOpened.amount -= 1;
-                        cardNotOpened.updater = "system";
-                        cardNotOpened.update_time = DateTime.Now;
+                        using (var scope = _serviceProvider.CreateScope())
+                        {
+                            var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
+                            var card = _masterDbContext.card_type.Where(a => a.type == decoded.Event.BoxType && a.chain_id == chain_id && a.state == 1).FirstOrDefault();
+                            var chainToken = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(card.token) && a.chain_id == chain_id).FirstOrDefault();
+                            var decimals_num = (double)Math.Pow(10, chainToken.decimals);
+                            var prize = (double)decoded.Event.Prize / decimals_num;
+                            _masterDbContext.card_opened.Add(new card_opened() { buyer = decoded.Event.User, card_name = card.name, card_type = card.type, chain_id = chain_id, create_time = DateTime.Now, creator = "system", contract = log.Address, img = card.img, price = card.price, token = card.token, wining = prize });
+                            var cardNotOpened = _masterDbContext.card_not_opened.Where(a => a.buyer.Equals(decoded.Event.User) && a.card_type.Equals(card.type) && a.contract.Equals(log.Address) && a.token.Equals(chainToken.token_address)).FirstOrDefault();
+                            cardNotOpened.amount -= 1;
+                            cardNotOpened.updater = "system";
+                            cardNotOpened.update_time = DateTime.Now;
 
-                        _masterDbContext.SaveChanges();
+                            _masterDbContext.SaveChanges();
+                        }
                     }
                     else
                     {

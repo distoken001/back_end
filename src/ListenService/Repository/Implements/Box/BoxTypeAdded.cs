@@ -20,17 +20,18 @@ using CommonLibrary.Model.DataEntityModel;
 using CommonLibrary.Common.Common;
 using ListenService.Repository.Interfaces;
 using System.Net.WebSockets;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ListenService.Repository.Implements
 {
     public class BoxTypeAdded : IBoxTypeAdded
     {
         private readonly IConfiguration _configuration;
-        private readonly MySqlMasterDbContext _masterDbContext;
-        public BoxTypeAdded(IConfiguration configuration, MySqlMasterDbContext mySqlMasterDbContext)
+        private readonly IServiceProvider _serviceProvider;
+        public BoxTypeAdded(IConfiguration configuration, IServiceProvider serviceProvider)
         {
             _configuration = configuration;
-            _masterDbContext = mySqlMasterDbContext;
+            _serviceProvider = serviceProvider;
         }
 
 
@@ -76,13 +77,17 @@ namespace ListenService.Repository.Implements
                     var decoded = Event<BoxTypeAddedEventDTO>.DecodeEvent(log);
                     if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
                     {
-                        Console.WriteLine("BoxTypeAdded监听到了！");
-                        var chainToken = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(decoded.Event.TokenAddress) && a.chain_id == chain_id).FirstOrDefault();
-                        var decimals_num = (double)Math.Pow(10, chainToken.decimals);
-                        var cardType = new card_type() { type = decoded.Event.BoxType, max_prize = (double)decoded.Event.MaxPrize / decimals_num, max_prize_probability = (int)decoded.Event.MaxPrizeProbability, name = decoded.Event.BoxName, price = (double)decoded.Event.Price / decimals_num, token = decoded.Event.TokenAddress, winning_probability = (int)decoded.Event.WinningProbability, chain_id = chain_id, state = 1, create_time = DateTime.Now };
-                        _masterDbContext.card_type.Add(cardType);
-                        _masterDbContext.SaveChanges();
-                        Console.WriteLine("Contract address: " + log.Address + " Log Transfer from:" + decoded.Event.BoxName);
+                        using (var scope = _serviceProvider.CreateScope())
+                        {
+                            var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
+                            Console.WriteLine("BoxTypeAdded监听到了！");
+                            var chainToken = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(decoded.Event.TokenAddress) && a.chain_id == chain_id).FirstOrDefault();
+                            var decimals_num = (double)Math.Pow(10, chainToken.decimals);
+                            var cardType = new card_type() { type = decoded.Event.BoxType, max_prize = (double)decoded.Event.MaxPrize / decimals_num, max_prize_probability = (int)decoded.Event.MaxPrizeProbability, name = decoded.Event.BoxName, price = (double)decoded.Event.Price / decimals_num, token = decoded.Event.TokenAddress, winning_probability = (int)decoded.Event.WinningProbability, chain_id = chain_id, state = 1, create_time = DateTime.Now };
+                            _masterDbContext.card_type.Add(cardType);
+                            _masterDbContext.SaveChanges();
+                            Console.WriteLine("Contract address: " + log.Address + " Log Transfer from:" + decoded.Event.BoxName);
+                        }
                     }
                     else
                     {

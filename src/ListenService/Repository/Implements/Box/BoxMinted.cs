@@ -15,11 +15,12 @@ namespace ListenService.Repository.Implements
     public class BoxMinted : IBoxMinted
     {
         private readonly IConfiguration _configuration;
-        private readonly MySqlMasterDbContext _masterDbContext;
-        public BoxMinted(IConfiguration configuration, MySqlMasterDbContext mySqlMasterDbContext)
+        private readonly IServiceProvider _serviceProvider;
+        public BoxMinted(IConfiguration configuration, IServiceProvider serviceProvider)
         {
             _configuration = configuration;
-            _masterDbContext = mySqlMasterDbContext;
+            _serviceProvider = serviceProvider;
+
         }
         public async Task StartAsync(string nodeUrl, string contractAddress, ChainEnum chain_id)
         {
@@ -45,21 +46,25 @@ namespace ListenService.Repository.Implements
                     var decoded = Event<BoxMintedEventDTO>.DecodeEvent(log);
                     if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
                     {
-                        var card = _masterDbContext.card_type.Where(a => a.type == decoded.Event.BoxType && a.chain_id == chain_id&&a.state==1).FirstOrDefault();
-                        var token = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(card.token) && a.chain_id == card.chain_id).FirstOrDefault();
-                        var cardNotOpened = _masterDbContext.card_not_opened.Where(a => a.buyer.Equals(decoded.Event.User) && a.card_type.Equals(card.type) && a.contract.Equals(log.Address) && a.token.Equals(token.token_address)).FirstOrDefault();
-                        if (cardNotOpened != null)
+                        using (var scope = _serviceProvider.CreateScope())
                         {
-                            cardNotOpened.amount += (int)decoded.Event.NumberOfBoxs;
-                            cardNotOpened.updater = "system";
-                            cardNotOpened.update_time = DateTime.Now;
+                            var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
+                            var card = _masterDbContext.card_type.Where(a => a.type == decoded.Event.BoxType && a.chain_id == chain_id && a.state == 1).FirstOrDefault();
+                            var token = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(card.token) && a.chain_id == card.chain_id).FirstOrDefault();
+                            var cardNotOpened = _masterDbContext.card_not_opened.Where(a => a.buyer.Equals(decoded.Event.User) && a.card_type.Equals(card.type) && a.contract.Equals(log.Address) && a.token.Equals(token.token_address)).FirstOrDefault();
+                            if (cardNotOpened != null)
+                            {
+                                cardNotOpened.amount += (int)decoded.Event.NumberOfBoxs;
+                                cardNotOpened.updater = "system";
+                                cardNotOpened.update_time = DateTime.Now;
+                            }
+                            else
+                            {
+                                var notOpened = new card_not_opened() { card_type = card.type, card_name = card.name, amount = (int)decoded.Event.NumberOfBoxs, buyer = decoded.Event.User, chain_id = chain_id, contract = log.Address, create_time = DateTime.Now, creator = "system", price = card.price, token = card.token, img = card.img };
+                                _masterDbContext.card_not_opened.Add(notOpened);
+                            }
+                            _masterDbContext.SaveChanges();
                         }
-                        else
-                        {
-                            var notOpened = new card_not_opened() { card_type = card.type, card_name = card.name, amount = (int)decoded.Event.NumberOfBoxs, buyer = decoded.Event.User, chain_id = chain_id, contract = log.Address, create_time = DateTime.Now, creator = "system", price = card.price, token = card.token, img = card.img };
-                            _masterDbContext.card_not_opened.Add(notOpened);
-                        }
-                        _masterDbContext.SaveChanges();
                     }
                     else
                     {

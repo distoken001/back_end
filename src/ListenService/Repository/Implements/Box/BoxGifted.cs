@@ -12,12 +12,12 @@ namespace ListenService.Repository.Implements
 {
     public class BoxGifted : IBoxGifted
     {
+        private readonly IServiceProvider _serviceProvider;
         private readonly IConfiguration _configuration;
-        private readonly MySqlMasterDbContext _masterDbContext;
-        public BoxGifted(IConfiguration configuration, MySqlMasterDbContext mySqlMasterDbContext)
+        public BoxGifted(IConfiguration configuration, IServiceProvider serviceProvider)
         {
             _configuration = configuration;
-            _masterDbContext = mySqlMasterDbContext;
+            _serviceProvider = serviceProvider;
         }
         public async Task StartAsync(string nodeUrl, string contractAddress, ChainEnum chain_id)
         {
@@ -42,29 +42,33 @@ namespace ListenService.Repository.Implements
                     var decoded = Event<BoxGiftedEventDTO>.DecodeEvent(log);
                     if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
                     {
-                        Console.WriteLine("BoxGifted监听到了！");
-                        var card = _masterDbContext.card_type.Where(a => a.type == decoded.Event.BoxType && a.chain_id == chain_id && a.state == 1).FirstOrDefault();
-                        var token = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(card.token) && a.chain_id == card.chain_id).FirstOrDefault();
-                        var cardNotOpenedSender = _masterDbContext.card_not_opened.Where(a => a.buyer.Equals(decoded.Event.Sender) && a.card_type.Equals(card.type) && a.contract.Equals(log.Address)).FirstOrDefault();
-
-                        cardNotOpenedSender.amount -= (int)decoded.Event.NumberOfBoxs;
-                        cardNotOpenedSender.updater = "system";
-                        cardNotOpenedSender.update_time = DateTime.Now;
-
-
-                        var cardNotOpenedRecipient = _masterDbContext.card_not_opened.Where(a => a.buyer.Equals(decoded.Event.Recipient) && a.card_type.Equals(card.type) && a.contract.Equals(log.Address)).FirstOrDefault();
-                        if (cardNotOpenedRecipient != null)
+                        using (var scope = _serviceProvider.CreateScope())
                         {
-                            cardNotOpenedRecipient.amount += (int)decoded.Event.NumberOfBoxs;
-                            cardNotOpenedRecipient.updater = "system";
-                            cardNotOpenedRecipient.update_time = DateTime.Now;
+                            var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
+                                                                                                             
+                            Console.WriteLine("BoxGifted监听到了！");
+                            var card = _masterDbContext.card_type.Where(a => a.type == decoded.Event.BoxType && a.chain_id == chain_id && a.state == 1).FirstOrDefault();
+                            var token = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(card.token) && a.chain_id == card.chain_id).FirstOrDefault();
+                            var cardNotOpenedSender = _masterDbContext.card_not_opened.Where(a => a.buyer.Equals(decoded.Event.Sender) && a.card_type.Equals(card.type) && a.contract.Equals(log.Address)).FirstOrDefault();
+
+                            cardNotOpenedSender.amount -= (int)decoded.Event.NumberOfBoxs;
+                            cardNotOpenedSender.updater = "system";
+                            cardNotOpenedSender.update_time = DateTime.Now;
+
+                            var cardNotOpenedRecipient = _masterDbContext.card_not_opened.Where(a => a.buyer.Equals(decoded.Event.Recipient) && a.card_type.Equals(card.type) && a.contract.Equals(log.Address)).FirstOrDefault();
+                            if (cardNotOpenedRecipient != null)
+                            {
+                                cardNotOpenedRecipient.amount += (int)decoded.Event.NumberOfBoxs;
+                                cardNotOpenedRecipient.updater = "system";
+                                cardNotOpenedRecipient.update_time = DateTime.Now;
+                            }
+                            else
+                            {
+                                var notOpened = new card_not_opened() { card_type = card.type, card_name = card.name, amount = (int)decoded.Event.NumberOfBoxs, buyer = decoded.Event.Recipient, chain_id = chain_id, contract = log.Address, create_time = DateTime.Now, creator = "system", price = card.price, token = card.token, img = card.img };
+                                _masterDbContext.card_not_opened.Add(notOpened);
+                            }
+                            _masterDbContext.SaveChanges();
                         }
-                        else
-                        {
-                            var notOpened = new card_not_opened() { card_type = card.type, card_name = card.name, amount = (int)decoded.Event.NumberOfBoxs, buyer = decoded.Event.Recipient, chain_id = chain_id, contract = log.Address, create_time = DateTime.Now, creator = "system", price = card.price, token = card.token, img = card.img };
-                            _masterDbContext.card_not_opened.Add(notOpened);
-                        }
-                        _masterDbContext.SaveChanges();
                     }
                     else
                     {
@@ -73,7 +77,7 @@ namespace ListenService.Repository.Implements
                 }, onErrorAction);
                 // open the web socket connection
                 await client.StartAsync();
-                
+
                 // begin receiving subscription data
                 // data will be received on a background thread
                 await subscription.SubscribeAsync(cardGifted);

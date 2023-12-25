@@ -26,11 +26,12 @@ namespace ListenService.Repository.Implements
     public class BoxTypeRemoved : IBoxTypeRemoved
     {
         private readonly IConfiguration _configuration;
-        private readonly MySqlMasterDbContext _masterDbContext;
-        public BoxTypeRemoved(IConfiguration configuration, MySqlMasterDbContext mySqlMasterDbContext)
+        private readonly IServiceProvider _serviceProvider;
+        public BoxTypeRemoved(IConfiguration configuration, IServiceProvider serviceProvider)
         {
             _configuration = configuration;
-            _masterDbContext = mySqlMasterDbContext;
+            _serviceProvider = serviceProvider;
+
         }
 
 
@@ -55,20 +56,24 @@ namespace ListenService.Repository.Implements
                 // attach a handler for Transfer event logs
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(log =>
                 {
-                        Console.WriteLine("BoxTypeAdded监听到了！");
-                        // decode the log into a typed event log
-                        var decoded = Event<BoxTypeRemovedEventDTO>.DecodeEvent(log);
-                        if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
+                    Console.WriteLine("BoxTypeAdded监听到了！");
+                    // decode the log into a typed event log
+                    var decoded = Event<BoxTypeRemovedEventDTO>.DecodeEvent(log);
+                    if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
+                    {
+                        using (var scope = _serviceProvider.CreateScope())
                         {
+                            var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
                             var card = _masterDbContext.card_type.Where(a => a.type == decoded.Event.BoxType && a.chain_id == chain_id && a.state == 1).FirstOrDefault();
                             card.state = 0;
                             _masterDbContext.SaveChanges();
                         }
-                        else
-                        {
+                    }
+                    else
+                    {
 
-                            Console.WriteLine("BoxTypeAdded: Found not standard log");
-                        }
+                        Console.WriteLine("BoxTypeAdded: Found not standard log");
+                    }
                 }, onErrorAction);
                 // open the web socket connection
                 await client.StartAsync();

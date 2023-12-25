@@ -28,12 +28,12 @@ namespace ListenService.Repository.Implements
     public class EbaySetStatus : IEbaySetStatus
     {
         private readonly IConfiguration _configuration;
-        private readonly MySqlMasterDbContext _masterDbContext;
+        private readonly IServiceProvider _serviceProvider;
         private readonly ISendMessage _sendMessage;
-        public EbaySetStatus(IConfiguration configuration, MySqlMasterDbContext mySqlMasterDbContext, ISendMessage sendMessage)
+        public EbaySetStatus(IConfiguration configuration, IServiceProvider serviceProvider, ISendMessage sendMessage)
         {
             _configuration = configuration;
-            _masterDbContext = mySqlMasterDbContext;
+            _serviceProvider = serviceProvider;
             _sendMessage = sendMessage;
 
         }
@@ -79,28 +79,32 @@ namespace ListenService.Repository.Implements
                     var decoded = Event<SetStatusEventDTO>.DecodeEvent(log);
                     if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
                     {
-                        Console.WriteLine("EbaySetStatus监听到了！");
-                        // 调用智能合约函数并获取返回结果
-                        var orderResult = await function.CallDeserializingToObjectAsync<EbayOrderDTO>((int)decoded.Event.OrderId);
-                        var chainToken = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(orderResult.Token) && a.chain_id == chain_id).FirstOrDefault();
-                        var decimals_num = new BigDecimal(Math.Pow(10, chainToken.decimals));
-                        var order = _masterDbContext.orders.Where(a => a.order_id == (int)decoded.Event.OrderId && a.chain_id == chain_id && a.contract.Equals(contractAddress)).FirstOrDefault();
-
-                        if (orderResult.Status == OrderStatus.Ordered)
+                        using (var scope = _serviceProvider.CreateScope())
                         {
-                            order.create_time = DateTime.Now;
-                        }
-                        order.status = orderResult.Status;
-                        order.buyer_ex = (double)(new BigDecimal(orderResult.BuyerEx) / decimals_num);
-                        order.update_time = DateTime.Now;
-                        order.buyer = orderResult.Buyer;
-                        order.buyer_pledge = (double)(new BigDecimal(orderResult.BuyerPledge) / decimals_num);
-                        order.seller_pledge = (double)(new BigDecimal(orderResult.SellerPledge) / decimals_num);
-                        order.amount = (double)orderResult.Amount;
-                        order.price = (double)(new BigDecimal(orderResult.Price) / decimals_num);
+                            var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
+                            Console.WriteLine("EbaySetStatus监听到了！");
+                            // 调用智能合约函数并获取返回结果
+                            var orderResult = await function.CallDeserializingToObjectAsync<EbayOrderDTO>((int)decoded.Event.OrderId);
+                            var chainToken = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(orderResult.Token) && a.chain_id == chain_id).FirstOrDefault();
+                            var decimals_num = new BigDecimal(Math.Pow(10, chainToken.decimals));
+                            var order = _masterDbContext.orders.Where(a => a.order_id == (int)decoded.Event.OrderId && a.chain_id == chain_id && a.contract.Equals(contractAddress)).FirstOrDefault();
 
-                        _masterDbContext.SaveChanges();
-                        _ = _sendMessage.SendMessageEbay((int)decoded.Event.OrderId, chain_id, contractAddress);
+                            if (orderResult.Status == OrderStatus.Ordered)
+                            {
+                                order.create_time = DateTime.Now;
+                            }
+                            order.status = orderResult.Status;
+                            order.buyer_ex = (double)(new BigDecimal(orderResult.BuyerEx) / decimals_num);
+                            order.update_time = DateTime.Now;
+                            order.buyer = orderResult.Buyer;
+                            order.buyer_pledge = (double)(new BigDecimal(orderResult.BuyerPledge) / decimals_num);
+                            order.seller_pledge = (double)(new BigDecimal(orderResult.SellerPledge) / decimals_num);
+                            order.amount = (double)orderResult.Amount;
+                            order.price = (double)(new BigDecimal(orderResult.Price) / decimals_num);
+
+                            _masterDbContext.SaveChanges();
+                            _ = _sendMessage.SendMessageEbay((int)decoded.Event.OrderId, chain_id, contractAddress);
+                        }
                     }
                     else
                     {
