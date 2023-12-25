@@ -308,7 +308,6 @@ namespace TelegramService
                                     telegramUserChat.state = 1;
                                 }
                                 _masterDbContext.SaveChanges();
-                                Console.WriteLine("保存了" + randomNumber);
                                 if (_configuration["GroupChatID"] == update.CallbackQuery.Message.Chat.Id.ToString())
                                 {
                                     await botClient.SendTextMessageAsync(
