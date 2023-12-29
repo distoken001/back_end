@@ -49,6 +49,7 @@ namespace DeMarketAPI.Controllers
         [ProducesResponseType(typeof(PagedModel<CardNotOpenedResponse>), 200)]
         public async Task<JsonResult> not_opened_list([FromBody] GetNotOpenedCardListRequest req)
         {
+            Console.WriteLine("地址" + CurrentLoginAddress);
             var queryEntities = _mySqlMasterDbContext.card_not_opened.AsNoTracking().AsQueryable();
             var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking();
             var cardTypes = _mySqlMasterDbContext.card_type.AsNoTracking();
