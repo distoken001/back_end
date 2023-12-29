@@ -53,7 +53,7 @@ namespace DeMarketAPI.Controllers
             var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking();
             var cardTypes = _mySqlMasterDbContext.card_type.AsNoTracking();
             queryEntities = queryEntities.Where(p => p.buyer.Equals(CurrentLoginAddress) && p.amount != 0);
-
+            Console.WriteLine("地址" + CurrentLoginAddress);
             if (req.chain_id != 0)
             {
                 queryEntities = queryEntities.Where(p => p.chain_id == req.chain_id);
