@@ -3,7 +3,7 @@ module.exports = {
         {
             name: "demarket_api",
             cmd: "dotnet",
-            args: ["DeMarketAPI.dll", "--urls", "http://localhost:5000"],
+            args: ["DeMarketAPI.dll"],
             watch: false,
             autorestart: true,
             env_development: {
