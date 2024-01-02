@@ -1,3 +1,5 @@
+
+
 module.exports = {
     apps: [
         {
@@ -6,6 +8,7 @@ module.exports = {
             args: ["DeMarketAPI.dll", "--urls", "http://localhost:5000"],
             watch: false,
             autorestart: true,
+            instances: 4,
             env_development: {
                 ASPNETCORE_ENVIRONMENT: "Development",
             },
