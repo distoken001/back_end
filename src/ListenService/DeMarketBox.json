@@ -193,44 +193,6 @@
       "type": "event"
     },
     {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "requestId",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256[]",
-          "name": "randomWords",
-          "type": "uint256[]"
-        }
-      ],
-      "name": "RequestFulfilled",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "requestId",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint32",
-          "name": "numWords",
-          "type": "uint32"
-        }
-      ],
-      "name": "RequestSent",
-      "type": "event"
-    },
-    {
       "inputs": [
         {
           "internalType": "string",
@@ -270,6 +232,24 @@
       ],
       "name": "addBoxType",
       "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "addRandomNumber",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "fulfilled",
+          "type": "bool"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "randomWords",
+          "type": "uint256[]"
+        }
+      ],
       "stateMutability": "nonpayable",
       "type": "function"
     },
@@ -434,12 +414,12 @@
     {
       "inputs": [
         {
-          "internalType": "bool",
-          "name": "newStatus",
-          "type": "bool"
+          "internalType": "uint32",
+          "name": "_callbackGasLimit",
+          "type": "uint32"
         }
       ],
-      "name": "changeIsOpen",
+      "name": "changeCallbackGasLimit",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -447,22 +427,76 @@
     {
       "inputs": [
         {
-          "internalType": "uint256",
-          "name": "_requestId",
-          "type": "uint256"
+          "internalType": "uint16",
+          "name": "_confirmations",
+          "type": "uint16"
         }
       ],
-      "name": "getRequestStatus",
-      "outputs": [
+      "name": "changeConfirmations",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "_keyHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "changeKeyHash",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint32",
+          "name": "_numWords",
+          "type": "uint32"
+        }
+      ],
+      "name": "changeNumWords",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
         {
           "internalType": "bool",
-          "name": "fulfilled",
+          "name": "newState",
           "type": "bool"
-        },
+        }
+      ],
+      "name": "changeState",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
         {
-          "internalType": "uint256[]",
-          "name": "randomWords",
-          "type": "uint256[]"
+          "internalType": "uint64",
+          "name": "subscriptionId",
+          "type": "uint64"
+        }
+      ],
+      "name": "changeSubscriptionId",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getRandomLength",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "length",
+          "type": "uint256"
         }
       ],
       "stateMutability": "view",
@@ -493,29 +527,6 @@
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "recipient",
-          "type": "address"
-        },
-        {
-          "internalType": "string",
-          "name": "boxType",
-          "type": "string"
-        },
-        {
-          "internalType": "uint256",
-          "name": "numberOfBoxs",
-          "type": "uint256"
-        }
-      ],
-      "name": "giftBoxs",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
       "inputs": [],
       "name": "isOk",
       "outputs": [
@@ -523,19 +534,6 @@
           "internalType": "bool",
           "name": "",
           "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "lastRequestId",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
         }
       ],
       "stateMutability": "view",
@@ -557,6 +555,19 @@
       "name": "mintBoxs",
       "outputs": [],
       "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "numWords",
+      "outputs": [
+        {
+          "internalType": "uint32",
+          "name": "",
+          "type": "uint32"
+        }
+      ],
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -605,52 +616,35 @@
     },
     {
       "inputs": [],
+      "name": "removeRequest",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "requestId",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
       "name": "renounceOwnership",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "name": "requestIds",
+      "inputs": [],
+      "name": "requestRandomWords",
       "outputs": [
         {
           "internalType": "uint256",
-          "name": "",
+          "name": "requestId",
           "type": "uint256"
         }
       ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "name": "s_requests",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "fulfilled",
-          "type": "bool"
-        },
-        {
-          "internalType": "bool",
-          "name": "exists",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -676,11 +670,21 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "newOwner",
+          "name": "recipient",
           "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "boxType",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "numberOfBoxs",
+          "type": "uint256"
         }
       ],
-      "name": "transferOwnership",
+      "name": "transferBoxs",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -689,34 +693,13 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "",
+          "name": "newOwner",
           "type": "address"
-        },
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
         }
       ],
-      "name": "userRewardInfo",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "rewardDebt",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "withdrawn",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "extra",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
