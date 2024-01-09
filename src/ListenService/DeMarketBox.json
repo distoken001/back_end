@@ -54,7 +54,7 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "numberOfBoxs",
+          "name": "numberOfBox",
           "type": "uint256"
         }
       ],
@@ -79,7 +79,7 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "numberOfBoxs",
+          "name": "numberOfBox",
           "type": "uint256"
         }
       ],
@@ -236,7 +236,13 @@
       "type": "function"
     },
     {
-      "inputs": [],
+      "inputs": [
+        {
+          "internalType": "uint32",
+          "name": "numWords",
+          "type": "uint32"
+        }
+      ],
       "name": "addRandomNumber",
       "outputs": [
         {
@@ -279,7 +285,7 @@
           "type": "uint256"
         }
       ],
-      "name": "availableBoxs",
+      "name": "availableBoxes",
       "outputs": [
         {
           "internalType": "string",
@@ -453,19 +459,6 @@
     {
       "inputs": [
         {
-          "internalType": "uint32",
-          "name": "_numWords",
-          "type": "uint32"
-        }
-      ],
-      "name": "changeNumWords",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
           "internalType": "bool",
           "name": "newState",
           "type": "bool"
@@ -548,26 +541,13 @@
         },
         {
           "internalType": "uint256",
-          "name": "numberOfBoxs",
+          "name": "numberOfBox",
           "type": "uint256"
         }
       ],
-      "name": "mintBoxs",
+      "name": "mintBoxes",
       "outputs": [],
       "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "numWords",
-      "outputs": [
-        {
-          "internalType": "uint32",
-          "name": "",
-          "type": "uint32"
-        }
-      ],
-      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -581,6 +561,24 @@
         }
       ],
       "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "tokenAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "ownerClaims",
+      "outputs": [],
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -650,6 +648,30 @@
     {
       "inputs": [
         {
+          "internalType": "string",
+          "name": "_boxType",
+          "type": "string"
+        }
+      ],
+      "name": "test",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "_amount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_rewardDebt",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "address",
           "name": "",
           "type": "address"
@@ -680,11 +702,11 @@
         },
         {
           "internalType": "uint256",
-          "name": "numberOfBoxs",
+          "name": "numberOfBox",
           "type": "uint256"
         }
       ],
-      "name": "transferBoxs",
+      "name": "transferBoxes",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -705,30 +727,46 @@
     {
       "inputs": [
         {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "name": "userRewardInfo",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "rewardDebt",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "withdrawn",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "extra",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "string",
           "name": "_boxType",
           "type": "string"
         }
       ],
       "name": "withdraw",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "tokenAddress",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "amountToWithdraw",
-          "type": "uint256"
-        }
-      ],
-      "name": "withdrawEquity",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
