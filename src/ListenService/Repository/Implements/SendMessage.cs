@@ -55,27 +55,27 @@ namespace ListenService.Repository.Implements
                     string mailMessageBuyer = "";
                     if (status == OrderStatus.Initial)
                     {
-                        if (seller?.telegram_id != null)
+                        //if (seller?.telegram_id != null)
+                        //{
+                        mailMessageSeller = $"您在{order.chain_id.ToString()}链上发布了商品：{order.name}。";
+                        var chatMessage = $"担保订单：用户 @{seller?.nick_name} 在{order.chain_id.ToString()}链上发布了新商品：{order.name}，单价：{order.price} {token.token_name}, 数量：{order.amount}，订单链接:{_configuration["Domain"]}/market/detail/{order.contract}/{(int)order.chain_id}/{order.order_id}";
+
+                        await botClient.SendTextMessageAsync(_configuration["GroupChatID"], chatMessage);
+
+                        var chatIDs = _configuration["GroupChatIDs"].Split(',');
+                        foreach (var chatID in chatIDs)
                         {
-                            mailMessageSeller = $"您在{order.chain_id.ToString()}链上发布了商品：{order.name}。";
-                            var chatMessage = $"担保订单：用户 @{seller?.nick_name} 在{order.chain_id.ToString()}链上发布了新商品：{order.name}，单价：{order.price} {token.token_name}, 数量：{order.amount}，订单链接:{_configuration["Domain"]}/market/detail/{order.contract}/{(int)order.chain_id}/{order.order_id}";
-
-                            await botClient.SendTextMessageAsync(_configuration["GroupChatID"], chatMessage);
-
-                            var chatIDs = _configuration["GroupChatIDs"].Split(',');
-                            foreach (var chatID in chatIDs)
+                            if (chatID == _configuration["GroupChatID"])
                             {
-                                if (chatID == _configuration["GroupChatID"])
-                                {
-                                    continue;
-                                }
-                                if (_configuration[chatID] == token.token_name || token.token_name == "USDT")
-                                {
-                                    var message = await botClient.SendTextMessageAsync(long.Parse(chatID), chatMessage);
-                                }
+                                continue;
                             }
-
+                            if (_configuration[chatID] == token.token_name || token.token_name == "USDT")
+                            {
+                                var message = await botClient.SendTextMessageAsync(long.Parse(chatID), chatMessage);
+                            }
                         }
+
+                        //}
                         if (buyer?.telegram_id != null)
                         {
                             mailMessageBuyer = $"卖家(@{seller?.nick_name})在{order.chain_id.ToString()}链上发布的商品({order.name})指定您为唯一购买人。";
