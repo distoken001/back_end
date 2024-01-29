@@ -63,7 +63,7 @@ namespace ListenService.Repository.Implements
                         {
                             yajin = "双押";
                         }
-                        var chatMessage = $"担保订单（{yajin}）：用户 @{seller?.nick_name} 在{order.chain_id.ToString()}链上发布了新商品：{order.name}，单价：{order.price.ToString("G")} {token.token_name}, 数量：{order.amount}，订单链接:{_configuration["Domain"]}/market/detail/{order.contract}/{(int)order.chain_id}/{order.order_id}";
+                        var chatMessage = $"担保订单（{yajin}）：用户 @{seller?.nick_name} 在{order.chain_id.ToString()}链上发布了新商品：{order.name}，单价：{order.price.ToString("0.000000000000000000").TrimEnd('0').TrimEnd('.')} {token.token_name}, 数量：{order.amount}，订单链接:{_configuration["Domain"]}/market/detail/{order.contract}/{(int)order.chain_id}/{order.order_id}";
 
                         await botClient.SendTextMessageAsync(_configuration["GroupChatID"], chatMessage);
 
@@ -159,7 +159,7 @@ namespace ListenService.Repository.Implements
                     if (status == OrderAuctionStatus.Initial)
                     {
                         mailMessageSeller = $"您在{order.chain_id.ToString()}链上发布了拍卖商品：{order.name}。";
-                        var chatMessage = $"拍卖订单：用户 @{seller?.nick_name} 在{order.chain_id.ToString()}链上发布了新商品：{order.name}，起拍单价：{order.price} {token.token_name}, 数量：{order.amount}，订单链接:{_configuration["Domain"]}/auction/detail/{order.contract}/{(int)order.chain_id}/{order.order_id}"; ;
+                        var chatMessage = $"拍卖订单：用户 @{seller?.nick_name} 在{order.chain_id.ToString()}链上发布了新商品：{order.name}，起拍单价：{order.price.ToString("0.000000000000000000").TrimEnd('0').TrimEnd('.')} {token.token_name}, 数量：{order.amount}，订单链接:{_configuration["Domain"]}/auction/detail/{order.contract}/{(int)order.chain_id}/{order.order_id}"; ;
                         await botClient.SendTextMessageAsync(_configuration["GroupChatID"], chatMessage);
 
                         var chatIDs = _configuration["GroupChatIDs"].Split(',');
