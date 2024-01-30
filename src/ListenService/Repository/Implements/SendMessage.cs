@@ -48,7 +48,7 @@ namespace ListenService.Repository.Implements
                     bool isSame = false;
                     var order = await _masterDbContext.orders.FirstOrDefaultAsync(p => p.order_id == order_id && p.chain_id == chain_id && p.contract == contract);
                     // var order_pre = await _masterDbContext.orders.FirstOrDefaultAsync(p => p.chain_id == chain_id && p.contract == contract && p.seller.Equals(order.seller) && (p.status == OrderStatus.Initial || p.status == OrderStatus.Ordered) && p.order_id < order.order_id&&p.token.Equals(order.token)&&p.img.Equals(order.img));
-                    var order_pre = await _masterDbContext.orders.FirstOrDefaultAsync(p =>  p.order_id < order.order_id && p.img.Equals(order.img));
+                    var order_pre = await _masterDbContext.orders.FirstOrDefaultAsync(p => p.order_id < order_id && p.img.Equals(order.img));
                     if (order_pre != null)
                     {
                         isSame = true;
