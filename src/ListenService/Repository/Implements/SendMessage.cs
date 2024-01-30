@@ -47,12 +47,13 @@ namespace ListenService.Repository.Implements
                     List<long> ls = new List<long>();
                     bool isSame = false;
                     var order = await _masterDbContext.orders.FirstOrDefaultAsync(p => p.order_id == order_id && p.chain_id == chain_id && p.contract == contract);
-                    var order_pre = await _masterDbContext.orders.FirstOrDefaultAsync(p => p.order_id == (order_id-1) && p.chain_id == chain_id && p.contract == contract);
-                    if (order_pre.status == OrderStatus.Ordered && order_pre.seller.Equals(order.seller,StringComparison.OrdinalIgnoreCase)&&order_pre.name.Equals(order.name))
+                    // var order_pre = await _masterDbContext.orders.FirstOrDefaultAsync(p => p.chain_id == chain_id && p.contract == contract && p.seller.Equals(order.seller) && (p.status == OrderStatus.Initial || p.status == OrderStatus.Ordered) && p.order_id < order.order_id&&p.token.Equals(order.token)&&p.img.Equals(order.img));
+                    var order_pre = await _masterDbContext.orders.FirstOrDefaultAsync(p =>  p.order_id < order.order_id && p.img.Equals(order.img));
+                    if (order_pre != null)
                     {
                         isSame = true;
                     }
-                        OrderStatus status = order.status;
+                    OrderStatus status = order.status;
                     var seller = await _masterDbContext.users.FirstOrDefaultAsync(u => u.address == order.seller);
                     var buyer = await _masterDbContext.users.FirstOrDefaultAsync(u => u.address == order.buyer);
                     var token = _masterDbContext.chain_tokens.AsNoTracking().FirstOrDefault(c => c.chain_id == order.chain_id && c.token_address.Equals(order.token, StringComparison.OrdinalIgnoreCase));
