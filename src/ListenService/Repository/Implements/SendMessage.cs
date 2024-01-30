@@ -45,8 +45,14 @@ namespace ListenService.Repository.Implements
                 {
                     var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
                     List<long> ls = new List<long>();
+                    bool isSame = false;
                     var order = await _masterDbContext.orders.FirstOrDefaultAsync(p => p.order_id == order_id && p.chain_id == chain_id && p.contract == contract);
-                    OrderStatus status = order.status;
+                    var order_pre = await _masterDbContext.orders.FirstOrDefaultAsync(p => p.order_id == (order_id-1) && p.chain_id == chain_id && p.contract == contract);
+                    if (order_pre.status == OrderStatus.Ordered && order_pre.seller.Equals(order.seller,StringComparison.OrdinalIgnoreCase)&&order_pre.name.Equals(order.name))
+                    {
+                        isSame = true;
+                    }
+                        OrderStatus status = order.status;
                     var seller = await _masterDbContext.users.FirstOrDefaultAsync(u => u.address == order.seller);
                     var buyer = await _masterDbContext.users.FirstOrDefaultAsync(u => u.address == order.buyer);
                     var token = _masterDbContext.chain_tokens.AsNoTracking().FirstOrDefault(c => c.chain_id == order.chain_id && c.token_address.Equals(order.token, StringComparison.OrdinalIgnoreCase));
@@ -64,9 +70,10 @@ namespace ListenService.Repository.Implements
                             yajin = "双押";
                         }
                         var chatMessage = $"担保订单（{yajin}）：用户 @{seller?.nick_name} 在{order.chain_id.ToString()}链上发布了新商品：{order.name}，单价：{order.price.ToString("0.000000000000000000").TrimEnd('0').TrimEnd('.')} {token.token_name}, 数量：{order.amount}，订单链接:{_configuration["Domain"]}/market/detail/{order.contract}/{(int)order.chain_id}/{order.order_id}";
-
-                        await botClient.SendTextMessageAsync(_configuration["GroupChatID"], chatMessage);
-
+                        if (!isSame)
+                        {
+                            await botClient.SendTextMessageAsync(_configuration["GroupChatID"], chatMessage);
+                        }
                         var chatIDs = _configuration["GroupChatIDs"].Split(',');
                         foreach (var chatID in chatIDs)
                         {
@@ -76,7 +83,10 @@ namespace ListenService.Repository.Implements
                             }
                             if (_configuration[chatID] == token.token_name || token.token_name == "USDT")
                             {
-                                var message = await botClient.SendTextMessageAsync(long.Parse(chatID), chatMessage);
+                                if (!isSame)
+                                {
+                                    var message = await botClient.SendTextMessageAsync(long.Parse(chatID), chatMessage);
+                                }
                             }
                         }
 
