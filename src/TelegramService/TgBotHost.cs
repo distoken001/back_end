@@ -226,7 +226,7 @@ namespace TelegramService
                                             return;
                                         }
                                         sb.AppendLine("Hey！靓仔！@" + update.Message.From.Username.Replace("_", @"\_"));
-                                        sb.AppendLine("与您相关的订单动态我会第一时间通知您，绑定之后切记不要拉黑我哦，不然会解除与DeMarket的绑定...");
+                                        sb.AppendLine("与您相关的订单动态我会第一时间通知您，如果您修改了Telegram用户名，务必去DeMarket个人中心重新绑定！");
                                         sb.AppendLine("");
                                         var obj = new[]
                                         {                new []
