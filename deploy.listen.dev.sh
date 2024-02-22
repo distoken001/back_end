@@ -4,6 +4,13 @@
 project_name="listen_service"
 publish_directory="./publish_listen_service"
 
+# 检查并删除旧的发布目录（如果存在）
+echo "Checking for existing publish directory..."
+if [ -d "$publish_directory" ]; then
+    echo "Publish directory exists. Removing..."
+    rm -rf $publish_directory
+fi
+
 # 构建项目
 echo "Building the project..."
 dotnet build --configuration Release ./src/ListenService/ListenService.csproj
