@@ -21,6 +21,8 @@ namespace CommonLibrary.Model.DataEntityModel
         public string img { get; set; }
         public DateTime create_time { get; set; }
         public int state { get; set; }
+        public string img_fail { get; set; }
+        public string img_win { get; set; }
     }
 }
 
