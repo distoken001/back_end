@@ -30,6 +30,5 @@
     <PackageReference Include="System.Drawing.Common" Version="8.0.0" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.0" />
     <PackageReference Include="System.Net.WebSockets.Client" Version="4.3.2" />
-    <PackageReference Include="Nethereum.JsonRpc.WebSocketClient" Version="4.19.0" />
   </ItemGroup>
 </Project>
