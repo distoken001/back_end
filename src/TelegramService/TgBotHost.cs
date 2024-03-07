@@ -63,12 +63,14 @@ namespace TelegramService
                 using (var scope = _serviceProvider.CreateScope())
                 {
                     var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
+                    Console.WriteLine("有消息进来" +update.Type);
                     switch (update.Type)
                     {
                         case UpdateType.Unknown: break;
                         case UpdateType.Message:
                             switch (update.Message.Type)
                             {
+
                                 case MessageType.ChatMemberLeft:
                                     break;
                                 case MessageType.ChatMembersAdded:
