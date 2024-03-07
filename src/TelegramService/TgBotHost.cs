@@ -72,6 +72,7 @@ namespace TelegramService
                                 case MessageType.ChatMemberLeft:
                                     break;
                                 case MessageType.ChatMembersAdded:
+                                    Console.WriteLine("有人进来" + update.Message.Chat.Id.ToString());
                                     if (update.Message.Chat.Id.ToString() == _configuration["GroupChatID"])
                                     {
 
