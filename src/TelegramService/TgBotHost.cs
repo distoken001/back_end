@@ -241,7 +241,7 @@ namespace TelegramService
 
                   new[]
                 {
-                    InlineKeyboardButton.WithUrl(text: "Telegram 群组", url: @"https://t.me/"+_configuration["ChatGroup"])
+                    InlineKeyboardButton.WithUrl(text: "进入DeMarket社群", url: @"https://t.me/"+_configuration["ChatGroup"])
                 }
                         };
 
