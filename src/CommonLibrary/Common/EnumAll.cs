@@ -217,7 +217,8 @@
         Harmony = 1666600000,
         HarmonyTest = 1666700000,
         Conflux = 1030,
-        OPSepolia = 11155420
+        OPSepolia = 11155420,
+        Sepolia= 11155111
     }
     public enum BelongUserEnum
     {
