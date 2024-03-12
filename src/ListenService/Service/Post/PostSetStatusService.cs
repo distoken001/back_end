@@ -64,7 +64,7 @@ namespace ListenService.Service
                 {
                     if (!string.IsNullOrEmpty(_configuration["Sepolia:Contract_Post"]))
                     {
-                        _ = _PostSetStatus.StartAsync(_configuration["Sepolia:WSS_URL"], _configuration["Sepolia:HTTPS_URL"], _configuration["OPGoerli:Contract_Post"], ChainEnum.OptimisticGoerli);
+                        _ = _PostSetStatus.StartAsync(_configuration["Sepolia:WSS_URL"], _configuration["Sepolia:HTTPS_URL"], _configuration["Sepolia:Contract_Post"], ChainEnum.Sepolia);
                     }
                 }
             }
