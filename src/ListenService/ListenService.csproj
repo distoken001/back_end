@@ -27,6 +27,9 @@
     <None Remove="Repository\Interfaces\Auction\" />
     <None Remove="Service\Auction\" />
     <None Remove="Service\Box\" />
+    <None Remove="Service\Post\" />
+    <None Remove="Repository\Implements\Post\" />
+    <None Remove="Repository\Interfaces\Post\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Service\" />
@@ -39,5 +42,8 @@
     <Folder Include="Repository\Interfaces\Auction\" />
     <Folder Include="Service\Auction\" />
     <Folder Include="Service\Box\" />
+    <Folder Include="Service\Post\" />
+    <Folder Include="Repository\Implements\Post\" />
+    <Folder Include="Repository\Interfaces\Post\" />
   </ItemGroup>
 </Project>

@@ -26,14 +26,14 @@ using ListenService.Repository.Implements;
 namespace ListenService.Service
 {
 
-    public class EbaySetStatusService : IHostedService
+    public class PostSetStatusService : IHostedService
     {
         private readonly IConfiguration _configuration;
-        private readonly IEbaySetStatus _ebaySetStatus;
-        public EbaySetStatusService(IConfiguration configuration, IEbaySetStatus ebaySetStatus)
+        private readonly IPostSetStatus _PostSetStatus;
+        public PostSetStatusService(IConfiguration configuration, IPostSetStatus PostSetStatus)
         {
             _configuration = configuration;
-            _ebaySetStatus = ebaySetStatus;
+            _PostSetStatus = PostSetStatus;
         }
         public async Task StartAsync(CancellationToken cancellationToken)
         {
@@ -42,30 +42,30 @@ namespace ListenService.Service
                
                 if (_configuration["Env"] == "prod")
                 {
-                    if (!string.IsNullOrEmpty(_configuration["Polygon:Contract_Ebay"]))
+                    if (!string.IsNullOrEmpty(_configuration["Polygon:Contract_Post"]))
                     {
-                        _ = _ebaySetStatus.StartAsync(_configuration["Polygon:WSS_URL"], _configuration["Polygon:HTTPS_URL"] ,_configuration["Polygon:Contract_Ebay"], ChainEnum.Polygon);
+                        _ = _PostSetStatus.StartAsync(_configuration["Polygon:WSS_URL"], _configuration["Polygon:HTTPS_URL"] ,_configuration["Polygon:Contract_Post"], ChainEnum.Polygon);
                     }
-                    if (!string.IsNullOrEmpty(_configuration["ARB:Contract_Ebay"]))
+                    if (!string.IsNullOrEmpty(_configuration["ARB:Contract_Post"]))
                     {
-                        _ = _ebaySetStatus.StartAsync(_configuration["ARB:WSS_URL"], _configuration["ARB:HTTPS_URL"], _configuration["ARB:Contract_Ebay"], ChainEnum.Arbitrum);
+                        _ = _PostSetStatus.StartAsync(_configuration["ARB:WSS_URL"], _configuration["ARB:HTTPS_URL"], _configuration["ARB:Contract_Post"], ChainEnum.Arbitrum);
                     }
-                    if (!string.IsNullOrEmpty(_configuration["BSC:Contract_Ebay"]))
+                    if (!string.IsNullOrEmpty(_configuration["BSC:Contract_Post"]))
                     {
-                        _ = _ebaySetStatus.StartAsync(_configuration["BSC:WSS_URL"], _configuration["BSC:HTTPS_URL"], _configuration["BSC:Contract_Ebay"], ChainEnum.Bsc);
+                        _ = _PostSetStatus.StartAsync(_configuration["BSC:WSS_URL"], _configuration["BSC:HTTPS_URL"], _configuration["BSC:Contract_Post"], ChainEnum.Bsc);
                     }
 
-                    if (!string.IsNullOrEmpty(_configuration["OP:Contract_Ebay"]))
+                    if (!string.IsNullOrEmpty(_configuration["OP:Contract_Post"]))
                     {
-                        _ = _ebaySetStatus.StartAsync(_configuration["OP:WSS_URL"], _configuration["OP:HTTPS_URL"], _configuration["OP:Contract_Ebay"], ChainEnum.Optimism);
+                        _ = _PostSetStatus.StartAsync(_configuration["OP:WSS_URL"], _configuration["OP:HTTPS_URL"], _configuration["OP:Contract_Post"], ChainEnum.Optimism);
                     }
                 }
                 else
                 {
-                    //if (!string.IsNullOrEmpty(_configuration["OPGoerli:Contract_Ebay"]))
-                    //{
-                    //    _ = _ebaySetStatus.StartAsync(_configuration["OPGoerli:WSS_URL"], _configuration["OPGoerli:HTTPS_URL"], _configuration["OPGoerli:Contract_Ebay"], ChainEnum.OptimisticGoerli);
-                    //}
+                    if (!string.IsNullOrEmpty(_configuration["Sepolia:Contract_Post"]))
+                    {
+                        _ = _PostSetStatus.StartAsync(_configuration["Sepolia:WSS_URL"], _configuration["Sepolia:HTTPS_URL"], _configuration["OPGoerli:Contract_Post"], ChainEnum.OptimisticGoerli);
+                    }
                 }
             }
             catch (Exception ex)

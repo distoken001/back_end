@@ -62,11 +62,11 @@ namespace ListenService.Service
                     //{
                     //    _ = _prizeClaimed.StartAsync(_configuration["BSC:WSS_URL"], _configuration["BSC:Contract_Box"], ChainEnum.Bsc);
                     //}
-                    if (!string.IsNullOrEmpty(_configuration["OPGoerli:Contract_Box"]))
-                    {
-                        ChainEnum chain_id = ChainEnum.OptimisticGoerli;
-                        _ = _prizeClaimed.StartAsync(_configuration["OPGoerli:WSS_URL"], _configuration["OPGoerli:Contract_Box"], chain_id);
-                    }
+                    //if (!string.IsNullOrEmpty(_configuration["OPGoerli:Contract_Box"]))
+                    //{
+                    //    ChainEnum chain_id = ChainEnum.OptimisticGoerli;
+                    //    _ = _prizeClaimed.StartAsync(_configuration["OPGoerli:WSS_URL"], _configuration["OPGoerli:Contract_Box"], chain_id);
+                    //}
                 }
             }
             catch (Exception ex)

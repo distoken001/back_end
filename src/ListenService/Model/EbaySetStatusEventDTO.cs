@@ -4,7 +4,7 @@ using Nethereum.ABI.FunctionEncoding.Attributes;
 namespace ListenService.Model
 {
     [Event("SetStatus")]
-    public class SetStatusEventDTO : IEventDTO
+    public class EbaySetStatusEventDTO : IEventDTO
     {
         [Parameter("address", "defaulter", 1, true)]
         public string Defaulter { get; set; }

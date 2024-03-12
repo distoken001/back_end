@@ -62,10 +62,10 @@ namespace ListenService.Service
                 }
                 else
                 {
-                    if (!string.IsNullOrEmpty(_configuration["OPGoerli:Contract_Auction"]))
-                    {
-                        _ = _addOrder.StartAsync(_configuration["OPGoerli:WSS_URL"], _configuration["OPGoerli:HTTPS_URL"], _configuration["OPGoerli:Contract_Auction"], ChainEnum.OptimisticGoerli);
-                    }
+                    //if (!string.IsNullOrEmpty(_configuration["OPGoerli:Contract_Auction"]))
+                    //{
+                    //    _ = _addOrder.StartAsync(_configuration["OPGoerli:WSS_URL"], _configuration["OPGoerli:HTTPS_URL"], _configuration["OPGoerli:Contract_Auction"], ChainEnum.OptimisticGoerli);
+                    //}
                 }
             }
             catch (Exception ex)

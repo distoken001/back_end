@@ -57,6 +57,9 @@ namespace ListenService
             services.AddSingleton<IEbayAddOrder, EbayAddOrder>();
             services.AddSingleton<IEbaySetStatus, EbaySetStatus>();
 
+            services.AddSingleton<IPostAddOrder, PostAddOrder>();
+            services.AddSingleton<IPostSetStatus, PostSetStatus>();
+
             services.AddSingleton<IAuctionAddOrder, AuctionAddOrder>();
             services.AddSingleton<IAuctionSetOrderInfo, AuctionSetOrderInfo>();
 
@@ -74,6 +77,8 @@ namespace ListenService
             services.AddHostedService<EbayAddOrderService>();
             services.AddHostedService<EbaySetStatusService>();
 
+            services.AddHostedService<PostAddOrderService>();
+            services.AddHostedService<PostSetStatusService>();
 
 
             services

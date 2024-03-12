@@ -25,12 +25,12 @@ using Nethereum.Util;
 
 namespace ListenService.Repository.Implements
 {
-    public class EbaySetStatus : IEbaySetStatus
+    public class PostSetStatus : IPostSetStatus
     {
         private readonly IConfiguration _configuration;
         private readonly IServiceProvider _serviceProvider;
         private readonly ISendMessage _sendMessage;
-        public EbaySetStatus(IConfiguration configuration, IServiceProvider serviceProvider, ISendMessage sendMessage)
+        public PostSetStatus(IConfiguration configuration, IServiceProvider serviceProvider, ISendMessage sendMessage)
         {
             _configuration = configuration;
             _serviceProvider = serviceProvider;
@@ -48,7 +48,7 @@ namespace ListenService.Repository.Implements
                 // 连接到以太坊区块链网络
                 var web3 = new Web3(nodeHttps);
                 // 读取JSON文件内容
-                string jsonFilePath = "Ebay.json"; // 替换为正确的JSON文件路径
+                string jsonFilePath = "Post.json"; // 替换为正确的JSON文件路径
 
                 string jsonString = File.ReadAllText(jsonFilePath);
 
@@ -62,13 +62,13 @@ namespace ListenService.Repository.Implements
                 var function = contract.GetFunction("orders");
 
 
-                var addOrder = Event<EbaySetStatusEventDTO>.GetEventABI().CreateFilterInput();
+                var addOrder = Event<PostSetStatusEventDTO>.GetEventABI().CreateFilterInput();
                 var subscription = new EthLogsObservableSubscription(client);
 
                 Action<Exception> onErrorAction = async (ex) =>
                 {
                     // 处理异常情况 ex
-                    Console.WriteLine($"Error EbaySetStatus: {ex}");
+                    Console.WriteLine($"Error PostSetStatus: {ex}");
                     client.Dispose();
                     await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
                 };
@@ -76,15 +76,15 @@ namespace ListenService.Repository.Implements
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
                 {
 
-                    var decoded = Event<EbaySetStatusEventDTO>.DecodeEvent(log);
+                    var decoded = Event<PostSetStatusEventDTO>.DecodeEvent(log);
                     if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
                     {
                         using (var scope = _serviceProvider.CreateScope())
                         {
                             var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
-                            Console.WriteLine("EbaySetStatus监听到了！");
+                            Console.WriteLine("PostSetStatus监听到了！");
                             // 调用智能合约函数并获取返回结果
-                            var orderResult = await function.CallDeserializingToObjectAsync<EbayOrderDTO>((int)decoded.Event.OrderId);
+                            var orderResult = await function.CallDeserializingToObjectAsync<PostOrderDTO>((int)decoded.Event.OrderId);
                             var chainToken = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(orderResult.Token) && a.chain_id == chain_id).FirstOrDefault();
                             var decimals_num = new BigDecimal(Math.Pow(10, chainToken.decimals));
                             var order = _masterDbContext.orders.Where(a => a.order_id == (int)decoded.Event.OrderId && a.chain_id == chain_id && a.contract.Equals(contractAddress)).FirstOrDefault();
@@ -103,12 +103,12 @@ namespace ListenService.Repository.Implements
                             order.price = (double)(new BigDecimal(orderResult.Price) / decimals_num);
 
                             _masterDbContext.SaveChanges();
-                            _ = _sendMessage.SendMessageEbay((int)decoded.Event.OrderId, chain_id, contractAddress);
+                            //_ = _sendMessage.SendMessagePost((int)decoded.Event.OrderId, chain_id, contractAddress);
                         }
                     }
                     else
                     {
-                        Console.WriteLine("EbaySetStatus:Found not standard log");
+                        Console.WriteLine("PostSetStatus:Found not standard log");
                     }
 
                 }, onErrorAction);
@@ -122,8 +122,8 @@ namespace ListenService.Repository.Implements
             {
                 client.Dispose();
                 await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
-                Console.WriteLine($"EbaySetStatus:{ex}");
-                Console.WriteLine("EbaySetStatus重启了EX");
+                Console.WriteLine($"PostSetStatus:{ex}");
+                Console.WriteLine("PostSetStatus重启了EX");
             }
         }
 
