@@ -61,9 +61,9 @@ namespace ListenService.Repository.Implements
                 var contract = new Contract(new EthApiService(web3.Client), abi, contractAddress);
                 var function = contract.GetFunction("orders");
 
-             
 
-                var addOrder = Event<PostAddOrderEventDTO>.GetEventABI().CreateFilterInput();
+
+                var addPost = Event<PostAddOrderEventDTO>.GetEventABI().CreateFilterInput();
                 var subscription = new EthLogsObservableSubscription(client);
 
                 Action<Exception> onErrorAction = async (ex) =>
@@ -85,11 +85,11 @@ namespace ListenService.Repository.Implements
                             var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
                             Console.WriteLine("PostAddOrder监听到了！");
                             // 调用智能合约函数并获取返回结果
-                            var orderResult = await function.CallDeserializingToObjectAsync<PostOrderDTO>((int)decoded.Event.OrderId);
-                            var chainToken = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(orderResult.Token) && a.chain_id == chain_id).FirstOrDefault();
+                            var postResult = await function.CallDeserializingToObjectAsync<PostOrderDTO>((int)decoded.Event.OrderId);
+                            var chainToken = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(postResult.Token) && a.chain_id == chain_id).FirstOrDefault();
                             var decimals_num = new BigDecimal(Math.Pow(10, chainToken.decimals));
-                            var order = new orders() { amount = (double)orderResult.Amount, buyer = orderResult.Buyer, buyer_contact = null, buyer_ex = (double)(new BigDecimal(orderResult.BuyerEx) / decimals_num), buyer_pledge = (double)(new BigDecimal(orderResult.BuyerPledge) / decimals_num), chain_id = chain_id, contract = contractAddress, create_time = DateTime.Now, creator = "system", description = orderResult.Description, img = orderResult.Img, name = orderResult.Name, seller = orderResult.Seller, order_id = (int)decoded.Event.OrderId, price = (double)(new BigDecimal(orderResult.Price) / decimals_num), seller_contact = null, seller_pledge = (double)(new BigDecimal(orderResult.SellerPledge) / decimals_num), status = orderResult.Status, token = orderResult.Token, updater = null, update_time = DateTime.Now, weight = 10000 };
-                            _masterDbContext.orders.Add(order);
+                            var post = new post() { amount = (double)postResult.Amount, buyer = postResult.Buyer, buyer_contact = null, buyer_ex = (double)(new BigDecimal(postResult.BuyerEx) / decimals_num), buyer_pledge = (double)(new BigDecimal(postResult.BuyerPledge) / decimals_num), chain_id = chain_id, contract = contractAddress, create_time = DateTime.Now, creator = "system", description = postResult.Description, img = postResult.Img, name = postResult.Name, seller = postResult.Seller, order_id = (int)decoded.Event.OrderId, price = (double)(new BigDecimal(postResult.Price) / decimals_num), seller_contact = null, seller_pledge = (double)(new BigDecimal(postResult.SellerPledge) / decimals_num), status = postResult.Status, token = postResult.Token, updater = null, update_time = DateTime.Now, weight = 10000 };
+                            _masterDbContext.post.Add(post);
                             _masterDbContext.SaveChanges();
                             //_ = _sendMessage.SendMessagePost((int)decoded.Event.OrderId, chain_id, contractAddress);
 
@@ -104,7 +104,7 @@ namespace ListenService.Repository.Implements
 
                 await client.StartAsync();
 
-                await subscription.SubscribeAsync(addOrder);
+                await subscription.SubscribeAsync(addPost);
 
             }
             catch (Exception ex)

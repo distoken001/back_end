@@ -62,7 +62,7 @@ namespace ListenService.Repository.Implements
                 var function = contract.GetFunction("orders");
 
 
-                var addOrder = Event<PostSetStatusEventDTO>.GetEventABI().CreateFilterInput();
+                var postSetStatus = Event<PostSetStatusEventDTO>.GetEventABI().CreateFilterInput();
                 var subscription = new EthLogsObservableSubscription(client);
 
                 Action<Exception> onErrorAction = async (ex) =>
@@ -84,23 +84,23 @@ namespace ListenService.Repository.Implements
                             var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
                             Console.WriteLine("PostSetStatus监听到了！");
                             // 调用智能合约函数并获取返回结果
-                            var orderResult = await function.CallDeserializingToObjectAsync<PostOrderDTO>((int)decoded.Event.OrderId);
-                            var chainToken = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(orderResult.Token) && a.chain_id == chain_id).FirstOrDefault();
+                            var postResult = await function.CallDeserializingToObjectAsync<PostOrderDTO>((int)decoded.Event.OrderId);
+                            var chainToken = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(postResult.Token) && a.chain_id == chain_id).FirstOrDefault();
                             var decimals_num = new BigDecimal(Math.Pow(10, chainToken.decimals));
-                            var order = _masterDbContext.orders.Where(a => a.order_id == (int)decoded.Event.OrderId && a.chain_id == chain_id && a.contract.Equals(contractAddress)).FirstOrDefault();
+                            var post = _masterDbContext.post.Where(a => a.order_id == (int)decoded.Event.OrderId && a.chain_id == chain_id && a.contract.Equals(contractAddress)).FirstOrDefault();
 
-                            if (orderResult.Status == OrderStatus.Ordered)
+                            if (postResult.Status == OrderStatus.Ordered)
                             {
-                                order.create_time = DateTime.Now;
+                                post.create_time = DateTime.Now;
                             }
-                            order.status = orderResult.Status;
-                            order.buyer_ex = (double)(new BigDecimal(orderResult.BuyerEx) / decimals_num);
-                            order.update_time = DateTime.Now;
-                            order.buyer = orderResult.Buyer;
-                            order.buyer_pledge = (double)(new BigDecimal(orderResult.BuyerPledge) / decimals_num);
-                            order.seller_pledge = (double)(new BigDecimal(orderResult.SellerPledge) / decimals_num);
-                            order.amount = (double)orderResult.Amount;
-                            order.price = (double)(new BigDecimal(orderResult.Price) / decimals_num);
+                            post.status = postResult.Status;
+                            post.buyer_ex = (double)(new BigDecimal(postResult.BuyerEx) / decimals_num);
+                            post.update_time = DateTime.Now;
+                            post.buyer = postResult.Buyer;
+                            post.buyer_pledge = (double)(new BigDecimal(postResult.BuyerPledge) / decimals_num);
+                            post.seller_pledge = (double)(new BigDecimal(postResult.SellerPledge) / decimals_num);
+                            post.amount = (double)postResult.Amount;
+                            post.price = (double)(new BigDecimal(postResult.Price) / decimals_num);
 
                             _masterDbContext.SaveChanges();
                             //_ = _sendMessage.SendMessagePost((int)decoded.Event.OrderId, chain_id, contractAddress);
@@ -115,7 +115,7 @@ namespace ListenService.Repository.Implements
 
                 await client.StartAsync();
 
-                await subscription.SubscribeAsync(addOrder);
+                await subscription.SubscribeAsync(postSetStatus);
 
             }
             catch (Exception ex)

@@ -21,6 +21,7 @@ namespace CommonLibrary.DbContext
 
         public virtual DbSet<event_logs> event_logs { get; set; }
         public virtual DbSet<orders> orders { get; set; }
+        public virtual DbSet<post> post { get; set; }
         public virtual DbSet<orders_auction> orders_auction { get; set; }
         public virtual DbSet<users> users { get; set; }
         public virtual DbSet<user_nft> user_nft { get; set; }
