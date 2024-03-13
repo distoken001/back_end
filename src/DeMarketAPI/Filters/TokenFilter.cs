@@ -37,7 +37,7 @@ namespace DeMarketAPI.Proxies
             if (token == null)
             {
                 var path = context.HttpContext.Request.Path.Value;
-                if (!path.Equals("/api/user/login", StringComparison.OrdinalIgnoreCase) && !path.Equals("/api/notice/sendemail", StringComparison.OrdinalIgnoreCase) && !path.Equals("/api/order/list", StringComparison.OrdinalIgnoreCase) && !path.Equals("/api/notice/cooperate", StringComparison.OrdinalIgnoreCase) && !path.Equals("/api/orderauction/list", StringComparison.OrdinalIgnoreCase) && !path.Equals("/api/orderauction/switch_like", StringComparison.OrdinalIgnoreCase) && !path.Equals("/api/order/switch_like", StringComparison.OrdinalIgnoreCase) && !path.Equals("/api/notice/sendBot", StringComparison.OrdinalIgnoreCase) && !path.Equals("/api/notice/sendBotAuction", StringComparison.OrdinalIgnoreCase))
+                if (!path.Equals("/api/user/login", StringComparison.OrdinalIgnoreCase)  && !path.Equals("/api/order/list", StringComparison.OrdinalIgnoreCase)&&!path.Equals("/api/post/list", StringComparison.OrdinalIgnoreCase) && !path.Equals("/api/notice/cooperate", StringComparison.OrdinalIgnoreCase) && !path.Equals("/api/orderauction/list", StringComparison.OrdinalIgnoreCase) && !path.Equals("/api/orderauction/switch_like", StringComparison.OrdinalIgnoreCase) && !path.Equals("/api/order/switch_like", StringComparison.OrdinalIgnoreCase) && !path.Equals("/api/notice/sendBot", StringComparison.OrdinalIgnoreCase) && !path.Equals("/api/notice/sendBotAuction", StringComparison.OrdinalIgnoreCase))
                 {
                     context.Result = new JsonResult(new { message = "Authorization header not found" }) { StatusCode = 401 };
                 }
