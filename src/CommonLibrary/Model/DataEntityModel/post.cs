@@ -57,7 +57,7 @@ namespace CommonLibrary.Model.DataEntityModel
         /// <summary>
         /// 订单状态
         /// </summary>
-        public OrderStatus status { get; set; }
+        public PostStatus status { get; set; }
 
 
         public DateTime create_time { get; set; }
