@@ -61,7 +61,7 @@ namespace ListenService.Repository.Implements
                 var contract = new Contract(new EthApiService(web3.Client), abi, contractAddress);
                 var function = contract.GetFunction("orders");
 
-             
+
 
                 var addOrder = Event<EbayAddOrderEventDTO>.GetEventABI().CreateFilterInput();
                 var subscription = new EthLogsObservableSubscription(client);
@@ -88,11 +88,14 @@ namespace ListenService.Repository.Implements
                             var orderResult = await function.CallDeserializingToObjectAsync<EbayOrderDTO>((int)decoded.Event.OrderId);
                             var chainToken = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(orderResult.Token) && a.chain_id == chain_id).FirstOrDefault();
                             var decimals_num = new BigDecimal(Math.Pow(10, chainToken.decimals));
-                            var order = new orders() { amount = (double)orderResult.Amount, buyer = orderResult.Buyer, buyer_contact = null, buyer_ex = (double)(new BigDecimal(orderResult.BuyerEx) / decimals_num), buyer_pledge = (double)(new BigDecimal(orderResult.BuyerPledge) / decimals_num), chain_id = chain_id, contract = contractAddress, create_time = DateTime.Now, creator = "system", description = orderResult.Description, img = orderResult.Img, name = orderResult.Name, seller = orderResult.Seller, order_id = (int)decoded.Event.OrderId, price = (double)(new BigDecimal(orderResult.Price) / decimals_num), seller_contact = null, seller_pledge = (double)(new BigDecimal(orderResult.SellerPledge) / decimals_num), status = orderResult.Status, token = orderResult.Token, updater = null, update_time = DateTime.Now, weight = 10000 };
+                            var seller_pledge = (double)(new BigDecimal(orderResult.SellerPledge) / decimals_num);
+                            var price = (double)(new BigDecimal(orderResult.Price) / decimals_num);
+                            var amount = (double)orderResult.Amount;
+                            var seller_ratio = (decimal)(seller_pledge / (price * amount));
+                            var order = new orders() { amount = amount, buyer = orderResult.Buyer, buyer_contact = null, buyer_ex = (double)(new BigDecimal(orderResult.BuyerEx) / decimals_num), buyer_pledge = (double)(new BigDecimal(orderResult.BuyerPledge) / decimals_num), chain_id = chain_id, contract = contractAddress, create_time = DateTime.Now, creator = "system", description = orderResult.Description, img = orderResult.Img, name = orderResult.Name, seller = orderResult.Seller, order_id = (int)decoded.Event.OrderId, price = price, seller_contact = null, seller_pledge = seller_pledge, status = orderResult.Status, token = orderResult.Token, updater = null, update_time = DateTime.Now, weight = 10000, seller_ratio = seller_ratio };
                             _masterDbContext.orders.Add(order);
                             _masterDbContext.SaveChanges();
                             _ = _sendMessage.SendMessageEbay((int)decoded.Event.OrderId, chain_id, contractAddress);
-
                         }
                     }
                     else

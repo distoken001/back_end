@@ -101,7 +101,7 @@ namespace ListenService.Repository.Implements
                             order.seller_pledge = (double)(new BigDecimal(orderResult.SellerPledge) / decimals_num);
                             order.amount = (double)orderResult.Amount;
                             order.price = (double)(new BigDecimal(orderResult.Price) / decimals_num);
-
+                            order.seller_ratio = (decimal)(order.seller_pledge / (order.price * order.amount));
                             _masterDbContext.SaveChanges();
                             _ = _sendMessage.SendMessageEbay((int)decoded.Event.OrderId, chain_id, contractAddress);
                         }
