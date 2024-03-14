@@ -95,5 +95,13 @@ namespace CommonLibrary.Model.DataEntityModel
         /// 权重
         /// </summary>
         public int weight { get; set; }
+        /// <summary>
+        /// 指定卖家质押比例
+        /// </summary>
+        public decimal? seller_ratio { get; set; }
+        /// <summary>
+        /// 卖家发布0、买家求购1
+        /// </summary>
+        public int way { get; set; }
     }
 }

@@ -106,7 +106,7 @@ namespace DeMarketAPI.Common.Model.HttpApiModel.ResponseModel
                 return price * amount;
             }
         }
-        public string seller_ratio
+        public string seller_ratio_string
         {
             get
             {
@@ -136,6 +136,18 @@ namespace DeMarketAPI.Common.Model.HttpApiModel.ResponseModel
         /// 卖家的nft
         /// </summary>
         public int[] seller_nfts { get; set; }
+        /// <summary>
+        /// 卖家的nft
+        /// </summary>
+        public int[] buyer_nfts { get; set; }
         public BelongUserEnum belong { get; set; }
+        /// <summary>
+        /// 指定卖家质押比例
+        /// </summary>
+        public decimal? seller_ratio { get; set; }
+        /// <summary>
+        /// 卖家发布0、买家求购1
+        /// </summary>
+        public int way { get; set; }
     }
 }

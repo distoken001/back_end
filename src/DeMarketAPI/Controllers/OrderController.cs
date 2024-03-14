@@ -161,7 +161,7 @@ namespace DeMarketAPI.Controllers
         {
             var queryEntities = _mySqlMasterDbContext.orders.AsNoTracking().AsQueryable();
             var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking().ToList();
-            queryEntities = queryEntities.Where(p => p.status == OrderStatus.Initial && (p.buyer.Equals("0x0000000000000000000000000000000000000000", StringComparison.OrdinalIgnoreCase) || p.buyer.Equals(CurrentLoginAddress, StringComparison.OrdinalIgnoreCase) || p.seller.Equals(CurrentLoginAddress, StringComparison.OrdinalIgnoreCase)));
+            queryEntities = queryEntities.Where(p => p.status == OrderStatus.Initial);
 
             if (!string.IsNullOrEmpty(req.name))
             {
@@ -190,13 +190,23 @@ namespace DeMarketAPI.Controllers
                 var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
                 a.token_des = tokenView;
                 a.belong = Tool.getBelongUserEnum(CurrentLoginAddress, a.buyer, a.seller);
-                var user = users.FirstOrDefault(c => c.address.Equals(a.seller, StringComparison.OrdinalIgnoreCase));
-                if (user != null)
+
+                var user_seller = users.FirstOrDefault(c => c.address.Equals(a.seller, StringComparison.OrdinalIgnoreCase));
+                if (user_seller != null)
                 {
-                    a.seller_nick = user.nick_name ?? "";
-                    a.seller_email = user.email ?? "";
-                    a.seller_nfts = user_nfts.Where(un => un.address.Equals(user.address)).Select(a => a.nft).ToArray();
+                    a.seller_nick = user_seller.nick_name ?? "";
+                    a.seller_email = user_seller.email ?? "";
+                    a.seller_nfts = user_nfts.Where(un => un.address.Equals(user_seller.address)).Select(a => a.nft).ToArray();
                 }
+
+                var user_buyer = users.FirstOrDefault(c => c.address.Equals(a.buyer, StringComparison.OrdinalIgnoreCase));
+                if (user_buyer != null)
+                {
+                    a.buyer_nick = user_buyer.nick_name ?? "";
+                    a.buyer_email = user_buyer.email ?? "";
+                    a.buyer_nfts = user_nfts.Where(un => un.address.Equals(user_buyer.address)).Select(a => a.nft).ToArray();
+                }
+
                 a.like_count = _mySqlMasterDbContext.ebay_user_like.AsNoTracking().Where(au => au.order_id == a.id && au.status == 1).Count() + new Random().Next(1, 15);
                 if (!string.IsNullOrEmpty(CurrentLoginAddress))
                 {
@@ -217,7 +227,7 @@ namespace DeMarketAPI.Controllers
         {
             var queryEntities = _mySqlMasterDbContext.orders.AsNoTracking().AsQueryable();
             var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking().ToList();
-            queryEntities = queryEntities.Where(p => p.status == OrderStatus.Initial && (p.buyer.Equals("0x0000000000000000000000000000000000000000", StringComparison.OrdinalIgnoreCase) || p.buyer.Equals(CurrentLoginAddress, StringComparison.OrdinalIgnoreCase) || p.seller.Equals(CurrentLoginAddress, StringComparison.OrdinalIgnoreCase)));
+            queryEntities = queryEntities.Where(p => p.status == OrderStatus.Initial);
 
             if (!string.IsNullOrEmpty(req.name))
             {
@@ -248,12 +258,20 @@ namespace DeMarketAPI.Controllers
                 var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
                 a.token_des = tokenView;
                 a.belong = Tool.getBelongUserEnum(CurrentLoginAddress, a.buyer, a.seller);
-                var user = users.FirstOrDefault(c => c.address.Equals(a.seller, StringComparison.OrdinalIgnoreCase));
-                if (user != null)
+                var user_seller = users.FirstOrDefault(c => c.address.Equals(a.seller, StringComparison.OrdinalIgnoreCase));
+                if (user_seller != null)
                 {
-                    a.seller_nick = user.nick_name ?? "";
-                    a.seller_email = user.email ?? "";
-                    a.seller_nfts = user_nfts.Where(un => un.address.Equals(user.address)).Select(a => a.nft).ToArray();
+                    a.seller_nick = user_seller.nick_name ?? "";
+                    a.seller_email = user_seller.email ?? "";
+                    a.seller_nfts = user_nfts.Where(un => un.address.Equals(user_seller.address)).Select(a => a.nft).ToArray();
+                }
+
+                var user_buyer = users.FirstOrDefault(c => c.address.Equals(a.buyer, StringComparison.OrdinalIgnoreCase));
+                if (user_buyer != null)
+                {
+                    a.buyer_nick = user_buyer.nick_name ?? "";
+                    a.buyer_email = user_buyer.email ?? "";
+                    a.buyer_nfts = user_nfts.Where(un => un.address.Equals(user_buyer.address)).Select(a => a.nft).ToArray();
                 }
                 a.like_count = _mySqlMasterDbContext.ebay_user_like.AsNoTracking().Where(au => au.order_id == a.id && au.status == 1).Count() + random.Next(1, 15);
                 if (!string.IsNullOrEmpty(CurrentLoginAddress))
@@ -315,21 +333,20 @@ namespace DeMarketAPI.Controllers
                 var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking().ToList();
                 var re = AutoMapperHelper.MapDbEntityToDTO<orders, OrderResponse>(res);
                 re.belong = Tool.getBelongUserEnum(CurrentLoginAddress, res.buyer, res.seller);
-                re.seller_nfts = _mySqlMasterDbContext.user_nft.AsNoTracking().Where(a => a.status == 1 && a.address.Equals(re.seller)).Select(a => a.nft).ToArray();
-                var user = _mySqlMasterDbContext.users.AsNoTracking().FirstOrDefault(c => c.address.Equals(re.seller, StringComparison.OrdinalIgnoreCase));
-                if (user != null)
+                var user_seller = _mySqlMasterDbContext.users.FirstOrDefault(c => c.address.Equals(re.seller, StringComparison.OrdinalIgnoreCase));
+                if (user_seller != null)
                 {
-                    re.seller_nick = user.nick_name ?? "";
-                    re.seller_email = user.email ?? "";
+                    re.seller_nick = user_seller.nick_name ?? "";
+                    re.seller_email = user_seller.email ?? "";
+                    re.seller_nfts = _mySqlMasterDbContext.user_nft.Where(un => un.status==1&&un.address.Equals(user_seller.address)).Select(a => a.nft).ToArray();
                 }
-                if (CurrentLoginAddress.Equals(re.buyer, StringComparison.OrdinalIgnoreCase) || CurrentLoginAddress.Equals(re.seller, StringComparison.OrdinalIgnoreCase))
+
+                var user_buyer = _mySqlMasterDbContext.users.FirstOrDefault(c => c.address.Equals(re.buyer, StringComparison.OrdinalIgnoreCase));
+                if (user_buyer != null)
                 {
-                    var userBuyer = _mySqlMasterDbContext.users.AsNoTracking().FirstOrDefault(c => c.address.Equals(re.buyer, StringComparison.OrdinalIgnoreCase));
-                    if (userBuyer != null)
-                    {
-                        re.buyer_nick = userBuyer.nick_name ?? "";
-                        re.buyer_email = userBuyer.email ?? "";
-                    }
+                    re.buyer_nick = user_buyer.nick_name ?? "";
+                    re.buyer_email = user_buyer.email ?? "";
+                    re.buyer_nfts = _mySqlMasterDbContext.user_nft.Where(un => un.status == 1&&un.address.Equals(user_buyer.address)).Select(a => a.nft).ToArray();
                 }
                 var token = chainTokens.FirstOrDefault(c => c.chain_id == re.chain_id && c.token_address.Equals(re.token, StringComparison.OrdinalIgnoreCase));
                 var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
@@ -337,7 +354,7 @@ namespace DeMarketAPI.Controllers
                 //return Json(new WebApiResult(1, "CurrentLoginAddress:" + CurrentLoginAddress + ",CurrentLoginChain:"+ CurrentLoginChain, ress));
                 return Json(new WebApiResult(1, "查询成功" + CurrentLoginAddress, re));
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine($"发送错误：{ex.Message}");
                 return Json(new WebApiResult(-1, "查询订单详情失败" + ex.Message));
@@ -365,20 +382,29 @@ namespace DeMarketAPI.Controllers
                 var list = _mySqlMasterDbContext.orders.AsNoTracking().Where(a => idList.Contains(a.id)).ToList();
                 var viewList = AutoMapperHelper.MapDbEntityToDTO<orders, OrderResponse>(list);
                 var sellers = viewList.Select(a => a.seller).ToList();
-                var users = _mySqlMasterDbContext.users.AsNoTracking().Where(a => sellers.Contains(a.address)).ToList();
-                var user_nfts = _mySqlMasterDbContext.user_nft.AsNoTracking().ToList();
+                var buyers = viewList.Select(a => a.buyer).ToList();
+                var users = _mySqlMasterDbContext.users.AsNoTracking().Where(a => sellers.Contains(a.address)|| buyers.Contains(a.address)).ToList();
+                var user_nfts = _mySqlMasterDbContext.user_nft.AsNoTracking().Where(a => a.status == 1);
                 foreach (var a in viewList)
                 {
                     var token = chainTokens.FirstOrDefault(c => c.chain_id == a.chain_id && c.token_address.Equals(a.token, StringComparison.OrdinalIgnoreCase));
                     var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
                     a.token_des = tokenView;
                     a.belong = Tool.getBelongUserEnum(CurrentLoginAddress, a.buyer, a.seller);
-                    var user = users.FirstOrDefault(c => c.address.Equals(a.seller, StringComparison.OrdinalIgnoreCase));
-                    if (user != null)
+                    var user_seller = users.FirstOrDefault(c => c.address.Equals(a.seller, StringComparison.OrdinalIgnoreCase));
+                    if (user_seller != null)
                     {
-                        a.seller_nick = user.nick_name ?? "匿名用户";
-                        a.seller_email = user.email ?? "未预留邮箱";
-                        a.seller_nfts = user_nfts.Where(un => un.address.Equals(user.address) && un.status == 1).Select(a => a.nft).ToArray();
+                        a.seller_nick = user_seller.nick_name ?? "";
+                        a.seller_email = user_seller.email ?? "";
+                        a.seller_nfts = user_nfts.Where(un => un.address.Equals(user_seller.address)).Select(a => a.nft).ToArray();
+                    }
+
+                    var user_buyer = users.FirstOrDefault(c => c.address.Equals(a.buyer, StringComparison.OrdinalIgnoreCase));
+                    if (user_buyer != null)
+                    {
+                        a.buyer_nick = user_buyer.nick_name ?? "";
+                        a.buyer_email = user_buyer.email ?? "";
+                        a.buyer_nfts = user_nfts.Where(un => un.address.Equals(user_buyer.address)).Select(a => a.nft).ToArray();
                     }
                     a.like_count = _mySqlMasterDbContext.ebay_user_like.AsNoTracking().Where(au => au.order_id == a.id && au.status == 1).Count() + new Random().Next(1, 15);
                     if (!string.IsNullOrEmpty(CurrentLoginAddress))
