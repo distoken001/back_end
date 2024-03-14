@@ -87,7 +87,7 @@ namespace ListenService.Repository.Implements
                             var postResult = await function.CallDeserializingToObjectAsync<PostOrderDTO>((int)decoded.Event.OrderId);
                             var chainToken = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(postResult.Token) && a.chain_id == chain_id).FirstOrDefault();
                             var decimals_num = new BigDecimal(Math.Pow(10, chainToken.decimals));
-                            var post = _masterDbContext.post.Where(a => a.order_id == (int)decoded.Event.OrderId && a.chain_id == chain_id && a.contract.Equals(contractAddress)).FirstOrDefault();
+                            var post = _masterDbContext.orders.Where(a => a.order_id == (int)decoded.Event.OrderId && a.chain_id == chain_id && a.contract.Equals(contractAddress)).FirstOrDefault();
 
                             if (postResult.Status == OrderStatus.Ordered)
                             {
