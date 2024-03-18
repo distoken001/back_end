@@ -150,8 +150,8 @@ namespace DeMarketAPI.Common.Model.HttpApiModel.ResponseModel
         /// </summary>
         public decimal? seller_ratio { get; set; }
         /// <summary>
-        /// 卖家发布0、买家求购1
+        /// 卖家发布1、买家发布2
         /// </summary>
-        public int way { get; set; }
+        public PostWayEnum way { get; set; }
     }
 }

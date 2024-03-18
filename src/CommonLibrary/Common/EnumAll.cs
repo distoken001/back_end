@@ -221,6 +221,12 @@
         OPSepolia = 11155420,
         Sepolia= 11155111
     }
+    public enum PostWayEnum : int
+    {
+        卖家发布=1,
+        买家发布=2
+    }
+
     public enum BelongUserEnum
     {
         未知 = 0,

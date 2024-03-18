@@ -22,6 +22,11 @@ namespace DeMarketAPI.Common.Model.HttpApiModel.RequestModel
         ///// 链id
         ///// </summary>
         public ChainEnum chain_id { get; set; }
+        ///// <summary>
+        /////1卖家发布 2买家发布 0全部
+        ///// </summary>
+        public PostWayEnum way { get; set; }
+        
 
     }
 }

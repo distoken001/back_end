@@ -102,6 +102,6 @@ namespace CommonLibrary.Model.DataEntityModel
         /// <summary>
         /// 卖家发布0、买家求购1
         /// </summary>
-        public int way { get; set; }
+        public PostWayEnum way { get; set; }
     }
 }

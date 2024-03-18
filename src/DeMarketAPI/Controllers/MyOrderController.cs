@@ -52,9 +52,15 @@ namespace DeMarketAPI.Controllers
             {
                 queryEntities = queryEntities.Where(p => p.description.Contains(req.description,StringComparison.OrdinalIgnoreCase));
             }
+            if (req.way != 0)
+            {
+                queryEntities = queryEntities.Where(p => p.way == req.way);
+            }
 
             if (req.chain_id != 0)
+            {
                 queryEntities = queryEntities.Where(p => p.chain_id == req.chain_id);
+            }
 
             var totalCount = await queryEntities.CountAsync();
             queryEntities = queryEntities.OrderByDescending(p => p.create_time).Skip((req.pageIndex - 1) * req.pageSize).Take(req.pageSize);
