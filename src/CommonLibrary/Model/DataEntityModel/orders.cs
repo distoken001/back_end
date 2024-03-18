@@ -100,7 +100,7 @@ namespace CommonLibrary.Model.DataEntityModel
         /// </summary>
         public decimal? seller_ratio { get; set; }
         /// <summary>
-        /// 卖家发布0、买家求购1
+        /// 卖家发布1、买家发布0
         /// </summary>
         public PostWayEnum way { get; set; }
     }
