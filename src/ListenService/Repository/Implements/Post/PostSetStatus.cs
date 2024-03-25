@@ -104,7 +104,7 @@ namespace ListenService.Repository.Implements
                             post.seller = postResult.Seller;
 
                             _masterDbContext.SaveChanges();
-                            //_ = _sendMessage.SendMessagePost((int)decoded.Event.OrderId, chain_id, contractAddress);
+                            _ = _sendMessage.SendMessagePost((int)decoded.Event.OrderId, chain_id, contractAddress);
                         }
                     }
                     else

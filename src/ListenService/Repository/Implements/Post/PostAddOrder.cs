@@ -92,7 +92,7 @@ namespace ListenService.Repository.Implements
                             var post = new orders() { amount = (double)postResult.Amount, buyer = postResult.Buyer, buyer_contact = null, buyer_ex = (double)(new BigDecimal(postResult.BuyerEx) / decimals_num), buyer_pledge = (double)(new BigDecimal(postResult.BuyerPledge) / decimals_num), chain_id = chain_id, contract = contractAddress, create_time = DateTime.Now, creator = "system", description = postResult.Description, img = postResult.Img, name = postResult.Name, seller = postResult.Seller, order_id = (int)decoded.Event.OrderId, price = (double)(new BigDecimal(postResult.Price) / decimals_num), seller_contact = null, seller_pledge = (double)(new BigDecimal(postResult.SellerPledge) / decimals_num), status = postResult.Status, token = postResult.Token, updater = null, update_time = DateTime.Now, weight = 10000, seller_ratio = (decimal)(new BigDecimal(extendResult.SellerRatio) / new BigDecimal(10000)) , way = PostWayEnum.买家发布 };
                             _masterDbContext.orders.Add(post);
                             _masterDbContext.SaveChanges();
-                            //_ = _sendMessage.SendMessagePost((int)decoded.Event.OrderId, chain_id, contractAddress);
+                            _ = _sendMessage.SendMessagePost((int)decoded.Event.OrderId, chain_id, contractAddress);
 
                         }
                     }
