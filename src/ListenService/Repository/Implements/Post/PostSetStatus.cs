@@ -101,6 +101,7 @@ namespace ListenService.Repository.Implements
                             post.seller_pledge = (double)(new BigDecimal(postResult.SellerPledge) / decimals_num);
                             post.amount = (double)postResult.Amount;
                             post.price = (double)(new BigDecimal(postResult.Price) / decimals_num);
+                            post.seller = postResult.Seller;
 
                             _masterDbContext.SaveChanges();
                             //_ = _sendMessage.SendMessagePost((int)decoded.Event.OrderId, chain_id, contractAddress);
