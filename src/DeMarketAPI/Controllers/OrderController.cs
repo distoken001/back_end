@@ -180,13 +180,15 @@ namespace DeMarketAPI.Controllers
             {
                 queryEntities = queryEntities.Where(p => p.way == req.way);
             }
-            
+
             var totalCount = await queryEntities.CountAsync();
             queryEntities = queryEntities.OrderBy(p => p.weight).ThenByDescending(p => p.create_time).Skip((req.pageIndex - 1) * req.pageSize).Take(req.pageSize);
             var list = await queryEntities.ToListAsync();
             var viewList = AutoMapperHelper.MapDbEntityToDTO<orders, OrderResponse>(list);
             var sellers = viewList.Select(a => a.seller).ToList();
+            var buyers = viewList.Select(a => a.buyer).ToList();
             var users = _mySqlMasterDbContext.users.AsNoTracking().Where(a => sellers.Contains(a.address)).ToList();
+            var users_buy = _mySqlMasterDbContext.users.AsNoTracking().Where(a => buyers.Contains(a.address)).ToList();
             var user_nfts = _mySqlMasterDbContext.user_nft.AsNoTracking().Where(a => a.status == 1);
             foreach (var a in viewList)
             {
@@ -203,7 +205,7 @@ namespace DeMarketAPI.Controllers
                     a.seller_nfts = user_nfts.Where(un => un.address.Equals(user_seller.address)).Select(a => a.nft).ToArray();
                 }
 
-                var user_buyer = users.FirstOrDefault(c => c.address.Equals(a.buyer, StringComparison.OrdinalIgnoreCase));
+                var user_buyer = users_buy.FirstOrDefault(c => c.address.Equals(a.buyer, StringComparison.OrdinalIgnoreCase));
                 if (user_buyer != null)
                 {
                     a.buyer_nick = user_buyer.nick_name ?? "";
@@ -256,7 +258,9 @@ namespace DeMarketAPI.Controllers
             var list = await queryEntities.ToListAsync();
             var viewList = AutoMapperHelper.MapDbEntityToDTO<orders, OrderResponse>(list);
             var sellers = viewList.Select(a => a.seller).ToList();
+            var buyers = viewList.Select(a => a.buyer).ToList();
             var users = _mySqlMasterDbContext.users.AsNoTracking().Where(a => sellers.Contains(a.address)).ToList();
+            var users_buy = _mySqlMasterDbContext.users.AsNoTracking().Where(a => buyers.Contains(a.address)).ToList();
             var user_nfts = _mySqlMasterDbContext.user_nft.AsNoTracking().Where(a => a.status == 1);
             foreach (var a in viewList)
             {
@@ -265,14 +269,14 @@ namespace DeMarketAPI.Controllers
                 a.token_des = tokenView;
                 a.belong = Tool.getBelongUserEnum(CurrentLoginAddress, a.buyer, a.seller);
                 var user_seller = users.FirstOrDefault(c => c.address.Equals(a.seller, StringComparison.OrdinalIgnoreCase));
+
                 if (user_seller != null)
                 {
                     a.seller_nick = user_seller.nick_name ?? "";
                     a.seller_email = user_seller.email ?? "";
                     a.seller_nfts = user_nfts.Where(un => un.address.Equals(user_seller.address)).Select(a => a.nft).ToArray();
                 }
-
-                var user_buyer = users.FirstOrDefault(c => c.address.Equals(a.buyer, StringComparison.OrdinalIgnoreCase));
+                var user_buyer = users_buy.FirstOrDefault(c => c.address.Equals(a.buyer, StringComparison.OrdinalIgnoreCase));
                 if (user_buyer != null)
                 {
                     a.buyer_nick = user_buyer.nick_name ?? "";
@@ -344,7 +348,7 @@ namespace DeMarketAPI.Controllers
                 {
                     re.seller_nick = user_seller.nick_name ?? "";
                     re.seller_email = user_seller.email ?? "";
-                    re.seller_nfts = _mySqlMasterDbContext.user_nft.Where(un => un.status==1&&un.address.Equals(user_seller.address)).Select(a => a.nft).ToArray();
+                    re.seller_nfts = _mySqlMasterDbContext.user_nft.Where(un => un.status == 1 && un.address.Equals(user_seller.address)).Select(a => a.nft).ToArray();
                 }
 
                 var user_buyer = _mySqlMasterDbContext.users.FirstOrDefault(c => c.address.Equals(re.buyer, StringComparison.OrdinalIgnoreCase));
@@ -352,7 +356,7 @@ namespace DeMarketAPI.Controllers
                 {
                     re.buyer_nick = user_buyer.nick_name ?? "";
                     re.buyer_email = user_buyer.email ?? "";
-                    re.buyer_nfts = _mySqlMasterDbContext.user_nft.Where(un => un.status == 1&&un.address.Equals(user_buyer.address)).Select(a => a.nft).ToArray();
+                    re.buyer_nfts = _mySqlMasterDbContext.user_nft.Where(un => un.status == 1 && un.address.Equals(user_buyer.address)).Select(a => a.nft).ToArray();
                 }
                 var token = chainTokens.FirstOrDefault(c => c.chain_id == re.chain_id && c.token_address.Equals(re.token, StringComparison.OrdinalIgnoreCase));
                 var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
@@ -389,7 +393,7 @@ namespace DeMarketAPI.Controllers
                 var viewList = AutoMapperHelper.MapDbEntityToDTO<orders, OrderResponse>(list);
                 var sellers = viewList.Select(a => a.seller).ToList();
                 var buyers = viewList.Select(a => a.buyer).ToList();
-                var users = _mySqlMasterDbContext.users.AsNoTracking().Where(a => sellers.Contains(a.address)|| buyers.Contains(a.address)).ToList();
+                var users = _mySqlMasterDbContext.users.AsNoTracking().Where(a => sellers.Contains(a.address) || buyers.Contains(a.address)).ToList();
                 var user_nfts = _mySqlMasterDbContext.user_nft.AsNoTracking().Where(a => a.status == 1);
                 foreach (var a in viewList)
                 {
