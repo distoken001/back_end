@@ -157,7 +157,7 @@
         Initial,//待购买0
         Ordered,//被下单1
         Completed,//已完成2
-        BuyerBreak,//买家毁约3
+        ConfirmShip,//卖家发货3
         SellerBreak,//卖家毁约4
         SellerCancelWithoutDuty,//卖家无责取消5
         BuyerLanchCancel,//买家发起取消6
