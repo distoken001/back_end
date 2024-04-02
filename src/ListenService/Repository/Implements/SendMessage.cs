@@ -71,7 +71,7 @@ namespace ListenService.Repository.Implements
                         //{
                         //    yajin = "双押";
                         //}
-                        var chatMessage = $"卖家订单：币友 @{seller?.nick_name} 在{order.chain_id.ToString()}链上发布了新订单：{order.name}，单价：{order.price.ToString("0.000000000000000000").TrimEnd('0').TrimEnd('.')} {token.token_name}, 库存：{order.amount}，订单链接:{_configuration["Domain"]}/market/detail/{order.contract}/{(int)order.chain_id}/{order.order_id}";
+                        var chatMessage = $"卖家订单：币友 @{seller?.nick_name} 在{order.chain_id.ToString()}链上发布了新订单：{order.name}，单价：{order.price.ToString("0.000000000000000000").TrimEnd('0').TrimEnd('.')} {token.token_name}, 库存数量：{order.amount}，订单链接:{_configuration["Domain"]}/market/detail/{order.contract}/{(int)order.chain_id}/{order.order_id}";
                         if (!isSame)
                         {
                             await botClient.SendTextMessageAsync(_configuration["GroupChatID"], chatMessage);
@@ -181,7 +181,7 @@ namespace ListenService.Repository.Implements
                         //{
                         mailMessageBuyer = $"您在{order.chain_id.ToString()}链上发布了新的求购：{order.name}。";
 
-                        var chatMessage = $"买家订单：币友在{order.chain_id.ToString()}链上发布了新的求购：{order.name}，单价：{order.price.ToString("0.000000000000000000").TrimEnd('0').TrimEnd('.')} {token.token_name}, 数量：{order.amount}，买家已经提前预付了款项，订单链接:{_configuration["Domain"]}/market/post/{order.contract}/{(int)order.chain_id}/{order.order_id}";
+                        var chatMessage = $"买家订单：币友在{order.chain_id.ToString()}链上发布了新的求购：{order.name}，单价：{order.price.ToString("0.000000000000000000").TrimEnd('0').TrimEnd('.')} {token.token_name}, 最大数量：{order.amount}，买家已经提前预付了款项，订单链接:{_configuration["Domain"]}/market/post/{order.contract}/{(int)order.chain_id}/{order.order_id}";
                         if (!isSame)
                         {
                             await botClient.SendTextMessageAsync(_configuration["GroupChatID"], chatMessage);
