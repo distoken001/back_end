@@ -65,13 +65,13 @@ namespace ListenService.Repository.Implements
                     {
                         //if (seller?.telegram_id != null)
                         //{
-                        mailMessageSeller = $"您在{order.chain_id.ToString()}链上发布了商品：{order.name}。";
+                        mailMessageSeller = $"您在{order.chain_id.ToString()}链上发布了订单：{order.name}。";
                         //var yajin = "单押";
                         //if (order.seller_pledge > 0)
                         //{
                         //    yajin = "双押";
                         //}
-                        var chatMessage = $"卖家订单：用户 @{seller?.nick_name} 在{order.chain_id.ToString()}链上发布了新商品：{order.name}，单价：{order.price.ToString("0.000000000000000000").TrimEnd('0').TrimEnd('.')} {token.token_name}, 数量：{order.amount}，订单链接:{_configuration["Domain"]}/market/detail/{order.contract}/{(int)order.chain_id}/{order.order_id}";
+                        var chatMessage = $"卖家订单：币友 @{seller?.nick_name} 在{order.chain_id.ToString()}链上发布了新订单：{order.name}，单价：{order.price.ToString("0.000000000000000000").TrimEnd('0').TrimEnd('.')} {token.token_name}, 库存：{order.amount}，订单链接:{_configuration["Domain"]}/market/detail/{order.contract}/{(int)order.chain_id}/{order.order_id}";
                         if (!isSame)
                         {
                             await botClient.SendTextMessageAsync(_configuration["GroupChatID"], chatMessage);
@@ -95,34 +95,34 @@ namespace ListenService.Repository.Implements
                         //}
                         if (buyer?.telegram_id != null)
                         {
-                            mailMessageBuyer = $"卖家(@{seller?.nick_name})在{order.chain_id.ToString()}链上发布的商品({order.name})指定您为唯一购买人。";
+                            mailMessageBuyer = $"卖家(@{seller?.nick_name})在{order.chain_id.ToString()}链上发布的订单({order.name})指定您为唯一购买人。";
                         }
                     }
                     else if (status == OrderStatus.SellerCancelWithoutDuty)
                     {
                         if (seller?.telegram_id != null)
                         {
-                            mailMessageSeller = $"您在{order.chain_id.ToString()}链上发布的商品({order.name})已取消。";
+                            mailMessageSeller = $"您在{order.chain_id.ToString()}链上发布的订单({order.name})已取消。";
                         }
                         if (buyer?.telegram_id != null)
                         {
-                            mailMessageBuyer = $"卖家(@{seller?.nick_name})在{order.chain_id.ToString()}链上发布的商品({order.name})已取消，该商品曾指定您为唯一购买人。";
+                            mailMessageBuyer = $"卖家(@{seller?.nick_name})在{order.chain_id.ToString()}链上发布的订单({order.name})已取消，该订单曾指定您为唯一购买人。";
                         }
                     }
                     else if (status == OrderStatus.Completed)
                     {
-                        mailMessageSeller = $"您在{order.chain_id.ToString()}链上的发布的商品({order.name})交易已完成。";
-                        mailMessageBuyer = $"您在{order.chain_id.ToString()}链上购买的商品({order.name})交易已完成。";
+                        mailMessageSeller = $"您在{order.chain_id.ToString()}链上的发布的订单({order.name})交易已完成。";
+                        mailMessageBuyer = $"您在{order.chain_id.ToString()}链上购买的订单({order.name})交易已完成。";
                     }
                     else if (status == OrderStatus.ConsultCancelCompleted)
                     {
-                        mailMessageSeller = $"您在{order.chain_id.ToString()}链上的发布的商品({order.name})协商取消已完成。";
-                        mailMessageBuyer = $"您在{order.chain_id.ToString()}链上购买的商品({order.name})协商取消已完成。";
+                        mailMessageSeller = $"您在{order.chain_id.ToString()}链上的发布的订单({order.name})协商取消已完成。";
+                        mailMessageBuyer = $"您在{order.chain_id.ToString()}链上购买的订单({order.name})协商取消已完成。";
                     }
                     else
                     {
-                        mailMessageSeller = $"您在{order.chain_id.ToString()}链上发布的商品（{order.name}）有新动态，请及时查看。\n对方Telegram：@" + buyer?.nick_name;
-                        mailMessageBuyer = $"您在{order.chain_id.ToString()}链上购买的商品（{order.name}）有新动态，请及时查看。\n对方Telegram： @" + seller?.nick_name;
+                        mailMessageSeller = $"您在{order.chain_id.ToString()}链上发布的订单（{order.name}）有新动态，请及时查看。\n对方Telegram：@" + buyer?.nick_name;
+                        mailMessageBuyer = $"您在{order.chain_id.ToString()}链上购买的订单（{order.name}）有新动态，请及时查看。\n对方Telegram： @" + seller?.nick_name;
                     }
 
                     if (!string.IsNullOrEmpty(mailMessageSeller))
