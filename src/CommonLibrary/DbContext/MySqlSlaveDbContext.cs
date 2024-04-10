@@ -25,6 +25,7 @@ namespace CommonLibrary.DbContext
         public virtual DbSet<user_nft> user_nft { get; set; }
         public virtual DbSet<contacts> contacts { get; set; }
         public virtual DbSet<chain_tokens> chain_tokens { get; set; }
+        public virtual DbSet<tokens> tokens { get; set; }
         public virtual DbSet<inviter_rebates> inviter_rebates { get; set; }
     }
 }

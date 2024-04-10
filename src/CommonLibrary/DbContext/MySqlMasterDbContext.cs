@@ -27,6 +27,7 @@ namespace CommonLibrary.DbContext
         public virtual DbSet<cooperator> cooperator { get; set; }
         public virtual DbSet<contacts> contacts { get; set; }
         public virtual DbSet<chain_tokens> chain_tokens { get; set; }
+        public virtual DbSet<tokens> tokens { get; set; }
         public virtual DbSet<inviter_rebates> inviter_rebates { get; set; }
         public virtual DbSet<ebay_user_like> ebay_user_like { get; set; }
         public virtual DbSet<auction_user_like> auction_user_like { get; set; }
