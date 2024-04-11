@@ -71,8 +71,8 @@ namespace ListenService
             services.AddHostedService<BoxTypeAddedService>();
             services.AddHostedService<BoxMintService>();
 
-            services.AddHostedService<AuctionAddOrderService>();
-            services.AddHostedService<AuctionSetOrderInfoService>();
+            //services.AddHostedService<AuctionAddOrderService>();
+            //services.AddHostedService<AuctionSetOrderInfoService>();
 
             services.AddHostedService<EbayAddOrderService>();
             services.AddHostedService<EbaySetStatusService>();
