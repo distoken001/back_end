@@ -219,7 +219,11 @@
         HarmonyTest = 1666700000,
         Conflux = 1030,
         OPSepolia = 11155420,
-        Sepolia= 11155111
+        Sepolia= 11155111,
+        Base= 8453,
+        Scroll= 534352,
+        ZksyncEra=324,
+        opBNB=204
     }
     public enum PostWayEnum : int
     {

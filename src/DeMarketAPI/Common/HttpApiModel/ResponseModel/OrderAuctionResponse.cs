@@ -93,7 +93,7 @@ namespace DeMarketAPI.Common.Model.HttpApiModel.ResponseModel
         /// <summary>
         /// 链名称
         /// </summary>
-        public string chain_name { get { if (chain_id == ChainEnum.Bsc) { return "BNB Chain"; } else return chain_id.ToString(); } }
+        public string chain_name { get { if (chain_id == ChainEnum.Bsc) { return "BNB Chain"; } else if (chain_id == ChainEnum.ZksyncEra) { return "Zksync Era"; }  else return chain_id.ToString(); } }
         /// <summary>
         /// 订单总价
         /// </summary>
