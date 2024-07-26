@@ -77,8 +77,8 @@ namespace ListenService
             services.AddHostedService<EbayAddOrderService>();
             services.AddHostedService<EbaySetStatusService>();
 
-            //services.AddHostedService<PostAddOrderService>();
-            //services.AddHostedService<PostSetStatusService>();
+            services.AddHostedService<PostAddOrderService>();
+            services.AddHostedService<PostSetStatusService>();
 
 
             services
