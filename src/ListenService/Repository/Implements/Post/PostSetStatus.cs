@@ -43,6 +43,7 @@ namespace ListenService.Repository.Implements
             StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
             //StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
             var client = new StreamingWebSocketClient(nodeWss);
+            Console.WriteLine("PostSetStatus程序启动：" + chain_id.ToString());
             try
             {
                 // 连接到以太坊区块链网络
@@ -75,14 +76,13 @@ namespace ListenService.Repository.Implements
 
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
                 {
-
+                    Console.WriteLine("PostSetStatus监听到了！");
                     var decoded = Event<PostSetStatusEventDTO>.DecodeEvent(log);
                     if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
                     {
                         using (var scope = _serviceProvider.CreateScope())
                         {
                             var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
-                            Console.WriteLine("PostSetStatus监听到了！");
                             // 调用智能合约函数并获取返回结果
                             var postResult = await function.CallDeserializingToObjectAsync<PostOrderDTO>((int)decoded.Event.OrderId);
                             var chainToken = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(postResult.Token) && a.chain_id == chain_id).FirstOrDefault();

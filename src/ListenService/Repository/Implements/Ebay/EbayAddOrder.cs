@@ -43,7 +43,7 @@ namespace ListenService.Repository.Implements
             StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
             //StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
             var client = new StreamingWebSocketClient(nodeWss);
-            Console.WriteLine("EbayAddOrder程序启动：BSC");
+            Console.WriteLine("EbayAddOrder程序启动："+chain_id.ToString());
             try
             {
                 // 连接到以太坊区块链网络
@@ -77,6 +77,7 @@ namespace ListenService.Repository.Implements
                 // attach a handler for Transfer event logs
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
                 {
+                    Console.WriteLine("EbayAddOrder监听到了！");
                     // decode the log into a typed event log
                     var decoded = Event<EbayAddOrderEventDTO>.DecodeEvent(log);
                     if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
@@ -84,7 +85,7 @@ namespace ListenService.Repository.Implements
                         using (var scope = _serviceProvider.CreateScope())
                         {
                             var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
-                            Console.WriteLine("EbayAddOrder监听到了！");
+                         
                             // 调用智能合约函数并获取返回结果
                             var orderResult = await function.CallDeserializingToObjectAsync<EbayOrderDTO>((int)decoded.Event.OrderId);
                             var chainToken = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(orderResult.Token) && a.chain_id == chain_id).FirstOrDefault();
