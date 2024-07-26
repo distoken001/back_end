@@ -17,9 +17,6 @@
     <PackageReference Include="Quartz" Version="3.0.7" />
     <PackageReference Include="Nethereum.Contracts" Version="4.21.3" />
     <PackageReference Include="Nethereum.Web3" Version="4.21.2" />
-    <PackageReference Include="Nethereum.Hex" Version="4.21.3" />
-    <PackageReference Include="Nethereum.Util" Version="4.21.3" />
-    <PackageReference Include="Nethereum.Signer" Version="4.21.3" />
     <PackageReference Include="Quartz.Jobs" Version="3.0.7" />
     <PackageReference Include="Quartz.Plugins" Version="3.0.7" />
     <PackageReference Include="Com.Ctrip.Framework.Apollo.Configuration" Version="2.10.1" />
@@ -30,6 +27,5 @@
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.0" />
     <PackageReference Include="System.Net.WebSockets.Client" Version="4.3.2" />
     <PackageReference Include="Nethereum.JsonRpc.WebSocketClient" Version="4.20.0" />
-    <PackageReference Include="Nethereum.RPC" Version="4.21.3" />
   </ItemGroup>
 </Project>
