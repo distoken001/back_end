@@ -39,7 +39,7 @@ namespace ListenService.Service
         {
             try
             {
-               
+            
                 if (_configuration["Env"] == "prod")
                 {
                     if (!string.IsNullOrEmpty(_configuration["Polygon:Contract_Ebay"]))

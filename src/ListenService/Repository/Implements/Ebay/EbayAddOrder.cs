@@ -43,6 +43,7 @@ namespace ListenService.Repository.Implements
             StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
             //StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
             var client = new StreamingWebSocketClient(nodeWss);
+            Console.WriteLine("EbayAddOrder程序启动：BSC");
             try
             {
                 // 连接到以太坊区块链网络
