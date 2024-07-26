@@ -76,10 +76,11 @@ namespace ListenService.Repository.Implements
 
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
                 {
-                    Console.WriteLine("PostSetStatus监听到了！");
+                   
                     var decoded = Event<PostSetStatusEventDTO>.DecodeEvent(log);
                     if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
                     {
+                        Console.WriteLine("PostSetStatus监听到了！ + chain_id.ToString()");
                         using (var scope = _serviceProvider.CreateScope())
                         {
                             var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
@@ -109,7 +110,7 @@ namespace ListenService.Repository.Implements
                     }
                     else
                     {
-                        Console.WriteLine("PostSetStatus:Found not standard log");
+                        //Console.WriteLine("PostSetStatus:Found not standard log" + chain_id.ToString());
                     }
 
                 }, onErrorAction);
@@ -123,8 +124,8 @@ namespace ListenService.Repository.Implements
             {
                 client.Dispose();
                 await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
-                Console.WriteLine($"PostSetStatus:{ex}");
-                Console.WriteLine("PostSetStatus重启了EX");
+                Console.WriteLine($"PostSetStatus:{ex}" + chain_id.ToString());
+                Console.WriteLine("PostSetStatus重启了EX" + chain_id.ToString());
             }
         }
 

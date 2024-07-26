@@ -77,11 +77,12 @@ namespace ListenService.Repository.Implements
                 // attach a handler for Transfer event logs
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
                 {
-                    Console.WriteLine("PostAddOrder监听到了！");
+                   
                     // decode the log into a typed event log
                     var decoded = Event<PostAddOrderEventDTO>.DecodeEvent(log);
                     if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
                     {
+                        Console.WriteLine("PostAddOrder监听到了！" + chain_id.ToString());
                         using (var scope = _serviceProvider.CreateScope())
                         {
                             var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
@@ -100,7 +101,7 @@ namespace ListenService.Repository.Implements
                     }
                     else
                     {
-                        Console.WriteLine("PostAddOrder:Found not standard log");
+                        //Console.WriteLine("PostAddOrder:Found not standard log" + chain_id.ToString());
                     }
 
                 }, onErrorAction);
@@ -114,8 +115,8 @@ namespace ListenService.Repository.Implements
             {
                 client.Dispose();
                 await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
-                Console.WriteLine($"PostAddOrder:{ex}");
-                Console.WriteLine("PostAddOrder重启了EX");
+                Console.WriteLine($"PostAddOrder:{ex}" + chain_id.ToString());
+                Console.WriteLine("PostAddOrder重启了EX" + chain_id.ToString());
             }
         }
     }

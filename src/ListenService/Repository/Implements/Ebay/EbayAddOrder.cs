@@ -70,18 +70,19 @@ namespace ListenService.Repository.Implements
                 Action<Exception> onErrorAction = async (ex) =>
                 {
                     // 处理异常情况 ex
-                    Console.WriteLine($"Error EbayAddOrder: {ex}");
+                    Console.WriteLine($"Error EbayAddOrder: {ex}" + chain_id.ToString());
                     client.Dispose();
                     await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
                 };
                 // attach a handler for Transfer event logs
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
                 {
-                    Console.WriteLine("EbayAddOrder监听到了！");
+                 
                     // decode the log into a typed event log
                     var decoded = Event<EbayAddOrderEventDTO>.DecodeEvent(log);
                     if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
                     {
+                        Console.WriteLine("EbayAddOrder监听到了！");
                         using (var scope = _serviceProvider.CreateScope())
                         {
                             var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
@@ -102,7 +103,7 @@ namespace ListenService.Repository.Implements
                     }
                     else
                     {
-                        Console.WriteLine("EbayAddOrder:Found not standard log");
+                        //Console.WriteLine("EbayAddOrder:Found not standard log" + chain_id.ToString());
                     }
 
                 }, onErrorAction);
@@ -116,8 +117,8 @@ namespace ListenService.Repository.Implements
             {
                 client.Dispose();
                 await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
-                Console.WriteLine($"EbayAddOrder:{ex}");
-                Console.WriteLine("EbayAddOrder重启了EX");
+                Console.WriteLine($"EbayAddOrder:{ex}" + chain_id.ToString());
+                Console.WriteLine("EbayAddOrder重启了EX" + chain_id.ToString());
             }
         }
     }

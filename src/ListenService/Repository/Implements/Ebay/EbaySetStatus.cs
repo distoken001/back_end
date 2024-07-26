@@ -76,10 +76,11 @@ namespace ListenService.Repository.Implements
 
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
                 {
-                    Console.WriteLine("EbaySetStatus监听到了！");
+                   
                     var decoded = Event<EbaySetStatusEventDTO>.DecodeEvent(log);
                     if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
                     {
+                        Console.WriteLine("EbaySetStatus监听到了！" + chain_id.ToString());
                         using (var scope = _serviceProvider.CreateScope())
                         {
                             var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
@@ -108,7 +109,7 @@ namespace ListenService.Repository.Implements
                     }
                     else
                     {
-                        Console.WriteLine("EbaySetStatus:Found not standard log");
+                        //Console.WriteLine("EbaySetStatus:Found not standard log" + chain_id.ToString());
                     }
 
                 }, onErrorAction);
@@ -122,8 +123,8 @@ namespace ListenService.Repository.Implements
             {
                 client.Dispose();
                 await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
-                Console.WriteLine($"EbaySetStatus:{ex}");
-                Console.WriteLine("EbaySetStatus重启了EX");
+                Console.WriteLine($"EbaySetStatus:{ex}" + chain_id.ToString());
+                Console.WriteLine("EbaySetStatus重启了EX" + chain_id.ToString());
             }
         }
 
