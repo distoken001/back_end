@@ -39,7 +39,7 @@ namespace ListenService.Service
         {
             try
             {
-                Console.WriteLine("启动EbayAddOrderService！");
+                //Console.WriteLine("启动EbayAddOrderService！");
                 if (_configuration["Env"] == "prod")
                 {
                     //if (!string.IsNullOrEmpty(_configuration["Polygon:Contract_Ebay"]))
