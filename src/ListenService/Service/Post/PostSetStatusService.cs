@@ -42,23 +42,23 @@ namespace ListenService.Service
                
                 if (_configuration["Env"] == "prod")
                 {
-                    if (!string.IsNullOrEmpty(_configuration["Polygon:Contract_Post"]))
-                    {
-                        _ = _PostSetStatus.StartAsync(_configuration["Polygon:WSS_URL"], _configuration["Polygon:HTTPS_URL"] ,_configuration["Polygon:Contract_Post"], ChainEnum.Polygon);
-                    }
-                    if (!string.IsNullOrEmpty(_configuration["ARB:Contract_Post"]))
-                    {
-                        _ = _PostSetStatus.StartAsync(_configuration["ARB:WSS_URL"], _configuration["ARB:HTTPS_URL"], _configuration["ARB:Contract_Post"], ChainEnum.Arbitrum);
-                    }
+                    //if (!string.IsNullOrEmpty(_configuration["Polygon:Contract_Post"]))
+                    //{
+                    //    _ = _PostSetStatus.StartAsync(_configuration["Polygon:WSS_URL"], _configuration["Polygon:HTTPS_URL"] ,_configuration["Polygon:Contract_Post"], ChainEnum.Polygon);
+                    //}
+                    //if (!string.IsNullOrEmpty(_configuration["ARB:Contract_Post"]))
+                    //{
+                    //    _ = _PostSetStatus.StartAsync(_configuration["ARB:WSS_URL"], _configuration["ARB:HTTPS_URL"], _configuration["ARB:Contract_Post"], ChainEnum.Arbitrum);
+                    //}
                     if (!string.IsNullOrEmpty(_configuration["BSC:Contract_Post"]))
                     {
                         _ = _PostSetStatus.StartAsync(_configuration["BSC:WSS_URL"], _configuration["BSC:HTTPS_URL"], _configuration["BSC:Contract_Post"], ChainEnum.Bsc);
                     }
 
-                    if (!string.IsNullOrEmpty(_configuration["OP:Contract_Post"]))
-                    {
-                        _ = _PostSetStatus.StartAsync(_configuration["OP:WSS_URL"], _configuration["OP:HTTPS_URL"], _configuration["OP:Contract_Post"], ChainEnum.Optimism);
-                    }
+                    //if (!string.IsNullOrEmpty(_configuration["OP:Contract_Post"]))
+                    //{
+                    //    _ = _PostSetStatus.StartAsync(_configuration["OP:WSS_URL"], _configuration["OP:HTTPS_URL"], _configuration["OP:Contract_Post"], ChainEnum.Optimism);
+                    //}
                 }
                 else
                 {
