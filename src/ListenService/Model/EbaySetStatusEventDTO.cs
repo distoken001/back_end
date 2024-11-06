@@ -14,7 +14,7 @@ namespace ListenService.Model
         public BigInteger Status { get; set; }
         [Parameter("address", "seller", 4, false)]
         public string Seller { get; set; }
-        [Parameter("address", "buyer", 4, false)]
+        [Parameter("address", "buyer", 5, false)]
         public string Buyer { get; set; }
 
     }
