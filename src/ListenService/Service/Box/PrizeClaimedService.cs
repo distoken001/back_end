@@ -25,7 +25,7 @@ using ListenService.Repository.Implements;
 
 namespace ListenService.Service
 {
-    public class PrizeClaimedService : IHostedService
+    public class PrizeClaimedService : BackgroundService
     {
         private readonly IConfiguration _configuration;
         private readonly IPrizeClaimed _prizeClaimed;
@@ -35,7 +35,7 @@ namespace ListenService.Service
             _prizeClaimed = prizeClaimed;
         }
 
-        public async Task StartAsync(CancellationToken cancellationToken)
+        protected override async Task ExecuteAsync(CancellationToken cancellationToken)
         {
             try
             {
@@ -75,10 +75,6 @@ namespace ListenService.Service
             }
         }
 
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            return Task.CompletedTask;
-        }
     }
 }
 

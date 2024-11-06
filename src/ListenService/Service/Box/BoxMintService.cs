@@ -23,7 +23,7 @@ using ListenService.Repository.Implements;
 
 namespace ListenService.Service
 {
-    public class BoxMintService : IHostedService
+    public class BoxMintService : BackgroundService
     {
         private readonly IConfiguration _configuration;
         private readonly IBoxMinted _cardPurchased;
@@ -33,7 +33,7 @@ namespace ListenService.Service
             _cardPurchased = cardPurchased;
         }
 
-        public async Task StartAsync(CancellationToken cancellationToken)
+        protected override async Task ExecuteAsync(CancellationToken cancellationToken)
         {
             try
             {
@@ -71,11 +71,6 @@ namespace ListenService.Service
             {
                 Console.WriteLine(ex.ToString());
             }
-        }
-
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            return Task.CompletedTask;
         }
 
     }

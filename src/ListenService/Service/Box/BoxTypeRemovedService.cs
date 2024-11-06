@@ -25,7 +25,7 @@ using ListenService.Repository.Implements;
 
 namespace ListenService.Service
 {
-    public class BoxTypeRemovedService : IHostedService
+    public class BoxTypeRemovedService : BackgroundService
     {
         private readonly IConfiguration _configuration;
         private readonly IBoxTypeRemoved _cardTypeRemoved;
@@ -35,7 +35,7 @@ namespace ListenService.Service
             _cardTypeRemoved = cardTypeRemoved;
         }
 
-        public async Task StartAsync(CancellationToken cancellationToken)
+        protected override async Task ExecuteAsync(CancellationToken cancellationToken)
         {
             try
             {
@@ -74,10 +74,7 @@ namespace ListenService.Service
             }
         }
 
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            return Task.CompletedTask;
-        }
+      
     }
 }
 
