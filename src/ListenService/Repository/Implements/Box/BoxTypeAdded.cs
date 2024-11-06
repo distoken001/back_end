@@ -75,7 +75,7 @@ namespace ListenService.Repository.Implements
                 // attach a handler for Transfer event logs
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(log =>
                 {
-                    if (!_redisDb.LockTake(log.BlockHash, 1, TimeSpan.FromSeconds(10)))
+                    if (!_redisDb.LockTake(log.TransactionHash, 1, TimeSpan.FromSeconds(10)))
                     {
                         return;
                     }

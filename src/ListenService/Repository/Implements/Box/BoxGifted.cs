@@ -46,7 +46,7 @@ namespace ListenService.Repository.Implements
                     var decoded = Event<BoxGiftedEventDTO>.DecodeEvent(log);
                     if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
                     {
-                        if (!_redisDb.LockTake(log.BlockHash, 1, TimeSpan.FromSeconds(10)))
+                        if (!_redisDb.LockTake(log.TransactionHash, 1, TimeSpan.FromSeconds(10)))
                         {
                             return;
                         }

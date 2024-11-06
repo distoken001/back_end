@@ -70,7 +70,7 @@ public class EbaySetStatus : IEbaySetStatus
         var decoded = Event<EbaySetStatusEventDTO>.DecodeEvent(log);
         if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
         {
-            if (!_redisDb.LockTake(log.BlockHash, 1, TimeSpan.FromSeconds(10)))
+            if (!_redisDb.LockTake(log.TransactionHash, 1, TimeSpan.FromSeconds(10)))
             {
                 return;
             }
