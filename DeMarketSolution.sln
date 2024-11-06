@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TelegramService", "src\Tele
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListenService", "src\ListenService\ListenService.csproj", "{3287D01E-887D-4545-8998-A095102420C0}"
 EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{92A48A62-DE8E-4A1F-9D43-085932EFB003}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{3287D01E-887D-4545-8998-A095102420C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3287D01E-887D-4545-8998-A095102420C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3287D01E-887D-4545-8998-A095102420C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92A48A62-DE8E-4A1F-9D43-085932EFB003}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92A48A62-DE8E-4A1F-9D43-085932EFB003}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92A48A62-DE8E-4A1F-9D43-085932EFB003}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92A48A62-DE8E-4A1F-9D43-085932EFB003}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

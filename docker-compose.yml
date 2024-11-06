@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  listenservice:
+    image: ${DOCKER_REGISTRY-}listenservice
+    build:
+      context: .
+      dockerfile: src/ListenService/Dockerfile
