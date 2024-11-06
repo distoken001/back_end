@@ -33,6 +33,7 @@ namespace ListenService.Repository.Implements
             {
                 var _subscription = new EthLogsObservableSubscription(_client);
                 var cardPurchased = Event<BoxMintedEventDTO>.GetEventABI().CreateFilterInput();
+                cardPurchased.Address = new string[] { contractAddress };
                 //Action<Exception> onErrorAction = async (ex) =>
                 //{
                 //    // 处理异常情况 ex

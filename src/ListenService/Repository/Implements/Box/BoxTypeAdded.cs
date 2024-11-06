@@ -64,6 +64,7 @@ namespace ListenService.Repository.Implements
 
 
                 var cardTypeAdded = Event<BoxTypeAddedEventDTO>.GetEventABI().CreateFilterInput();
+                cardTypeAdded.Address = new string[] { contractAddress };
                 //Action<Exception> onErrorAction = async (ex) =>
                 //{
                 //    // 处理异常情况 ex

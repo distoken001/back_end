@@ -46,7 +46,7 @@ namespace ListenService.Repository.Implements
             try
             {
                 var cardTypeAdded = Event<BoxTypeRemovedEventDTO>.GetEventABI().CreateFilterInput();
-
+                cardTypeAdded.Address = new string[] { contractAddress };
                 var subscription = new EthLogsObservableSubscription(client);
                 //Action<Exception> onErrorAction = async (ex) =>
                 //{

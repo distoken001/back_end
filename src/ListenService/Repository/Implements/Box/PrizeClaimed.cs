@@ -52,7 +52,7 @@ namespace ListenService.Repository.Implements
                 //// 你的以太坊智能合约地址
 
                 var prizeClaimed = Event<PrizeClaimedEventDTO>.GetEventABI().CreateFilterInput();
-
+                prizeClaimed.Address = new string[] { contractAddress };
                 var subscription = new EthLogsObservableSubscription(client);
                 Action<Exception> onErrorAction = async (ex) =>
                 {
