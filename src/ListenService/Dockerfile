@@ -7,9 +7,8 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["src/ListenService/ListenService.csproj", "src/ListenService/"]
-COPY ["src/CommonLibrary/CommonLibrary.csproj", "src/CommonLibrary/"]
-RUN dotnet restore "src/ListenService/ListenService.csproj"
+COPY ["ListenService.csproj", "src/ListenService/"]
+RUN dotnet restore "ListenService.csproj"
 COPY . .
 WORKDIR "/src/src/ListenService"
 RUN dotnet build "ListenService.csproj" -c Release -o /app/build
