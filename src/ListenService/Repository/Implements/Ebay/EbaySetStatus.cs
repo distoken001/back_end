@@ -1,140 +1,123 @@
-﻿using Nethereum.Contracts;
+﻿using CommonLibrary.Common.Common;
 using CommonLibrary.DbContext;
-using Nethereum.JsonRpc.WebSocketStreamingClient;
-using Nethereum.RPC.Reactive.Eth.Subscriptions;
-using Newtonsoft.Json;
-using System;
-using System.Reactive.Linq;
-using System.Threading.Tasks;
-using Nethereum.ABI.Model;
 using ListenService.Model;
-using Nethereum.JsonRpc.Client;
-using CommonLibrary.Model.DataEntityModel;
-using CommonLibrary.Common.Common;
 using ListenService.Repository.Interfaces;
-using System.Net.WebSockets;
-using Newtonsoft.Json.Linq;
-using Nethereum.Web3;
+using Nethereum.Contracts;
+using Nethereum.JsonRpc.WebSocketStreamingClient;
 using Nethereum.RPC;
-using Org.BouncyCastle.Asn1.X509;
-using Microsoft.VisualBasic;
-using Microsoft.AspNetCore.Mvc;
-using Telegram.Bot;
-using Microsoft.EntityFrameworkCore;
+using Nethereum.RPC.Reactive.Eth.Subscriptions;
 using Nethereum.Util;
+using Nethereum.Web3;
+using Newtonsoft.Json.Linq;
 using StackExchange.Redis;
 
-namespace ListenService.Repository.Implements
+public class EbaySetStatus : IEbaySetStatus
 {
-    public class EbaySetStatus : IEbaySetStatus
+    private readonly IConfiguration _configuration;
+    private readonly IServiceProvider _serviceProvider;
+    private readonly ISendMessage _sendMessage;
+    private readonly IDatabase _redisDb;
+    private string _abi;  // 将 abi 提升为类成员
+    private Web3 _web3;   // 将 Web3 实例提升为类成员
+    private Contract _contract; // 将 Contract 实例提升为类成员
+
+    public EbaySetStatus(IConfiguration configuration, IServiceProvider serviceProvider, ISendMessage sendMessage, IDatabase redisDb)
     {
-        private readonly IConfiguration _configuration;
-        private readonly IServiceProvider _serviceProvider;
-        private readonly ISendMessage _sendMessage;
-        private readonly IDatabase _redisDb;
-        public EbaySetStatus(IConfiguration configuration, IServiceProvider serviceProvider, ISendMessage sendMessage,IDatabase redisDb)
-        {
-            _configuration = configuration;
-            _serviceProvider = serviceProvider;
-            _sendMessage = sendMessage;
-            _redisDb = redisDb;
+        _configuration = configuration;
+        _serviceProvider = serviceProvider;
+        _sendMessage = sendMessage;
+        _redisDb = redisDb;
+    }
 
-        }
-        public async Task StartAsync(string nodeWss, string nodeHttps, string contractAddress, ChainEnum chain_id)
-        {
+    public async Task StartAsync(string nodeWss, string nodeHttps, string contractAddress, ChainEnum chainId)
+    {
+        StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
+        var client = new StreamingWebSocketClient(nodeWss);
+        Console.WriteLine("EbaySetStatus程序启动：" + chainId);
 
-            StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
-            //StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
-            var client = new StreamingWebSocketClient(nodeWss);
-            Console.WriteLine("EbaySetStatus程序启动：" + chain_id.ToString());
-            try
+        try
+        {
+            // 读取 JSON 文件内容并解析 ABI
+            string jsonFilePath = "Ebay.json"; // 替换为正确的 JSON 文件路径
+            string jsonString = File.ReadAllText(jsonFilePath);
+            JObject jsonObject = JObject.Parse(jsonString);
+            _abi = jsonObject["abi"]?.ToString();
+
+            // 初始化 Web3 和 Contract，避免重复创建
+            _web3 = new Web3(nodeHttps);
+            _contract = new Contract(new EthApiService(_web3.Client), _abi, contractAddress);
+
+            var addOrder = Event<EbaySetStatusEventDTO>.GetEventABI().CreateFilterInput();
+            var subscription = new EthLogsObservableSubscription(client);
+
+            subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
             {
-                // 连接到以太坊区块链网络
-                var web3 = new Web3(nodeHttps);
-                // 读取JSON文件内容
-                string jsonFilePath = "Ebay.json"; // 替换为正确的JSON文件路径
+                await HandleLogAsync(log, contractAddress, chainId);
+            });
 
-                string jsonString = File.ReadAllText(jsonFilePath);
+            await client.StartAsync();
+            await subscription.SubscribeAsync(addOrder);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"EbaySetStatus:{ex} - Chain ID: {chainId}");
+        }
+    }
 
-                // 解析JSON
-                JObject jsonObject = JObject.Parse(jsonString);
+    private async Task HandleLogAsync(Nethereum.RPC.Eth.DTOs.FilterLog log, string contractAddress, ChainEnum chainId)
+    {
+        // 检查事件来源是否符合要求
+        var decoded = Event<EbaySetStatusEventDTO>.DecodeEvent(log);
+        if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
+        {
+            if (!_redisDb.LockTake(log.BlockHash, 1, TimeSpan.FromSeconds(10)))
+            {
+                return;
+            }
 
-                // 获取abi节点的值
-                string abi = jsonObject["abi"]?.ToString();
+            Console.WriteLine("EbaySetStatus监听到事件：" + chainId);
 
-                var contract = new Contract(new EthApiService(web3.Client), abi, contractAddress);
-                var function = contract.GetFunction("orders");
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
+                var function = _contract.GetFunction("orders");
 
+                // 获取智能合约中的订单信息
+                var orderResult = await function.CallDeserializingToObjectAsync<EbayOrderDTO>((int)decoded.Event.OrderId);
+                var chainToken = _masterDbContext.chain_tokens
+                    .FirstOrDefault(a => a.token_address.Equals(orderResult.Token) && a.chain_id == chainId);
 
-                var addOrder = Event<EbaySetStatusEventDTO>.GetEventABI().CreateFilterInput();
-                var subscription = new EthLogsObservableSubscription(client);
-
-                //Action<Exception> onErrorAction = async (ex) =>
-                //{
-                //    // 处理异常情况 ex
-                //    Console.WriteLine($"Error EbaySetStatus: {ex}");
-                //    client.Dispose();
-                //    await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
-                //};
-
-                subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
+                if (chainToken != null)
                 {
-                   
-                    var decoded = Event<EbaySetStatusEventDTO>.DecodeEvent(log);
-                    if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
+                    var decimalsNum = new BigDecimal(Math.Pow(10, chainToken.decimals));
+                    var order = _masterDbContext.orders
+                        .FirstOrDefault(a => a.order_id == (int)decoded.Event.OrderId && a.chain_id == chainId && a.contract.Equals(contractAddress));
+
+                    if (order != null)
                     {
-                        if (!_redisDb.LockTake(log.BlockHash, 1, TimeSpan.FromSeconds(10)))
+                        // 更新订单信息
+                        if (orderResult.Status == OrderStatus.Ordered)
                         {
-                            return;
+                            order.create_time = DateTime.Now;
                         }
-                        Console.WriteLine("EbaySetStatus监听到了！" + chain_id.ToString());
-                        using (var scope = _serviceProvider.CreateScope())
-                        {
-                            var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
-                            // 调用智能合约函数并获取返回结果
-                            var orderResult = await function.CallDeserializingToObjectAsync<EbayOrderDTO>((int)decoded.Event.OrderId);
-                            var chainToken = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(orderResult.Token) && a.chain_id == chain_id).FirstOrDefault();
-                            var decimals_num = new BigDecimal(Math.Pow(10, chainToken.decimals));
-                            var order = _masterDbContext.orders.Where(a => a.order_id == (int)decoded.Event.OrderId && a.chain_id == chain_id && a.contract.Equals(contractAddress)).FirstOrDefault();
 
-                            if (orderResult.Status == OrderStatus.Ordered)
-                            {
-                                order.create_time = DateTime.Now;
-                            }
-                            order.status = orderResult.Status;
-                            order.buyer_ex = (double)(new BigDecimal(orderResult.BuyerEx) / decimals_num);
-                            order.update_time = DateTime.Now;
-                            order.buyer = orderResult.Buyer;
-                            order.buyer_pledge = (double)(new BigDecimal(orderResult.BuyerPledge) / decimals_num);
-                            order.seller_pledge = (double)(new BigDecimal(orderResult.SellerPledge) / decimals_num);
-                            order.amount = (double)orderResult.Amount;
-                            order.price = (double)(new BigDecimal(orderResult.Price) / decimals_num);
-                            order.seller_ratio = (decimal)(order.seller_pledge / (order.price * order.amount));
-                            _masterDbContext.SaveChanges();
-                            _ = _sendMessage.SendMessageEbay((int)decoded.Event.OrderId, chain_id, contractAddress);
-                        }
+                        order.status = orderResult.Status;
+                        order.buyer_ex = (double)(new BigDecimal(orderResult.BuyerEx) / decimalsNum);
+                        order.update_time = DateTime.Now;
+                        order.buyer = orderResult.Buyer;
+                        order.buyer_pledge = (double)(new BigDecimal(orderResult.BuyerPledge) / decimalsNum);
+                        order.seller_pledge = (double)(new BigDecimal(orderResult.SellerPledge) / decimalsNum);
+                        order.amount = (double)orderResult.Amount;
+                        order.price = (double)(new BigDecimal(orderResult.Price) / decimalsNum);
+                        order.seller_ratio = (decimal)(order.seller_pledge / (order.price * order.amount));
+
+                        _masterDbContext.SaveChanges();
+
+                        // 发送消息
+                        _ = _sendMessage.SendMessageEbay((int)decoded.Event.OrderId, chainId, contractAddress);
                     }
-                    else
-                    {
-                        //Console.WriteLine("EbaySetStatus:Found not standard log" + chain_id.ToString());
-                    }
-
-                });
-
-                await client.StartAsync();
-
-                await subscription.SubscribeAsync(addOrder);
-
-            }
-            catch (Exception ex)
-            {
-                client.Dispose();
-                await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
-                Console.WriteLine($"EbaySetStatus:{ex}" + chain_id.ToString());
-                Console.WriteLine("EbaySetStatus重启了EX" + chain_id.ToString());
+                }
             }
         }
-
     }
 }
-

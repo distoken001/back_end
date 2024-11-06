@@ -12,7 +12,7 @@
     "ListenService": {
       "commandName": "Project",
       "launchBrowser": true,
-      "applicationUrl": "http://localhost:15578",
+      "applicationUrl": "http://localhost:44453",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
