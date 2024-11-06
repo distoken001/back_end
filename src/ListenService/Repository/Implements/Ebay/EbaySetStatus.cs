@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.Mvc;
 using Telegram.Bot;
 using Microsoft.EntityFrameworkCore;
 using Nethereum.Util;
+using StackExchange.Redis;
 
 namespace ListenService.Repository.Implements
 {
@@ -30,11 +31,13 @@ namespace ListenService.Repository.Implements
         private readonly IConfiguration _configuration;
         private readonly IServiceProvider _serviceProvider;
         private readonly ISendMessage _sendMessage;
-        public EbaySetStatus(IConfiguration configuration, IServiceProvider serviceProvider, ISendMessage sendMessage)
+        private readonly IDatabase _redisDb;
+        public EbaySetStatus(IConfiguration configuration, IServiceProvider serviceProvider, ISendMessage sendMessage,IDatabase redisDb)
         {
             _configuration = configuration;
             _serviceProvider = serviceProvider;
             _sendMessage = sendMessage;
+            _redisDb = redisDb;
 
         }
         public async Task StartAsync(string nodeWss, string nodeHttps, string contractAddress, ChainEnum chain_id)
@@ -66,13 +69,13 @@ namespace ListenService.Repository.Implements
                 var addOrder = Event<EbaySetStatusEventDTO>.GetEventABI().CreateFilterInput();
                 var subscription = new EthLogsObservableSubscription(client);
 
-                Action<Exception> onErrorAction = async (ex) =>
-                {
-                    // 处理异常情况 ex
-                    Console.WriteLine($"Error EbaySetStatus: {ex}");
-                    client.Dispose();
-                    await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
-                };
+                //Action<Exception> onErrorAction = async (ex) =>
+                //{
+                //    // 处理异常情况 ex
+                //    Console.WriteLine($"Error EbaySetStatus: {ex}");
+                //    client.Dispose();
+                //    await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
+                //};
 
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
                 {
@@ -80,6 +83,10 @@ namespace ListenService.Repository.Implements
                     var decoded = Event<EbaySetStatusEventDTO>.DecodeEvent(log);
                     if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
                     {
+                        if (!_redisDb.LockTake(log.BlockHash, 1, TimeSpan.FromSeconds(10)))
+                        {
+                            return;
+                        }
                         Console.WriteLine("EbaySetStatus监听到了！" + chain_id.ToString());
                         using (var scope = _serviceProvider.CreateScope())
                         {
@@ -112,7 +119,7 @@ namespace ListenService.Repository.Implements
                         //Console.WriteLine("EbaySetStatus:Found not standard log" + chain_id.ToString());
                     }
 
-                }, onErrorAction);
+                });
 
                 await client.StartAsync();
 

@@ -7,6 +7,7 @@ using Nethereum.Contracts;
 using Nethereum.JsonRpc.WebSocketStreamingClient;
 using Nethereum.RPC.Reactive;
 using Nethereum.RPC.Reactive.Eth.Subscriptions;
+using StackExchange.Redis;
 using System.Net.WebSockets;
 using System.Reactive.Linq;
 
@@ -16,11 +17,12 @@ namespace ListenService.Repository.Implements
     {
         private readonly IConfiguration _configuration;
         private readonly IServiceProvider _serviceProvider;
-        public BoxMinted(IConfiguration configuration, IServiceProvider serviceProvider)
+        private readonly IDatabase _redisDb;
+        public BoxMinted(IConfiguration configuration, IServiceProvider serviceProvider,IDatabase redisDb)
         {
             _configuration = configuration;
             _serviceProvider = serviceProvider;
-
+            _redisDb = redisDb;
         }
         public async Task StartAsync(string nodeUrl, string contractAddress, ChainEnum chain_id)
         {
@@ -31,21 +33,26 @@ namespace ListenService.Repository.Implements
             {
                 var _subscription = new EthLogsObservableSubscription(_client);
                 var cardPurchased = Event<BoxMintedEventDTO>.GetEventABI().CreateFilterInput();
-                Action<Exception> onErrorAction = async (ex) =>
-                {
-                    // 处理异常情况 ex
-                    // 例如：
-                    Console.WriteLine($"Error BoxPurchased: {ex}");
-                    _client.Dispose();
-                    await StartAsync(nodeUrl, contractAddress, chain_id);
-                };
+                //Action<Exception> onErrorAction = async (ex) =>
+                //{
+                //    // 处理异常情况 ex
+                //    // 例如：
+                //    Console.WriteLine($"Error BoxPurchased: {ex}");
+                //    _client.Dispose();
+                //    await StartAsync(nodeUrl, contractAddress, chain_id);
+                //};
                 _subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(log =>
                 {
+                    if (!_redisDb.LockTake(log.BlockHash, 1, TimeSpan.FromSeconds(10)))
+                    {
+                        return;
+                    }
                     Console.WriteLine("BoxMinted监听到了！");
                     // decode the log into a typed event log
                     var decoded = Event<BoxMintedEventDTO>.DecodeEvent(log);
                     if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
                     {
+                      
                         using (var scope = _serviceProvider.CreateScope())
                         {
                             var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
@@ -65,14 +72,16 @@ namespace ListenService.Repository.Implements
                             }
                             _masterDbContext.SaveChanges();
                         }
+                     
                     }
                     else
                     {
                         Console.WriteLine("BoxMinted:Found not standard log");
                     }
-                }, onErrorAction);
+                });
                 await _client.StartAsync();
                 await _subscription.SubscribeAsync(cardPurchased);
+
                 //while (true)
                 //{
                 //    if (_client.WebSocketState == WebSocketState.Aborted)
@@ -89,11 +98,12 @@ namespace ListenService.Repository.Implements
 
             catch (Exception ex)
             {
-                _client.Dispose();
-                await StartAsync(nodeUrl, contractAddress, chain_id);
+                //_client.Dispose();
+                //await StartAsync(nodeUrl, contractAddress, chain_id);
                 Console.WriteLine($"BoxMinted:{ex}");
-                Console.WriteLine("BoxMinted重启了EX");
+                //Console.WriteLine("BoxMinted重启了EX");
             }
+
         }
 
     }

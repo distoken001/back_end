@@ -7,6 +7,7 @@ using ListenService.Model;
 using CommonLibrary.Model.DataEntityModel;
 using CommonLibrary.Common.Common;
 using ListenService.Repository.Interfaces;
+using StackExchange.Redis;
 
 namespace ListenService.Repository.Implements
 {
@@ -14,10 +15,12 @@ namespace ListenService.Repository.Implements
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly IConfiguration _configuration;
-        public BoxGifted(IConfiguration configuration, IServiceProvider serviceProvider)
+        private readonly IDatabase _redisDb;
+        public BoxGifted(IConfiguration configuration, IServiceProvider serviceProvider,IDatabase redisDb)
         {
             _configuration = configuration;
             _serviceProvider = serviceProvider;
+            _redisDb = redisDb;
         }
         public async Task StartAsync(string nodeUrl, string contractAddress, ChainEnum chain_id)
         {
@@ -28,20 +31,25 @@ namespace ListenService.Repository.Implements
             {
                 var cardGifted = Event<BoxGiftedEventDTO>.GetEventABI().CreateFilterInput();
                 var subscription = new EthLogsObservableSubscription(client);
-                Action<Exception> onErrorAction = async (ex) =>
-                {
-                    // 处理异常情况 ex
-                    Console.WriteLine($"Error BoxGifted: {ex}");
-                    client.Dispose();
-                    await StartAsync(nodeUrl, contractAddress, chain_id);
-                };
+                //Action<Exception> onErrorAction = async (ex) =>
+                //{
+                //    // 处理异常情况 ex
+                //    Console.WriteLine($"Error BoxGifted: {ex}");
+                //    client.Dispose();
+                //    await StartAsync(nodeUrl, contractAddress, chain_id);
+                //};
                 // attach a handler for Transfer event logs
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(log =>
                 {
+                   
                     // decode the log into a typed event log
                     var decoded = Event<BoxGiftedEventDTO>.DecodeEvent(log);
                     if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
                     {
+                        if (!_redisDb.LockTake(log.BlockHash, 1, TimeSpan.FromSeconds(10)))
+                        {
+                            return;
+                        }
                         using (var scope = _serviceProvider.CreateScope())
                         {
                             var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
@@ -69,12 +77,13 @@ namespace ListenService.Repository.Implements
                             }
                             _masterDbContext.SaveChanges();
                         }
+                      
                     }
                     else
                     {
                         Console.WriteLine("BoxPurchased:Found not standard log");
                     }
-                }, onErrorAction);
+                });
                 // open the web socket connection
                 await client.StartAsync();
 
@@ -96,10 +105,10 @@ namespace ListenService.Repository.Implements
             }
             catch (Exception ex)
             {
-                client.Dispose();
-                await StartAsync(nodeUrl, contractAddress, chain_id);
+                //client.Dispose();
+                //await StartAsync(nodeUrl, contractAddress, chain_id);
                 Console.WriteLine($"BoxGifted:{ex}");
-                Console.WriteLine("BoxGifted重启了EX");
+                //Console.WriteLine("BoxGifted重启了EX");
             }
         }
 

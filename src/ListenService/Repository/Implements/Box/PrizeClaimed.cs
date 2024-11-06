@@ -22,6 +22,7 @@ using Microsoft.VisualBasic;
 using Nethereum.Contracts.Standards.ERC20.TokenList;
 using ListenService.Repository.Interfaces;
 using System.Net.WebSockets;
+using StackExchange.Redis;
 
 namespace ListenService.Repository.Implements
 {
@@ -29,10 +30,12 @@ namespace ListenService.Repository.Implements
     {
         private readonly IConfiguration _configuration;
         private readonly IServiceProvider _serviceProvider;
-        public PrizeClaimed(IConfiguration configuration, IServiceProvider serviceProvider)
+        private readonly IDatabase _redisDb;
+        public PrizeClaimed(IConfiguration configuration, IServiceProvider serviceProvider,IDatabase redisDb)
         {
             _configuration = configuration;
             _serviceProvider = serviceProvider;
+            _redisDb = redisDb;
         }
         public async Task StartAsync(string nodeUrl, string contractAddress, ChainEnum chain_id)
         {
@@ -61,6 +64,10 @@ namespace ListenService.Repository.Implements
                 // attach a handler for Transfer event logs
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(log =>
                 {
+                    if (!_redisDb.LockTake(log.BlockHash, 1, TimeSpan.FromSeconds(10)))
+                    {
+                        return;
+                    }
                     Console.WriteLine("PrizeClaimed监听到了！");
                     // decode the log into a typed event log
                     var decoded = Event<PrizeClaimedEventDTO>.DecodeEvent(log);

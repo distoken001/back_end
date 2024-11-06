@@ -24,6 +24,7 @@ using Microsoft.EntityFrameworkCore;
 using Org.BouncyCastle.Asn1.Ocsp;
 using System.Numerics;
 using Nethereum.Util;
+using StackExchange.Redis;
 
 namespace ListenService.Repository.Implements
 {
@@ -32,8 +33,10 @@ namespace ListenService.Repository.Implements
         private readonly IConfiguration _configuration;
         private readonly IServiceProvider _serviceProvider;
         private readonly ISendMessage _sendMessage;
-        public EbayAddOrder(IConfiguration configuration, IServiceProvider serviceProvider, ISendMessage sendMessage)
+        private readonly IDatabase _redisDb;
+        public EbayAddOrder(IConfiguration configuration, IServiceProvider serviceProvider, ISendMessage sendMessage,IDatabase redisDb)
         {
+            _redisDb = redisDb;
             _configuration = configuration;
             _serviceProvider = serviceProvider;
             _sendMessage = sendMessage;
@@ -67,13 +70,13 @@ namespace ListenService.Repository.Implements
                 var addOrder = Event<EbayAddOrderEventDTO>.GetEventABI().CreateFilterInput();
                 var subscription = new EthLogsObservableSubscription(client);
 
-                Action<Exception> onErrorAction = async (ex) =>
-                {
-                    // 处理异常情况 ex
-                    Console.WriteLine($"Error EbayAddOrder: {ex}" + chain_id.ToString());
-                    client.Dispose();
-                    await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
-                };
+                //Action<Exception> onErrorAction = async (ex) =>
+                //{
+                //    // 处理异常情况 ex
+                //    Console.WriteLine($"Error EbayAddOrder: {ex}" + chain_id.ToString());
+                //    client.Dispose();
+                //    await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
+                //};
                 // attach a handler for Transfer event logs
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
                 {
@@ -82,6 +85,10 @@ namespace ListenService.Repository.Implements
                     var decoded = Event<EbayAddOrderEventDTO>.DecodeEvent(log);
                     if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
                     {
+                        if (!_redisDb.LockTake(log.BlockHash, 1, TimeSpan.FromSeconds(10)))
+                        {
+                            return;
+                        }
                         Console.WriteLine("EbayAddOrder监听到了！");
                         using (var scope = _serviceProvider.CreateScope())
                         {
@@ -106,7 +113,7 @@ namespace ListenService.Repository.Implements
                         //Console.WriteLine("EbayAddOrder:Found not standard log" + chain_id.ToString());
                     }
 
-                }, onErrorAction);
+                });
 
                 await client.StartAsync();
 
@@ -115,10 +122,10 @@ namespace ListenService.Repository.Implements
             }
             catch (Exception ex)
             {
-                client.Dispose();
-                await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
+                //client.Dispose();
+                //await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
                 Console.WriteLine($"EbayAddOrder:{ex}" + chain_id.ToString());
-                Console.WriteLine("EbayAddOrder重启了EX" + chain_id.ToString());
+                //Console.WriteLine("EbayAddOrder重启了EX" + chain_id.ToString());
             }
         }
     }

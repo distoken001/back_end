@@ -21,6 +21,7 @@ using CommonLibrary.Common.Common;
 using ListenService.Repository.Interfaces;
 using System.Net.WebSockets;
 using Microsoft.Extensions.DependencyInjection;
+using StackExchange.Redis;
 
 namespace ListenService.Repository.Implements
 {
@@ -28,10 +29,12 @@ namespace ListenService.Repository.Implements
     {
         private readonly IConfiguration _configuration;
         private readonly IServiceProvider _serviceProvider;
-        public BoxTypeAdded(IConfiguration configuration, IServiceProvider serviceProvider)
+        private readonly IDatabase _redisDb;
+        public BoxTypeAdded(IConfiguration configuration, IServiceProvider serviceProvider,IDatabase redisDb)
         {
             _configuration = configuration;
             _serviceProvider = serviceProvider;
+            _redisDb = redisDb;
         }
 
 
@@ -61,18 +64,21 @@ namespace ListenService.Repository.Implements
 
 
                 var cardTypeAdded = Event<BoxTypeAddedEventDTO>.GetEventABI().CreateFilterInput();
-                Action<Exception> onErrorAction = async (ex) =>
-                {
-                    // 处理异常情况 ex
-                    client.Dispose();
-                    Console.WriteLine($"Error BoxTypeAdded: {ex}");
-                    await StartAsync(nodeUrl, contractAddress, chain_id);
-                };
+                //Action<Exception> onErrorAction = async (ex) =>
+                //{
+                //    // 处理异常情况 ex
+                //    client.Dispose();
+                //    Console.WriteLine($"Error BoxTypeAdded: {ex}");
+                //    await StartAsync(nodeUrl, contractAddress, chain_id);
+                //};
                 var subscription = new EthLogsObservableSubscription(client);
                 // attach a handler for Transfer event logs
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(log =>
                 {
-
+                    if (!_redisDb.LockTake(log.BlockHash, 1, TimeSpan.FromSeconds(10)))
+                    {
+                        return;
+                    }
                     // decode the log into a typed event log
                     var decoded = Event<BoxTypeAddedEventDTO>.DecodeEvent(log);
                     if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
@@ -94,14 +100,13 @@ namespace ListenService.Repository.Implements
 
                         Console.WriteLine("BoxTypeAdded: Found not standard log");
                     }
-                }, onErrorAction);
+                });
                 // open the web socket connection
                 await client.StartAsync();
 
                 // begin receiving subscription data
                 // data will be received on a background thread
                 await subscription.SubscribeAsync(cardTypeAdded);
-
                 //while (true)
                 //{
                 //    if (client.WebSocketState == WebSocketState.Aborted)
@@ -118,10 +123,10 @@ namespace ListenService.Repository.Implements
             }
             catch (Exception ex)
             {
-                client.Dispose();
+                //client.Dispose();
                 Console.WriteLine($"BoxTypeAdded:{ex}");
-                await StartAsync(nodeUrl, contractAddress, chain_id);
-                Console.WriteLine("BoxTypeAdded重启了EX");
+                //await StartAsync(nodeUrl, contractAddress, chain_id);
+                //Console.WriteLine("BoxTypeAdded重启了EX");
             }
         }
     }

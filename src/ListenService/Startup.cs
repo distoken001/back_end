@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http.Features;
 using ListenService.Service;
 using ListenService.Repository.Implements;
 using ListenService.Repository.Interfaces;
+using StackExchange.Redis;
 
 namespace ListenService
 {
@@ -47,6 +48,9 @@ namespace ListenService
             services.AddControllers();
             services.AddDirectoryBrowser();
             services.AddSingleton<IConfiguration>(Configuration);
+            //redis
+            var redisConn = Configuration["ConnectionStrings:RedisConnection"];
+            services.AddSingleton<IDatabase>(ConnectionMultiplexer.Connect(redisConn).GetDatabase());
 
             services.AddSingleton<IBoxMinted, BoxMinted>();
             services.AddSingleton<IBoxGifted, BoxGifted>();
