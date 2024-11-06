@@ -68,6 +68,7 @@ namespace ListenService.Repository.Implements
                 var functionExtend = contract.GetFunction("extend");
 
                 var addPost = Event<PostAddOrderEventDTO>.GetEventABI().CreateFilterInput();
+                addPost.Address = new string[] { contractAddress };
                 var subscription = new EthLogsObservableSubscription(client);
 
                 //Action<Exception> onErrorAction = async (ex) =>
@@ -80,6 +81,7 @@ namespace ListenService.Repository.Implements
                 // attach a handler for Transfer event logs
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
                 {
+                    Console.WriteLine("PostAddOrder监听到了！" + chain_id.ToString());
                     if (!_redisDb.LockTake(log.TransactionHash, 1, TimeSpan.FromSeconds(10)))
                     {
                         return;
@@ -88,7 +90,7 @@ namespace ListenService.Repository.Implements
                     var decoded = Event<PostAddOrderEventDTO>.DecodeEvent(log);
                     if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
                     {
-                        Console.WriteLine("PostAddOrder监听到了！" + chain_id.ToString());
+                      
                         using (var scope = _serviceProvider.CreateScope())
                         {
                             var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();

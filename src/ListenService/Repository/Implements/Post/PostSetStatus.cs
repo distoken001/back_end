@@ -67,6 +67,7 @@ namespace ListenService.Repository.Implements
 
 
                 var postSetStatus = Event<PostSetStatusEventDTO>.GetEventABI().CreateFilterInput();
+                postSetStatus.Address = new string[] { contractAddress };
                 var subscription = new EthLogsObservableSubscription(client);
 
                 //Action<Exception> onErrorAction = async (ex) =>
@@ -79,7 +80,7 @@ namespace ListenService.Repository.Implements
 
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
                 {
-                   
+                    Console.WriteLine("PostSetStatus监听到了！ + chain_id.ToString()");
                     var decoded = Event<PostSetStatusEventDTO>.DecodeEvent(log);
                     if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
                     {
@@ -87,7 +88,6 @@ namespace ListenService.Repository.Implements
                         {
                             return;
                         }
-                        Console.WriteLine("PostSetStatus监听到了！ + chain_id.ToString()");
                         using (var scope = _serviceProvider.CreateScope())
                         {
                             var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();

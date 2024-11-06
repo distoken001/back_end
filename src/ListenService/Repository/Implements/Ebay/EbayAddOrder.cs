@@ -49,10 +49,12 @@ public class EbayAddOrder : IEbayAddOrder
             _contract = new Contract(new EthApiService(_web3.Client), _abi, contractAddress);
 
             var addOrder = Event<EbayAddOrderEventDTO>.GetEventABI().CreateFilterInput();
+            addOrder.Address = new string[] { contractAddress };
             var subscription = new EthLogsObservableSubscription(client);
 
             subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
             {
+                Console.WriteLine("EbayAddOrder监听到了！");
                 await HandleLogAsync(log, contractAddress, chainId);
             });
 
@@ -67,6 +69,7 @@ public class EbayAddOrder : IEbayAddOrder
 
     private async Task HandleLogAsync(Nethereum.RPC.Eth.DTOs.FilterLog log, string contractAddress, ChainEnum chainId)
     {
+      
         // 检查事件来源
         if (log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
         {
@@ -75,7 +78,7 @@ public class EbayAddOrder : IEbayAddOrder
                 return;
             }
 
-            Console.WriteLine("EbayAddOrder监听到了！");
+           
             using (var scope = _serviceProvider.CreateScope())
             {
                 var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();

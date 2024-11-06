@@ -48,10 +48,12 @@ public class EbaySetStatus : IEbaySetStatus
             _contract = new Contract(new EthApiService(_web3.Client), _abi, contractAddress);
 
             var addOrder = Event<EbaySetStatusEventDTO>.GetEventABI().CreateFilterInput();
+            addOrder.Address = new string[] { contractAddress };
             var subscription = new EthLogsObservableSubscription(client);
 
             subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
             {
+                Console.WriteLine("EbayAddOrder监听到了！");
                 await HandleLogAsync(log, contractAddress, chainId);
             });
 
