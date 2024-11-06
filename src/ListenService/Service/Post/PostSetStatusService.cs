@@ -26,7 +26,7 @@ using ListenService.Repository.Implements;
 namespace ListenService.Service
 {
 
-    public class PostSetStatusService : IHostedService
+    public class PostSetStatusService : BackgroundService
     {
         private readonly IConfiguration _configuration;
         private readonly IPostSetStatus _PostSetStatus;
@@ -35,7 +35,7 @@ namespace ListenService.Service
             _configuration = configuration;
             _PostSetStatus = PostSetStatus;
         }
-        public async Task StartAsync(CancellationToken cancellationToken)
+        protected override async Task ExecuteAsync(CancellationToken cancellationToken)
         {
             try
             {
@@ -73,10 +73,7 @@ namespace ListenService.Service
                 Console.WriteLine(ex.ToString());
             }
         }
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            return Task.CompletedTask;
-        }
+       
     }
 }
 

@@ -24,7 +24,7 @@ using ListenService.Repository.Interfaces;
 
 namespace ListenService.Service
 {
-    public class BoxGiftedService : IHostedService
+    public class BoxGiftedService : BackgroundService
     {
         private readonly IConfiguration _configuration;
         private readonly IBoxGifted _cardGifted;
@@ -34,7 +34,7 @@ namespace ListenService.Service
             _cardGifted = cardGifted;
         }
 
-        public async Task StartAsync(CancellationToken cancellationToken)
+        protected override async Task ExecuteAsync(CancellationToken cancellationToken)
         {
             try
             {
@@ -75,10 +75,7 @@ namespace ListenService.Service
             }
         }
 
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            return Task.CompletedTask;
-        }
+     
     }
 }
 

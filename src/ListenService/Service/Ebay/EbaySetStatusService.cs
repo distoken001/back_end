@@ -26,7 +26,7 @@ using ListenService.Repository.Implements;
 namespace ListenService.Service
 {
 
-    public class EbaySetStatusService : IHostedService
+    public class EbaySetStatusService : BackgroundService
     {
         private readonly IConfiguration _configuration;
         private readonly IEbaySetStatus _ebaySetStatus;
@@ -35,7 +35,7 @@ namespace ListenService.Service
             _configuration = configuration;
             _ebaySetStatus = ebaySetStatus;
         }
-        public async Task StartAsync(CancellationToken cancellationToken)
+        protected async override Task ExecuteAsync(CancellationToken cancellationToken)
         {
             try
             {
@@ -76,10 +76,6 @@ namespace ListenService.Service
             {
                 Console.WriteLine(ex.ToString());
             }
-        }
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            return Task.CompletedTask;
         }
     }
 }

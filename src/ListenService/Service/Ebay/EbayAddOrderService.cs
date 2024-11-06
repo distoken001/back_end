@@ -26,7 +26,7 @@ using ListenService.Repository.Implements;
 namespace ListenService.Service
 {
 
-    public class EbayAddOrderService : IHostedService
+    public class EbayAddOrderService : BackgroundService
     {
         private readonly IConfiguration _configuration;
         private readonly IEbayAddOrder _addOrder;
@@ -35,7 +35,7 @@ namespace ListenService.Service
             _configuration = configuration;
             _addOrder = addOrder;
         }
-        public async Task StartAsync(CancellationToken cancellationToken)
+        protected async override Task ExecuteAsync(CancellationToken cancellationToken)
         {
             try
             {
@@ -76,10 +76,7 @@ namespace ListenService.Service
                 Console.WriteLine(ex.ToString());
             }
         }
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            return Task.CompletedTask;
-        }
+   
     }
 }
 
