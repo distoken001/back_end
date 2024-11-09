@@ -31,21 +31,20 @@ namespace ListenService.Repository.Implements
         private readonly IConfiguration _configuration;
         private readonly IServiceProvider _serviceProvider;
         private readonly IDatabase _redisDb;
-        public PrizeClaimed(IConfiguration configuration, IServiceProvider serviceProvider,IDatabase redisDb)
+        private readonly StreamingWebSocketClient _client;
+        public PrizeClaimed(IConfiguration configuration, IServiceProvider serviceProvider,IDatabase redisDb,StreamingWebSocketClient client)
         {
             _configuration = configuration;
             _serviceProvider = serviceProvider;
             _redisDb = redisDb;
+            _client = client;
         }
         public async Task StartAsync(string nodeUrl, string contractAddress, ChainEnum chain_id)
         {
-            //string contractAddress = _configuration["OP:Contract_Box"];
-            StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
-            //StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
-            var client = new StreamingWebSocketClient(nodeUrl);
-
+           
             try
             {
+                await _client.StartAsync();
                 //// Infura 提供的以太坊节点 WebSocket 地址
                 //string nodeUrl = _configuration["OP:WSS_URL"];
 
@@ -53,15 +52,8 @@ namespace ListenService.Repository.Implements
 
                 var prizeClaimed = Event<PrizeClaimedEventDTO>.GetEventABI().CreateFilterInput();
                 prizeClaimed.Address = new string[] { contractAddress };
-                var subscription = new EthLogsObservableSubscription(client);
-                Action<Exception> onErrorAction = async (ex) =>
-                {
-                    // 处理异常情况 ex
-                    client.Dispose();
-                    Console.WriteLine($"Error PrizeClaimed: {ex}");
-                    await StartAsync(nodeUrl, contractAddress, chain_id);
-                };
-                // attach a handler for Transfer event logs
+                var subscription = new EthLogsObservableSubscription(_client);
+                         
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(log =>
                 {
                     if (!_redisDb.LockTake(log.TransactionHash, 1, TimeSpan.FromSeconds(10)))
@@ -94,9 +86,11 @@ namespace ListenService.Repository.Implements
                         Console.WriteLine("PrizeClaimed:Found not standard log");
                     }
 
-                }, onErrorAction);
-                // open the web socket connection
-                await client.StartAsync();
+                }, async (ex) => {
+                    Console.WriteLine($"PrizeClaimed:{ex}");
+                    await Task.Delay(2000);
+                    await StartAsync(nodeUrl, contractAddress, chain_id);
+                });
 
                 // begin receiving subscription data
                 // data will be received on a background thread
@@ -116,10 +110,10 @@ namespace ListenService.Repository.Implements
             }
             catch (Exception ex)
             {
-                client.Dispose();
                 Console.WriteLine($"PrizeClaimed:{ex}");
+                await Task.Delay(2000);
                 await StartAsync(nodeUrl, contractAddress, chain_id);
-                Console.WriteLine("PrizeClaimed重启了EX");
+              
             }
         }
     }

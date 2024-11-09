@@ -20,23 +20,24 @@ public class EbaySetStatus : IEbaySetStatus
     private string _abi;  // 将 abi 提升为类成员
     private Web3 _web3;   // 将 Web3 实例提升为类成员
     private Contract _contract; // 将 Contract 实例提升为类成员
-
-    public EbaySetStatus(IConfiguration configuration, IServiceProvider serviceProvider, ISendMessage sendMessage, IDatabase redisDb)
+    private StreamingWebSocketClient _client;
+    public EbaySetStatus(IConfiguration configuration, IServiceProvider serviceProvider, ISendMessage sendMessage, IDatabase redisDb, StreamingWebSocketClient client)
     {
         _configuration = configuration;
         _serviceProvider = serviceProvider;
         _sendMessage = sendMessage;
         _redisDb = redisDb;
+        _client = client;
     }
 
     public async Task StartAsync(string nodeWss, string nodeHttps, string contractAddress, ChainEnum chainId)
     {
-        StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
-        var client = new StreamingWebSocketClient(nodeWss);
+       
         Console.WriteLine("EbaySetStatus程序启动：" + chainId);
 
         try
         {
+            await _client.StartAsync();
             // 读取 JSON 文件内容并解析 ABI
             string jsonFilePath = "Ebay.json"; // 替换为正确的 JSON 文件路径
             string jsonString = File.ReadAllText(jsonFilePath);
@@ -49,20 +50,25 @@ public class EbaySetStatus : IEbaySetStatus
 
             var addOrder = Event<EbaySetStatusEventDTO>.GetEventABI().CreateFilterInput();
             addOrder.Address = new string[] { contractAddress };
-            var subscription = new EthLogsObservableSubscription(client);
+            var subscription = new EthLogsObservableSubscription(_client);
 
             subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
             {
-                Console.WriteLine("EbayAddOrder监听到了！");
+                Console.WriteLine("EbaySetStatus监听到了！");
                 await HandleLogAsync(log, contractAddress, chainId);
+            }, async (ex) => {
+                Console.WriteLine($"EbaySetStatus:{ex}");
+                await Task.Delay(2000);
+                await StartAsync(nodeWss, nodeHttps, contractAddress, chainId);
             });
 
-            await client.StartAsync();
             await subscription.SubscribeAsync(addOrder);
         }
         catch (Exception ex)
         {
             Console.WriteLine($"EbaySetStatus:{ex} - Chain ID: {chainId}");
+            await Task.Delay(2000);
+            await StartAsync(nodeWss, nodeHttps, contractAddress, chainId);
         }
     }
 

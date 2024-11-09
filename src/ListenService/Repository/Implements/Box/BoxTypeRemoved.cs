@@ -29,25 +29,26 @@ namespace ListenService.Repository.Implements
         private readonly IConfiguration _configuration;
         private readonly IServiceProvider _serviceProvider;
         private readonly IDatabase _redisDb;
-        public BoxTypeRemoved(IConfiguration configuration, IServiceProvider serviceProvider,IDatabase redisDb)
+        private readonly StreamingWebSocketClient _client;
+        public BoxTypeRemoved(IConfiguration configuration, IServiceProvider serviceProvider,IDatabase redisDb,StreamingWebSocketClient client)
         {
             _configuration = configuration;
             _serviceProvider = serviceProvider;
             _redisDb = redisDb;
+            _client = client;
         }
 
 
         public async Task StartAsync(string nodeUrl, string contractAddress, ChainEnum chain_id)
         {
-            StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
-            //StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
-            var client = new StreamingWebSocketClient(nodeUrl);
+           
 
             try
             {
+                await _client.StartAsync();
                 var cardTypeAdded = Event<BoxTypeRemovedEventDTO>.GetEventABI().CreateFilterInput();
                 cardTypeAdded.Address = new string[] { contractAddress };
-                var subscription = new EthLogsObservableSubscription(client);
+                var subscription = new EthLogsObservableSubscription(_client);
                 //Action<Exception> onErrorAction = async (ex) =>
                 //{
                 //    // 处理异常情况 ex
@@ -80,10 +81,11 @@ namespace ListenService.Repository.Implements
 
                         Console.WriteLine("BoxTypeAdded: Found not standard log");
                     }
+                }, async (ex) => {
+                    Console.WriteLine($"BoxTypeAdded:{ex}");
+                    await Task.Delay(2000);
+                    await StartAsync(nodeUrl, contractAddress, chain_id);
                 });
-                // open the web socket connection
-                await client.StartAsync();
-
                 // begin receiving subscription data
                 // data will be received on a background thread
                 await subscription.SubscribeAsync(cardTypeAdded);
@@ -103,11 +105,9 @@ namespace ListenService.Repository.Implements
             }
             catch (Exception ex)
             {
-                //client.Dispose();
                 Console.WriteLine($"BoxTypeRemoved:{ex}");
-                //await StartAsync(nodeUrl, contractAddress, chain_id);
-                //Console.WriteLine("BoxTypeRemoved重启了ex");
-
+                await Task.Delay(2000);
+                await StartAsync(nodeUrl, contractAddress, chain_id);
             }
         }
     }

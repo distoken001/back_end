@@ -32,23 +32,23 @@ namespace ListenService.Repository.Implements
         private readonly IServiceProvider _serviceProvider;
         private readonly ISendMessage _sendMessage;
         private readonly IDatabase _redisDb;
-        public PostSetStatus(IConfiguration configuration, IServiceProvider serviceProvider, ISendMessage sendMessage,IDatabase redisDb)
+        private readonly StreamingWebSocketClient _client;
+        public PostSetStatus(IConfiguration configuration, IServiceProvider serviceProvider, ISendMessage sendMessage,IDatabase redisDb, StreamingWebSocketClient client)
         {
             _configuration = configuration;
             _serviceProvider = serviceProvider;
             _sendMessage = sendMessage;
             _redisDb = redisDb;
-
+            _client = client;
         }
         public async Task StartAsync(string nodeWss, string nodeHttps, string contractAddress, ChainEnum chain_id)
         {
 
-            StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
-            //StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
-            var client = new StreamingWebSocketClient(nodeWss);
+          
             Console.WriteLine("PostSetStatus程序启动：" + chain_id.ToString());
             try
             {
+                await _client.StartAsync();
                 // 连接到以太坊区块链网络
                 var web3 = new Web3(nodeHttps);
                 // 读取JSON文件内容
@@ -68,7 +68,7 @@ namespace ListenService.Repository.Implements
 
                 var postSetStatus = Event<PostSetStatusEventDTO>.GetEventABI().CreateFilterInput();
                 postSetStatus.Address = new string[] { contractAddress };
-                var subscription = new EthLogsObservableSubscription(client);
+                var subscription = new EthLogsObservableSubscription(_client);
 
                 //Action<Exception> onErrorAction = async (ex) =>
                 //{
@@ -115,24 +115,23 @@ namespace ListenService.Repository.Implements
                             _ = _sendMessage.SendMessagePost((int)decoded.Event.OrderId, chain_id, contractAddress);
                         }
                     }
-                    else
-                    {
-                        //Console.WriteLine("PostSetStatus:Found not standard log" + chain_id.ToString());
-                    }
 
+                }, async (ex) => {
+                    Console.WriteLine($"PostSetStatus:{ex}");
+                    await Task.Delay(2000);
+                    await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
                 });
 
-                await client.StartAsync();
+            
 
                 await subscription.SubscribeAsync(postSetStatus);
 
             }
             catch (Exception ex)
             {
-                //client.Dispose();
-                //await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
-                Console.WriteLine($"PostSetStatus:{ex}" + chain_id.ToString());
-                //Console.WriteLine("PostSetStatus重启了EX" + chain_id.ToString());
+                Console.WriteLine($"PostSetStatus:{ex} - Chain ID: {chain_id}");
+                await Task.Delay(2000);
+                await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
             }
         }
 

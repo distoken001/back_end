@@ -8,6 +8,8 @@ using CommonLibrary.Model.DataEntityModel;
 using CommonLibrary.Common.Common;
 using ListenService.Repository.Interfaces;
 using StackExchange.Redis;
+using ListenService.Chains;
+using Nethereum.JsonRpc.Client;
 
 namespace ListenService.Repository.Implements
 {
@@ -16,30 +18,23 @@ namespace ListenService.Repository.Implements
         private readonly IServiceProvider _serviceProvider;
         private readonly IConfiguration _configuration;
         private readonly IDatabase _redisDb;
-        public BoxGifted(IConfiguration configuration, IServiceProvider serviceProvider,IDatabase redisDb)
+        private readonly StreamingWebSocketClient _client;
+        public BoxGifted(IConfiguration configuration, IServiceProvider serviceProvider,IDatabase redisDb, StreamingWebSocketClient client)
         {
             _configuration = configuration;
             _serviceProvider = serviceProvider;
             _redisDb = redisDb;
+            _client = client;
         }
         public async Task StartAsync(string nodeUrl, string contractAddress, ChainEnum chain_id)
         {
-            StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
-            //StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
-            var client = new StreamingWebSocketClient(nodeUrl);
+        
             try
             {
+                await _client.StartAsync();
                 var cardGifted = Event<BoxGiftedEventDTO>.GetEventABI().CreateFilterInput();
                 cardGifted.Address = new string[] { contractAddress };
-                var subscription = new EthLogsObservableSubscription(client);
-                //Action<Exception> onErrorAction = async (ex) =>
-                //{
-                //    // 处理异常情况 ex
-                //    Console.WriteLine($"Error BoxGifted: {ex}");
-                //    client.Dispose();
-                //    await StartAsync(nodeUrl, contractAddress, chain_id);
-                //};
-                // attach a handler for Transfer event logs
+                var subscription = new EthLogsObservableSubscription(_client);
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(log =>
                 {
                    
@@ -84,32 +79,22 @@ namespace ListenService.Repository.Implements
                     {
                         Console.WriteLine("BoxPurchased:Found not standard log");
                     }
+                }, async (ex) => {
+                    Console.WriteLine($"BoxGifted:{ex}");
+                    await Task.Delay(2000);
+                    await StartAsync(nodeUrl, contractAddress, chain_id);
                 });
-                // open the web socket connection
-                await client.StartAsync();
 
                 // begin receiving subscription data
                 // data will be received on a background thread
                 await subscription.SubscribeAsync(cardGifted);
-                //while (true)
-                //{
-                //    if (client.WebSocketState == WebSocketState.Aborted)
-                //    {
-                //        client.Dispose();
-                //        await StartAsync(nodeUrl, contractAddress, chain_id);
-                //        Console.WriteLine("BoxGifted重启了");
-                //        break;
-
-                //    }
-                //    await Task.Delay(500);
-                //}
+             
             }
             catch (Exception ex)
             {
-                //client.Dispose();
-                //await StartAsync(nodeUrl, contractAddress, chain_id);
                 Console.WriteLine($"BoxGifted:{ex}");
-                //Console.WriteLine("BoxGifted重启了EX");
+                await Task.Delay(2000);
+                await StartAsync(nodeUrl, contractAddress, chain_id);
             }
         }
 

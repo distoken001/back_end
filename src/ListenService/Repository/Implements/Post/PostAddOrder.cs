@@ -34,21 +34,22 @@ namespace ListenService.Repository.Implements
         private readonly IServiceProvider _serviceProvider;
         private readonly ISendMessage _sendMessage;
         private readonly IDatabase _redisDb;
-        public PostAddOrder(IConfiguration configuration, IServiceProvider serviceProvider, ISendMessage sendMessage,IDatabase redisDb)
+        private StreamingWebSocketClient _client;
+        public PostAddOrder(IConfiguration configuration, IServiceProvider serviceProvider, ISendMessage sendMessage,IDatabase redisDb,StreamingWebSocketClient client)
         {
             _configuration = configuration;
             _serviceProvider = serviceProvider;
             _sendMessage = sendMessage;
             _redisDb = redisDb;
+            _client = client;
         }
         public async Task StartAsync(string nodeWss, string nodeHttps, string contractAddress, ChainEnum chain_id)
         {
-            StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
-            //StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
-            var client = new StreamingWebSocketClient(nodeWss);
+          
             Console.WriteLine("PostAddOrder程序启动：" + chain_id.ToString());
             try
             {
+                await _client.StartAsync();
                 // 连接到以太坊区块链网络
                 var web3 = new Web3(nodeHttps);
                 // 读取JSON文件内容
@@ -69,7 +70,7 @@ namespace ListenService.Repository.Implements
 
                 var addPost = Event<PostAddOrderEventDTO>.GetEventABI().CreateFilterInput();
                 addPost.Address = new string[] { contractAddress };
-                var subscription = new EthLogsObservableSubscription(client);
+                var subscription = new EthLogsObservableSubscription(_client);
 
                 //Action<Exception> onErrorAction = async (ex) =>
                 //{
@@ -112,19 +113,22 @@ namespace ListenService.Repository.Implements
                         //Console.WriteLine("PostAddOrder:Found not standard log" + chain_id.ToString());
                     }
 
+                }, async (ex) => {
+                    Console.WriteLine($"PostAddOrder:{ex}");
+                    await Task.Delay(2000);
+                    await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
                 });
 
-                await client.StartAsync();
+          
 
                 await subscription.SubscribeAsync(addPost);
 
             }
             catch (Exception ex)
             {
-                //client.Dispose();
-                //await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
-                Console.WriteLine($"PostAddOrder:{ex}" + chain_id.ToString());
-                //Console.WriteLine("PostAddOrder重启了EX" + chain_id.ToString());
+                Console.WriteLine($"PostAddOrder:{ex} - Chain ID: {chain_id}");
+                await Task.Delay(2000);
+                await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
             }
         }
     }

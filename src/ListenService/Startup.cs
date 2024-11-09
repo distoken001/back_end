@@ -8,6 +8,9 @@ using ListenService.Service;
 using ListenService.Repository.Implements;
 using ListenService.Repository.Interfaces;
 using StackExchange.Redis;
+using Nethereum.JsonRpc.WebSocketStreamingClient;
+using System.Net.WebSockets;
+using ListenService.Chains;
 
 namespace ListenService
 {
@@ -31,9 +34,43 @@ namespace ListenService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<StreamingWebSocketClient,WebSocketClientBsc>(  provider =>
+            {
+                var nodeUrl = Configuration["BSC:WSS_URL"];
+                WebSocketClientBsc.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
+                var client = new WebSocketClientBsc(nodeUrl);
+               
+                StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
+                // 启动连接，确保重连机制
+                Task.Run(async () =>
+                {
+                    while (true)
+                    {
+                        try
+                        {
+                            if (client.IsStarted != true)
+                            {
+                                Console.WriteLine("连接断开，正在重连...");
+                               await client.StartAsync();
+                                Console.WriteLine("连接成功！");
+                            }
 
-            //解决文件上传Multipart body length limit 134217728 exceeded
-            services.Configure<FormOptions>(x =>
+                            await Task.Delay(1000); // 检查间隔
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"连接错误: {ex.Message}");
+                            await Task.Delay(1000); // 延迟重试
+                        }
+                    }
+                });
+
+                return client;
+            });
+
+
+           //解决文件上传Multipart body length limit 134217728 exceeded
+           services.Configure<FormOptions>(x =>
             {
                 x.ValueLengthLimit = int.MaxValue;
                 x.MultipartBodyLengthLimit = int.MaxValue;

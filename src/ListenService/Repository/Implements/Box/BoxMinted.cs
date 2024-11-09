@@ -1,6 +1,7 @@
 ﻿using CommonLibrary.Common.Common;
 using CommonLibrary.DbContext;
 using CommonLibrary.Model.DataEntityModel;
+using ListenService.Chains;
 using ListenService.Model;
 using ListenService.Repository.Interfaces;
 using Nethereum.Contracts;
@@ -18,7 +19,8 @@ namespace ListenService.Repository.Implements
         private readonly IConfiguration _configuration;
         private readonly IServiceProvider _serviceProvider;
         private readonly IDatabase _redisDb;
-        public BoxMinted(IConfiguration configuration, IServiceProvider serviceProvider,IDatabase redisDb)
+        private readonly StreamingWebSocketClient _client;
+        public BoxMinted(IConfiguration configuration, IServiceProvider serviceProvider,IDatabase redisDb,StreamingWebSocketClient client)
         {
             _configuration = configuration;
             _serviceProvider = serviceProvider;
@@ -26,11 +28,9 @@ namespace ListenService.Repository.Implements
         }
         public async Task StartAsync(string nodeUrl, string contractAddress, ChainEnum chain_id)
         {
-            StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
-            //StreamingWebSocketClient.ConnectionTimeout = Timeout.InfiniteTimeSpan;
-            var _client = new StreamingWebSocketClient(nodeUrl);
             try
             {
+                await _client.StartAsync();
                 var _subscription = new EthLogsObservableSubscription(_client);
                 var cardPurchased = Event<BoxMintedEventDTO>.GetEventABI().CreateFilterInput();
                 cardPurchased.Address = new string[] { contractAddress };
@@ -79,30 +79,20 @@ namespace ListenService.Repository.Implements
                     {
                         Console.WriteLine("BoxMinted:Found not standard log");
                     }
+                }, async(ex) => {
+                    Console.WriteLine($"PrizeClaimed:{ex}");
+                    await Task.Delay(2000);
+                    await StartAsync(nodeUrl, contractAddress, chain_id);
                 });
-                await _client.StartAsync();
+            
                 await _subscription.SubscribeAsync(cardPurchased);
-
-                //while (true)
-                //{
-                //    if (_client.WebSocketState == WebSocketState.Aborted)
-                //    {
-                //        _client.Dispose();
-                //        await StartAsync(nodeUrl, contractAddress, chain_id);
-                //        Console.WriteLine("BoxPurchased重启了");
-                //        break;
-
-                //    }
-                //    await Task.Delay(500);
-                //}
             }
 
             catch (Exception ex)
             {
-                //_client.Dispose();
-                //await StartAsync(nodeUrl, contractAddress, chain_id);
                 Console.WriteLine($"BoxMinted:{ex}");
-                //Console.WriteLine("BoxMinted重启了EX");
+                await Task.Delay(2000);
+                await StartAsync(nodeUrl, contractAddress, chain_id);
             }
 
         }
