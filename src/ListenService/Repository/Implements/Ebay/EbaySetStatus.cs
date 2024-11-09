@@ -54,8 +54,17 @@ public class EbaySetStatus : IEbaySetStatus
 
             subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
             {
-                Console.WriteLine("EbaySetStatus监听到了！");
-                await HandleLogAsync(log, contractAddress, chainId);
+                try
+                {
+                    Console.WriteLine("EbaySetStatus监听到了！");
+                    await HandleLogAsync(log, contractAddress, chainId);
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine($"EbaySetStatus:{ex}");
+                    await Task.Delay(2000);
+                    await StartAsync(nodeWss, nodeHttps, contractAddress, chainId);
+                }
             }, async (ex) => {
                 Console.WriteLine($"EbaySetStatus:{ex}");
                 await Task.Delay(2000);
@@ -76,8 +85,7 @@ public class EbaySetStatus : IEbaySetStatus
     {
         // 检查事件来源是否符合要求
         var decoded = Event<EbaySetStatusEventDTO>.DecodeEvent(log);
-        if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
-        {
+     
             if (!_redisDb.LockTake(log.TransactionHash, 1, TimeSpan.FromSeconds(10)))
             {
                 return;
@@ -126,6 +134,6 @@ public class EbaySetStatus : IEbaySetStatus
                     }
                 }
             }
-        }
+        
     }
 }

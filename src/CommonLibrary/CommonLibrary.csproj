@@ -27,6 +27,7 @@
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.0" />
     <PackageReference Include="System.Net.WebSockets.Client" Version="4.3.2" />
     <PackageReference Include="StackExchange.Redis" Version="2.8.16" />
+    <PackageReference Include="Nethereum.JsonRpc.WebSocketClient" Version="4.26.0" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Services\" />

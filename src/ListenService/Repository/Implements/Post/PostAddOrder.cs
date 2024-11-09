@@ -82,6 +82,7 @@ namespace ListenService.Repository.Implements
                 // attach a handler for Transfer event logs
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
                 {
+                    try { 
                     Console.WriteLine("PostAddOrder监听到了！" + chain_id.ToString());
                     if (!_redisDb.LockTake(log.TransactionHash, 1, TimeSpan.FromSeconds(10)))
                     {
@@ -89,29 +90,29 @@ namespace ListenService.Repository.Implements
                     }
                     // decode the log into a typed event log
                     var decoded = Event<PostAddOrderEventDTO>.DecodeEvent(log);
-                    if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
-                    {
-                      
+
                         using (var scope = _serviceProvider.CreateScope())
                         {
                             var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
-                          
+
                             // 调用智能合约函数并获取返回结果
                             var postResult = await function.CallDeserializingToObjectAsync<PostOrderDTO>((int)decoded.Event.OrderId);
                             var extendResult = await functionExtend.CallDeserializingToObjectAsync<ExtendDTO>((int)decoded.Event.OrderId);
                             var chainToken = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(postResult.Token) && a.chain_id == chain_id).FirstOrDefault();
                             var decimals_num = new BigDecimal(Math.Pow(10, chainToken.decimals));
-                            var post = new orders() { amount = (double)postResult.Amount, buyer = postResult.Buyer, buyer_contact = null, buyer_ex = (double)(new BigDecimal(postResult.BuyerEx) / decimals_num), buyer_pledge = (double)(new BigDecimal(postResult.BuyerPledge) / decimals_num), chain_id = chain_id, contract = contractAddress, create_time = DateTime.Now, creator = "system", description = postResult.Description, img = postResult.Img, name = postResult.Name, seller = postResult.Seller, order_id = (int)decoded.Event.OrderId, price = (double)(new BigDecimal(postResult.Price) / decimals_num), seller_contact = null, seller_pledge = (double)(new BigDecimal(postResult.SellerPledge) / decimals_num), status = postResult.Status, token = postResult.Token, updater = null, update_time = DateTime.Now, weight = 10000, seller_ratio = (decimal)(new BigDecimal(extendResult.SellerRatio) / new BigDecimal(10000)) , way = PostWayEnum.买家发布 };
+                            var post = new orders() { amount = (double)postResult.Amount, buyer = postResult.Buyer, buyer_contact = null, buyer_ex = (double)(new BigDecimal(postResult.BuyerEx) / decimals_num), buyer_pledge = (double)(new BigDecimal(postResult.BuyerPledge) / decimals_num), chain_id = chain_id, contract = contractAddress, create_time = DateTime.Now, creator = "system", description = postResult.Description, img = postResult.Img, name = postResult.Name, seller = postResult.Seller, order_id = (int)decoded.Event.OrderId, price = (double)(new BigDecimal(postResult.Price) / decimals_num), seller_contact = null, seller_pledge = (double)(new BigDecimal(postResult.SellerPledge) / decimals_num), status = postResult.Status, token = postResult.Token, updater = null, update_time = DateTime.Now, weight = 10000, seller_ratio = (decimal)(new BigDecimal(extendResult.SellerRatio) / new BigDecimal(10000)), way = PostWayEnum.买家发布 };
                             _masterDbContext.orders.Add(post);
                             _masterDbContext.SaveChanges();
                             _ = _sendMessage.SendMessagePost((int)decoded.Event.OrderId, chain_id, contractAddress);
-
                         }
                     }
-                    else
+                    catch(Exception ex)
                     {
-                        //Console.WriteLine("PostAddOrder:Found not standard log" + chain_id.ToString());
+                        Console.WriteLine($"PostAddOrder:{ex}");
+                        await Task.Delay(2000);
+                        await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
                     }
+                   
 
                 }, async (ex) => {
                     Console.WriteLine($"PostAddOrder:{ex}");

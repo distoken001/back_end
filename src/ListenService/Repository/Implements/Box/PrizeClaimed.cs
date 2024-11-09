@@ -54,17 +54,17 @@ namespace ListenService.Repository.Implements
                 prizeClaimed.Address = new string[] { contractAddress };
                 var subscription = new EthLogsObservableSubscription(_client);
                          
-                subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(log =>
+                subscription.GetSubscriptionDataResponsesAsObservable().Subscribe( async log =>
                 {
-                    if (!_redisDb.LockTake(log.TransactionHash, 1, TimeSpan.FromSeconds(10)))
+                    try
                     {
-                        return;
-                    }
-                    Console.WriteLine("PrizeClaimed监听到了！");
-                    // decode the log into a typed event log
-                    var decoded = Event<PrizeClaimedEventDTO>.DecodeEvent(log);
-                    if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
-                    {
+                        if (!_redisDb.LockTake(log.TransactionHash, 1, TimeSpan.FromSeconds(10)))
+                        {
+                            return;
+                        }
+                        Console.WriteLine("PrizeClaimed监听到了！");
+                        // decode the log into a typed event log
+                        var decoded = Event<PrizeClaimedEventDTO>.DecodeEvent(log);
                         using (var scope = _serviceProvider.CreateScope())
                         {
                             var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
@@ -72,7 +72,7 @@ namespace ListenService.Repository.Implements
                             var chainToken = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(card.token) && a.chain_id == chain_id).FirstOrDefault();
                             var decimals_num = (double)Math.Pow(10, chainToken.decimals);
                             var prize = (double)decoded.Event.Prize / decimals_num;
-                            _masterDbContext.card_opened.Add(new card_opened() { buyer = decoded.Event.User, card_name = card.name, card_type = card.type, chain_id = chain_id, create_time = DateTime.Now, creator = "system", contract = log.Address, img = prize>0?card.img_win:card.img_fail, price = card.price, token = card.token, wining = prize });
+                            _masterDbContext.card_opened.Add(new card_opened() { buyer = decoded.Event.User, card_name = card.name, card_type = card.type, chain_id = chain_id, create_time = DateTime.Now, creator = "system", contract = log.Address, img = prize > 0 ? card.img_win : card.img_fail, price = card.price, token = card.token, wining = prize });
                             var cardNotOpened = _masterDbContext.card_not_opened.Where(a => a.buyer.Equals(decoded.Event.User) && a.card_type.Equals(card.type) && a.contract.Equals(log.Address) && a.token.Equals(chainToken.token_address)).FirstOrDefault();
                             cardNotOpened.amount -= 1;
                             cardNotOpened.updater = "system";
@@ -81,9 +81,11 @@ namespace ListenService.Repository.Implements
                             _masterDbContext.SaveChanges();
                         }
                     }
-                    else
+                    catch(Exception ex)
                     {
-                        Console.WriteLine("PrizeClaimed:Found not standard log");
+                        Console.WriteLine($"PrizeClaimed:{ex}");
+                        await Task.Delay(2000);
+                        await StartAsync(nodeUrl, contractAddress, chain_id);
                     }
 
                 }, async (ex) => {

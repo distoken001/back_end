@@ -80,10 +80,10 @@ namespace ListenService.Repository.Implements
 
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
                 {
+                    try { 
                     Console.WriteLine("PostSetStatus监听到了！ + chain_id.ToString()");
                     var decoded = Event<PostSetStatusEventDTO>.DecodeEvent(log);
-                    if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
-                    {
+                  
                         if (!_redisDb.LockTake(log.TransactionHash, 1, TimeSpan.FromSeconds(10)))
                         {
                             return;
@@ -114,6 +114,12 @@ namespace ListenService.Repository.Implements
                             _masterDbContext.SaveChanges();
                             _ = _sendMessage.SendMessagePost((int)decoded.Event.OrderId, chain_id, contractAddress);
                         }
+                    }
+                    catch(Exception ex)
+                    {
+                        Console.WriteLine($"PostSetStatus:{ex}");
+                        await Task.Delay(2000);
+                        await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
                     }
 
                 }, async (ex) => {

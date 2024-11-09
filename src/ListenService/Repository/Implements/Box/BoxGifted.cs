@@ -35,13 +35,11 @@ namespace ListenService.Repository.Implements
                 var cardGifted = Event<BoxGiftedEventDTO>.GetEventABI().CreateFilterInput();
                 cardGifted.Address = new string[] { contractAddress };
                 var subscription = new EthLogsObservableSubscription(_client);
-                subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(log =>
+                subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
                 {
-                   
+                    try {   
                     // decode the log into a typed event log
-                    var decoded = Event<BoxGiftedEventDTO>.DecodeEvent(log);
-                    if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
-                    {
+                       var decoded = Event<BoxGiftedEventDTO>.DecodeEvent(log);
                         if (!_redisDb.LockTake(log.TransactionHash, 1, TimeSpan.FromSeconds(10)))
                         {
                             return;
@@ -75,9 +73,11 @@ namespace ListenService.Repository.Implements
                         }
                       
                     }
-                    else
+                  catch(Exception ex)
                     {
-                        Console.WriteLine("BoxPurchased:Found not standard log");
+                        Console.WriteLine($"BoxGifted:{ex}");
+                        await Task.Delay(2000);
+                        await StartAsync(nodeUrl, contractAddress, chain_id);
                     }
                 }, async (ex) => {
                     Console.WriteLine($"BoxGifted:{ex}");

@@ -49,25 +49,19 @@ namespace ListenService.Repository.Implements
                 var cardTypeAdded = Event<BoxTypeRemovedEventDTO>.GetEventABI().CreateFilterInput();
                 cardTypeAdded.Address = new string[] { contractAddress };
                 var subscription = new EthLogsObservableSubscription(_client);
-                //Action<Exception> onErrorAction = async (ex) =>
-                //{
-                //    // 处理异常情况 ex
-                //    client.Dispose();
-                //    Console.WriteLine($"Error BoxTypeRemoved: {ex}");
-                //    await StartAsync(nodeUrl, contractAddress, chain_id);
-                //};
-                // attach a handler for Transfer event logs
-                subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(log =>
+         
+                subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
                 {
-                    if (!_redisDb.LockTake(log.TransactionHash, 1, TimeSpan.FromSeconds(10)))
+                    try
                     {
-                        return;
-                    }
-                    Console.WriteLine("BoxTypeAdded监听到了！");
-                    // decode the log into a typed event log
-                    var decoded = Event<BoxTypeRemovedEventDTO>.DecodeEvent(log);
-                    if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
-                    {
+                        if (!_redisDb.LockTake(log.TransactionHash, 1, TimeSpan.FromSeconds(10)))
+                        {
+                            return;
+                        }
+                        Console.WriteLine("BoxTypeAdded监听到了！");
+                        // decode the log into a typed event log
+                        var decoded = Event<BoxTypeRemovedEventDTO>.DecodeEvent(log);
+
                         using (var scope = _serviceProvider.CreateScope())
                         {
                             var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
@@ -76,10 +70,11 @@ namespace ListenService.Repository.Implements
                             _masterDbContext.SaveChanges();
                         }
                     }
-                    else
+                    catch(Exception ex)
                     {
-
-                        Console.WriteLine("BoxTypeAdded: Found not standard log");
+                        Console.WriteLine($"BoxTypeAdded:{ex}");
+                        await Task.Delay(2000);
+                        await StartAsync(nodeUrl, contractAddress, chain_id);
                     }
                 }, async (ex) => {
                     Console.WriteLine($"BoxTypeAdded:{ex}");

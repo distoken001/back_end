@@ -75,16 +75,16 @@ namespace ListenService.Repository.Implements
                 //};
                 var subscription = new EthLogsObservableSubscription(_client);
                 // attach a handler for Transfer event logs
-                subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(log =>
+                subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
                 {
+                    try { 
                     if (!_redisDb.LockTake(log.TransactionHash, 1, TimeSpan.FromSeconds(10)))
                     {
                         return;
                     }
                     // decode the log into a typed event log
                     var decoded = Event<BoxTypeAddedEventDTO>.DecodeEvent(log);
-                    if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
-                    {
+                  
                         using (var scope = _serviceProvider.CreateScope())
                         {
                             var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
@@ -97,11 +97,13 @@ namespace ListenService.Repository.Implements
                             Console.WriteLine("Contract address: " + log.Address + " Log Transfer from:" + decoded.Event.BoxName);
                         }
                     }
-                    else
+                    catch(Exception ex)
                     {
-
-                        Console.WriteLine("BoxTypeAdded: Found not standard log");
+                        Console.WriteLine($"BoxTypeAdded:{ex}");
+                        await Task.Delay(2000);
+                        await StartAsync(nodeUrl, contractAddress, chain_id);
                     }
+                 
                 }, async (ex) => {
                     Console.WriteLine($"BoxTypeAdded:{ex}");
                     await Task.Delay(2000);

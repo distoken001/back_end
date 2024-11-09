@@ -55,8 +55,17 @@ public class EbayAddOrder : IEbayAddOrder
 
             subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
             {
-                Console.WriteLine("EbayAddOrder监听到了！");
-                await HandleLogAsync(log, contractAddress, chainId);
+                try
+                {
+                    Console.WriteLine("EbayAddOrder监听到了！");
+                    await HandleLogAsync(log, contractAddress, chainId);
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine($"EbayAddOrder:{ex}");
+                    await Task.Delay(2000);
+                    await StartAsync(nodeWss, nodeHttps, contractAddress, chainId);
+                }
             }, async (ex) => {
                 Console.WriteLine($"EbayAddOrder:{ex}");
                 await Task.Delay(2000);
@@ -76,9 +85,7 @@ public class EbayAddOrder : IEbayAddOrder
     private async Task HandleLogAsync(Nethereum.RPC.Eth.DTOs.FilterLog log, string contractAddress, ChainEnum chainId)
     {
       
-        // 检查事件来源
-        if (log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
-        {
+       
             if (!_redisDb.LockTake(log.TransactionHash, 1, TimeSpan.FromSeconds(10)))
             {
                 return;
@@ -144,5 +151,4 @@ public class EbayAddOrder : IEbayAddOrder
                 }
             }
         }
-    }
 }
