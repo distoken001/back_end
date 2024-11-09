@@ -12,9 +12,10 @@ namespace ListenService.Model
         [Parameter("address", "recipient", 2, true)]
         public string Recipient { get; set; }
 
-        [Parameter("string", "cardType", 3, false)]
+        [Parameter("string", "BoxType", 3, false)]
         public string BoxType { get; set; }
-        [Parameter("uint256", "numberOfBoxs", 4, false)]
+
+        [Parameter("uint256", "numberOfBox", 4, false)]
         public BigInteger NumberOfBoxs { get; set; }
     }
 }
