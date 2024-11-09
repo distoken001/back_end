@@ -76,6 +76,9 @@ namespace ListenService.Service
             {
                 Console.WriteLine(ex.ToString());
             }
+            var tcs = new TaskCompletionSource<bool>();
+            cancellationToken.Register(s => ((TaskCompletionSource<bool>)s).SetResult(true), tcs);
+            await tcs.Task;
         }
     }
 }
