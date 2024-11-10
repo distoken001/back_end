@@ -73,13 +73,15 @@ namespace ListenService.Repository.Implements
                         }
                       
                     }
-                  catch(Exception ex)
+                      catch(Exception ex)
                     {
                         Console.WriteLine($"BoxGifted:{ex}");
+                        await  subscription.UnsubscribeAsync();
                         await Task.Delay(2000);
                         await StartAsync(nodeUrl, contractAddress, chain_id);
                     }
                 }, async (ex) => {
+                    await subscription.UnsubscribeAsync();
                     Console.WriteLine($"BoxGifted:{ex}");
                     await Task.Delay(2000);
                     await StartAsync(nodeUrl, contractAddress, chain_id);

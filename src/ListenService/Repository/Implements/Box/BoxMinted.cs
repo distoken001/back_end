@@ -42,18 +42,17 @@ namespace ListenService.Repository.Implements
                 //    _client.Dispose();
                 //    await StartAsync(nodeUrl, contractAddress, chain_id);
                 //};
-                _subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(log =>
+                _subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
                 {
-                    if (!_redisDb.LockTake(log.TransactionHash, 1, TimeSpan.FromSeconds(10)))
+                    try
                     {
-                        return;
-                    }
-                    Console.WriteLine("BoxMinted监听到了！");
-                    // decode the log into a typed event log
-                    var decoded = Event<BoxMintedEventDTO>.DecodeEvent(log);
-                    if (decoded != null && log.Address.Equals(contractAddress, StringComparison.OrdinalIgnoreCase))
-                    {
-                      
+                        if (!_redisDb.LockTake(log.TransactionHash, 1, TimeSpan.FromSeconds(10)))
+                        {
+                            return;
+                        }
+                        Console.WriteLine("BoxMinted监听到了！");
+                        // decode the log into a typed event log
+                        var decoded = Event<BoxMintedEventDTO>.DecodeEvent(log);
                         using (var scope = _serviceProvider.CreateScope())
                         {
                             var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
@@ -73,13 +72,18 @@ namespace ListenService.Repository.Implements
                             }
                             _masterDbContext.SaveChanges();
                         }
-                     
                     }
-                    else
+                    catch(Exception ex)
                     {
-                        Console.WriteLine("BoxMinted:Found not standard log");
+                        await _subscription.UnsubscribeAsync();
+                        Console.WriteLine($"PrizeClaimed:{ex}");
+                        await Task.Delay(2000);
+                        await StartAsync(nodeUrl, contractAddress, chain_id);
                     }
+                     
+                    
                 }, async(ex) => {
+                    await _subscription.UnsubscribeAsync();
                     Console.WriteLine($"PrizeClaimed:{ex}");
                     await Task.Delay(2000);
                     await StartAsync(nodeUrl, contractAddress, chain_id);

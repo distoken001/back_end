@@ -69,15 +69,6 @@ namespace ListenService.Repository.Implements
                 var postSetStatus = Event<PostSetStatusEventDTO>.GetEventABI().CreateFilterInput();
                 postSetStatus.Address = new string[] { contractAddress };
                 var subscription = new EthLogsObservableSubscription(_client);
-
-                //Action<Exception> onErrorAction = async (ex) =>
-                //{
-                //    // 处理异常情况 ex
-                //    Console.WriteLine($"Error PostSetStatus: {ex}");
-                //    client.Dispose();
-                //    await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
-                //};
-
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
                 {
                     try { 
@@ -117,18 +108,18 @@ namespace ListenService.Repository.Implements
                     }
                     catch(Exception ex)
                     {
+                        await subscription.UnsubscribeAsync();
                         Console.WriteLine($"PostSetStatus:{ex}");
                         await Task.Delay(2000);
                         await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
                     }
 
                 }, async (ex) => {
+                    await subscription.UnsubscribeAsync();
                     Console.WriteLine($"PostSetStatus:{ex}");
                     await Task.Delay(2000);
                     await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
                 });
-
-            
 
                 await subscription.SubscribeAsync(postSetStatus);
 

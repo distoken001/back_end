@@ -66,13 +66,6 @@ namespace ListenService.Repository.Implements
 
                 var cardTypeAdded = Event<BoxTypeAddedEventDTO>.GetEventABI().CreateFilterInput();
                 cardTypeAdded.Address = new string[] { contractAddress };
-                //Action<Exception> onErrorAction = async (ex) =>
-                //{
-                //    // 处理异常情况 ex
-                //    client.Dispose();
-                //    Console.WriteLine($"Error BoxTypeAdded: {ex}");
-                //    await StartAsync(nodeUrl, contractAddress, chain_id);
-                //};
                 var subscription = new EthLogsObservableSubscription(_client);
                 // attach a handler for Transfer event logs
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
@@ -99,33 +92,20 @@ namespace ListenService.Repository.Implements
                     }
                     catch(Exception ex)
                     {
+                        await subscription.UnsubscribeAsync();
                         Console.WriteLine($"BoxTypeAdded:{ex}");
                         await Task.Delay(2000);
                         await StartAsync(nodeUrl, contractAddress, chain_id);
                     }
                  
                 }, async (ex) => {
+                    await subscription.UnsubscribeAsync();
                     Console.WriteLine($"BoxTypeAdded:{ex}");
                     await Task.Delay(2000);
                     await StartAsync(nodeUrl, contractAddress, chain_id);
                 });
              
-
-                // begin receiving subscription data
-                // data will be received on a background thread
                 await subscription.SubscribeAsync(cardTypeAdded);
-                //while (true)
-                //{
-                //    if (client.WebSocketState == WebSocketState.Aborted)
-                //    {
-                //        client.Dispose();
-                //        await StartAsync(nodeUrl, contractAddress, chain_id);
-                //        Console.WriteLine("BoxTypeAdded重启了");
-                //        break;
-
-                //    }
-                //    await Task.Delay(500);
-                //}
 
             }
             catch (Exception ex)

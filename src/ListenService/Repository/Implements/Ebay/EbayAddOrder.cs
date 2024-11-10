@@ -38,7 +38,7 @@ public class EbayAddOrder : IEbayAddOrder
 
         try
         {
-            await _client.StartAsync();
+                await _client.StartAsync();
             // 读取 JSON 文件内容并解析 ABI
             string jsonFilePath = "Ebay.json";
             string jsonString = File.ReadAllText(jsonFilePath);
@@ -62,11 +62,13 @@ public class EbayAddOrder : IEbayAddOrder
                 }
                 catch(Exception ex)
                 {
+                    await subscription.UnsubscribeAsync();
                     Console.WriteLine($"EbayAddOrder:{ex}");
                     await Task.Delay(2000);
                     await StartAsync(nodeWss, nodeHttps, contractAddress, chainId);
                 }
             }, async (ex) => {
+                await subscription.UnsubscribeAsync();
                 Console.WriteLine($"EbayAddOrder:{ex}");
                 await Task.Delay(2000);
                 await StartAsync(nodeWss, nodeHttps, contractAddress, chainId);

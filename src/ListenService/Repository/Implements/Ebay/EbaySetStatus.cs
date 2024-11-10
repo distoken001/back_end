@@ -61,11 +61,13 @@ public class EbaySetStatus : IEbaySetStatus
                 }
                 catch(Exception ex)
                 {
+                    await subscription.UnsubscribeAsync();
                     Console.WriteLine($"EbaySetStatus:{ex}");
                     await Task.Delay(2000);
                     await StartAsync(nodeWss, nodeHttps, contractAddress, chainId);
                 }
             }, async (ex) => {
+                await subscription.UnsubscribeAsync();
                 Console.WriteLine($"EbaySetStatus:{ex}");
                 await Task.Delay(2000);
                 await StartAsync(nodeWss, nodeHttps, contractAddress, chainId);

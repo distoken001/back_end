@@ -72,11 +72,13 @@ namespace ListenService.Repository.Implements
                     }
                     catch(Exception ex)
                     {
+                        await subscription.UnsubscribeAsync();
                         Console.WriteLine($"BoxTypeAdded:{ex}");
                         await Task.Delay(2000);
                         await StartAsync(nodeUrl, contractAddress, chain_id);
                     }
                 }, async (ex) => {
+                    await subscription.UnsubscribeAsync();
                     Console.WriteLine($"BoxTypeAdded:{ex}");
                     await Task.Delay(2000);
                     await StartAsync(nodeUrl, contractAddress, chain_id);
@@ -85,18 +87,6 @@ namespace ListenService.Repository.Implements
                 // data will be received on a background thread
                 await subscription.SubscribeAsync(cardTypeAdded);
 
-                //while (true)
-                //{
-                //    if (client.WebSocketState == WebSocketState.Aborted)
-                //    {
-                //        client.Dispose();
-                //        await StartAsync(nodeUrl, contractAddress, chain_id);
-                //        Console.WriteLine("BoxTypeRemoved重启了");
-                //        break;
-
-                //    }
-                //    await Task.Delay(500);
-                //}
             }
             catch (Exception ex)
             {
