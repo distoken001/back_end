@@ -10,6 +10,7 @@ using ListenService.Repository.Interfaces;
 using StackExchange.Redis;
 using ListenService.Chains;
 using Nethereum.JsonRpc.Client;
+using System.Net.WebSockets;
 
 namespace ListenService.Repository.Implements
 {
@@ -76,12 +77,12 @@ namespace ListenService.Repository.Implements
                       catch(Exception ex)
                     {
                         Console.WriteLine($"BoxGifted:{ex}");
-                        await  subscription.UnsubscribeAsync();
+                        _client.RemoveSubscription(subscription.SubscriptionId);
                         await Task.Delay(2000);
                         await StartAsync(nodeUrl, contractAddress, chain_id);
                     }
                 }, async (ex) => {
-                    await subscription.UnsubscribeAsync();
+                    _client.RemoveSubscription(subscription.SubscriptionId);
                     Console.WriteLine($"BoxGifted:{ex}");
                     await Task.Delay(2000);
                     await StartAsync(nodeUrl, contractAddress, chain_id);

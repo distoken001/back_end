@@ -75,7 +75,7 @@ namespace ListenService.Repository.Implements
                     }
                     catch(Exception ex)
                     {
-                        await _subscription.UnsubscribeAsync();
+                        _client.RemoveSubscription(_subscription.SubscriptionId);
                         Console.WriteLine($"PrizeClaimed:{ex}");
                         await Task.Delay(2000);
                         await StartAsync(nodeUrl, contractAddress, chain_id);
@@ -83,7 +83,7 @@ namespace ListenService.Repository.Implements
                      
                     
                 }, async(ex) => {
-                    await _subscription.UnsubscribeAsync();
+                    _client.RemoveSubscription(_subscription.SubscriptionId);
                     Console.WriteLine($"PrizeClaimed:{ex}");
                     await Task.Delay(2000);
                     await StartAsync(nodeUrl, contractAddress, chain_id);

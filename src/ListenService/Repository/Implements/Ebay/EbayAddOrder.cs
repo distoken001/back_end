@@ -62,13 +62,13 @@ public class EbayAddOrder : IEbayAddOrder
                 }
                 catch(Exception ex)
                 {
-                    await subscription.UnsubscribeAsync();
+                    _client.RemoveSubscription(subscription.SubscriptionId);
                     Console.WriteLine($"EbayAddOrder:{ex}");
                     await Task.Delay(2000);
                     await StartAsync(nodeWss, nodeHttps, contractAddress, chainId);
                 }
             }, async (ex) => {
-                await subscription.UnsubscribeAsync();
+                _client.RemoveSubscription(subscription.SubscriptionId);
                 Console.WriteLine($"EbayAddOrder:{ex}");
                 await Task.Delay(2000);
                 await StartAsync(nodeWss, nodeHttps, contractAddress, chainId);

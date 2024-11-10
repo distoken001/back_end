@@ -108,14 +108,14 @@ namespace ListenService.Repository.Implements
                     }
                     catch(Exception ex)
                     {
-                        await subscription.UnsubscribeAsync();
+                        _client.RemoveSubscription(subscription.SubscriptionId);
                         Console.WriteLine($"PostSetStatus:{ex}");
                         await Task.Delay(2000);
                         await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
                     }
 
                 }, async (ex) => {
-                    await subscription.UnsubscribeAsync();
+                    _client.RemoveSubscription(subscription.SubscriptionId);
                     Console.WriteLine($"PostSetStatus:{ex}");
                     await Task.Delay(2000);
                     await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);

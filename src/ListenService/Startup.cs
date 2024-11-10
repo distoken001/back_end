@@ -48,10 +48,10 @@ namespace ListenService
                     {
                         try
                         {
-                            if (client.IsStarted != true)
+                            if (client.IsStarted ==default||client.WebSocketState!=WebSocketState.Open)
                             {
                                 Console.WriteLine("连接断开，正在重连...");
-                               await client.StartAsync();
+                                await client.StartAsync();
                                 Console.WriteLine("连接成功！");
                             }
 
@@ -106,14 +106,10 @@ namespace ListenService
 
             services.AddSingleton<ISendMessage, SendMessage>();
 
-            services.AddHostedService<PrizeClaimedService>();
-            services.AddHostedService<BoxTypeRemovedService>();
-            services.AddHostedService<BoxGiftedService>();
-            services.AddHostedService<BoxTypeAddedService>();
-            services.AddHostedService<BoxMintService>();
 
-            //services.AddHostedService<AuctionAddOrderService>();
-            //services.AddHostedService<AuctionSetOrderInfoService>();
+
+            services.AddHostedService<AuctionAddOrderService>();
+            services.AddHostedService<AuctionSetOrderInfoService>();
 
             services.AddHostedService<EbayAddOrderService>();
             services.AddHostedService<EbaySetStatusService>();
@@ -121,7 +117,11 @@ namespace ListenService
             services.AddHostedService<PostAddOrderService>();
             services.AddHostedService<PostSetStatusService>();
 
-
+            services.AddHostedService<PrizeClaimedService>();
+            services.AddHostedService<BoxTypeRemovedService>();
+            services.AddHostedService<BoxGiftedService>();
+            services.AddHostedService<BoxTypeAddedService>();
+            services.AddHostedService<BoxMintService>();
             services
                 .AddHttpClient()
                 .AddCors(options =>

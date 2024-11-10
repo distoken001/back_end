@@ -92,14 +92,14 @@ namespace ListenService.Repository.Implements
                     }
                     catch(Exception ex)
                     {
-                        await subscription.UnsubscribeAsync();
+                        _client.RemoveSubscription(subscription.SubscriptionId);
                         Console.WriteLine($"BoxTypeAdded:{ex}");
                         await Task.Delay(2000);
                         await StartAsync(nodeUrl, contractAddress, chain_id);
                     }
                  
                 }, async (ex) => {
-                    await subscription.UnsubscribeAsync();
+                    _client.RemoveSubscription(subscription.SubscriptionId);
                     Console.WriteLine($"BoxTypeAdded:{ex}");
                     await Task.Delay(2000);
                     await StartAsync(nodeUrl, contractAddress, chain_id);
