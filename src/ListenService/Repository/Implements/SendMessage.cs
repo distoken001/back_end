@@ -23,6 +23,7 @@ using Telegram.Bot;
 using Microsoft.EntityFrameworkCore;
 using Org.BouncyCastle.Asn1.Ocsp;
 using Telegram.Bot.Requests.Abstractions;
+using StackExchange.Redis;
 
 namespace ListenService.Repository.Implements
 {
@@ -30,10 +31,12 @@ namespace ListenService.Repository.Implements
     {
         private readonly IConfiguration _configuration;
         private readonly IServiceProvider _serviceProvider;
-        public SendMessage(IConfiguration configuration, IServiceProvider serviceProvider)
+        private readonly IDatabase _redisDb;
+        public SendMessage(IConfiguration configuration, IServiceProvider serviceProvider, IDatabase redisDb)
         {
             _configuration = configuration;
             _serviceProvider = serviceProvider;
+            _redisDb = redisDb;
         }
 
         public async Task SendMessageEbay(long order_id, ChainEnum chain_id, string contract)
@@ -49,12 +52,16 @@ namespace ListenService.Repository.Implements
                     var order = await _masterDbContext.orders.FirstOrDefaultAsync(p => p.order_id == order_id && p.chain_id == chain_id && p.contract == contract);
                     // var order_pre = await _masterDbContext.orders.FirstOrDefaultAsync(p => p.chain_id == chain_id && p.contract == contract && p.seller.Equals(order.seller) && (p.status == OrderStatus.Initial || p.status == OrderStatus.Ordered) && p.order_id < order.order_id&&p.token.Equals(order.token)&&p.img.Equals(order.img));
                     //var order_pre = await _masterDbContext.orders.FirstOrDefaultAsync(p => p.order_id < order_id && p.img.Equals(order.img)&&p.status==OrderStatus.Initial);
-                    var order_pres = _masterDbContext.orders.Where(p => p.img.Equals(order.img)).ToList();
-                    if (order_pres != null && order_pres.Count > 1)
+                    //var order_pres = _masterDbContext.orders.Where(p => p.img.Equals(order.img)).ToList();
+                    //if (order_pres != null && order_pres.Count > 1)
+                    //{
+                    //    isSame = true;
+                    //}
+                    if (!_redisDb.LockTake(order_id.ToString()+chain_id.ToString()+ contract, 1, TimeSpan.FromSeconds(60*24)))
                     {
                         isSame = true;
                     }
-                    OrderStatus status = order.status;
+                        OrderStatus status = order.status;
                     var seller = await _masterDbContext.users.FirstOrDefaultAsync(u => u.address == order.seller);
                     var buyer = await _masterDbContext.users.FirstOrDefaultAsync(u => u.address == order.buyer);
                     var token = _masterDbContext.chain_tokens.AsNoTracking().FirstOrDefault(c => c.chain_id == order.chain_id && c.token_address.Equals(order.token, StringComparison.OrdinalIgnoreCase));
@@ -171,8 +178,12 @@ namespace ListenService.Repository.Implements
                     var order = await _masterDbContext.orders.FirstOrDefaultAsync(p => p.order_id == order_id && p.chain_id == chain_id && p.contract == contract);
                     // var order_pre = await _masterDbContext.orders.FirstOrDefaultAsync(p => p.chain_id == chain_id && p.contract == contract && p.seller.Equals(order.seller) && (p.status == OrderStatus.Initial || p.status == OrderStatus.Ordered) && p.order_id < order.order_id&&p.token.Equals(order.token)&&p.img.Equals(order.img));
                     //var order_pre = await _masterDbContext.orders.FirstOrDefaultAsync(p => p.order_id < order_id && p.img.Equals(order.img)&&p.status==OrderStatus.Initial);
-                    var order_pres = _masterDbContext.orders.Where(p => p.img.Equals(order.img)).ToList();
-                    if (order_pres != null && order_pres.Count > 1)
+                    //var order_pres = _masterDbContext.orders.Where(p => p.img.Equals(order.img)).ToList();
+                    //if (order_pres != null && order_pres.Count > 1)
+                    //{
+                    //    isSame = true;
+                    //}
+                    if (!_redisDb.LockTake(order_id.ToString() + chain_id.ToString() + contract, 1, TimeSpan.FromSeconds(60 * 24)))
                     {
                         isSame = true;
                     }

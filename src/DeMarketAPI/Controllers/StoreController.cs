@@ -27,6 +27,7 @@ namespace DeMarketAPI.Controllers
             this.txCosUploadeService = txCosUploadeService;
             _configuration = configuration;
         }
+        
         /// <summary>
         /// 店铺(社区)列表
         /// </summary>
