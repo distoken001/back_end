@@ -11,6 +11,7 @@ using StackExchange.Redis;
 using Nethereum.JsonRpc.WebSocketStreamingClient;
 using System.Net.WebSockets;
 using ListenService.Chains;
+using Nethereum.JsonRpc.Client;
 
 namespace ListenService
 {
@@ -52,7 +53,19 @@ namespace ListenService
                             {
                                 Console.WriteLine("连接断开，正在重连...");
                                 await client.StartAsync();
-                                Console.WriteLine("连接成功！");
+                                for (int i = 0; i < 5; i++)
+                                {
+                                    if (client.WebSocketState == WebSocketState.Open)
+                                    {
+                                        Console.WriteLine("连接成功！");
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        await Task.Delay(500).ConfigureAwait(false);
+                                    }
+                                }
+                               
                             }
 
                             await Task.Delay(1000); // 检查间隔
