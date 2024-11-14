@@ -93,14 +93,14 @@ namespace ListenService.Repository.Implements
                     catch(Exception ex)
                     {
                         _client.RemoveSubscription(subscription.SubscriptionId);
-                        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"BoxTypeAdded:{ex}");
+                        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"BoxTypeAdded1:{ex}");
                         await Task.Delay(2000);
                         await StartAsync(nodeUrl, contractAddress, chain_id);
                     }
                  
                 }, async (ex) => {
                     _client.RemoveSubscription(subscription.SubscriptionId);
-                    Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"BoxTypeAdded:{ex}");
+                    Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"BoxTypeAdded2:{ex}");
                     await Task.Delay(2000);
                     await StartAsync(nodeUrl, contractAddress, chain_id);
                 });
@@ -110,7 +110,7 @@ namespace ListenService.Repository.Implements
             }
             catch (Exception ex)
             {
-                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"BoxTypeAdded:{ex}");
+                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"BoxTypeAdded3:{ex}");
                 await Task.Delay(2000);
                 await StartAsync(nodeUrl, contractAddress, chain_id);
             }

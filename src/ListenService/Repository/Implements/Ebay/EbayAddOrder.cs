@@ -63,13 +63,13 @@ public class EbayAddOrder : IEbayAddOrder
                 catch(Exception ex)
                 {
                     _client.RemoveSubscription(subscription.SubscriptionId);
-                    Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"EbayAddOrder:{ex}");
+                    Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"EbayAddOrder1:{ex}");
                     await Task.Delay(2000);
                     await StartAsync(nodeWss, nodeHttps, contractAddress, chainId);
                 }
             }, async (ex) => {
                 _client.RemoveSubscription(subscription.SubscriptionId);
-                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"EbayAddOrder:{ex}");
+                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"EbayAddOrder2:{ex}");
                 await Task.Delay(2000);
                 await StartAsync(nodeWss, nodeHttps, contractAddress, chainId);
             });
@@ -78,7 +78,7 @@ public class EbayAddOrder : IEbayAddOrder
         }
         catch (Exception ex)
         {
-            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"EbayAddOrder:{ex} - Chain ID: {chainId}");
+            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"EbayAddOrder3:{ex} - Chain ID: {chainId}");
             await Task.Delay(2000);
             await StartAsync(nodeWss, nodeHttps,contractAddress, chainId);
         }

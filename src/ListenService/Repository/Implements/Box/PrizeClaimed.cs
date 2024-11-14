@@ -84,14 +84,14 @@ namespace ListenService.Repository.Implements
                     catch(Exception ex)
                     {
                         _client.RemoveSubscription(subscription.SubscriptionId);
-                        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"PrizeClaimed:{ex}");
+                        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"PrizeClaimed1:{ex}");
                         await Task.Delay(2000);
                         await StartAsync(nodeUrl, contractAddress, chain_id);
                     }
 
                 }, async (ex) => {
                     _client.RemoveSubscription(subscription.SubscriptionId);
-                    Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"PrizeClaimed:{ex}");
+                    Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"PrizeClaimed2:{ex}");
                     await Task.Delay(2000);
                     await StartAsync(nodeUrl, contractAddress, chain_id);
                 });
@@ -114,7 +114,7 @@ namespace ListenService.Repository.Implements
             }
             catch (Exception ex)
             {
-                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"PrizeClaimed:{ex}");
+                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"PrizeClaimed3:{ex}");
                 await Task.Delay(2000);
                 await StartAsync(nodeUrl, contractAddress, chain_id);
               

@@ -109,14 +109,14 @@ namespace ListenService.Repository.Implements
                     catch(Exception ex)
                     {
                         _client.RemoveSubscription(subscription.SubscriptionId);
-                        Console.WriteLine($"PostSetStatus:{ex}");
+                        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"PostSetStatus1:{ex}");
                         await Task.Delay(2000);
                         await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
                     }
 
                 }, async (ex) => {
                     _client.RemoveSubscription(subscription.SubscriptionId);
-                    Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"PostSetStatus:{ex}");
+                    Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"PostSetStatus2:{ex}");
                     await Task.Delay(2000);
                     await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
                 });
@@ -126,7 +126,7 @@ namespace ListenService.Repository.Implements
             }
             catch (Exception ex)
             {
-                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"PostSetStatus:{ex} - Chain ID: {chain_id}");
+                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"PostSetStatus3:{ex} - Chain ID: {chain_id}");
                 await Task.Delay(2000);
                 await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
             }
