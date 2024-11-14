@@ -49,7 +49,7 @@ namespace ListenService.Repository.Implements
                         {
                             var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
                                                                                                              
-                            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd") + "BoxGifted监听到了！");
+                            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "BoxGifted监听到了！");
                             var card = _masterDbContext.card_type.Where(a => a.type == decoded.Event.BoxType && a.chain_id == chain_id && a.state == 1).FirstOrDefault();
                             var token = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(card.token) && a.chain_id == card.chain_id).FirstOrDefault();
                             var cardNotOpenedSender = _masterDbContext.card_not_opened.Where(a => a.buyer.Equals(decoded.Event.Sender) && a.card_type.Equals(card.type) && a.contract.Equals(log.Address)).FirstOrDefault();
@@ -76,14 +76,14 @@ namespace ListenService.Repository.Implements
                     }
                       catch(Exception ex)
                     {
-                        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd") + $"BoxGifted:{ex}");
+                        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"BoxGifted:{ex}");
                         _client.RemoveSubscription(subscription.SubscriptionId);
                         await Task.Delay(2000);
                         await StartAsync(nodeUrl, contractAddress, chain_id);
                     }
                 }, async (ex) => {
                     _client.RemoveSubscription(subscription.SubscriptionId);
-                    Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd") + $"BoxGifted:{ex}");
+                    Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"BoxGifted:{ex}");
                     await Task.Delay(2000);
                     await StartAsync(nodeUrl, contractAddress, chain_id);
                 });
@@ -95,7 +95,7 @@ namespace ListenService.Repository.Implements
             }
             catch (Exception ex)
             {
-                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd") + $"BoxGifted:{ex}");
+                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"BoxGifted:{ex}");
                 await Task.Delay(2000);
                 await StartAsync(nodeUrl, contractAddress, chain_id);
             }

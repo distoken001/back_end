@@ -46,7 +46,7 @@ namespace ListenService.Repository.Implements
         public async Task StartAsync(string nodeWss, string nodeHttps, string contractAddress, ChainEnum chain_id)
         {
           
-            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd") + "PostAddOrder程序启动：" + chain_id.ToString());
+            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "PostAddOrder程序启动：" + chain_id.ToString());
             try
             {
                 await _client.StartAsync();
@@ -83,7 +83,7 @@ namespace ListenService.Repository.Implements
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
                 {
                     try { 
-                    Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd") + "PostAddOrder监听到了！" + chain_id.ToString());
+                    Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "PostAddOrder监听到了！" + chain_id.ToString());
                     if (!_redisDb.LockTake(log.TransactionHash, 1, TimeSpan.FromSeconds(10)))
                     {
                         return;
@@ -109,7 +109,7 @@ namespace ListenService.Repository.Implements
                     catch(Exception ex)
                     {
                         _client.RemoveSubscription(subscription.SubscriptionId);
-                        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd") + $"PostAddOrder:{ex}");
+                        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"PostAddOrder:{ex}");
                         await Task.Delay(2000);
                         await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
                     }
@@ -117,7 +117,7 @@ namespace ListenService.Repository.Implements
 
                 }, async (ex) => {
                     _client.RemoveSubscription(subscription.SubscriptionId);
-                    Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd") + $"PostAddOrder:{ex}");
+                    Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"PostAddOrder:{ex}");
                     await Task.Delay(2000);
                     await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
                 });
@@ -129,7 +129,7 @@ namespace ListenService.Repository.Implements
             }
             catch (Exception ex)
             {
-                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd") + $"PostAddOrder:{ex} - Chain ID: {chain_id}");
+                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"PostAddOrder:{ex} - Chain ID: {chain_id}");
                 await Task.Delay(2000);
                 await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
             }

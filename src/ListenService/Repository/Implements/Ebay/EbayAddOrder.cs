@@ -34,7 +34,7 @@ public class EbayAddOrder : IEbayAddOrder
 
     public async Task StartAsync(string nodeWss, string nodeHttps, string contractAddress, ChainEnum chainId)
     {
-        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd") + "EbayAddOrder程序启动：" + chainId);
+        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "EbayAddOrder程序启动：" + chainId);
 
         try
         {
@@ -57,19 +57,19 @@ public class EbayAddOrder : IEbayAddOrder
             {
                 try
                 {
-                    Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd") + "EbayAddOrder监听到了！");
+                    Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "EbayAddOrder监听到了！");
                     await HandleLogAsync(log, contractAddress, chainId);
                 }
                 catch(Exception ex)
                 {
                     _client.RemoveSubscription(subscription.SubscriptionId);
-                    Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd") + $"EbayAddOrder:{ex}");
+                    Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"EbayAddOrder:{ex}");
                     await Task.Delay(2000);
                     await StartAsync(nodeWss, nodeHttps, contractAddress, chainId);
                 }
             }, async (ex) => {
                 _client.RemoveSubscription(subscription.SubscriptionId);
-                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd") + $"EbayAddOrder:{ex}");
+                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"EbayAddOrder:{ex}");
                 await Task.Delay(2000);
                 await StartAsync(nodeWss, nodeHttps, contractAddress, chainId);
             });
@@ -78,7 +78,7 @@ public class EbayAddOrder : IEbayAddOrder
         }
         catch (Exception ex)
         {
-            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd") + $"EbayAddOrder:{ex} - Chain ID: {chainId}");
+            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"EbayAddOrder:{ex} - Chain ID: {chainId}");
             await Task.Delay(2000);
             await StartAsync(nodeWss, nodeHttps,contractAddress, chainId);
         }

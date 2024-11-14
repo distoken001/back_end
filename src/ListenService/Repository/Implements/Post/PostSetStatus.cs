@@ -45,7 +45,7 @@ namespace ListenService.Repository.Implements
         {
 
           
-            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd") + "PostSetStatus程序启动：" + chain_id.ToString());
+            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "PostSetStatus程序启动：" + chain_id.ToString());
             try
             {
                 await _client.StartAsync();
@@ -72,7 +72,7 @@ namespace ListenService.Repository.Implements
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
                 {
                     try { 
-                    Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd") + "PostSetStatus监听到了！ + chain_id.ToString()");
+                    Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "PostSetStatus监听到了！ + chain_id.ToString()");
                     var decoded = Event<PostSetStatusEventDTO>.DecodeEvent(log);
                   
                         if (!_redisDb.LockTake(log.TransactionHash, 1, TimeSpan.FromSeconds(10)))
@@ -116,7 +116,7 @@ namespace ListenService.Repository.Implements
 
                 }, async (ex) => {
                     _client.RemoveSubscription(subscription.SubscriptionId);
-                    Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd") + $"PostSetStatus:{ex}");
+                    Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"PostSetStatus:{ex}");
                     await Task.Delay(2000);
                     await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
                 });
@@ -126,7 +126,7 @@ namespace ListenService.Repository.Implements
             }
             catch (Exception ex)
             {
-                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd") + $"PostSetStatus:{ex} - Chain ID: {chain_id}");
+                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"PostSetStatus:{ex} - Chain ID: {chain_id}");
                 await Task.Delay(2000);
                 await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
             }

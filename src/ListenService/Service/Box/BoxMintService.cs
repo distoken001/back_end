@@ -37,7 +37,7 @@ namespace ListenService.Service
         {
             try
             {
-                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd") + "BoxPurchasedService启动啦！");
+                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "BoxPurchasedService启动啦！");
 
                 //if (!string.IsNullOrEmpty(_configuration["Polygon:Contract_Box"]))
                 //{

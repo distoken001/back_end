@@ -81,26 +81,26 @@ namespace ListenService.Repository.Implements
                         using (var scope = _serviceProvider.CreateScope())
                         {
                             var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
-                            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd") + "BoxTypeAdded监听到了！");
+                            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "BoxTypeAdded监听到了！");
                             var chainToken = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(decoded.Event.TokenAddress) && a.chain_id == chain_id).FirstOrDefault();
                             var decimals_num = (double)Math.Pow(10, chainToken.decimals);
                             var cardType = new card_type() { type = decoded.Event.BoxType, max_prize = (double)decoded.Event.MaxPrize / decimals_num, max_prize_probability = (int)decoded.Event.MaxPrizeProbability, name = decoded.Event.BoxName, price = (double)decoded.Event.Price / decimals_num, token = decoded.Event.TokenAddress, winning_probability = (int)decoded.Event.WinningProbability, chain_id = chain_id, state = 1, create_time = DateTime.Now };
                             _masterDbContext.card_type.Add(cardType);
                             _masterDbContext.SaveChanges();
-                            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd") + "Contract address: " + log.Address + " Log Transfer from:" + decoded.Event.BoxName);
+                            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "Contract address: " + log.Address + " Log Transfer from:" + decoded.Event.BoxName);
                         }
                     }
                     catch(Exception ex)
                     {
                         _client.RemoveSubscription(subscription.SubscriptionId);
-                        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd") + $"BoxTypeAdded:{ex}");
+                        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"BoxTypeAdded:{ex}");
                         await Task.Delay(2000);
                         await StartAsync(nodeUrl, contractAddress, chain_id);
                     }
                  
                 }, async (ex) => {
                     _client.RemoveSubscription(subscription.SubscriptionId);
-                    Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd") + $"BoxTypeAdded:{ex}");
+                    Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"BoxTypeAdded:{ex}");
                     await Task.Delay(2000);
                     await StartAsync(nodeUrl, contractAddress, chain_id);
                 });
@@ -110,7 +110,7 @@ namespace ListenService.Repository.Implements
             }
             catch (Exception ex)
             {
-                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd") + $"BoxTypeAdded:{ex}");
+                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"BoxTypeAdded:{ex}");
                 await Task.Delay(2000);
                 await StartAsync(nodeUrl, contractAddress, chain_id);
             }
