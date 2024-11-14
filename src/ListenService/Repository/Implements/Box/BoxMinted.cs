@@ -25,6 +25,7 @@ namespace ListenService.Repository.Implements
             _configuration = configuration;
             _serviceProvider = serviceProvider;
             _redisDb = redisDb;
+            _client = client;
         }
         public async Task StartAsync(string nodeUrl, string contractAddress, ChainEnum chain_id)
         {
