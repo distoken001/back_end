@@ -44,7 +44,17 @@ namespace ListenService.Repository.Implements
            
             try
             {
-                await _client.StartAsync();
+                for (int i = 0; i < 10; i++)
+                {
+                    if (_client.WebSocketState == WebSocketState.Open)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        await Task.Delay(500).ConfigureAwait(false);
+                    }
+                }
                 //// Infura 提供的以太坊节点 WebSocket 地址
                 //string nodeUrl = _configuration["OP:WSS_URL"];
 

@@ -48,7 +48,7 @@ namespace ListenService
                     {
                         try
                         {
-                            if (client.IsStarted ==default||client.WebSocketState!=WebSocketState.Open)
+                            if (client.WebSocketState!=WebSocketState.Open&&client.WebSocketState!=WebSocketState.Connecting)
                             {
                                 Console.WriteLine("连接断开，正在重连...");
                                 await client.StartAsync();

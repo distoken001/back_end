@@ -1,4 +1,5 @@
-﻿using CommonLibrary.Common.Common;
+﻿using System.Net.WebSockets;
+using CommonLibrary.Common.Common;
 using CommonLibrary.DbContext;
 using ListenService.Model;
 using ListenService.Repository.Interfaces;
@@ -37,7 +38,17 @@ public class EbaySetStatus : IEbaySetStatus
 
         try
         {
-            await _client.StartAsync();
+            for (int i = 0; i < 10; i++)
+            {
+                if (_client.WebSocketState == WebSocketState.Open)
+                {
+                    break;
+                }
+                else
+                {
+                    await Task.Delay(500).ConfigureAwait(false);
+                }
+            }
             // 读取 JSON 文件内容并解析 ABI
             string jsonFilePath = "Ebay.json"; // 替换为正确的 JSON 文件路径
             string jsonString = File.ReadAllText(jsonFilePath);

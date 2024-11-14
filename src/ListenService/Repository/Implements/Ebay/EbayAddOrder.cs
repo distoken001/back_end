@@ -1,4 +1,5 @@
-﻿using CommonLibrary.Common.Common;
+﻿using System.Net.WebSockets;
+using CommonLibrary.Common.Common;
 using CommonLibrary.DbContext;
 using CommonLibrary.Model.DataEntityModel;
 using ListenService.Model;
@@ -38,7 +39,17 @@ public class EbayAddOrder : IEbayAddOrder
 
         try
         {
-                await _client.StartAsync();
+            for (int i = 0; i < 10; i++)
+            {
+                if (_client.WebSocketState == WebSocketState.Open)
+                {
+                    break;
+                }
+                else
+                {
+                    await Task.Delay(500).ConfigureAwait(false);
+                }
+            }
             // 读取 JSON 文件内容并解析 ABI
             string jsonFilePath = "Ebay.json";
             string jsonString = File.ReadAllText(jsonFilePath);

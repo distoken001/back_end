@@ -31,7 +31,17 @@ namespace ListenService.Repository.Implements
         {
             try
             {
-                await _client.StartAsync();
+                for (int i = 0; i < 10; i++)
+                {
+                    if (_client.WebSocketState == WebSocketState.Open)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        await Task.Delay(500).ConfigureAwait(false);
+                    }
+                }
                 var _subscription = new EthLogsObservableSubscription(_client);
                 var cardPurchased = Event<BoxMintedEventDTO>.GetEventABI().CreateFilterInput();
                 cardPurchased.Address = new string[] { contractAddress };

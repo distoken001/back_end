@@ -49,7 +49,17 @@ namespace ListenService.Repository.Implements
             Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "PostAddOrder程序启动：" + chain_id.ToString());
             try
             {
-                await _client.StartAsync();
+                for (int i = 0; i < 10; i++)
+                {
+                    if (_client.WebSocketState == WebSocketState.Open)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        await Task.Delay(500).ConfigureAwait(false);
+                    }
+                }
                 // 连接到以太坊区块链网络
                 var web3 = new Web3(nodeHttps);
                 // 读取JSON文件内容
