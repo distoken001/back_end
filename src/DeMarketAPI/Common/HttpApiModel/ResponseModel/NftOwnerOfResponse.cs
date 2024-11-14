@@ -9,4 +9,3 @@ namespace DeMarketAPI.Common.Model.HttpApiModel.ResponseModel
         public string Owner { get; set; }
     }
 }
-

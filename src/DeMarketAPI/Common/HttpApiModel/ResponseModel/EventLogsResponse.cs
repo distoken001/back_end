@@ -31,7 +31,7 @@ namespace DeMarketAPI.Common.Model.HttpApiModel.ResponseModel
         public String data { get; set; }
 
         /**
-         * 
+         *
          */
         public int status { get; set; }
 
@@ -53,22 +53,28 @@ namespace DeMarketAPI.Common.Model.HttpApiModel.ResponseModel
          * 创建人
          */
         public String creator { get; set; }
+
         /// <summary>
         ///链id
         /// </summary>
         public ChainEnum chain_id { get; set; }
+
         /// <summary>
         /// 链名称
         /// </summary>
-        public string chain_name { get { if (chain_id == ChainEnum.Bsc) { return "BNB Chain"; } else if (chain_id == ChainEnum.ZksyncEra) { return "Zksync Era"; }  else return chain_id.ToString(); } }
+        public string chain_name
+        { get { if (chain_id == ChainEnum.Bsc) { return "BNB Chain"; } else if (chain_id == ChainEnum.ZksyncEra) { return "Zksync Era"; } else return chain_id.ToString(); } }
+
         /// <summary>
         /// 卖方
         /// </summary>
         public string seller { get; set; }
+
         /// <summary>
         /// 买方
         /// </summary>
         public string buyer { get; set; }
+
         /// <summary>
         /// 合约
         /// </summary>

@@ -13,6 +13,5 @@ namespace DeMarketAPI.Common.Model.HttpApiModel.RequestModel
         ///// 链id
         ///// </summary>
         //public int chain_id { get; set; }
-
     }
 }

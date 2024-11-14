@@ -8,6 +8,7 @@
         /// 其它：失败
         /// </summary>
         public string authCode { get; set; }
+
         /// <summary>
         /// 验证信息
         /// </summary>

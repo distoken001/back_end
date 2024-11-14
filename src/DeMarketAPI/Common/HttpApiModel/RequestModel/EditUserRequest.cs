@@ -10,17 +10,20 @@ namespace DeMarketAPI.Common.Model.HttpApiModel.RequestModel
         /// </summary>
         public string Avatar { get; set; }
     }
+
     public class EditUserNickRequest
     {
         /// <summary>
         /// 昵称
         /// </summary>
         public string NickName { get; set; }
+
         /// <summary>
         /// 昵称
         /// </summary>
         public string VerifyCode { get; set; }
     }
+
     public class EditUserEmaiRequest
     {
         /// <summary>

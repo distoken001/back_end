@@ -11,14 +11,15 @@ namespace DeMarketAPI.Common.Model.HttpApiModel.RequestModel
         /// 签名
         /// </summary>
         public String signature { get; set; }
+
         /// <summary>
         /// 邀请人
         /// </summary>
         public String parentAddress { get; set; }
+
         /// <summary>
         /// 地址
         /// </summary>
         public String address { get; set; }
-
     }
 }

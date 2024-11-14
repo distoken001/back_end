@@ -10,6 +10,7 @@ namespace DeMarketAPI.Common.Model.HttpApiModel.RequestModel
     {
         public int pageSize { get; set; } = 10;
         public int pageIndex { get; set; } = 1;
+
         ///// <summary>
         ///// 链id
         ///// </summary>
