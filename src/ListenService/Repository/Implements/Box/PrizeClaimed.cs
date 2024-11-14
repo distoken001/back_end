@@ -62,7 +62,7 @@ namespace ListenService.Repository.Implements
                         {
                             return;
                         }
-                        Console.WriteLine("PrizeClaimed监听到了！");
+                        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd") + "PrizeClaimed监听到了！");
                         // decode the log into a typed event log
                         var decoded = Event<PrizeClaimedEventDTO>.DecodeEvent(log);
                         using (var scope = _serviceProvider.CreateScope())
@@ -84,14 +84,14 @@ namespace ListenService.Repository.Implements
                     catch(Exception ex)
                     {
                         _client.RemoveSubscription(subscription.SubscriptionId);
-                        Console.WriteLine($"PrizeClaimed:{ex}");
+                        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd") + $"PrizeClaimed:{ex}");
                         await Task.Delay(2000);
                         await StartAsync(nodeUrl, contractAddress, chain_id);
                     }
 
                 }, async (ex) => {
                     _client.RemoveSubscription(subscription.SubscriptionId);
-                    Console.WriteLine($"PrizeClaimed:{ex}");
+                    Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd") + $"PrizeClaimed:{ex}");
                     await Task.Delay(2000);
                     await StartAsync(nodeUrl, contractAddress, chain_id);
                 });
@@ -114,7 +114,7 @@ namespace ListenService.Repository.Implements
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"PrizeClaimed:{ex}");
+                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd") + $"PrizeClaimed:{ex}");
                 await Task.Delay(2000);
                 await StartAsync(nodeUrl, contractAddress, chain_id);
               

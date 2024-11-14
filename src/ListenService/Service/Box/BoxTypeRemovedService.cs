@@ -39,7 +39,7 @@ namespace ListenService.Service
         {
             try
             {
-                Console.WriteLine("BoxTypeRemovedService启动啦！");
+                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd") + "BoxTypeRemovedService启动啦！");
                 //if (!string.IsNullOrEmpty(_configuration["Polygon:Contract_Box"]))
                 //{
                 //    _ = _cardTypeRemoved.StartAsync(_configuration["Polygon:WSS_URL"], _configuration["Polygon:Contract_Box"], ChainEnum.Polygon);

@@ -58,7 +58,7 @@ namespace ListenService.Repository.Implements
                         {
                             return;
                         }
-                        Console.WriteLine("BoxTypeAdded监听到了！");
+                        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd") + "BoxTypeAdded监听到了！");
                         // decode the log into a typed event log
                         var decoded = Event<BoxTypeRemovedEventDTO>.DecodeEvent(log);
 
@@ -73,13 +73,13 @@ namespace ListenService.Repository.Implements
                     catch(Exception ex)
                     {
                         _client.RemoveSubscription(subscription.SubscriptionId);
-                        Console.WriteLine($"BoxTypeAdded:{ex}");
+                        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd") + $"BoxTypeAdded:{ex}");
                         await Task.Delay(2000);
                         await StartAsync(nodeUrl, contractAddress, chain_id);
                     }
                 }, async (ex) => {
                     _client.RemoveSubscription(subscription.SubscriptionId);
-                    Console.WriteLine($"BoxTypeAdded:{ex}");
+                    Console.WriteLine( DateTime.Now.ToString("yyyy-MM-dd")+$"BoxTypeAdded:{ex}");
                     await Task.Delay(2000);
                     await StartAsync(nodeUrl, contractAddress, chain_id);
                 });
@@ -90,7 +90,7 @@ namespace ListenService.Repository.Implements
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"BoxTypeRemoved:{ex}");
+                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd") + $"BoxTypeRemoved:{ex}");
                 await Task.Delay(2000);
                 await StartAsync(nodeUrl, contractAddress, chain_id);
             }

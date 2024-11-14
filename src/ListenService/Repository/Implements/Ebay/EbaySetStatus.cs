@@ -33,7 +33,7 @@ public class EbaySetStatus : IEbaySetStatus
     public async Task StartAsync(string nodeWss, string nodeHttps, string contractAddress, ChainEnum chainId)
     {
        
-        Console.WriteLine("EbaySetStatus程序启动：" + chainId);
+        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd") + "EbaySetStatus程序启动：" + chainId);
 
         try
         {
@@ -56,19 +56,19 @@ public class EbaySetStatus : IEbaySetStatus
             {
                 try
                 {
-                    Console.WriteLine("EbaySetStatus监听到了！");
+                    Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd") + "EbaySetStatus监听到了！");
                     await HandleLogAsync(log, contractAddress, chainId);
                 }
                 catch(Exception ex)
                 {
                     _client.RemoveSubscription(subscription.SubscriptionId);
-                    Console.WriteLine($"EbaySetStatus:{ex}");
+                    Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd") + $"EbaySetStatus:{ex}");
                     await Task.Delay(2000);
                     await StartAsync(nodeWss, nodeHttps, contractAddress, chainId);
                 }
             }, async (ex) => {
                 _client.RemoveSubscription(subscription.SubscriptionId);
-                Console.WriteLine($"EbaySetStatus:{ex}");
+                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd") + $"EbaySetStatus:{ex}");
                 await Task.Delay(2000);
                 await StartAsync(nodeWss, nodeHttps, contractAddress, chainId);
             });
@@ -77,7 +77,7 @@ public class EbaySetStatus : IEbaySetStatus
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"EbaySetStatus:{ex} - Chain ID: {chainId}");
+            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd") + $"EbaySetStatus:{ex} - Chain ID: {chainId}");
             await Task.Delay(2000);
             await StartAsync(nodeWss, nodeHttps, contractAddress, chainId);
         }
@@ -93,7 +93,7 @@ public class EbaySetStatus : IEbaySetStatus
                 return;
             }
 
-            Console.WriteLine("EbaySetStatus监听到事件：" + chainId);
+            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd") + "EbaySetStatus监听到事件：" + chainId);
 
             using (var scope = _serviceProvider.CreateScope())
             {
