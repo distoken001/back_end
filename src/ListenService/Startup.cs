@@ -51,7 +51,7 @@ namespace ListenService
                         {
                             if (client.WebSocketState!=WebSocketState.Open&&client.WebSocketState!=WebSocketState.Connecting)
                             {
-                                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "连接断开，正在重连...");
+                                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "连接断开，正在重连..."+client.WebSocketState);
                                 await client.StartAsync();
                                 for (int i = 0; i < 5; i++)
                                 {
