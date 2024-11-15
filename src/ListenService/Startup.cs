@@ -114,15 +114,13 @@ namespace ListenService
             services.AddSingleton<IPostAddOrder, PostAddOrder>();
             services.AddSingleton<IPostSetStatus, PostSetStatus>();
 
-            services.AddSingleton<IAuctionAddOrder, AuctionAddOrder>();
-            services.AddSingleton<IAuctionSetOrderInfo, AuctionSetOrderInfo>();
+            //services.AddSingleton<IAuctionAddOrder, AuctionAddOrder>();
+            //services.AddSingleton<IAuctionSetOrderInfo, AuctionSetOrderInfo>();
 
             services.AddSingleton<ISendMessage, SendMessage>();
 
-
-
-            services.AddHostedService<AuctionAddOrderService>();
-            services.AddHostedService<AuctionSetOrderInfoService>();
+            //services.AddHostedService<AuctionAddOrderService>();
+            //services.AddHostedService<AuctionSetOrderInfoService>();
 
             services.AddHostedService<EbayAddOrderService>();
             services.AddHostedService<EbaySetStatusService>();
