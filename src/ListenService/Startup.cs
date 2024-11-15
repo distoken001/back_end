@@ -51,13 +51,13 @@ namespace ListenService
                         {
                             if (client.WebSocketState!=WebSocketState.Open&&client.WebSocketState!=WebSocketState.Connecting)
                             {
-                                Console.WriteLine("连接断开，正在重连...");
+                                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "连接断开，正在重连...");
                                 await client.StartAsync();
                                 for (int i = 0; i < 5; i++)
                                 {
                                     if (client.WebSocketState == WebSocketState.Open)
                                     {
-                                        Console.WriteLine("连接成功！");
+                                        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "连接成功！");
                                         break;
                                     }
                                     else
@@ -72,7 +72,7 @@ namespace ListenService
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine($"连接错误: {ex.Message}");
+                            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"连接错误: {ex.Message}");
                             await Task.Delay(1000); // 延迟重试
                         }
                     }
