@@ -49,7 +49,7 @@ namespace ListenService.Repository.Implements
             Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "PostAddOrder程序启动：" + chain_id.ToString());
             try
             {
-                for (int i = 0; i < 10; i++)
+                while (true)
                 {
                     if (_client.WebSocketState == WebSocketState.Open)
                     {

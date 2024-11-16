@@ -39,7 +39,7 @@ namespace ListenService
             {
                 var nodeUrl = Configuration["BSC:WSS_URL"];
                 WebSocketClientBsc.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
-                WebSocketClientBsc.ConnectionTimeout = Timeout.Infinite;
+                WebSocketClientBsc.ConnectionTimeout = Timeout.InfiniteTimeSpan;
                 var client = new WebSocketClientBsc(nodeUrl);
                
                 StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
@@ -61,7 +61,6 @@ namespace ListenService
                                         Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "连接成功！");
                                         break;
                                     }
-                                    client.StopAsync
                                     else
                                     {
                                         await Task.Delay(500).ConfigureAwait(false);
