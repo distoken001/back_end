@@ -15,6 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CommonLibrary.Model.DataEntityModel;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DeMarketAPI.Controllers
 {
@@ -36,6 +37,7 @@ namespace DeMarketAPI.Controllers
         /// <param name = "req" ></ param >
         /// < returns ></ returns >
         [HttpPost("list")]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(PagedModel<OrderAuctionResponse>), 200)]
         public async Task<JsonResult> list([FromBody] OrderAuctionRequest req)
         {
@@ -176,6 +178,7 @@ namespace DeMarketAPI.Controllers
         /// <param name = "req" ></ param >
         /// < returns ></ returns >
         [HttpPost("switch_like")]
+        [AllowAnonymous]
         public JsonResult switch_like([FromBody] SwitchLikeRequest request)
         {
             if (string.IsNullOrEmpty(CurrentLoginAddress))

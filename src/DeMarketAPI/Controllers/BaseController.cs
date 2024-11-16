@@ -1,10 +1,12 @@
 ﻿using DeMarketAPI.Common.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
 
 namespace DeMarketAPI.Controllers
 {
+    [Authorize]
     public class BaseController : Controller
     {
         /// <summary>

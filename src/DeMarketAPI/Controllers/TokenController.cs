@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
 using CommonLibrary.Model.DataEntityModel;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DeMarketAPI.Controllers
 {
@@ -28,6 +29,7 @@ namespace DeMarketAPI.Controllers
         /// <returns></returns>
         [HttpPost("list")]
         [ProducesResponseType(typeof(PagedModel<TokenViewModel>), 200)]
+        [AllowAnonymous]
         public async Task<JsonResult> list([FromBody] TokenQueryRequest req)
         {
             var queryEntities = _mySqlMasterDbContext.tokens.Where(p => p.status==1).AsNoTracking().AsQueryable();

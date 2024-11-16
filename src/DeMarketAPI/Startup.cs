@@ -24,6 +24,7 @@ using Microsoft.Extensions.FileProviders;
 using System.IO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
+using CommonLibrary.Model;
 
 namespace DeMarketAPI
 {
@@ -32,7 +33,7 @@ namespace DeMarketAPI
         public Startup(IConfiguration configuration,IHostEnvironment env)
         {
             //输出debug日志在控制台，方便查找问题
-            Com.Ctrip.Framework.Apollo.Logging.LogManager.UseConsoleLogging(Com.Ctrip.Framework.Apollo.Logging.LogLevel.Debug);
+            Com.Ctrip.Framework.Apollo.Logging.LogManager.UseConsoleLogging(Com.Ctrip.Framework.Apollo.Logging.LogLevel.Information);
             var builder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
@@ -55,7 +56,17 @@ namespace DeMarketAPI
                 x.MultipartBodyLengthLimit = int.MaxValue;
                 x.MemoryBufferThreshold = int.MaxValue;
             });
-
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer((options) => options.TokenValidationParameters = new TokenValidationParameters()
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = StringConstant.issuer,
+                ValidAudience = StringConstant.audience,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(StringConstant.secretKey))
+            });
+            services.AddAuthorization();
             EncodingProvider provider = CodePagesEncodingProvider.Instance;
             Encoding.RegisterProvider(provider);
             //var deMarketConn = "Server=97.74.86.12;Database=ebay;Uid=dev;Pwd=Dev@1234;sslMode=None;";//Configuration[StringConstant.DatabaseConnectionString];
@@ -65,7 +76,6 @@ namespace DeMarketAPI
             services.AddDirectoryBrowser();
             services.AddSingleton<IConfiguration>(Configuration);
             services.AddScoped<ExLogFilter>();
-            services.AddScoped<TokenFilter>();
             services.AddSingleton<ITxCosUploadeService, TxCosUploadeService>();
             services.AddScoped<EmailProxy>();
             //services.AddScoped<CustomerRebateService>();
@@ -90,7 +100,6 @@ namespace DeMarketAPI
                 .AddMvc(
                 options => {
                     options.Filters.Add<ExLogFilter>();
-                    options.Filters.Add<TokenFilter>();
                     }
                 )
                 .AddJsonOptions(options =>

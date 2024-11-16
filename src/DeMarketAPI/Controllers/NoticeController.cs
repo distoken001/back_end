@@ -16,6 +16,7 @@ using CommonLibrary.Model.DataEntityModel;
 using System.Net.Mail;
 using System.Linq;
 using Telegram.Bot.Types;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DeMarketAPI.Controllers
 {
@@ -36,6 +37,7 @@ namespace DeMarketAPI.Controllers
             _configuration = configuration;
         }
         [HttpPost("sendemail")]
+        [AllowAnonymous]
         public async Task<JsonResult> SendEmail([FromBody] SendEmailRequest request)
         {
 
@@ -297,6 +299,7 @@ namespace DeMarketAPI.Controllers
         //    return Json(new WebApiResult(1, "发送成功"));
         //}
         [HttpPost("cooperate")]
+        [AllowAnonymous]
         public async Task<JsonResult> Cooperate([FromBody] CooperateRequest request)
         {
 

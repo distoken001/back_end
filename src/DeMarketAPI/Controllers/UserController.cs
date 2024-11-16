@@ -26,6 +26,7 @@ using System.Threading.Tasks;
 using TencentCloud.Ckafka.V20190819.Models;
 using CommonLibrary.Model;
 using CommonLibrary.Model.DataEntityModel;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DeMarketAPI.Controllers
 {
@@ -50,6 +51,7 @@ namespace DeMarketAPI.Controllers
         /// < returns ></ returns >
         [HttpPost("login")]
         [ProducesResponseType(typeof(LoginResponse), 200)]
+        [AllowAnonymous]
         public async Task<WebApiResult> login([FromBody] LoginRequest req)
         {
             if (req.address.Length != 42 || !req.address.StartsWith("0x"))

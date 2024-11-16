@@ -20,6 +20,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using CommonLibrary.Model.DataEntityModel;
 using TencentCloud.Pds.V20210701.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DeMarketAPI.Controllers
 {
@@ -157,6 +158,7 @@ namespace DeMarketAPI.Controllers
         /// < returns ></ returns >
         [HttpPost("list")]
         [ProducesResponseType(typeof(PagedModel<OrderResponse>), 200)]
+        [AllowAnonymous]
         public async Task<JsonResult> list([FromBody] GetOrderListRequest req)
         {
             var queryEntities = _mySqlMasterDbContext.orders.AsNoTracking().AsQueryable();
@@ -298,6 +300,7 @@ namespace DeMarketAPI.Controllers
         /// <param name = "request" ></ param >
         /// < returns ></ returns >
         [HttpPost("switch_like")]
+        [AllowAnonymous]
         public JsonResult switch_like([FromBody] SwitchLikeRequest request)
         {
             if (string.IsNullOrEmpty(CurrentLoginAddress))
