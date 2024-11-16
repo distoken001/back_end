@@ -33,7 +33,7 @@ namespace DeMarketAPI
         public Startup(IConfiguration configuration,IHostEnvironment env)
         {
             //输出debug日志在控制台，方便查找问题
-            Com.Ctrip.Framework.Apollo.Logging.LogManager.UseConsoleLogging(Com.Ctrip.Framework.Apollo.Logging.LogLevel.Information);
+            Com.Ctrip.Framework.Apollo.Logging.LogManager.UseConsoleLogging(Com.Ctrip.Framework.Apollo.Logging.LogLevel.Warning);
             var builder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
@@ -150,7 +150,6 @@ namespace DeMarketAPI
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, Microsoft.AspNetCore.Hosting.IApplicationLifetime lifetime)
         {
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
             string grandparentDirectory = Directory.GetParent(Directory.GetParent(env.ContentRootPath).FullName).FullName;
             //app.UseDirectoryBrowser(new DirectoryBrowserOptions
             //{
@@ -173,8 +172,6 @@ namespace DeMarketAPI
 
             //app.usehealth(configuration[stringconstant.metaenv], configuration[stringconstant.metaversion]);
 
-            app.UseStaticFiles();
-
             //Swagger 配置
             if (Configuration["Env"] == "dev" || Configuration["Env"] == "test")
             {
@@ -188,6 +185,8 @@ namespace DeMarketAPI
 
             //Swagger 配置
             app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.UseEndpoints(routes => routes.MapControllers());
             //   app.UseMvc(routes => routes.MapRoute(name: "default", template: "api/{controller=Home}/{action=Index}/{id?}"));
 
