@@ -41,8 +41,6 @@ namespace ListenService
                 WebSocketClientBsc.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
                 WebSocketClientBsc.ConnectionTimeout = Timeout.InfiniteTimeSpan;
                 var client = new WebSocketClientBsc(nodeUrl);
-               
-                StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
                 // 启动连接，确保重连机制
                 Task.Run(async () =>
                 {
