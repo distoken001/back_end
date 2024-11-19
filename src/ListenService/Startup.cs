@@ -59,6 +59,12 @@ namespace ListenService
                                         Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "连接成功！");
                                         break;
                                     }
+                                    if (client.WebSocketState == WebSocketState.CloseReceived||client.WebSocketState==WebSocketState.CloseSent)
+                                    {
+                                        client.Dispose();
+                                        client = new WebSocketClientBsc(nodeUrl);
+
+                                    }
                                     else
                                     {
                                         await Task.Delay(500).ConfigureAwait(false);
