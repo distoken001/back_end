@@ -35,7 +35,7 @@ namespace ListenService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<StreamingWebSocketClient,WebSocketClientBsc>(  provider =>
+            services.AddSingleton<StreamingWebSocketClient, WebSocketClientBsc>(provider =>
             {
                 var nodeUrl = Configuration["BSC:WSS_URL"];
                 WebSocketClientBsc.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
@@ -48,9 +48,9 @@ namespace ListenService
                     {
                         try
                         {
-                            if (client.WebSocketState!=WebSocketState.Open&&client.WebSocketState!=WebSocketState.Connecting)
+                            if (client.WebSocketState != WebSocketState.Open && client.WebSocketState != WebSocketState.Connecting)
                             {
-                                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "连接断开，正在重连..."+client.WebSocketState);
+                                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "连接断开，正在重连..." + client.WebSocketState);
                                 await client.StartAsync();
                                 for (int i = 0; i < 5; i++)
                                 {
@@ -59,24 +59,21 @@ namespace ListenService
                                         Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "连接成功！");
                                         break;
                                     }
-                                    if (client.WebSocketState == WebSocketState.CloseReceived||client.WebSocketState==WebSocketState.CloseSent)
+                                    if (client.WebSocketState == WebSocketState.CloseReceived || client.WebSocketState == WebSocketState.CloseSent)
                                     {
                                         client.Dispose();
                                         client = new WebSocketClientBsc(nodeUrl);
+                                    }
+                                    await Task.Delay(500).ConfigureAwait(false);
 
-                                    }
-                                    else
-                                    {
-                                        await Task.Delay(500).ConfigureAwait(false);
-                                    }
                                 }
-                               
                             }
-
                             await Task.Delay(1000); // 检查间隔
                         }
                         catch (Exception ex)
                         {
+                            client.Dispose();
+                            client = new WebSocketClientBsc(nodeUrl);
                             Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"连接错误: {ex.Message}");
                             await Task.Delay(1000); // 延迟重试
                         }
@@ -87,13 +84,13 @@ namespace ListenService
             });
 
 
-           //解决文件上传Multipart body length limit 134217728 exceeded
-           services.Configure<FormOptions>(x =>
-            {
-                x.ValueLengthLimit = int.MaxValue;
-                x.MultipartBodyLengthLimit = int.MaxValue;
-                x.MemoryBufferThreshold = int.MaxValue;
-            });
+            //解决文件上传Multipart body length limit 134217728 exceeded
+            services.Configure<FormOptions>(x =>
+             {
+                 x.ValueLengthLimit = int.MaxValue;
+                 x.MultipartBodyLengthLimit = int.MaxValue;
+                 x.MemoryBufferThreshold = int.MaxValue;
+             });
 
             EncodingProvider provider = CodePagesEncodingProvider.Instance;
             Encoding.RegisterProvider(provider);
