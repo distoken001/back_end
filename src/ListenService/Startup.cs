@@ -68,14 +68,14 @@ namespace ListenService
 
                                 }
                             }
-                            await Task.Delay(1000); // 检查间隔
+                            await Task.Delay(1000).ConfigureAwait(false); // 检查间隔
                         }
                         catch (Exception ex)
                         {
                             client.Dispose();
                             client = new WebSocketClientBsc(nodeUrl);
                             Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"连接错误: {ex.Message}");
-                            await Task.Delay(1000); // 延迟重试
+                            await Task.Delay(1000).ConfigureAwait(false); // 延迟重试
                         }
                     }
                 });
