@@ -12,6 +12,7 @@ using Nethereum.JsonRpc.WebSocketStreamingClient;
 using System.Net.WebSockets;
 using ListenService.Chains;
 using Nethereum.JsonRpc.Client;
+using Newtonsoft.Json;
 
 namespace ListenService
 {
@@ -72,10 +73,17 @@ namespace ListenService
                         }
                         catch (Exception ex)
                         {
-                            client.Dispose();
-                            client = new WebSocketClientBsc(nodeUrl);
-                            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"连接错误: {ex.Message}");
-                            await Task.Delay(1000).ConfigureAwait(false); // 延迟重试
+                            try
+                            {
+                                client.Dispose();
+                                client = new WebSocketClientBsc(nodeUrl);
+                                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"连接错误: {ex.Message}");
+                                await Task.Delay(1000).ConfigureAwait(false); // 延迟重试
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + JsonConvert.SerializeObject(client) + $"终极错误: " + JsonConvert.SerializeObject(e));
+                            }
                         }
                     }
                 });
