@@ -19,13 +19,13 @@ namespace ListenService.Repository.Implements
         private readonly IConfiguration _configuration;
         private readonly IServiceProvider _serviceProvider;
         private readonly IDatabase _redisDb;
-        private readonly StreamingWebSocketClient _client;
-        public BoxMinted(IConfiguration configuration, IServiceProvider serviceProvider,IDatabase redisDb,StreamingWebSocketClient client)
+        private readonly ClientManage _clientManage;
+        public BoxMinted(IConfiguration configuration, IServiceProvider serviceProvider,IDatabase redisDb, ClientManage clientManage)
         {
             _configuration = configuration;
             _serviceProvider = serviceProvider;
             _redisDb = redisDb;
-            _client = client;
+            _clientManage = clientManage;
         }
         public async Task StartAsync(string nodeUrl, string contractAddress, ChainEnum chain_id)
         {
@@ -33,7 +33,7 @@ namespace ListenService.Repository.Implements
             {
                 while (true)
                 {
-                    if (_client.WebSocketState == WebSocketState.Open)
+                    if (_clientManage.GetClient().WebSocketState == WebSocketState.Open)
                     {
                         break;
                     }
@@ -42,7 +42,7 @@ namespace ListenService.Repository.Implements
                         await Task.Delay(500).ConfigureAwait(false);
                     }
                 }
-                var _subscription = new EthLogsObservableSubscription(_client);
+                var _subscription = new EthLogsObservableSubscription(_clientManage.GetClient());
                 var cardPurchased = Event<BoxMintedEventDTO>.GetEventABI().CreateFilterInput();
                 cardPurchased.Address = new string[] { contractAddress };
                 //Action<Exception> onErrorAction = async (ex) =>
@@ -86,7 +86,7 @@ namespace ListenService.Repository.Implements
                     }
                     catch(Exception ex)
                     {
-                        _client.RemoveSubscription(_subscription.SubscriptionId);
+                        _clientManage.GetClient().RemoveSubscription(_subscription.SubscriptionId);
                         Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"BoxMinted1:{ex}");
                         await Task.Delay(2000);
                         await StartAsync(nodeUrl, contractAddress, chain_id);
@@ -94,7 +94,7 @@ namespace ListenService.Repository.Implements
                      
                     
                 }, async(ex) => {
-                    _client.RemoveSubscription(_subscription.SubscriptionId);
+                    _clientManage.GetClient().RemoveSubscription(_subscription.SubscriptionId);
                     Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"BoxMinted2:{ex}");
                     await Task.Delay(2000);
                     await StartAsync(nodeUrl, contractAddress, chain_id);

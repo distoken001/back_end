@@ -36,34 +36,32 @@ namespace ListenService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<StreamingWebSocketClient, WebSocketClientBsc>(provider =>
+            services.AddSingleton<ClientManage>(provider =>
             {
                 var nodeUrl = Configuration["BSC:WSS_URL"];
-                WebSocketClientBsc.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
-                WebSocketClientBsc.ConnectionTimeout = Timeout.InfiniteTimeSpan;
-                var client = new WebSocketClientBsc(nodeUrl);
-                // 启动连接，确保重连机制
+               var clientManage= new ClientManage(nodeUrl);
+
                 Task.Run(async () =>
                 {
                     while (true)
                     {
                         try
                         {
-                            if (client.WebSocketState != WebSocketState.Open && client.WebSocketState != WebSocketState.Connecting)
+                            if (clientManage.GetClient().WebSocketState != WebSocketState.Open && clientManage.GetClient().WebSocketState != WebSocketState.Connecting)
                             {
-                                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "连接断开，正在重连..." + client.WebSocketState);
-                                await client.StartAsync();
+                                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "连接断开，正在重连..." + clientManage.GetClient().WebSocketState);
+                                await clientManage.GetClient().StartAsync();
                                 for (int i = 0; i < 5; i++)
                                 {
-                                    if (client.WebSocketState == WebSocketState.Open)
+                                    if (clientManage.GetClient().WebSocketState == WebSocketState.Open)
                                     {
                                         Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "连接成功！");
                                         break;
                                     }
-                                    if (client.WebSocketState == WebSocketState.CloseReceived || client.WebSocketState == WebSocketState.CloseSent)
+                                    if (clientManage.GetClient().WebSocketState == WebSocketState.CloseReceived || clientManage.GetClient().WebSocketState == WebSocketState.CloseSent)
                                     {
-                                        client.Dispose();
-                                        client = new WebSocketClientBsc(nodeUrl);
+                                        //clientManage.GetClient().Dispose();
+                                        clientManage.ReplaceClient(new WebSocketClientBsc(nodeUrl));
                                     }
                                     await Task.Delay(500).ConfigureAwait(false);
 
@@ -73,23 +71,20 @@ namespace ListenService
                         }
                         catch (Exception ex)
                         {
-                            try
-                            {
-                                client.Dispose();
-                                client = new WebSocketClientBsc(nodeUrl);
-                                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"连接错误: {ex.Message}");
-                                await Task.Delay(1000).ConfigureAwait(false); // 延迟重试
-                            }
-                            catch (Exception e)
-                            {
-                                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + JsonConvert.SerializeObject(client) + $"终极错误: " + JsonConvert.SerializeObject(e));
-                            }
+                            //clientManage.GetClient().Dispose();
+                            clientManage.ReplaceClient(new WebSocketClientBsc(nodeUrl));
+                            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"连接错误: {ex.Message}");
+                            await Task.Delay(1000).ConfigureAwait(false); // 延迟重试
+
                         }
                     }
                 });
 
-                return client;
+
+
+                        return clientManage;
             });
+          
 
 
             //解决文件上传Multipart body length limit 134217728 exceeded

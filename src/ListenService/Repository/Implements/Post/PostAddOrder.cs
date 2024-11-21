@@ -34,14 +34,14 @@ namespace ListenService.Repository.Implements
         private readonly IServiceProvider _serviceProvider;
         private readonly ISendMessage _sendMessage;
         private readonly IDatabase _redisDb;
-        private StreamingWebSocketClient _client;
-        public PostAddOrder(IConfiguration configuration, IServiceProvider serviceProvider, ISendMessage sendMessage,IDatabase redisDb,StreamingWebSocketClient client)
+        private readonly ClientManage _clientManage;
+        public PostAddOrder(IConfiguration configuration, IServiceProvider serviceProvider, ISendMessage sendMessage,IDatabase redisDb, ClientManage clientManage)
         {
             _configuration = configuration;
             _serviceProvider = serviceProvider;
             _sendMessage = sendMessage;
             _redisDb = redisDb;
-            _client = client;
+            _clientManage = clientManage;
         }
         public async Task StartAsync(string nodeWss, string nodeHttps, string contractAddress, ChainEnum chain_id)
         {
@@ -51,7 +51,7 @@ namespace ListenService.Repository.Implements
             {
                 while (true)
                 {
-                    if (_client.WebSocketState == WebSocketState.Open)
+                    if (_clientManage.GetClient().WebSocketState == WebSocketState.Open)
                     {
                         break;
                     }
@@ -80,7 +80,7 @@ namespace ListenService.Repository.Implements
 
                 var addPost = Event<PostAddOrderEventDTO>.GetEventABI().CreateFilterInput();
                 addPost.Address = new string[] { contractAddress };
-                var subscription = new EthLogsObservableSubscription(_client);
+                var subscription = new EthLogsObservableSubscription(_clientManage.GetClient());
 
                 //Action<Exception> onErrorAction = async (ex) =>
                 //{
@@ -118,7 +118,7 @@ namespace ListenService.Repository.Implements
                     }
                     catch(Exception ex)
                     {
-                        _client.RemoveSubscription(subscription.SubscriptionId);
+                        _clientManage.GetClient().RemoveSubscription(subscription.SubscriptionId);
                         Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"PostAddOrder1:{ex}");
                         await Task.Delay(2000);
                         await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
@@ -126,7 +126,7 @@ namespace ListenService.Repository.Implements
                    
 
                 }, async (ex) => {
-                    _client.RemoveSubscription(subscription.SubscriptionId);
+                    _clientManage.GetClient().RemoveSubscription(subscription.SubscriptionId);
                     Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"PostAddOrder2:{ex}");
                     await Task.Delay(2000);
                     await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);

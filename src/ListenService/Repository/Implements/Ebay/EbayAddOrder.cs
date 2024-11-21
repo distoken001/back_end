@@ -2,6 +2,7 @@
 using CommonLibrary.Common.Common;
 using CommonLibrary.DbContext;
 using CommonLibrary.Model.DataEntityModel;
+using ListenService;
 using ListenService.Model;
 using ListenService.Repository.Interfaces;
 using Nethereum.Contracts;
@@ -22,15 +23,15 @@ public class EbayAddOrder : IEbayAddOrder
     private string _abi;  // 将 abi 提升为类成员
     private Web3 _web3;   // 将 Web3 实例提升为类成员
     private Contract _contract; // 将 Contract 实例提升为类成员
-    private readonly StreamingWebSocketClient _client;
+    private readonly ClientManage _clientManage;
 
-    public EbayAddOrder(IConfiguration configuration, IServiceProvider serviceProvider, ISendMessage sendMessage, IDatabase redisDb,StreamingWebSocketClient client)
+    public EbayAddOrder(IConfiguration configuration, IServiceProvider serviceProvider, ISendMessage sendMessage, IDatabase redisDb, ClientManage clientManage)
     {
         _configuration = configuration;
         _serviceProvider = serviceProvider;
         _sendMessage = sendMessage;
         _redisDb = redisDb;
-        _client = client;
+        _clientManage = clientManage;
     }
 
     public async Task StartAsync(string nodeWss, string nodeHttps, string contractAddress, ChainEnum chainId)
@@ -41,7 +42,7 @@ public class EbayAddOrder : IEbayAddOrder
         {
            while(true)
             {
-                if (_client.WebSocketState == WebSocketState.Open)
+                if (_clientManage.GetClient().WebSocketState == WebSocketState.Open)
                 {
                     break;
                 }
@@ -62,7 +63,7 @@ public class EbayAddOrder : IEbayAddOrder
 
             var addOrder = Event<EbayAddOrderEventDTO>.GetEventABI().CreateFilterInput();
             addOrder.Address = new string[] { contractAddress };
-            var subscription = new EthLogsObservableSubscription(_client);
+            var subscription = new EthLogsObservableSubscription(_clientManage.GetClient());
 
             subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
             {
@@ -73,13 +74,13 @@ public class EbayAddOrder : IEbayAddOrder
                 }
                 catch(Exception ex)
                 {
-                    _client.RemoveSubscription(subscription.SubscriptionId);
+                    _clientManage.GetClient().RemoveSubscription(subscription.SubscriptionId);
                     Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"EbayAddOrder1:{ex}");
                     await Task.Delay(2000);
                     await StartAsync(nodeWss, nodeHttps, contractAddress, chainId);
                 }
             }, async (ex) => {
-                _client.RemoveSubscription(subscription.SubscriptionId);
+                _clientManage.GetClient().RemoveSubscription(subscription.SubscriptionId);
                 Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"EbayAddOrder2:{ex}");
                 await Task.Delay(2000);
                 await StartAsync(nodeWss, nodeHttps, contractAddress, chainId);

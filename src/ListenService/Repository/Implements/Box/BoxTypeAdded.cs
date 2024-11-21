@@ -30,13 +30,13 @@ namespace ListenService.Repository.Implements
         private readonly IConfiguration _configuration;
         private readonly IServiceProvider _serviceProvider;
         private readonly IDatabase _redisDb;
-        private readonly StreamingWebSocketClient _client;
-        public BoxTypeAdded(IConfiguration configuration, IServiceProvider serviceProvider,IDatabase redisDb, StreamingWebSocketClient client)
+        private readonly ClientManage _clientManage;
+        public BoxTypeAdded(IConfiguration configuration, IServiceProvider serviceProvider,IDatabase redisDb, ClientManage clientManage)
         {
             _configuration = configuration;
             _serviceProvider = serviceProvider;
             _redisDb = redisDb;
-            _client = client;
+            _clientManage = clientManage;
         }
 
 
@@ -47,7 +47,7 @@ namespace ListenService.Repository.Implements
             {
                 while (true)
                 {
-                    if (_client.WebSocketState == WebSocketState.Open)
+                    if (_clientManage.GetClient().WebSocketState == WebSocketState.Open)
                     {
                         break;
                     }
@@ -76,7 +76,7 @@ namespace ListenService.Repository.Implements
 
                 var cardTypeAdded = Event<BoxTypeAddedEventDTO>.GetEventABI().CreateFilterInput();
                 cardTypeAdded.Address = new string[] { contractAddress };
-                var subscription = new EthLogsObservableSubscription(_client);
+                var subscription = new EthLogsObservableSubscription(_clientManage.GetClient());
                 // attach a handler for Transfer event logs
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
                 {
@@ -102,14 +102,14 @@ namespace ListenService.Repository.Implements
                     }
                     catch(Exception ex)
                     {
-                        _client.RemoveSubscription(subscription.SubscriptionId);
+                        _clientManage.GetClient().RemoveSubscription(subscription.SubscriptionId);
                         Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"BoxTypeAdded1:{ex}");
                         await Task.Delay(2000);
                         await StartAsync(nodeUrl, contractAddress, chain_id);
                     }
                  
                 }, async (ex) => {
-                    _client.RemoveSubscription(subscription.SubscriptionId);
+                    _clientManage.GetClient().RemoveSubscription(subscription.SubscriptionId);
                     Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"BoxTypeAdded2:{ex}");
                     await Task.Delay(2000);
                     await StartAsync(nodeUrl, contractAddress, chain_id);
