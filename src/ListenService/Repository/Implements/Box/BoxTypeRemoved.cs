@@ -56,8 +56,8 @@ namespace ListenService.Repository.Implements
                         await Task.Delay(500).ConfigureAwait(false);
                     }
                 }
-                var cardTypeAdded = Event<BoxTypeRemovedEventDTO>.GetEventABI().CreateFilterInput();
-                cardTypeAdded.Address = new string[] { contractAddress };
+                var cardTypeRemoved = Event<BoxTypeRemovedEventDTO>.GetEventABI().CreateFilterInput();
+                cardTypeRemoved.Address = new string[] { contractAddress };
                 var subscription = new EthLogsObservableSubscription(_clientManage.GetClient());
          
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
@@ -68,7 +68,7 @@ namespace ListenService.Repository.Implements
                         {
                             return;
                         }
-                        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "BoxTypeAdded监听到了！");
+                        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "BoxTypeRemoved监听到了！");
                         // decode the log into a typed event log
                         var decoded = Event<BoxTypeRemovedEventDTO>.DecodeEvent(log);
 
@@ -83,19 +83,19 @@ namespace ListenService.Repository.Implements
                     catch(Exception ex)
                     {
                         _clientManage.GetClient().RemoveSubscription(subscription.SubscriptionId);
-                        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"BoxTypeAdded1:{ex}");
+                        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"BoxTypeRemoved1:{ex}");
                         await Task.Delay(2000);
                         await StartAsync(nodeUrl, contractAddress, chain_id);
                     }
                 }, async (ex) => {
                     _clientManage.GetClient().RemoveSubscription(subscription.SubscriptionId);
-                    Console.WriteLine( DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")+$"BoxTypeAdded2:{ex}");
+                    Console.WriteLine( DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")+$"BoxTypeRemoved2:{ex}");
                     await Task.Delay(2000);
                     await StartAsync(nodeUrl, contractAddress, chain_id);
                 });
                 // begin receiving subscription data
                 // data will be received on a background thread
-                await subscription.SubscribeAsync(cardTypeAdded);
+                await subscription.SubscribeAsync(cardTypeRemoved);
 
             }
             catch (Exception ex)
