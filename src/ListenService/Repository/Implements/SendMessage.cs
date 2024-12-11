@@ -24,6 +24,8 @@ using Microsoft.EntityFrameworkCore;
 using Org.BouncyCastle.Asn1.Ocsp;
 using Telegram.Bot.Requests.Abstractions;
 using StackExchange.Redis;
+using System.Text;
+using Telegram.Bot.Types;
 
 namespace ListenService.Repository.Implements
 {
@@ -90,6 +92,9 @@ namespace ListenService.Repository.Implements
                         if (!isSame)
                         {
                             await botClient.SendTextMessageAsync(_configuration["GroupChatID"], chatMessage);
+                            var deboxMessage = new DeBoxMessageDTO() { content = chatMessage, object_name = "text", to_user_id = "" };
+                            await DeboxSend(deboxMessage);
+                            
                         }
                         var chatIDs = _configuration["GroupChatIDs"].Split(',');
                         foreach (var chatID in chatIDs)
@@ -211,6 +216,8 @@ namespace ListenService.Repository.Implements
                         if (!isSame)
                         {
                             await botClient.SendTextMessageAsync(_configuration["GroupChatID"], chatMessage);
+                            var deboxMessage = new DeBoxMessageDTO() { content = chatMessage, object_name = "text", to_user_id = "" };
+                            await DeboxSend(deboxMessage);
                         }
                         var chatIDs = _configuration["GroupChatIDs"].Split(',');
                         foreach (var chatID in chatIDs)
@@ -372,6 +379,35 @@ namespace ListenService.Repository.Implements
             }
 
 
+        }
+
+        public async Task DeboxSend(DeBoxMessageDTO reqeust)
+        {
+            string url = "https://open.debox.pro/openapi/messages/group/send";
+           var chatIDs=   _configuration["Debox:GroupID"].Split(',');
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    client.DefaultRequestHeaders.Add("X-API-KEY", "UjRsgQ1KwcjroH11");
+                    foreach (var chatID in chatIDs)
+            {
+                        reqeust.group_id = chatID;
+                string jsonContent = JsonConvert.SerializeObject(reqeust);
+                        HttpContent content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+                        HttpResponseMessage response = await client.PostAsync(url, content);
+                        string responseString = await response.Content.ReadAsStringAsync();
+
+                        // 打印响应
+                        Console.WriteLine($"Response: {response.StatusCode}");
+                        Console.WriteLine($"Content: {responseString}");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
+                }
+            }
         }
     }
 }
