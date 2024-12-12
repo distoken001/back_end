@@ -1,31 +1,13 @@
-﻿using Nethereum.Contracts;
-using CommonLibrary.DbContext;
-using Nethereum.JsonRpc.WebSocketStreamingClient;
-using Nethereum.RPC.Reactive.Eth.Subscriptions;
-using Newtonsoft.Json;
-using System;
-using System.Reactive.Linq;
-using System.Threading.Tasks;
-using Nethereum.ABI.Model;
-using ListenService.Model;
-using Nethereum.JsonRpc.Client;
-using CommonLibrary.Model.DataEntityModel;
-using CommonLibrary.Common.Common;
-using ListenService.Repository.Interfaces;
-using System.Net.WebSockets;
-using Newtonsoft.Json.Linq;
-using Nethereum.Web3;
-using Nethereum.RPC;
-using Org.BouncyCastle.Asn1.X509;
-using Microsoft.VisualBasic;
-using Microsoft.AspNetCore.Mvc;
-using Telegram.Bot;
-using Microsoft.EntityFrameworkCore;
-using Org.BouncyCastle.Asn1.Ocsp;
-using Telegram.Bot.Requests.Abstractions;
-using StackExchange.Redis;
+﻿using System.Reactive.Linq;
 using System.Text;
-using Telegram.Bot.Types;
+using CommonLibrary.Common.Common;
+using CommonLibrary.DbContext;
+using ListenService.Model;
+using ListenService.Repository.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using StackExchange.Redis;
+using Telegram.Bot;
 
 namespace ListenService.Repository.Implements
 {
@@ -59,11 +41,11 @@ namespace ListenService.Repository.Implements
                     //{
                     //    isSame = true;
                     //}
-                    if (!_redisDb.LockTake(order_id.ToString()+chain_id.ToString()+ contract, 1, TimeSpan.FromSeconds(60*24)))
+                    if (!_redisDb.LockTake(order_id.ToString() + chain_id.ToString() + contract, 1, TimeSpan.FromSeconds(60 * 24)))
                     {
                         isSame = true;
                     }
-                        OrderStatus status = order.status;
+                    OrderStatus status = order.status;
                     var seller = await _masterDbContext.users.FirstOrDefaultAsync(u => u.address == order.seller);
                     var buyer = await _masterDbContext.users.FirstOrDefaultAsync(u => u.address == order.buyer);
                     var token = _masterDbContext.chain_tokens.AsNoTracking().FirstOrDefault(c => c.chain_id == order.chain_id && c.token_address.Equals(order.token, StringComparison.OrdinalIgnoreCase));
@@ -94,7 +76,7 @@ namespace ListenService.Repository.Implements
                             await botClient.SendTextMessageAsync(_configuration["GroupChatID"], chatMessage);
                             var deboxMessage = new DeBoxMessageDTO() { content = chatMessage, object_name = "text", to_user_id = "" };
                             await DeboxSend(deboxMessage);
-                            
+
                         }
                         var chatIDs = _configuration["GroupChatIDs"].Split(',');
                         foreach (var chatID in chatIDs)
@@ -384,16 +366,16 @@ namespace ListenService.Repository.Implements
         public async Task DeboxSend(DeBoxMessageDTO reqeust)
         {
             string url = "https://open.debox.pro/openapi/messages/group/send";
-           var chatIDs=   _configuration["Debox:GroupID"].Split(',');
+            var chatIDs = _configuration["Debox:GroupID"].Split(',');
             using (HttpClient client = new HttpClient())
             {
                 try
                 {
                     client.DefaultRequestHeaders.Add("X-API-KEY", "UjRsgQ1KwcjroH11");
                     foreach (var chatID in chatIDs)
-            {
+                    {
                         reqeust.group_id = chatID;
-                string jsonContent = JsonConvert.SerializeObject(reqeust);
+                        string jsonContent = JsonConvert.SerializeObject(reqeust);
                         HttpContent content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
                         HttpResponseMessage response = await client.PostAsync(url, content);
                         string responseString = await response.Content.ReadAsStringAsync();
