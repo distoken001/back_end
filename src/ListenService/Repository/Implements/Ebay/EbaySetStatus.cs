@@ -100,17 +100,17 @@ public class EbaySetStatus : IEbaySetStatus
         // 检查事件来源是否符合要求
         var decoded = Event<EbaySetStatusEventDTO>.DecodeEvent(log);
 
-        if (!_redisDb.LockTake(log.TransactionHash, 1, TimeSpan.FromSeconds(10)))
+        if (!_redisDb.LockTake(log.TransactionHash + "EbaySet", 1, TimeSpan.FromSeconds(10)))
         {
             return;
         }
-        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "EbaySetStatus监听到事件：" + chainId);
+        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "EbaySetStatus监听到了！" + chainId);
 
         using (var scope = _serviceProvider.CreateScope())
         {
             var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
             var function = _contract.GetFunction("orders");
-            await Task.Delay(2000);
+            //await Task.Delay(2000);
             // 获取智能合约中的订单信息
             var orderResult = await function.CallDeserializingToObjectAsync<EbayOrderDTO>((int)decoded.Event.OrderId);
             var chainToken = _masterDbContext.chain_tokens

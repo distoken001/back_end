@@ -100,7 +100,7 @@ public class EbayAddOrder : IEbayAddOrder
     {
 
 
-        if (!_redisDb.LockTake(log.TransactionHash, 1, TimeSpan.FromSeconds(10)))
+        if (!_redisDb.LockTake(log.TransactionHash + "EbayADD", 1, TimeSpan.FromSeconds(10)))
         {
             return;
         }
