@@ -23,18 +23,18 @@ public class EbaySetStatus : IEbaySetStatus
     private Web3 _web3;   // 将 Web3 实例提升为类成员
     private Contract _contract; // 将 Contract 实例提升为类成员
     private readonly ClientManage _clientManage;
-    public EbaySetStatus(IConfiguration configuration, IServiceProvider serviceProvider, ISendMessage sendMessage, IDatabase redisDb,  ClientManage clientManage)
+    public EbaySetStatus(IConfiguration configuration, IServiceProvider serviceProvider, ISendMessage sendMessage, IDatabase redisDb, ClientManage clientManage)
     {
         _configuration = configuration;
         _serviceProvider = serviceProvider;
         _sendMessage = sendMessage;
         _redisDb = redisDb;
-        _clientManage=clientManage ;
+        _clientManage = clientManage;
     }
 
     public async Task StartAsync(string nodeWss, string nodeHttps, string contractAddress, ChainEnum chainId)
     {
-       
+
         Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "EbaySetStatus程序启动：" + chainId);
 
         try
@@ -71,14 +71,15 @@ public class EbaySetStatus : IEbaySetStatus
                     Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "EbaySetStatus监听到了！");
                     await HandleLogAsync(log, contractAddress, chainId);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     _clientManage.GetClient().RemoveSubscription(subscription.SubscriptionId);
                     Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"EbaySetStatus1:{ex}");
                     await Task.Delay(2000);
                     await StartAsync(nodeWss, nodeHttps, contractAddress, chainId);
                 }
-            }, async (ex) => {
+            }, async (ex) =>
+            {
                 _clientManage.GetClient().RemoveSubscription(subscription.SubscriptionId);
                 Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"EbaySetStatus2:{ex}");
                 await Task.Delay(2000);
@@ -99,55 +100,55 @@ public class EbaySetStatus : IEbaySetStatus
     {
         // 检查事件来源是否符合要求
         var decoded = Event<EbaySetStatusEventDTO>.DecodeEvent(log);
-     
-            if (!_redisDb.LockTake(log.TransactionHash, 1, TimeSpan.FromSeconds(10)))
+
+        if (!_redisDb.LockTake(log.TransactionHash, 1, TimeSpan.FromSeconds(10)))
+        {
+            return;
+        }
+
+        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "EbaySetStatus监听到事件：" + chainId);
+
+        using (var scope = _serviceProvider.CreateScope())
+        {
+            var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
+            var function = _contract.GetFunction("orders");
+
+            // 获取智能合约中的订单信息
+            var orderResult = await function.CallDeserializingToObjectAsync<EbayOrderDTO>((int)decoded.Event.OrderId);
+            var chainToken = _masterDbContext.chain_tokens
+                .FirstOrDefault(a => a.token_address.Equals(orderResult.Token) && a.chain_id == chainId);
+
+            if (chainToken != null)
             {
-                return;
-            }
+                var decimalsNum = new BigDecimal(Math.Pow(10, chainToken.decimals));
+                var order = _masterDbContext.orders
+                    .FirstOrDefault(a => a.order_id == (int)decoded.Event.OrderId && a.chain_id == chainId && a.contract.Equals(contractAddress));
 
-            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "EbaySetStatus监听到事件：" + chainId);
-
-            using (var scope = _serviceProvider.CreateScope())
-            {
-                var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
-                var function = _contract.GetFunction("orders");
-
-                // 获取智能合约中的订单信息
-                var orderResult = await function.CallDeserializingToObjectAsync<EbayOrderDTO>((int)decoded.Event.OrderId);
-                var chainToken = _masterDbContext.chain_tokens
-                    .FirstOrDefault(a => a.token_address.Equals(orderResult.Token) && a.chain_id == chainId);
-
-                if (chainToken != null)
+                if (order != null)
                 {
-                    var decimalsNum = new BigDecimal(Math.Pow(10, chainToken.decimals));
-                    var order = _masterDbContext.orders
-                        .FirstOrDefault(a => a.order_id == (int)decoded.Event.OrderId && a.chain_id == chainId && a.contract.Equals(contractAddress));
-
-                    if (order != null)
+                    // 更新订单信息
+                    if (orderResult.Status == OrderStatus.Ordered)
                     {
-                        // 更新订单信息
-                        if (orderResult.Status == OrderStatus.Ordered)
-                        {
-                            order.create_time = DateTime.Now;
-                        }
-
-                        order.status = orderResult.Status;
-                        order.buyer_ex = (double)(new BigDecimal(orderResult.BuyerEx) / decimalsNum);
-                        order.update_time = DateTime.Now;
-                        order.buyer = orderResult.Buyer;
-                        order.buyer_pledge = (double)(new BigDecimal(orderResult.BuyerPledge) / decimalsNum);
-                        order.seller_pledge = (double)(new BigDecimal(orderResult.SellerPledge) / decimalsNum);
-                        order.amount = (double)orderResult.Amount;
-                        order.price = (double)(new BigDecimal(orderResult.Price) / decimalsNum);
-                        order.seller_ratio = (decimal)(order.seller_pledge / (order.price * order.amount));
-
-                        _masterDbContext.SaveChanges();
-
-                        // 发送消息
-                        _ = _sendMessage.SendMessageEbay((int)decoded.Event.OrderId, chainId, contractAddress);
+                        order.create_time = DateTime.Now;
                     }
+
+                    order.status = orderResult.Status;
+                    order.buyer_ex = (double)(new BigDecimal(orderResult.BuyerEx) / decimalsNum);
+                    order.update_time = DateTime.Now;
+                    order.buyer = orderResult.Buyer;
+                    order.buyer_pledge = (double)(new BigDecimal(orderResult.BuyerPledge) / decimalsNum);
+                    order.seller_pledge = (double)(new BigDecimal(orderResult.SellerPledge) / decimalsNum);
+                    order.amount = (double)orderResult.Amount;
+                    order.price = (double)(new BigDecimal(orderResult.Price) / decimalsNum);
+                    order.seller_ratio = (decimal)(order.seller_pledge / (order.price * order.amount));
+
+                    _masterDbContext.SaveChanges();
+
+                    // 发送消息
+                    _ = _sendMessage.SendMessageEbay((int)decoded.Event.OrderId, chainId, contractAddress);
                 }
             }
-        
+        }
+
     }
 }

@@ -39,7 +39,7 @@ namespace ListenService
             services.AddSingleton<ClientManage>(provider =>
             {
                 var nodeUrl = Configuration["BSC:WSS_URL"];
-               var clientManage= new ClientManage(nodeUrl);
+                var clientManage = new ClientManage(nodeUrl);
 
                 Task.Run(async () =>
                 {
@@ -82,9 +82,9 @@ namespace ListenService
 
 
 
-                        return clientManage;
+                return clientManage;
             });
-          
+
 
 
             //解决文件上传Multipart body length limit 134217728 exceeded

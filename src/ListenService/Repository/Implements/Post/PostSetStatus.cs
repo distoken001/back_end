@@ -33,7 +33,7 @@ namespace ListenService.Repository.Implements
         private readonly ISendMessage _sendMessage;
         private readonly IDatabase _redisDb;
         private readonly ClientManage _clientManage;
-        public PostSetStatus(IConfiguration configuration, IServiceProvider serviceProvider, ISendMessage sendMessage,IDatabase redisDb, ClientManage clientManage)
+        public PostSetStatus(IConfiguration configuration, IServiceProvider serviceProvider, ISendMessage sendMessage, IDatabase redisDb, ClientManage clientManage)
         {
             _configuration = configuration;
             _serviceProvider = serviceProvider;
@@ -44,7 +44,7 @@ namespace ListenService.Repository.Implements
         public async Task StartAsync(string nodeWss, string nodeHttps, string contractAddress, ChainEnum chain_id)
         {
 
-          
+
             Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "PostSetStatus程序启动：" + chain_id.ToString());
             try
             {
@@ -81,10 +81,11 @@ namespace ListenService.Repository.Implements
                 var subscription = new EthLogsObservableSubscription(_clientManage.GetClient());
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
                 {
-                    try { 
-                    Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "PostSetStatus监听到了！ + chain_id.ToString()");
-                    var decoded = Event<PostSetStatusEventDTO>.DecodeEvent(log);
-                  
+                    try
+                    {
+                        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "PostSetStatus监听到了！ + chain_id.ToString()");
+                        var decoded = Event<PostSetStatusEventDTO>.DecodeEvent(log);
+
                         if (!_redisDb.LockTake(log.TransactionHash, 1, TimeSpan.FromSeconds(10)))
                         {
                             return;
@@ -116,7 +117,7 @@ namespace ListenService.Repository.Implements
                             _ = _sendMessage.SendMessagePost((int)decoded.Event.OrderId, chain_id, contractAddress);
                         }
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         _clientManage.GetClient().RemoveSubscription(subscription.SubscriptionId);
                         Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"PostSetStatus1:{ex}");
@@ -124,7 +125,8 @@ namespace ListenService.Repository.Implements
                         await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
                     }
 
-                }, async (ex) => {
+                }, async (ex) =>
+                {
                     _clientManage.GetClient().RemoveSubscription(subscription.SubscriptionId);
                     Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"PostSetStatus2:{ex}");
                     await Task.Delay(2000);
