@@ -94,11 +94,12 @@ namespace ListenService.Repository.Implements
                 {
                     try
                     {
-                        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "PostAddOrder监听到了！" + chain_id.ToString());
+                    
                         if (!_redisDb.LockTake(log.TransactionHash, 1, TimeSpan.FromSeconds(10)))
                         {
                             return;
                         }
+                        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "PostAddOrder监听到了！" + chain_id.ToString());
                         // decode the log into a typed event log
                         var decoded = Event<PostAddOrderEventDTO>.DecodeEvent(log);
 

@@ -83,16 +83,17 @@ namespace ListenService.Repository.Implements
                 {
                     try
                     {
-                        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "PostSetStatus监听到了！ + chain_id.ToString()");
                         var decoded = Event<PostSetStatusEventDTO>.DecodeEvent(log);
 
                         if (!_redisDb.LockTake(log.TransactionHash, 1, TimeSpan.FromSeconds(10)))
                         {
                             return;
                         }
+                        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "PostSetStatus监听到了！ + chain_id.ToString()");
                         using (var scope = _serviceProvider.CreateScope())
                         {
                             var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
+                            await Task.Delay(1000);
                             // 调用智能合约函数并获取返回结果
                             var postResult = await function.CallDeserializingToObjectAsync<PostOrderDTO>((int)decoded.Event.OrderId);
                             var chainToken = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(postResult.Token) && a.chain_id == chain_id).FirstOrDefault();

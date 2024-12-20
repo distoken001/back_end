@@ -68,7 +68,6 @@ public class EbaySetStatus : IEbaySetStatus
             {
                 try
                 {
-                    Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "EbaySetStatus监听到了！");
                     await HandleLogAsync(log, contractAddress, chainId);
                 }
                 catch (Exception ex)
@@ -105,14 +104,13 @@ public class EbaySetStatus : IEbaySetStatus
         {
             return;
         }
-
         Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "EbaySetStatus监听到事件：" + chainId);
 
         using (var scope = _serviceProvider.CreateScope())
         {
             var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
             var function = _contract.GetFunction("orders");
-
+            await Task.Delay(1000);
             // 获取智能合约中的订单信息
             var orderResult = await function.CallDeserializingToObjectAsync<EbayOrderDTO>((int)decoded.Event.OrderId);
             var chainToken = _masterDbContext.chain_tokens
