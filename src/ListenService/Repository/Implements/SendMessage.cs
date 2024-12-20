@@ -41,7 +41,7 @@ namespace ListenService.Repository.Implements
                     //{
                     //    isSame = true;
                     //}
-                    if (!_redisDb.LockTake(order_id.ToString() + chain_id.ToString() + contract, 1, TimeSpan.FromSeconds(60 * 24)))
+                    if (!_redisDb.LockTake(order_id.ToString() + chain_id.ToString() + contract, 1, TimeSpan.FromSeconds(60 * 24 * 60)))
                     {
                         isSame = true;
                     }
@@ -170,7 +170,7 @@ namespace ListenService.Repository.Implements
                     //{
                     //    isSame = true;
                     //}
-                    if (!_redisDb.LockTake(order_id.ToString() + chain_id.ToString() + contract, 1, TimeSpan.FromSeconds(60 * 24)))
+                    if (!_redisDb.LockTake(order_id.ToString() + chain_id.ToString() + contract, 1, TimeSpan.FromSeconds(60 * 24 * 60)))
                     {
                         isSame = true;
                     }
