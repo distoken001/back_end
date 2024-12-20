@@ -110,7 +110,7 @@ public class EbaySetStatus : IEbaySetStatus
         {
             var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
             var function = _contract.GetFunction("orders");
-            await Task.Delay(1000);
+            await Task.Delay(2000);
             // 获取智能合约中的订单信息
             var orderResult = await function.CallDeserializingToObjectAsync<EbayOrderDTO>((int)decoded.Event.OrderId);
             var chainToken = _masterDbContext.chain_tokens

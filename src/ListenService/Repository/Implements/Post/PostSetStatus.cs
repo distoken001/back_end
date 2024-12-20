@@ -93,7 +93,7 @@ namespace ListenService.Repository.Implements
                         using (var scope = _serviceProvider.CreateScope())
                         {
                             var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
-                            await Task.Delay(1000);
+                            await Task.Delay(2000);
                             // 调用智能合约函数并获取返回结果
                             var postResult = await function.CallDeserializingToObjectAsync<PostOrderDTO>((int)decoded.Event.OrderId);
                             var chainToken = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(postResult.Token) && a.chain_id == chain_id).FirstOrDefault();
