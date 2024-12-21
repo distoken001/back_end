@@ -14,6 +14,7 @@ using TelegramService.Service;
 using CommonLibrary.DbContext;
 using CommonLibrary.Model.DataEntityModel;
 using Microsoft.Extensions.Primitives;
+using System.Diagnostics;
 
 namespace TelegramService
 {
@@ -242,7 +243,12 @@ namespace TelegramService
                   new[]
                 {
                     InlineKeyboardButton.WithUrl(text: "进入DeMarket社群", url: @"https://t.me/"+_configuration["ChatGroup"])
-                }
+                  },
+                       new[]
+                {
+                    InlineKeyboardButton.WithUrl(text: "进入Debox社群", url: @"https://m.debox.pro/group?id="+_configuration["Debox:Group"])
+                  },
+                  
                         };
 
                                         obj = obj.Concat(new[]{new[]
