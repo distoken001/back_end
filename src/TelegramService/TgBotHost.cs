@@ -96,6 +96,7 @@ namespace TelegramService
                 {
                     InlineKeyboardButton.WithUrl(text: "Twitter", url: "https://twitter.com/demarket_io"),
                 },
+
                        new[]
                 {
                     InlineKeyboardButton.WithUrl(text: "进入Debox社群", url: @"https://m.debox.pro/group?id="+_configuration["Debox:Group"])
@@ -175,6 +176,10 @@ namespace TelegramService
                 {
                     InlineKeyboardButton.WithUrl(text: "Twitter", url: "https://twitter.com/demarket_io"),
                 },
+                       new[]
+                {
+                    InlineKeyboardButton.WithUrl(text: "进入Debox社群", url: @"https://m.debox.pro/group?id="+_configuration["Debox:Group"])
+                  },
 
                 //  new[]
                 //{
