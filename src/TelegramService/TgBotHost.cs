@@ -166,7 +166,7 @@ namespace TelegramService
                                             {
                                                 if (update.Message.Chat.Id.ToString() == _configuration["GroupChatID"])
                                                 {
-                                                    sb.AppendLine("Hey！靓仔！@" + update.Message.From.Username.Replace("_", @"\_"));
+                                                    sb.AppendLine("Hey！@" + update.Message.From.Username.Replace("_", @"\_"));
                                                     var obj = new[]
                                           {                new []
                 {                    InlineKeyboardButton.WithUrl(text: "DeMarket", url: "https://demarket.io/"),
@@ -234,7 +234,7 @@ namespace TelegramService
                                             var message = await botClient.SendTextMessageAsync(update.Message.Chat.Id, "Hey，" + update.Message.From.FirstName + "，您需要先设置Telegram用户名才能与DeMarket绑定哦");
                                             return;
                                         }
-                                        sb.AppendLine("Hey！靓仔！@" + update.Message.From.Username.Replace("_", @"\_"));
+                                        sb.AppendLine("Hey！@" + update.Message.From.Username.Replace("_", @"\_"));
                                         sb.AppendLine("与您相关的订单动态我会第一时间通知您，如果您修改了Telegram用户名，务必去DeMarket个人中心重新绑定！");
                                         sb.AppendLine("");
                                         var obj = new[]
