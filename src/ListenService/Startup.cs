@@ -1,18 +1,14 @@
-﻿using CommonLibrary.DbContext;
-using Microsoft.EntityFrameworkCore;
-using System.Text;
-using Com.Ctrip.Framework.Apollo;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.AspNetCore.Http.Features;
-using ListenService.Service;
+﻿using Com.Ctrip.Framework.Apollo;
+using CommonLibrary.DbContext;
+using ListenService.Chains;
 using ListenService.Repository.Implements;
 using ListenService.Repository.Interfaces;
+using ListenService.Service;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
-using Nethereum.JsonRpc.WebSocketStreamingClient;
 using System.Net.WebSockets;
-using ListenService.Chains;
-using Nethereum.JsonRpc.Client;
-using Newtonsoft.Json;
+using System.Text;
 
 namespace ListenService
 {
@@ -30,6 +26,7 @@ namespace ListenService
                 .AddDefault();
             Configuration = builder.Build();
         }
+
         public static ServiceProvider privider;
         public IConfiguration Configuration { get; }
 
@@ -64,7 +61,6 @@ namespace ListenService
                                         clientManage.ReplaceClient(new WebSocketClientBsc(nodeUrl));
                                     }
                                     await Task.Delay(500).ConfigureAwait(false);
-
                                 }
                             }
                             await Task.Delay(1000).ConfigureAwait(false); // 检查间隔
@@ -75,17 +71,12 @@ namespace ListenService
                             clientManage.ReplaceClient(new WebSocketClientBsc(nodeUrl));
                             Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"连接错误: {ex.Message}");
                             await Task.Delay(1000).ConfigureAwait(false); // 延迟重试
-
                         }
                     }
                 });
 
-
-
                 return clientManage;
             });
-
-
 
             //解决文件上传Multipart body length limit 134217728 exceeded
             services.Configure<FormOptions>(x =>
@@ -153,7 +144,6 @@ namespace ListenService
                  //.AddDbContext<MySqlMasterDbContext>(options => options.UseMySql(identityConn))
                  .AddDbContext<MySqlMasterDbContext>(options => options.UseMySql(deMarketConn, builder => builder.EnableRetryOnFailure()));
             privider = services.BuildServiceProvider();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

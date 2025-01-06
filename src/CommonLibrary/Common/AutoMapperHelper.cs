@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using System.Collections.Generic;
 
 namespace CommonLibrary.Common.Common
 {
@@ -14,7 +13,8 @@ namespace CommonLibrary.Common.Common
         /// <returns></returns>
         public static TDestination AssignmentMap<TSource, TDestination>(TSource source)
         {
-            var config = new MapperConfiguration(cfg => {
+            var config = new MapperConfiguration(cfg =>
+            {
                 cfg.CreateMap<TSource, TDestination>();
             });
             var mapper = config.CreateMapper();
@@ -38,7 +38,8 @@ namespace CommonLibrary.Common.Common
         /// <returns></returns>
         public static TDestination AssignmentMap<TSource, TDestination>(TSource source, INamingConvention sourceMemberNamingConvention = null, INamingConvention destinationMemberNamingConvention = null)
         {
-            var config = new MapperConfiguration(cfg => {
+            var config = new MapperConfiguration(cfg =>
+            {
                 cfg.CreateMap<TSource, TDestination>();
                 if (sourceMemberNamingConvention != null)
                 {
@@ -70,7 +71,8 @@ namespace CommonLibrary.Common.Common
         /// <returns></returns>
         public static List<TDestination> AssignmentMap<TSource, TDestination>(List<TSource> source, INamingConvention sourceMemberNamingConvention = null, INamingConvention destinationMemberNamingConvention = null)
         {
-            var config = new MapperConfiguration(cfg => {
+            var config = new MapperConfiguration(cfg =>
+            {
                 cfg.CreateMap<TSource, TDestination>();
                 if (sourceMemberNamingConvention != null)
                 {
@@ -105,7 +107,8 @@ namespace CommonLibrary.Common.Common
         /// <returns></returns>
         public static TDestination MapDbEntityToDTO<TSource, TDestination>(TSource source, INamingConvention sourceMemberNamingConvention = null, INamingConvention destinationMemberNamingConvention = null)
         {
-            var config = new MapperConfiguration(cfg => {
+            var config = new MapperConfiguration(cfg =>
+            {
                 cfg.CreateMap<TSource, TDestination>();
                 if (sourceMemberNamingConvention != null)
                 {
@@ -148,7 +151,8 @@ namespace CommonLibrary.Common.Common
         /// <returns></returns>
         public static List<TDestination> MapDbEntityToDTO<TSource, TDestination>(List<TSource> source, INamingConvention sourceMemberNamingConvention = null, INamingConvention destinationMemberNamingConvention = null)
         {
-            var config = new MapperConfiguration(cfg => {
+            var config = new MapperConfiguration(cfg =>
+            {
                 cfg.CreateMap<TSource, TDestination>();
                 if (sourceMemberNamingConvention != null)
                 {

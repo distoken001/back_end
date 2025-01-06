@@ -1,25 +1,17 @@
 ﻿using CommonLibrary.Common.Common;
-using DeMarketAPI.Common.Model;
+using CommonLibrary.DbContext;
+using CommonLibrary.Model.DataEntityModel;
 using DeMarketAPI.Common.Model.HttpApiModel.RequestModel;
 using DeMarketAPI.Common.Model.HttpApiModel.ResponseModel;
-using CommonLibrary.DbContext;
 using DeMarketAPI.Services.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using TencentCloud.Ecm.V20190719.Models;
-using TencentCloud.Tcss.V20201101.Models;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Configuration;
-using CommonLibrary.Model.DataEntityModel;
-using TencentCloud.Pds.V20210701.Models;
 
 namespace DeMarketAPI.Controllers
 {
@@ -27,7 +19,7 @@ namespace DeMarketAPI.Controllers
     [ApiController]
     public class CardController : BaseController
     {
-        MySqlMasterDbContext _mySqlMasterDbContext;
+        private MySqlMasterDbContext _mySqlMasterDbContext;
         private readonly ITxCosUploadeService txCosUploadeService;
         private readonly IHostEnvironment _environment;
         private readonly IConfiguration _configuration;
@@ -38,7 +30,6 @@ namespace DeMarketAPI.Controllers
             this.txCosUploadeService = txCosUploadeService;
             _environment = environment;
         }
-
 
         /// <summary>
         /// 刮刮卡未刮开列表
@@ -74,6 +65,7 @@ namespace DeMarketAPI.Controllers
             var res = new PagedModel<CardNotOpenedResponse>(totalCount, viewList);
             return Json(new WebApiResult(1, "刮刮卡未刮开列表" + CurrentLoginAddress, res));
         }
+
         /// <summary>
         /// 已刮开列表
         /// </summary>
@@ -100,7 +92,7 @@ namespace DeMarketAPI.Controllers
             {
                 var token = chainTokens.FirstOrDefault(c => c.chain_id == a.chain_id && c.token_address.Equals(a.token));
                 var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
-                var cardType=  cardTypes.FirstOrDefault(c => c.chain_id == a.chain_id && c.type.Equals(a.card_type));
+                var cardType = cardTypes.FirstOrDefault(c => c.chain_id == a.chain_id && c.type.Equals(a.card_type));
                 var cardTypeView = AutoMapperHelper.MapDbEntityToDTO<card_type, CardTypeResponse>(cardType);
                 a.token_des = tokenView;
                 a.card_type_des = cardTypeView;
@@ -108,6 +100,7 @@ namespace DeMarketAPI.Controllers
             var res = new PagedModel<CardOpenedResponse>(totalCount, viewList);
             return Json(new WebApiResult(1, "刮刮卡已刮开列表" + CurrentLoginAddress, res));
         }
+
         /// <summary>
         /// 获取卡类型
         /// </summary>

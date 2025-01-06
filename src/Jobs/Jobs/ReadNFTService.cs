@@ -1,20 +1,11 @@
-﻿using CommonLibrary.Model.DataEntityModel;
+﻿using CommonLibrary.Common.Common;
 using CommonLibrary.DbContext;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using CommonLibrary.Model.DataEntityModel;
 using Nethereum.Contracts;
-using Nethereum.Contracts.Standards.ERC721.ContractDefinition;
 using Nethereum.RPC;
 using Nethereum.Web3;
 using Newtonsoft.Json.Linq;
 using Quartz;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using CommonLibrary.Common.Common;
 
 namespace Jobs.Jobs
 {
@@ -27,6 +18,7 @@ namespace Jobs.Jobs
         private readonly ILogger<ReadNFTService> _logger;
         private readonly MySqlMasterDbContext _masterDbContext;
         private IConfiguration _config;
+
         public ReadNFTService(ILogger<ReadNFTService> logger, MySqlMasterDbContext masterDbContext, IConfiguration configuration)
         {
             _logger = logger;
@@ -70,7 +62,7 @@ namespace Jobs.Jobs
                     {
                         var owner = await function.CallAsync<string>(i);
 
-                        var user_nfts = _masterDbContext.user_nft.Where(a => a.nft == i && a.status == 1&&a.contract.Equals(contractAddress)).ToList();
+                        var user_nfts = _masterDbContext.user_nft.Where(a => a.nft == i && a.status == 1 && a.contract.Equals(contractAddress)).ToList();
                         if (user_nfts.Count > 1)
                         {
                             user_nfts.ForEach(a => a.status = 0);
@@ -87,8 +79,8 @@ namespace Jobs.Jobs
                                     nft = i,
                                     status = 1,
                                     update_time = DateTime.Now,
-                                    contract= contractAddress,
-                                    chain_id= ChainEnum.Bsc
+                                    contract = contractAddress,
+                                    chain_id = ChainEnum.Bsc
                                 };
                                 _masterDbContext.Add(model);
                             }

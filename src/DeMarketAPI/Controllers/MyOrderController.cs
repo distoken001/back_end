@@ -1,19 +1,14 @@
 ﻿using CommonLibrary.Common.Common;
-using DeMarketAPI.Common.Model;
+using CommonLibrary.DbContext;
+using CommonLibrary.Model.DataEntityModel;
 using DeMarketAPI.Common.Model.HttpApiModel.RequestModel;
 using DeMarketAPI.Common.Model.HttpApiModel.ResponseModel;
-using CommonLibrary.DbContext;
 using DeMarketAPI.Services.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using CommonLibrary.Model.DataEntityModel;
 
 namespace DeMarketAPI.Controllers
 {
@@ -21,7 +16,7 @@ namespace DeMarketAPI.Controllers
     [ApiController]
     public class MyOrderController : BaseController
     {
-        MySqlMasterDbContext _mySqlMasterDbContext;
+        private MySqlMasterDbContext _mySqlMasterDbContext;
         private readonly ITxCosUploadeService txCosUploadeService;
 
         public MyOrderController(MySqlMasterDbContext mySqlMasterDbContext, ITxCosUploadeService txCosUploadeService)
@@ -29,6 +24,7 @@ namespace DeMarketAPI.Controllers
             _mySqlMasterDbContext = mySqlMasterDbContext;
             this.txCosUploadeService = txCosUploadeService;
         }
+
         /// <summary>
         /// 我的订单列表
         /// </summary>
@@ -42,15 +38,15 @@ namespace DeMarketAPI.Controllers
             var chainTokens = _mySqlMasterDbContext.chain_tokens.AsNoTracking().ToList();
             var currentLoginAddress = this.CurrentLoginAddress;
 
-            queryEntities = queryEntities.Where(p => p.buyer.Equals(currentLoginAddress,StringComparison.OrdinalIgnoreCase) || p.seller.Equals(currentLoginAddress,StringComparison.OrdinalIgnoreCase));
+            queryEntities = queryEntities.Where(p => p.buyer.Equals(currentLoginAddress, StringComparison.OrdinalIgnoreCase) || p.seller.Equals(currentLoginAddress, StringComparison.OrdinalIgnoreCase));
 
             if (!string.IsNullOrEmpty(req.name))
             {
-                queryEntities = queryEntities.Where(p => p.name.Contains(req.name,StringComparison.OrdinalIgnoreCase));
+                queryEntities = queryEntities.Where(p => p.name.Contains(req.name, StringComparison.OrdinalIgnoreCase));
             }
             if (!string.IsNullOrEmpty(req.description))
             {
-                queryEntities = queryEntities.Where(p => p.description.Contains(req.description,StringComparison.OrdinalIgnoreCase));
+                queryEntities = queryEntities.Where(p => p.description.Contains(req.description, StringComparison.OrdinalIgnoreCase));
             }
             if (req.way != 0)
             {
@@ -68,7 +64,7 @@ namespace DeMarketAPI.Controllers
             var viewList = AutoMapperHelper.MapDbEntityToDTO<orders, OrderResponse>(list);
             foreach (var a in viewList)
             {
-                var token = chainTokens.FirstOrDefault(c => c.chain_id == a.chain_id && c.token_address.Equals(a.token,StringComparison.OrdinalIgnoreCase));
+                var token = chainTokens.FirstOrDefault(c => c.chain_id == a.chain_id && c.token_address.Equals(a.token, StringComparison.OrdinalIgnoreCase));
                 var tokenView = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(token);
                 a.token_des = tokenView;
             }

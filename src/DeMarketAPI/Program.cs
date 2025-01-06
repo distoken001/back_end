@@ -1,13 +1,12 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Events;
+using System;
+using System.IO;
+using System.Reflection;
 
 namespace DeMarketAPI
 {
@@ -50,14 +49,12 @@ namespace DeMarketAPI
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
-
             string appRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             return WebHost.CreateDefaultBuilder(args)
             .ConfigureLogging(builder =>
             {
                 builder.ClearProviders();
                 builder.AddSerilog();
-
             })
             //.ConfigureKestrel(options =>
             //{

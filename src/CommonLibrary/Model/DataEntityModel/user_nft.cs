@@ -1,7 +1,6 @@
-﻿using System;
+﻿using CommonLibrary.Common.Common;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using CommonLibrary.Common.Common;
 
 namespace CommonLibrary.Model.DataEntityModel
 {
@@ -10,6 +9,7 @@ namespace CommonLibrary.Model.DataEntityModel
     {
         [Key]
         public int id { get; set; }
+
         public String address { get; set; }
         public int nft { get; set; }
         public int status { get; set; }
@@ -17,7 +17,5 @@ namespace CommonLibrary.Model.DataEntityModel
         public DateTime update_time { get; set; }
         public string contract { get; set; }
         public ChainEnum chain_id { get; set; }
-
     }
 }
-

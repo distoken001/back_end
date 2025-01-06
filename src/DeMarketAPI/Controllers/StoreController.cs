@@ -1,15 +1,14 @@
-﻿using System;
-using DeMarketAPI.Common.Model.HttpApiModel.RequestModel;
-using System.Threading.Tasks;
+﻿using CommonLibrary.Common.Common;
 using CommonLibrary.DbContext;
+using CommonLibrary.Model.DataEntityModel;
+using DeMarketAPI.Common.Model.HttpApiModel.RequestModel;
+using DeMarketAPI.Common.Model.HttpApiModel.ResponseModel;
 using DeMarketAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using DeMarketAPI.Common.Model.HttpApiModel.ResponseModel;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System.Linq;
-using CommonLibrary.Common.Common;
-using CommonLibrary.Model.DataEntityModel;
+using System.Threading.Tasks;
 
 namespace DeMarketAPI.Controllers
 {
@@ -17,7 +16,7 @@ namespace DeMarketAPI.Controllers
     [ApiController]
     public class StoreController : BaseController
     {
-        MySqlMasterDbContext _mySqlMasterDbContext;
+        private MySqlMasterDbContext _mySqlMasterDbContext;
         private readonly ITxCosUploadeService txCosUploadeService;
         private readonly IConfiguration _configuration;
 
@@ -27,7 +26,7 @@ namespace DeMarketAPI.Controllers
             this.txCosUploadeService = txCosUploadeService;
             _configuration = configuration;
         }
-        
+
         /// <summary>
         /// 店铺(社区)列表
         /// </summary>
@@ -41,8 +40,8 @@ namespace DeMarketAPI.Controllers
             {
                 return Json(new WebApiResult(-1, "获取失败"));
             }
-            var queryEntities = _mySqlMasterDbContext.users.AsNoTracking().Where(a=>(a.type&req.type)>0).AsQueryable();
-            if(!string.IsNullOrEmpty(req.address.Trim()))
+            var queryEntities = _mySqlMasterDbContext.users.AsNoTracking().Where(a => (a.type & req.type) > 0).AsQueryable();
+            if (!string.IsNullOrEmpty(req.address.Trim()))
             {
                 queryEntities = queryEntities.Where(a => a.address.Equals(req.address.Trim()));
             }
@@ -66,4 +65,3 @@ namespace DeMarketAPI.Controllers
         }
     }
 }
-

@@ -1,18 +1,14 @@
-﻿using System;
-using CommonLibrary.Common.Common;
+﻿using CommonLibrary.Common.Common;
+using CommonLibrary.DbContext;
+using CommonLibrary.Model.DataEntityModel;
 using DeMarketAPI.Common.Model.HttpApiModel.RequestModel;
 using DeMarketAPI.Common.Model.HttpApiModel.ResponseModel;
-using CommonLibrary.DbContext;
-using DeMarketAPI.Model;
+using DeMarketAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
+using System;
 using System.Linq;
-using System.Reflection;
-using System.Security.Claims;
 using System.Threading.Tasks;
-using DeMarketAPI.Services.Interfaces;
-using CommonLibrary.Model.DataEntityModel;
 
 namespace DeMarketAPI.Controllers
 {
@@ -20,8 +16,7 @@ namespace DeMarketAPI.Controllers
     [ApiController]
     public class EventController : BaseController
     {
-
-        MySqlMasterDbContext _mySqlMasterDbContext;
+        private MySqlMasterDbContext _mySqlMasterDbContext;
         private readonly ITxCosUploadeService txCosUploadeService;
 
         public EventController(MySqlMasterDbContext mySqlMasterDbContext, ITxCosUploadeService txCosUploadeService)
@@ -39,7 +34,7 @@ namespace DeMarketAPI.Controllers
         [ProducesResponseType(typeof(PagedModel<EventLogsResponse>), 200)]
         public async Task<JsonResult> list([FromBody] GetEventListRequest req)
         {
-            var queryEntities = _mySqlMasterDbContext.event_logs.Where(a => a.seller.Equals(CurrentLoginAddress,StringComparison.OrdinalIgnoreCase) || a.buyer.Equals(CurrentLoginAddress)).AsNoTracking().AsQueryable();
+            var queryEntities = _mySqlMasterDbContext.event_logs.Where(a => a.seller.Equals(CurrentLoginAddress, StringComparison.OrdinalIgnoreCase) || a.buyer.Equals(CurrentLoginAddress)).AsNoTracking().AsQueryable();
             //if (CurrentLoginChain != 0)
             //{
             //    queryEntities = queryEntities.Where(p => p.chain_id == CurrentLoginChain);
@@ -54,11 +49,7 @@ namespace DeMarketAPI.Controllers
 
             var res = new PagedModel<EventLogsResponse>(totalCount, viewList);
 
-
             return Json(new WebApiResult(1, "日志列表", res));
         }
-
     }
 }
-
-

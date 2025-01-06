@@ -1,12 +1,12 @@
-﻿using System.Reactive.Linq;
-using System.Text;
-using CommonLibrary.Common.Common;
+﻿using CommonLibrary.Common.Common;
 using CommonLibrary.DbContext;
 using ListenService.Model;
 using ListenService.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using StackExchange.Redis;
+using System.Reactive.Linq;
+using System.Text;
 using Telegram.Bot;
 
 namespace ListenService.Repository.Implements
@@ -16,6 +16,7 @@ namespace ListenService.Repository.Implements
         private readonly IConfiguration _configuration;
         private readonly IServiceProvider _serviceProvider;
         private readonly IDatabase _redisDb;
+
         public SendMessage(IConfiguration configuration, IServiceProvider serviceProvider, IDatabase redisDb)
         {
             _configuration = configuration;
@@ -25,7 +26,6 @@ namespace ListenService.Repository.Implements
 
         public async Task SendMessageEbay(long order_id, ChainEnum chain_id, string contract)
         {
-
             try
             {
                 using (var scope = _serviceProvider.CreateScope())
@@ -76,7 +76,6 @@ namespace ListenService.Repository.Implements
                             await botClient.SendTextMessageAsync(_configuration["GroupChatID"], chatMessage);
                             var deboxMessage = new DeBoxMessageDTO() { content = chatMessage, object_name = "text", to_user_id = "" };
                             await DeboxSend(deboxMessage);
-
                         }
                         var chatIDs = _configuration["GroupChatIDs"].Split(',');
                         foreach (var chatID in chatIDs)
@@ -129,7 +128,6 @@ namespace ListenService.Repository.Implements
 
                     if (!string.IsNullOrEmpty(mailMessageSeller))
                     {
-
                         var chatId = seller?.telegram_id; // 替换为您要发送消息的聊天ID
                         if (chatId != null)
                         {
@@ -149,12 +147,11 @@ namespace ListenService.Repository.Implements
             catch (Exception ex)
             {
                 Console.WriteLine("Exception caught in SendMessageEbay(): {0}", ex.ToString());
-
             }
         }
+
         public async Task SendMessagePost(long order_id, ChainEnum chain_id, string contract)
         {
-
             try
             {
                 using (var scope = _serviceProvider.CreateScope())
@@ -252,7 +249,6 @@ namespace ListenService.Repository.Implements
 
                     if (!string.IsNullOrEmpty(mailMessageSeller))
                     {
-
                         var chatId = seller?.telegram_id; // 替换为您要发送消息的聊天ID
                         if (chatId != null)
                         {
@@ -272,9 +268,9 @@ namespace ListenService.Repository.Implements
             catch (Exception ex)
             {
                 Console.WriteLine("Exception caught in SendMessagePost(): {0}", ex.ToString());
-
             }
         }
+
         public async Task SendMessageAuction(long order_id, ChainEnum chain_id, string contract)
         {
             try
@@ -319,7 +315,6 @@ namespace ListenService.Repository.Implements
                         {
                             mailMessageSeller = $"您在{order.chain_id.ToString()}链上发布的拍卖商品({order.name})已取消。";
                         }
-
                     }
                     else if (status == OrderAuctionStatus.Completed)
                     {
@@ -338,7 +333,6 @@ namespace ListenService.Repository.Implements
                     }
                     if (!string.IsNullOrEmpty(mailMessageSeller))
                     {
-
                         var chatId = seller?.telegram_id; // 替换为您要发送消息的聊天ID
                         if (chatId != null)
                         {
@@ -359,8 +353,6 @@ namespace ListenService.Repository.Implements
             {
                 Console.WriteLine("Exception caught in sendBotAuction(): {0}", ex.ToString());
             }
-
-
         }
 
         public async Task DeboxSend(DeBoxMessageDTO reqeust)
@@ -393,4 +385,3 @@ namespace ListenService.Repository.Implements
         }
     }
 }
-

@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-
-namespace Jobs
+﻿namespace Jobs
 {
     public static class AppMap
     {

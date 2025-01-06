@@ -18,6 +18,7 @@ namespace Jobs.Jobs
         private readonly ILogger<TronReadNFTService> _logger;
         private readonly MySqlMasterDbContext _masterDbContext;
         private IConfiguration _config;
+
         public TronReadNFTService(ILogger<TronReadNFTService> logger, MySqlMasterDbContext masterDbContext, IConfiguration configuration)
         {
             _logger = logger;
@@ -60,7 +61,7 @@ namespace Jobs.Jobs
                     {
                         var owner = await function.CallAsync<string>(i);
 
-                        var user_nfts = _masterDbContext.user_nft.Where(a => a.nft == i && a.status == 1&&a.contract.Equals(contractAddress)).ToList();
+                        var user_nfts = _masterDbContext.user_nft.Where(a => a.nft == i && a.status == 1 && a.contract.Equals(contractAddress)).ToList();
                         if (user_nfts.Count > 1)
                         {
                             user_nfts.ForEach(a => a.status = 0);
@@ -77,8 +78,8 @@ namespace Jobs.Jobs
                                     nft = i,
                                     status = 1,
                                     update_time = DateTime.Now,
-                                    contract= contractAddress,
-                                    chain_id= ChainEnum.Bsc
+                                    contract = contractAddress,
+                                    chain_id = ChainEnum.Bsc
                                 };
                                 _masterDbContext.Add(model);
                             }

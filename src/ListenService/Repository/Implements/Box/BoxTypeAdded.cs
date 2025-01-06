@@ -1,27 +1,14 @@
-﻿using System;
-using System.Threading.Tasks;
-using Nethereum.Web3;
-using Nethereum.Web3.Accounts;
-using Nethereum.Contracts;
-using Nethereum.RPC.Eth.DTOs;
+﻿using CommonLibrary.Common.Common;
 using CommonLibrary.DbContext;
-using Newtonsoft.Json.Linq;
-using Nethereum.JsonRpc.WebSocketClient;
-using Nethereum.JsonRpc.WebSocketStreamingClient;
-using Nethereum.RPC.Reactive.Eth.Subscriptions;
-using Newtonsoft.Json;
-using System;
-using System.Reactive.Linq;
-using System.Threading.Tasks;
-using Nethereum.ABI.Model;
-using ListenService.Model;
-using Nethereum.JsonRpc.Client;
 using CommonLibrary.Model.DataEntityModel;
-using CommonLibrary.Common.Common;
+using ListenService.Model;
 using ListenService.Repository.Interfaces;
-using System.Net.WebSockets;
-using Microsoft.Extensions.DependencyInjection;
+using Nethereum.Contracts;
+using Nethereum.RPC.Reactive.Eth.Subscriptions;
+using Newtonsoft.Json.Linq;
 using StackExchange.Redis;
+using System.Net.WebSockets;
+using System.Reactive.Linq;
 
 namespace ListenService.Repository.Implements
 {
@@ -31,7 +18,8 @@ namespace ListenService.Repository.Implements
         private readonly IServiceProvider _serviceProvider;
         private readonly IDatabase _redisDb;
         private readonly ClientManage _clientManage;
-        public BoxTypeAdded(IConfiguration configuration, IServiceProvider serviceProvider,IDatabase redisDb, ClientManage clientManage)
+
+        public BoxTypeAdded(IConfiguration configuration, IServiceProvider serviceProvider, IDatabase redisDb, ClientManage clientManage)
         {
             _configuration = configuration;
             _serviceProvider = serviceProvider;
@@ -39,10 +27,8 @@ namespace ListenService.Repository.Implements
             _clientManage = clientManage;
         }
 
-
         public async Task StartAsync(string nodeUrl, string contractAddress, ChainEnum chain_id)
         {
-            
             try
             {
                 while (true)
@@ -73,21 +59,21 @@ namespace ListenService.Repository.Implements
                 // 获取abi节点的值
                 string abi = jsonObject["abi"]?.ToString();
 
-
                 var cardTypeAdded = Event<BoxTypeAddedEventDTO>.GetEventABI().CreateFilterInput();
                 cardTypeAdded.Address = new string[] { contractAddress };
                 var subscription = new EthLogsObservableSubscription(_clientManage.GetClient());
                 // attach a handler for Transfer event logs
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
                 {
-                    try { 
-                    if (!_redisDb.LockTake(log.TransactionHash, 1, TimeSpan.FromSeconds(10)))
+                    try
                     {
-                        return;
-                    }
-                    // decode the log into a typed event log
-                    var decoded = Event<BoxTypeAddedEventDTO>.DecodeEvent(log);
-                  
+                        if (!_redisDb.LockTake(log.TransactionHash, 1, TimeSpan.FromSeconds(10)))
+                        {
+                            return;
+                        }
+                        // decode the log into a typed event log
+                        var decoded = Event<BoxTypeAddedEventDTO>.DecodeEvent(log);
+
                         using (var scope = _serviceProvider.CreateScope())
                         {
                             var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
@@ -100,23 +86,22 @@ namespace ListenService.Repository.Implements
                             Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "Contract address: " + log.Address + " Log Transfer from:" + decoded.Event.BoxName);
                         }
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         _clientManage.GetClient().RemoveSubscription(subscription.SubscriptionId);
                         Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"BoxTypeAdded1:{ex}");
                         await Task.Delay(2000);
                         await StartAsync(nodeUrl, contractAddress, chain_id);
                     }
-                 
-                }, async (ex) => {
+                }, async (ex) =>
+                {
                     _clientManage.GetClient().RemoveSubscription(subscription.SubscriptionId);
                     Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"BoxTypeAdded2:{ex}");
                     await Task.Delay(2000);
                     await StartAsync(nodeUrl, contractAddress, chain_id);
                 });
-             
-                await subscription.SubscribeAsync(cardTypeAdded);
 
+                await subscription.SubscribeAsync(cardTypeAdded);
             }
             catch (Exception ex)
             {

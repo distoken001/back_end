@@ -1,11 +1,9 @@
-﻿using System;
-using CommonLibrary.Common.Common;
+﻿using CommonLibrary.Common.Common;
 
 namespace ListenService.Repository.Interfaces
 {
-	public interface IPostSetStatus
+    public interface IPostSetStatus
     {
-        Task StartAsync(string nodeWss, string nodeHttps,string contractAddress, ChainEnum chain_id);
+        Task StartAsync(string nodeWss, string nodeHttps, string contractAddress, ChainEnum chain_id);
     }
 }
-

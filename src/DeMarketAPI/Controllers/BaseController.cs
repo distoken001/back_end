@@ -1,5 +1,4 @@
-﻿using DeMarketAPI.Common.Model;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
@@ -21,6 +20,7 @@ namespace DeMarketAPI.Controllers
                 return u;
             }
         }
+
         public string ClientIP
         {
             get
@@ -35,6 +35,7 @@ namespace DeMarketAPI.Controllers
                 return clientIP;
             }
         }
+
         ///// <summary>
         ///// 获取用户身份
         ///// </summary>
@@ -66,7 +67,6 @@ namespace DeMarketAPI.Controllers
         //{
         //    get
         //    {
-
         //        try
         //        {
         //            var chain_str = User.Claims.FirstOrDefault(x => x.Type == "chain_id")?.Value;

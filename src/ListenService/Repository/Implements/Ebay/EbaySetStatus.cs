@@ -1,17 +1,16 @@
-﻿using System.Net.WebSockets;
-using CommonLibrary.Common.Common;
+﻿using CommonLibrary.Common.Common;
 using CommonLibrary.DbContext;
 using ListenService;
 using ListenService.Model;
 using ListenService.Repository.Interfaces;
 using Nethereum.Contracts;
-using Nethereum.JsonRpc.WebSocketStreamingClient;
 using Nethereum.RPC;
 using Nethereum.RPC.Reactive.Eth.Subscriptions;
 using Nethereum.Util;
 using Nethereum.Web3;
 using Newtonsoft.Json.Linq;
 using StackExchange.Redis;
+using System.Net.WebSockets;
 
 public class EbaySetStatus : IEbaySetStatus
 {
@@ -23,6 +22,7 @@ public class EbaySetStatus : IEbaySetStatus
     private Web3 _web3;   // 将 Web3 实例提升为类成员
     private Contract _contract; // 将 Contract 实例提升为类成员
     private readonly ClientManage _clientManage;
+
     public EbaySetStatus(IConfiguration configuration, IServiceProvider serviceProvider, ISendMessage sendMessage, IDatabase redisDb, ClientManage clientManage)
     {
         _configuration = configuration;
@@ -34,7 +34,6 @@ public class EbaySetStatus : IEbaySetStatus
 
     public async Task StartAsync(string nodeWss, string nodeHttps, string contractAddress, ChainEnum chainId)
     {
-
         Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "EbaySetStatus程序启动：" + chainId);
 
         try
@@ -147,6 +146,5 @@ public class EbaySetStatus : IEbaySetStatus
                 }
             }
         }
-
     }
 }

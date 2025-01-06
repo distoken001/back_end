@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Nethereum.Signer;
 using System.Text;
-using System.Threading.Tasks;
-using Nethereum.Hex.HexConvertors.Extensions;
-using Nethereum.Signer;
-using Nethereum.Util;
 
 namespace CommonLibrary.Common.Common
 {
-
     public class EthereumSignatureVerifier
     {
         private static String message = "DeMarket - The Next Generation Decentralized E-commerce Platform on Web3.0.";
@@ -20,6 +13,7 @@ namespace CommonLibrary.Common.Common
         * @param address
         * @return
         */
+
         public static bool Verify(string signature, string address)
         {
             var signer = new EthereumMessageSigner();
@@ -33,7 +27,4 @@ namespace CommonLibrary.Common.Common
             return publicKey.Equals(address, StringComparison.OrdinalIgnoreCase);
         }
     }
-
 }
-
-

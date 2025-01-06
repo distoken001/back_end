@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -19,10 +18,12 @@ namespace DeMarketAPI.Proxies
         /// demarket@foxmail.com
         /// </summary>
         private string UserName { get; set; }
+
         /// <summary>
         /// aqvpgsnuuyimbjdc
         /// </summary>
         private string PassWord { get; set; }
+
         private string Host { get; set; }
         private int Port { get; set; }
         public ILogger _logger;
@@ -76,7 +77,7 @@ namespace DeMarketAPI.Proxies
                 throw new Exception("Email:PassWord为空");
             }
 
-            SmtpClient smtpClient = new  SmtpClient();
+            SmtpClient smtpClient = new SmtpClient();
             smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;//指定电子邮件发送方式
             smtpClient.Host = Host;//指定SMTP服务器
             smtpClient.Port = Port;

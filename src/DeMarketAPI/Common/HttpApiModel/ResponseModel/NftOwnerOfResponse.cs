@@ -1,5 +1,4 @@
-﻿using System;
-using Nethereum.ABI.FunctionEncoding.Attributes;
+﻿using Nethereum.ABI.FunctionEncoding.Attributes;
 
 namespace DeMarketAPI.Common.Model.HttpApiModel.ResponseModel
 {

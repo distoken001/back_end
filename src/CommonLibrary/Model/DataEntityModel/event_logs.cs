@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using CommonLibrary.Common.Common;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
-using CommonLibrary.Common.Common;
 
 namespace CommonLibrary.Model.DataEntityModel
 {
@@ -35,7 +31,7 @@ namespace CommonLibrary.Model.DataEntityModel
         public String data { get; set; }
 
         /**
-         * 
+         *
          */
         public int status { get; set; }
 
@@ -57,22 +53,25 @@ namespace CommonLibrary.Model.DataEntityModel
          * 创建人
          */
         public String creator { get; set; }
+
         /// <summary>
         ///链id
         /// </summary>
         public ChainEnum chain_id { get; set; }
+
         /// <summary>
         /// 卖方
         /// </summary>
         public string seller { get; set; }
+
         /// <summary>
         /// 买方
         /// </summary>
         public string buyer { get; set; }
+
         /// <summary>
         /// 合约
         /// </summary>
         public string contract { get; set; }
-
     }
 }

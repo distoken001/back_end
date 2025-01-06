@@ -1,26 +1,20 @@
-﻿using System;
-using CommonLibrary.Common.Common;
-using CommonLibrary.DbContext;
-using CommonLibrary.Model.DataEntityModel;
-using DeMarketAPI.Common.Model.HttpApiModel.RequestModel;
+﻿using DeMarketAPI.Common.Model.HttpApiModel.RequestModel;
 using DeMarketAPI.Common.Model.HttpApiModel.ResponseModel;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace DeMarketAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DeBoxController :BaseController
-	{
+    public class DeBoxController : BaseController
+    {
         [HttpPost("receivemessage")]
         [AllowAnonymous]
         public async Task<JsonResult> ReceiveMessage([FromBody] GetCardTypeListRequest req)
         {
-          
-            return Json(new WebApiResult(1, "成功" ));
+            return Json(new WebApiResult(1, "成功"));
         }
     }
 }
-

@@ -1,5 +1,4 @@
 ﻿using DeMarketAPI.Common.Model.HttpApiModel.ResponseModel;
-using DeMarketAPI.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;

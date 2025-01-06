@@ -1,31 +1,13 @@
-﻿
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using Nethereum.Web3;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
-using Telegram.Bot;
-using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.ReplyMarkups;
-
-namespace TelegramService.Service
+﻿namespace TelegramService.Service
 {
-    public class TgBotService 
+    public class TgBotService
     {
-
         //        private readonly IRedisService redisService;
         //        private readonly IIdProvideService idProvideService;
         //        private readonly TrendingContext trendingContext;
         //        private readonly ILogRecorder<BuyTrendingBotService> logger;
         //        private readonly TgBotConfigOption tgBotConfigOption;
         //        private readonly Web3ConfigOption web3ConfigOption;
-
-
 
         //        public BuyTrendingBotService(
         //            IRedisService redisService,
@@ -88,8 +70,6 @@ namespace TelegramService.Service
         //            }
         //            return res;
         //        }
-
-
 
         //        public async Task ReceiveProcessBackToOptionCallBack(CallbackQuery callbackQuery)
         //        {
@@ -304,7 +284,6 @@ namespace TelegramService.Service
         //            }
         //        }
 
-
         //        public async Task ReceiveProcessChoseHoursCallBack(CallbackQuery callbackQuery)
         //        {
         //            var stepEntity = await trendingContext.CqBuyTrendingBotStep.FirstOrDefaultAsync(p => p.ChartId == callbackQuery.Message.Chat.Id);
@@ -371,7 +350,6 @@ namespace TelegramService.Service
         //                        replyMarkup: inlineKeyboard);
         //                }
 
-
         //            }
         //        }
 
@@ -395,7 +373,6 @@ namespace TelegramService.Service
         //            }
 
         //        }
-
 
         //        private async Task<TextCommandViewModel> PrivateProcessConfirmTgUrlText(Message message, CqBuyTrendingBotStep stepEntity)
         //        {
@@ -459,7 +436,6 @@ namespace TelegramService.Service
         //            }
         //        }
 
-
         //        private async Task<TextCommandViewModel> PrivateProcessConfirmTokenText(Message message, CqBuyTrendingBotStep stepEntity)
         //        {
         //            //根据地址，获得合约名称,供应量
@@ -479,7 +455,6 @@ namespace TelegramService.Service
         //                    res.Text = $"❌ Token address not valid ({message.Text}). Try again";
         //                    return res;
         //                }
-
 
         //                abi = web3ConfigOption.EthAbi;
         //                try
@@ -533,7 +508,6 @@ namespace TelegramService.Service
         //                    res.Text = $"❌ Token address not valid ({message.Text}). Try again";
         //                    return res;
         //                }
-
 
         //                abi = web3ConfigOption.BscAbi;
 
@@ -687,8 +661,6 @@ namespace TelegramService.Service
         //                            return res;
         //                        }
 
-
-
         //                        // 获取交易状态
         //                        var receipt = await web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(message.Text);
 
@@ -737,8 +709,6 @@ namespace TelegramService.Service
         //                            res.Text = $"❌ amount is not valid. soure {menu.Amount}{menu.Unit}?";
         //                            return res;
         //                        }
-
-
 
         //                        // 获取交易状态
         //                        var receipt = await web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(message.Text);

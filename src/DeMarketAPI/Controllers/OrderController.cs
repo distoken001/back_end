@@ -1,26 +1,22 @@
 ﻿using CommonLibrary.Common.Common;
-using DeMarketAPI.Common.Model;
+using CommonLibrary.DbContext;
+using CommonLibrary.Model.DataEntityModel;
 using DeMarketAPI.Common.Model.HttpApiModel.RequestModel;
 using DeMarketAPI.Common.Model.HttpApiModel.ResponseModel;
-using CommonLibrary.DbContext;
 using DeMarketAPI.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using TencentCloud.Ecm.V20190719.Models;
-using TencentCloud.Tcss.V20201101.Models;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Configuration;
-using CommonLibrary.Model.DataEntityModel;
-using TencentCloud.Pds.V20210701.Models;
-using Microsoft.AspNetCore.Authorization;
 
 namespace DeMarketAPI.Controllers
 {
@@ -28,7 +24,7 @@ namespace DeMarketAPI.Controllers
     [ApiController]
     public class OrderController : BaseController
     {
-        MySqlMasterDbContext _mySqlMasterDbContext;
+        private MySqlMasterDbContext _mySqlMasterDbContext;
         private readonly ITxCosUploadeService txCosUploadeService;
         private readonly IHostEnvironment _environment;
         private readonly IConfiguration _configuration;
@@ -150,7 +146,6 @@ namespace DeMarketAPI.Controllers
             }
         }
 
-
         /// <summary>
         /// 商品列表
         /// </summary>
@@ -224,6 +219,7 @@ namespace DeMarketAPI.Controllers
             var res = new PagedModel<OrderResponse>(totalCount, viewList);
             return Json(new WebApiResult(1, "订单列表" + CurrentLoginAddress, res));
         }
+
         /// <summary>
         /// 猜您喜欢
         /// </summary>
@@ -294,6 +290,7 @@ namespace DeMarketAPI.Controllers
             var res = new PagedModel<OrderResponse>(totalCount, viewList);
             return Json(new WebApiResult(1, "猜您喜欢" + CurrentLoginAddress, res));
         }
+
         /// <summary>
         /// 收藏（添加或取消）
         /// </summary>
@@ -373,6 +370,7 @@ namespace DeMarketAPI.Controllers
                 return Json(new WebApiResult(-1, "查询订单详情失败" + ex.Message));
             }
         }
+
         /// <summary>
         /// 我的收藏
         /// </summary>

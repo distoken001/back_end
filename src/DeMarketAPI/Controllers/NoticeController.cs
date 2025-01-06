@@ -1,22 +1,17 @@
-﻿using System;
-using DeMarketAPI.Common.Model.HttpApiModel.ResponseModel;
-using System.IO;
-using System.Threading.Tasks;
+﻿using CommonLibrary.Common.Common;
 using CommonLibrary.DbContext;
-using DeMarketAPI.Services.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using DeMarketAPI.Common.Model.HttpApiModel.RequestModel;
-using CommonLibrary.Common.Common;
-using Microsoft.EntityFrameworkCore;
-using DeMarketAPI.Proxies;
-using System.Collections.Generic;
-using Microsoft.Extensions.Configuration;
-using Telegram.Bot;
 using CommonLibrary.Model.DataEntityModel;
-using System.Net.Mail;
-using System.Linq;
-using Telegram.Bot.Types;
+using DeMarketAPI.Common.Model.HttpApiModel.RequestModel;
+using DeMarketAPI.Common.Model.HttpApiModel.ResponseModel;
+using DeMarketAPI.Proxies;
+using DeMarketAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace DeMarketAPI.Controllers
 {
@@ -24,11 +19,11 @@ namespace DeMarketAPI.Controllers
     [ApiController]
     public class NoticeController : BaseController
     {
-
-        MySqlMasterDbContext _mySqlMasterDbContext;
+        private MySqlMasterDbContext _mySqlMasterDbContext;
         private readonly ITxCosUploadeService txCosUploadeService;
         private readonly EmailProxy _mailKitEmail;
         private readonly IConfiguration _configuration;
+
         public NoticeController(MySqlMasterDbContext mySqlMasterDbContext, ITxCosUploadeService txCosUploadeService, EmailProxy mailKitEmail, IConfiguration configuration)
         {
             _mySqlMasterDbContext = mySqlMasterDbContext;
@@ -36,11 +31,11 @@ namespace DeMarketAPI.Controllers
             _mailKitEmail = mailKitEmail;
             _configuration = configuration;
         }
+
         [HttpPost("sendemail")]
         [AllowAnonymous]
         public async Task<JsonResult> SendEmail([FromBody] SendEmailRequest request)
         {
-
             try
             {
                 List<string> ls = new List<string>();
@@ -88,8 +83,6 @@ namespace DeMarketAPI.Controllers
                     {
                         mailMessage = $"商家在{order.chain_id.ToString()}链上发布的商品({order.name})已取消，该商品曾指定您为唯一购买人。";
                     }
-
-
                 }
                 else if (status == OrderStatus.Completed)
                 {
@@ -112,10 +105,10 @@ namespace DeMarketAPI.Controllers
             }
             return Json(new WebApiResult(1, "发送成功"));
         }
+
         //[HttpPost("sendBot")]
         //public async Task<JsonResult> sendBot([FromBody] SendEmailRequest request)
         //{
-
         //    try
         //    {
         //        List<long> ls = new List<long>();
@@ -151,7 +144,7 @@ namespace DeMarketAPI.Controllers
         //                        var message = await botClient.SendTextMessageAsync(long.Parse(chatID), chatMessage);
         //                    }
         //                }
-                      
+
         //            }
         //            if (buyer?.telegram_id != null)
         //            {
@@ -187,7 +180,6 @@ namespace DeMarketAPI.Controllers
 
         //        if (!string.IsNullOrEmpty(mailMessageSeller))
         //        {
-
         //            var chatId = seller?.telegram_id; // 替换为您要发送消息的聊天ID
         //            if (chatId != null)
         //            {
@@ -215,7 +207,6 @@ namespace DeMarketAPI.Controllers
         //[HttpPost("sendBotAuction")]
         //public async Task<JsonResult> sendBotAuction([FromBody] SendEmailRequest request)
         //{
-
         //    try
         //    {
         //        List<long> ls = new List<long>();
@@ -256,7 +247,7 @@ namespace DeMarketAPI.Controllers
         //            {
         //                mailMessageSeller = $"您在{order.chain_id.ToString()}链上发布的拍卖商品({order.name})已取消。";
         //            }
-                   
+
         //        }
         //        else if (status == OrderAuctionStatus.Completed)
         //        {
@@ -275,7 +266,6 @@ namespace DeMarketAPI.Controllers
         //        }
         //        if (!string.IsNullOrEmpty(mailMessageSeller))
         //        {
-
         //            var chatId = seller?.telegram_id; // 替换为您要发送消息的聊天ID
         //            if (chatId != null)
         //            {
@@ -302,7 +292,6 @@ namespace DeMarketAPI.Controllers
         [AllowAnonymous]
         public async Task<JsonResult> Cooperate([FromBody] CooperateRequest request)
         {
-
             try
             {
                 var co = new cooperator

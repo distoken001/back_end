@@ -1,10 +1,8 @@
-﻿using CommonLibrary.DbContext;
+﻿using Com.Ctrip.Framework.Apollo;
+using CommonLibrary.DbContext;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
-using Com.Ctrip.Framework.Apollo;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.AspNetCore.Http.Features;
-using TelegramService.Service;
 
 namespace TelegramService
 {
@@ -22,13 +20,13 @@ namespace TelegramService
                 .AddDefault();
             Configuration = builder.Build();
         }
+
         public static ServiceProvider privider;
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             //解决文件上传Multipart body length limit 134217728 exceeded
             services.Configure<FormOptions>(x =>
             {
@@ -45,7 +43,7 @@ namespace TelegramService
             services.AddControllers();
             services.AddDirectoryBrowser();
             services.AddSingleton<IConfiguration>(Configuration);
-           
+
             services.AddHostedService<TgBotHost>();
             services
                 .AddHttpClient()
@@ -63,8 +61,7 @@ namespace TelegramService
                 })
               //.AddDbContext<MySqlMasterDbContext>(options => options.UseMySql(identityConn))
               .AddDbContext<MySqlMasterDbContext>(options => options.UseMySql(deMarketConn, builder => builder.EnableRetryOnFailure()));
-                         privider = services.BuildServiceProvider();
-       
+            privider = services.BuildServiceProvider();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

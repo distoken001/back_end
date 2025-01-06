@@ -1,5 +1,4 @@
-﻿
-//using Nethereum.JsonRpc.Client;
+﻿//using Nethereum.JsonRpc.Client;
 //using Nethereum.JsonRpc.Client.RpcMessages;
 //using Newtonsoft.Json;
 //using System;
@@ -214,7 +213,7 @@
 //        protected bool ProcessNextMessageBytes(byte[] buffer, MemoryStream memoryStream, int bytesRead = -1, bool endOfMessage = false)
 //        {
 //            int currentIndex = 0;
-//            //if bytes read is 0 we don't care as streaming might continue regardless and message split.. 
+//            //if bytes read is 0 we don't care as streaming might continue regardless and message split..
 //            int bufferToRead = bytesRead;
 //            if (bytesRead == -1) bufferToRead = buffer.Length; //old data from previous buffer
 
@@ -280,7 +279,7 @@
 //                }
 //                catch (Exception ex)
 //                {
-//                    //HandleError should not be called from any of the functions that are called from this function 
+//                    //HandleError should not be called from any of the functions that are called from this function
 //                    //which also rethrow the exception to avoid calling the error handlers twice for the same error.
 //                    if (!_cancellationTokenSource.IsCancellationRequested)
 //                    {

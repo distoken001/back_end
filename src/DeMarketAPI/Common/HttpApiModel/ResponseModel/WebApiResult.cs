@@ -1,18 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace DeMarketAPI.Common.Model.HttpApiModel.ResponseModel
+﻿namespace DeMarketAPI.Common.Model.HttpApiModel.ResponseModel
 {
     public class WebApiResult
     {
-        public WebApiResult() { }
-        public WebApiResult(int result, string msg = "") {
+        public WebApiResult()
+        { }
+
+        public WebApiResult(int result, string msg = "")
+        {
             ActionResult = result;
             Message = msg;
         }
-        public WebApiResult(int result, string msg = "", object data = null) {
+
+        public WebApiResult(int result, string msg = "", object data = null)
+        {
             ActionResult = result;
             Message = msg;
             Data = data;

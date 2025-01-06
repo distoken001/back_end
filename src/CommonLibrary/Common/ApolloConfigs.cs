@@ -1,7 +1,7 @@
 ﻿using CommonLibrary.Model;
 using Microsoft.Extensions.Configuration;
 
-namespace CommonLibrary.Common 
+namespace CommonLibrary.Common
 {
     public class ApolloConfigs
     {
@@ -13,6 +13,5 @@ namespace CommonLibrary.Common
         }
 
         public string MetaEnv => _config[StringConstant.MetaEnv];
-
     }
 }

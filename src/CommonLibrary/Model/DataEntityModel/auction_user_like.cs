@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CommonLibrary.Model.DataEntityModel
@@ -9,6 +8,7 @@ namespace CommonLibrary.Model.DataEntityModel
     {
         [Key]
         public int id { get; set; }
+
         public string address { get; set; }
         public long order_id { get; set; }
         public int status { get; set; }
@@ -16,4 +16,3 @@ namespace CommonLibrary.Model.DataEntityModel
         public DateTime update_time { get; set; }
     }
 }
-

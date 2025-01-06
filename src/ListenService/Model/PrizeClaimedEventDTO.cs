@@ -1,6 +1,7 @@
 ﻿// 定义一个DTO类，用于解析事件数据
-using System.Numerics;
 using Nethereum.ABI.FunctionEncoding.Attributes;
+using System.Numerics;
+
 namespace ListenService.Model
 {
     [Event("PrizeClaimed")]
@@ -16,4 +17,3 @@ namespace ListenService.Model
         public BigInteger Prize { get; set; }
     }
 }
-

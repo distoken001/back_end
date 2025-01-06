@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CommonLibrary.Common.Common
+﻿namespace CommonLibrary.Common.Common
 {
     public static class Tool
     {
@@ -32,8 +30,6 @@ namespace CommonLibrary.Common.Common
             {
                 return BelongUserEnum.游客;
             };
-
         }
     }
 }
-

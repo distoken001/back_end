@@ -9,6 +9,7 @@ namespace CommonLibrary.Services
     public interface IRedisClientService
     {
         #region 同步
+
         /// <summary>
         /// 添加一个字符串对象。
         /// </summary>
@@ -27,7 +28,6 @@ namespace CommonLibrary.Services
         /// <param name="expiry">过期时间（时间间隔）。</param>
         /// <returns>返回是否执行成功。</returns>
         bool Set<T>(string key, T value, TimeSpan? expiry = null);
-
 
         /// <summary>
         /// 获取一个对象。
@@ -64,9 +64,11 @@ namespace CommonLibrary.Services
         /// <param name="expiry">过期时间（时间间隔）。</param>
         /// <returns>返回是否执行成功。</returns>
         bool SetExpire(string key, TimeSpan? expiry);
-        #endregion
+
+        #endregion 同步
 
         #region 异步
+
         /// <summary>
         /// 异步添加一个字符串对象。
         /// </summary>
@@ -129,7 +131,8 @@ namespace CommonLibrary.Services
         /// <param name="redisPrefix"></param>
         /// <returns></returns>
         Task<List<string>> FuzzyExistsAsync(string redisPrefix);
-        #endregion
+
+        #endregion 异步
 
         #region 分布式锁...
 
@@ -167,8 +170,9 @@ namespace CommonLibrary.Services
         /// <returns>是否成功。</returns>
         Task<bool> UnLockAsync(string key, string lockToken);
 
-        #endregion
+        #endregion 分布式锁...
     }
+
     /// <summary>
     /// 封装 Redis 相关操作的方法
     /// </summary>
@@ -177,7 +181,7 @@ namespace CommonLibrary.Services
         private readonly IDatabase _database;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="database"></param>
         public RedisClientService(IDatabase database)
@@ -269,7 +273,8 @@ namespace CommonLibrary.Services
         {
             return _database.KeyExpire(key, expiry);
         }
-        #endregion
+
+        #endregion 同步方法...
 
         #region 异步方法...
 
@@ -377,7 +382,8 @@ namespace CommonLibrary.Services
             }
             return result;
         }
-        #endregion
+
+        #endregion 异步方法...
 
         #region 分布式锁... 需要注意的是一定要禁用 UNLINK,UNLINK 需要 Redis 4.0 以上的版本才支持。
 
@@ -427,6 +433,6 @@ namespace CommonLibrary.Services
             return await _database.LockReleaseAsync(key, lockToken);
         }
 
-        #endregion
+        #endregion 分布式锁... 需要注意的是一定要禁用 UNLINK,UNLINK 需要 Redis 4.0 以上的版本才支持。
     }
 }

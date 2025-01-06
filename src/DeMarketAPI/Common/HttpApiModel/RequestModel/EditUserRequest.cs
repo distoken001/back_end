@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using System.ComponentModel.DataAnnotations;
-
-namespace DeMarketAPI.Common.Model.HttpApiModel.RequestModel
+﻿namespace DeMarketAPI.Common.Model.HttpApiModel.RequestModel
 {
     public class EditUserRequest
     {

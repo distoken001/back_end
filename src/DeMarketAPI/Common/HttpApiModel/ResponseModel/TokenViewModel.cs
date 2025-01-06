@@ -1,5 +1,4 @@
 ﻿using System;
-using CommonLibrary.Common.Common;
 
 namespace DeMarketAPI.Common.Model.HttpApiModel.ResponseModel
 {

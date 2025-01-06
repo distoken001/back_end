@@ -1,24 +1,20 @@
-﻿using Quartz.Impl.Matchers;
-using Quartz.Impl;
+﻿using CommonLibrary.Common.Common;
 using Quartz;
-using System.Collections.Generic;
+using Quartz.Impl;
+using Quartz.Impl.Matchers;
 using System.Collections.Specialized;
 using System.Text;
-using System.Threading.Tasks;
-using System;
-using System.Linq;
-using CommonLibrary.Common.Common;
 
 namespace Jobs
 {
     public class QuartzStartup
     {
         public static IScheduler scheduler = null;
+
         public static async Task Run()
         {
             try
             {
-
                 var properties = new NameValueCollection
                 {
                     ["quartz.plugin.triggHistory.type"] = "Quartz.Plugin.History.LoggingJobHistoryPlugin, Quartz.Plugins",
@@ -122,16 +118,22 @@ namespace Jobs
             {
                 case TriggerState.Blocked:
                     return "阻塞";
+
                 case TriggerState.Complete:
                     return "执行完成，不会重新触发";
+
                 case TriggerState.Error:
                     return "错误，不会触发";
+
                 case TriggerState.None:
                     return "触发器不存在";
+
                 case TriggerState.Normal:
                     return "正常";
+
                 case TriggerState.Paused:
                     return "暂停";
+
                 default:
                     return "未知";
             }
@@ -174,7 +176,6 @@ namespace Jobs
                 {
                     str.Append($"<p>{e.job} : <span style='background-color:yellow;'>{QuartzStartup.TranslateTriggerState(e.state)}</span></p>");
                 }
-
             });
             return str.ToString();
         }

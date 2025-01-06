@@ -1,7 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Quartz;
-using System;
-using System.Threading.Tasks;
+﻿using Quartz;
 
 namespace Jobs.Jobs
 {

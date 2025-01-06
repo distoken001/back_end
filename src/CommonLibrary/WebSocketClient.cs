@@ -1,5 +1,4 @@
-﻿
-//using Nethereum.JsonRpc.Client;
+﻿//using Nethereum.JsonRpc.Client;
 //using Nethereum.JsonRpc.Client.RpcMessages;
 //using Newtonsoft.Json;
 //using System;
@@ -41,7 +40,6 @@
 
 //        private ClientWebSocket _clientWebSocket;
 
-
 //        public WebSocketClient(string path, JsonSerializerSettings jsonSerializerSettings = null, ILogger log = null) : this(path, jsonSerializerSettings)
 //        {
 //            _log = log;
@@ -58,7 +56,6 @@
 //            {
 //                if (_clientWebSocket != null && (_clientWebSocket.State == WebSocketState.Open || _clientWebSocket.State == WebSocketState.Connecting))
 //                {
-
 //                    await _semaphoreSlim.WaitAsync().ConfigureAwait(false);
 //                    await _clientWebSocket.CloseOutputAsync(webSocketCloseStatus, status, timeOutToken).ConfigureAwait(false);
 //                    while (_clientWebSocket.State != WebSocketState.Closed && !timeOutToken.IsCancellationRequested) ;
@@ -103,7 +100,6 @@
 //            }
 //            return _clientWebSocket;
 //        }
-
 
 //        public async Task<WebSocketReceiveResult> ReceiveBufferedResponseAsync(ClientWebSocket client, byte[] buffer)
 //        {
@@ -245,11 +241,9 @@
 //            }
 //            catch
 //            {
-
 //            }
 //            _clientWebSocket?.Dispose();
 //            _clientWebSocket = null;
 //        }
 //    }
 //}
-

@@ -22,12 +22,12 @@ namespace TelegramService
     {
         private readonly IConfiguration _configuration;
         private readonly IServiceProvider _serviceProvider;
+
         public TgBotHost(IConfiguration configuration, IServiceProvider serviceProvider)
         {
             _configuration = configuration;
             _serviceProvider = serviceProvider;
         }
-
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
@@ -47,6 +47,7 @@ namespace TelegramService
         {
             throw new NotImplementedException();
         }
+
         /// <summary>
         /// 消息处理方法
         /// </summary>
@@ -54,7 +55,7 @@ namespace TelegramService
         /// <param name="update"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
+        private async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
             try
             {
@@ -70,14 +71,13 @@ namespace TelegramService
                         case UpdateType.Message:
                             switch (update.Message.Type)
                             {
-
                                 case MessageType.ChatMemberLeft:
                                     break;
+
                                 case MessageType.ChatMembersAdded:
                                     Console.WriteLine("有人进来" + update.Message.Chat.Id.ToString());
                                     if (update.Message.Chat.Id.ToString() == _configuration["GroupChatID"])
                                     {
-
                                         if (string.IsNullOrEmpty(update.Message.From.Username))
                                         {
                                             var message = await botClient.SendTextMessageAsync(update.Message.Chat.Id, "Hey，" + update.Message.From.FirstName + "，您需要先设置Telegram用户名才能与DeMarket绑定哦");
@@ -112,7 +112,6 @@ namespace TelegramService
                                               text: sb.ToString(),
                                               parseMode: ParseMode.Markdown,
                                               replyMarkup: inlineKeyboard);
-
                                         }
                                     }
                                     else
@@ -144,6 +143,7 @@ namespace TelegramService
                                               replyMarkup: inlineKeyboard);
                                     }
                                     break;
+
                                 case MessageType.Text:
                                     if (update.Message.Chat.Id < 0)
                                     {
@@ -166,7 +166,6 @@ namespace TelegramService
                                             {
                                                 if (update.Message.Chat.Id.ToString() == _configuration["GroupChatID"])
                                                 {
-
                                                     sb.AppendLine("Hey！靓仔！@" + update.Message.From.Username.Replace("_", @"\_"));
                                                     var obj = new[]
                                           {                new []
@@ -198,7 +197,6 @@ namespace TelegramService
                                                           text: sb.ToString(),
                                                           parseMode: ParseMode.Markdown,
                                                           replyMarkup: inlineKeyboard);
-
                                                 }
                                                 else
                                                 {
@@ -233,7 +231,6 @@ namespace TelegramService
                                     {
                                         if (string.IsNullOrEmpty(update.Message.From.Username))
                                         {
-
                                             var message = await botClient.SendTextMessageAsync(update.Message.Chat.Id, "Hey，" + update.Message.From.FirstName + "，您需要先设置Telegram用户名才能与DeMarket绑定哦");
                                             return;
                                         }
@@ -257,7 +254,6 @@ namespace TelegramService
                 {
                     InlineKeyboardButton.WithUrl(text: "进入Debox社群", url: @"https://m.debox.pro/group?id="+_configuration["Debox:Group"])
                   },
-
                         };
 
                                         obj = obj.Concat(new[]{new[]
@@ -295,10 +291,13 @@ namespace TelegramService
                                     break;
                             }
                             break;
+
                         case UpdateType.InlineQuery:
                             break;
+
                         case UpdateType.ChosenInlineResult:
                             break;
+
                         case UpdateType.CallbackQuery:
                             if (update.CallbackQuery.Data == "Bind")
                             {
@@ -330,30 +329,36 @@ namespace TelegramService
                                 chatId: update.CallbackQuery.Message.Chat.Id,
                                 text: "@" + modifiedString + " *私聊我立即获取绑定验证码*",
                                 parseMode: ParseMode.MarkdownV2);
-
                                 }
 
                                 await botClient.SendTextMessageAsync(
                                       chatId: telegramUserChat.user_id,
                                       text: sb.ToString(),
                                       parseMode: ParseMode.MarkdownV2);
-
                             }
                             break;
+
                         case UpdateType.EditedMessage:
                             break;
+
                         case UpdateType.ChannelPost:
                             break;
+
                         case UpdateType.EditedChannelPost:
                             break;
+
                         case UpdateType.ShippingQuery:
                             break;
+
                         case UpdateType.PreCheckoutQuery:
                             break;
+
                         case UpdateType.Poll:
                             break;
+
                         case UpdateType.PollAnswer:
                             break;
+
                         case UpdateType.MyChatMember:
                             if (update.MyChatMember.NewChatMember.Status == ChatMemberStatus.Member)
                             {
@@ -385,29 +390,31 @@ namespace TelegramService
 
                             await _masterDbContext.SaveChangesAsync();
                             break;
+
                         case UpdateType.ChatMember:
                             break;
+
                         case UpdateType.ChatJoinRequest:
                             break;
+
                         default:
                             break;
                     }
                 }
             }
-
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
                 return;
-
             }
         }
+
         /// 异常处理方法            /// </summary>
         /// <param name="botClient"></param>
         /// <param name="exception"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
+        private Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
         {
             var ErrorMessage = exception switch
             {

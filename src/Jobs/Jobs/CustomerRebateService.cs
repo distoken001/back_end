@@ -56,7 +56,6 @@
 //                        //查出昨日被邀请人为买家所有交易完成的订单
 //                        var ordersEntities = _masterDbContext.orders.AsNoTracking().Where(p => p.status == OrderStatus.Completed && p.create_time >= yesStartDate && p.create_time < yesEndDate && beinAddresses.Contains(p.buyer));
 
-
 //                        var irEntities = await (from order in ordersEntities
 //                                                join t in _masterDbContext.chain_tokens.AsNoTracking()
 //                                                on new { token = order.token, cid = order.chain_id }
@@ -77,7 +76,6 @@
 
 //                        //查出昨日被邀请人为卖家所有交易完成的订单
 //                        var ordersSellerEntities = _masterDbContext.orders.AsNoTracking().Where(p => p.status == OrderStatus.Completed && p.create_time >= yesStartDate && p.create_time < yesEndDate && beinAddresses.Contains(p.seller));
-
 
 //                        var irSellerEntities = await (from order in ordersSellerEntities
 //                                                      join t in _masterDbContext.chain_tokens.AsNoTracking()
@@ -120,7 +118,6 @@
 //                }
 //                catch (Exception ex)
 //                {
-
 //                    _logger.LogDebug($"CustomerRebateService task 异常 {ex.InnerException.GetBaseException().Message}");
 //                }
 //            });

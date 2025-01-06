@@ -1,16 +1,13 @@
-﻿using Nethereum.Contracts;
+﻿using CommonLibrary.Common.Common;
 using CommonLibrary.DbContext;
-using Nethereum.JsonRpc.WebSocketStreamingClient;
-using Nethereum.RPC.Reactive.Eth.Subscriptions;
-using System.Reactive.Linq;
-using ListenService.Model;
 using CommonLibrary.Model.DataEntityModel;
-using CommonLibrary.Common.Common;
+using ListenService.Model;
 using ListenService.Repository.Interfaces;
+using Nethereum.Contracts;
+using Nethereum.RPC.Reactive.Eth.Subscriptions;
 using StackExchange.Redis;
-using ListenService.Chains;
-using Nethereum.JsonRpc.Client;
 using System.Net.WebSockets;
+using System.Reactive.Linq;
 
 namespace ListenService.Repository.Implements
 {
@@ -20,16 +17,17 @@ namespace ListenService.Repository.Implements
         private readonly IConfiguration _configuration;
         private readonly IDatabase _redisDb;
         private readonly ClientManage _clientManage;
-        public BoxGifted(IConfiguration configuration, IServiceProvider serviceProvider,IDatabase redisDb, ClientManage clientManage)
+
+        public BoxGifted(IConfiguration configuration, IServiceProvider serviceProvider, IDatabase redisDb, ClientManage clientManage)
         {
             _configuration = configuration;
             _serviceProvider = serviceProvider;
             _redisDb = redisDb;
             _clientManage = clientManage;
         }
+
         public async Task StartAsync(string nodeUrl, string contractAddress, ChainEnum chain_id)
         {
-        
             try
             {
                 while (true)
@@ -40,7 +38,7 @@ namespace ListenService.Repository.Implements
                     }
                     else
                     {
-                     await   Task.Delay(500).ConfigureAwait(false);
+                        await Task.Delay(500).ConfigureAwait(false);
                     }
                 }
                 var cardGifted = Event<BoxGiftedEventDTO>.GetEventABI().CreateFilterInput();
@@ -48,9 +46,10 @@ namespace ListenService.Repository.Implements
                 var subscription = new EthLogsObservableSubscription(_clientManage.GetClient());
                 subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
                 {
-                    try {   
-                    // decode the log into a typed event log
-                       var decoded = Event<BoxGiftedEventDTO>.DecodeEvent(log);
+                    try
+                    {
+                        // decode the log into a typed event log
+                        var decoded = Event<BoxGiftedEventDTO>.DecodeEvent(log);
                         if (!_redisDb.LockTake(log.TransactionHash, 1, TimeSpan.FromSeconds(10)))
                         {
                             return;
@@ -58,7 +57,7 @@ namespace ListenService.Repository.Implements
                         using (var scope = _serviceProvider.CreateScope())
                         {
                             var _masterDbContext = scope.ServiceProvider.GetRequiredService<MySqlMasterDbContext>();
-                                                                                                             
+
                             Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "BoxGifted监听到了！");
                             var card = _masterDbContext.card_type.Where(a => a.type == decoded.Event.BoxType && a.chain_id == chain_id && a.state == 1).FirstOrDefault();
                             var token = _masterDbContext.chain_tokens.Where(a => a.token_address.Equals(card.token) && a.chain_id == card.chain_id).FirstOrDefault();
@@ -82,16 +81,16 @@ namespace ListenService.Repository.Implements
                             }
                             _masterDbContext.SaveChanges();
                         }
-                      
                     }
-                      catch(Exception ex)
+                    catch (Exception ex)
                     {
                         Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"BoxGifted1:{ex}");
                         _clientManage.GetClient().RemoveSubscription(subscription.SubscriptionId);
                         await Task.Delay(2000);
                         await StartAsync(nodeUrl, contractAddress, chain_id);
                     }
-                }, async (ex) => {
+                }, async (ex) =>
+                {
                     _clientManage.GetClient().RemoveSubscription(subscription.SubscriptionId);
                     Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"BoxGifted2:{ex}");
                     await Task.Delay(2000);
@@ -101,7 +100,6 @@ namespace ListenService.Repository.Implements
                 // begin receiving subscription data
                 // data will be received on a background thread
                 await subscription.SubscribeAsync(cardGifted);
-             
             }
             catch (Exception ex)
             {
@@ -110,7 +108,5 @@ namespace ListenService.Repository.Implements
                 await StartAsync(nodeUrl, contractAddress, chain_id);
             }
         }
-
     }
 }
-

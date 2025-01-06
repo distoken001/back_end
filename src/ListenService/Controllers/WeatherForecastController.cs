@@ -24,10 +24,8 @@ public class WeatherForecastController : ControllerBase
     [HttpGet(Name = "GetWeatherForecast")]
     public async Task<string> Get()
     {
-        Summaries.Select<string,string>(a =>  a);
+        Summaries.Select<string, string>(a => a);
         await _client.StopAsync();
-        return _client.IsStarted.ToString()+_client.WebSocketState;
-
+        return _client.IsStarted.ToString() + _client.WebSocketState;
     }
 }
-

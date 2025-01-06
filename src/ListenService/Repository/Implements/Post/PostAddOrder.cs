@@ -1,30 +1,17 @@
-﻿using Nethereum.Contracts;
+﻿using CommonLibrary.Common.Common;
 using CommonLibrary.DbContext;
-using Nethereum.JsonRpc.WebSocketStreamingClient;
-using Nethereum.RPC.Reactive.Eth.Subscriptions;
-using Newtonsoft.Json;
-using System;
-using System.Reactive.Linq;
-using System.Threading.Tasks;
-using Nethereum.ABI.Model;
-using ListenService.Model;
-using Nethereum.JsonRpc.Client;
 using CommonLibrary.Model.DataEntityModel;
-using CommonLibrary.Common.Common;
+using ListenService.Model;
 using ListenService.Repository.Interfaces;
-using System.Net.WebSockets;
-using Newtonsoft.Json.Linq;
-using Nethereum.Web3;
+using Nethereum.Contracts;
 using Nethereum.RPC;
-using Org.BouncyCastle.Asn1.X509;
-using Microsoft.VisualBasic;
-using Microsoft.AspNetCore.Mvc;
-using Telegram.Bot;
-using Microsoft.EntityFrameworkCore;
-using Org.BouncyCastle.Asn1.Ocsp;
-using System.Numerics;
+using Nethereum.RPC.Reactive.Eth.Subscriptions;
 using Nethereum.Util;
+using Nethereum.Web3;
+using Newtonsoft.Json.Linq;
 using StackExchange.Redis;
+using System.Net.WebSockets;
+using System.Reactive.Linq;
 
 namespace ListenService.Repository.Implements
 {
@@ -35,6 +22,7 @@ namespace ListenService.Repository.Implements
         private readonly ISendMessage _sendMessage;
         private readonly IDatabase _redisDb;
         private readonly ClientManage _clientManage;
+
         public PostAddOrder(IConfiguration configuration, IServiceProvider serviceProvider, ISendMessage sendMessage, IDatabase redisDb, ClientManage clientManage)
         {
             _configuration = configuration;
@@ -43,9 +31,9 @@ namespace ListenService.Repository.Implements
             _redisDb = redisDb;
             _clientManage = clientManage;
         }
+
         public async Task StartAsync(string nodeWss, string nodeHttps, string contractAddress, ChainEnum chain_id)
         {
-
             Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "PostAddOrder程序启动：" + chain_id.ToString());
             try
             {
@@ -94,7 +82,6 @@ namespace ListenService.Repository.Implements
                 {
                     try
                     {
-                    
                         if (!_redisDb.LockTake(log.TransactionHash, 1, TimeSpan.FromSeconds(10)))
                         {
                             return;
@@ -125,8 +112,6 @@ namespace ListenService.Repository.Implements
                         await Task.Delay(2000);
                         await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
                     }
-
-
                 }, async (ex) =>
                 {
                     _clientManage.GetClient().RemoveSubscription(subscription.SubscriptionId);
@@ -135,10 +120,7 @@ namespace ListenService.Repository.Implements
                     await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
                 });
 
-
-
                 await subscription.SubscribeAsync(addPost);
-
             }
             catch (Exception ex)
             {
@@ -149,4 +131,3 @@ namespace ListenService.Repository.Implements
         }
     }
 }
-

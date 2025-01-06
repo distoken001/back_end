@@ -1,11 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore;
 using Serilog;
 using Serilog.Events;
 
@@ -31,17 +24,13 @@ namespace TelegramService
             host.Build().Run();
         }
 
-
-
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
-
             return WebHost.CreateDefaultBuilder(args)
             .ConfigureLogging(builder =>
             {
                 builder.ClearProviders();
                 builder.AddSerilog();
-
             })
             .UseStartup<Startup>();
         }

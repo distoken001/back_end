@@ -1,20 +1,19 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Quartz;
 using Quartz.Spi;
-using Quartz;
-using System;
 
 namespace Jobs
 {
     public class IOCJobFactory : IJobFactory
     {
         private readonly ServiceProvider _serviceProvider;
+
         public IOCJobFactory(ServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
         }
+
         public IJob NewJob(TriggerFiredBundle bundle, IScheduler scheduler)
         {
-
             IJobDetail jobDetail = bundle.JobDetail;
             var data = bundle.JobDetail.JobDataMap;
             var scope = _serviceProvider.CreateScope();
@@ -35,15 +34,12 @@ namespace Jobs
                 SchedulerException se = new SchedulerException($"Problem instantiating class '{jobDetail.JobType.FullName}'", e);
                 throw se;
             }
-
         }
 
         public void ReturnJob(IJob job)
         {
-
             var disposable = job as IDisposable;
             disposable?.Dispose();
-
         }
     }
 }

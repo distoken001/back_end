@@ -1,12 +1,12 @@
 ﻿using CommonLibrary.Common.Common;
+using CommonLibrary.DbContext;
+using CommonLibrary.Model.DataEntityModel;
 using DeMarketAPI.Common.Model.HttpApiModel.RequestModel;
 using DeMarketAPI.Common.Model.HttpApiModel.ResponseModel;
-using CommonLibrary.DbContext;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
-using CommonLibrary.Model.DataEntityModel;
 
 namespace DeMarketAPI.Controllers
 {
@@ -14,7 +14,7 @@ namespace DeMarketAPI.Controllers
     [ApiController]
     public class ChainController : BaseController
     {
-        MySqlMasterDbContext _mySqlMasterDbContext;
+        private MySqlMasterDbContext _mySqlMasterDbContext;
 
         public ChainController(MySqlMasterDbContext mySqlMasterDbContext)
         {
@@ -30,9 +30,9 @@ namespace DeMarketAPI.Controllers
         [ProducesResponseType(typeof(PagedModel<ChainTokenViewModel>), 200)]
         public async Task<JsonResult> list([FromBody] ChainTokenQueryRequest req)
         {
-            var queryEntities = _mySqlMasterDbContext.chain_tokens.Where(p => p.chain_id == req.chainId&&p.status==1).AsNoTracking().AsQueryable();
+            var queryEntities = _mySqlMasterDbContext.chain_tokens.Where(p => p.chain_id == req.chainId && p.status == 1).AsNoTracking().AsQueryable();
             var totalCount = await queryEntities.CountAsync();
-            queryEntities = queryEntities.OrderBy(a=>a.weight).Skip((req.pageIndex - 1) * req.pageSize).Take(req.pageSize);
+            queryEntities = queryEntities.OrderBy(a => a.weight).Skip((req.pageIndex - 1) * req.pageSize).Take(req.pageSize);
             var list = await queryEntities.ToListAsync();
             var viewList = AutoMapperHelper.MapDbEntityToDTO<chain_tokens, ChainTokenViewModel>(list);
             var res = new PagedModel<ChainTokenViewModel>(totalCount, viewList);

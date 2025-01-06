@@ -1,18 +1,17 @@
-﻿using System.Net.WebSockets;
-using CommonLibrary.Common.Common;
+﻿using CommonLibrary.Common.Common;
 using CommonLibrary.DbContext;
 using CommonLibrary.Model.DataEntityModel;
 using ListenService;
 using ListenService.Model;
 using ListenService.Repository.Interfaces;
 using Nethereum.Contracts;
-using Nethereum.JsonRpc.WebSocketStreamingClient;
 using Nethereum.RPC;
 using Nethereum.RPC.Reactive.Eth.Subscriptions;
 using Nethereum.Util;
 using Nethereum.Web3;
 using Newtonsoft.Json.Linq;
 using StackExchange.Redis;
+using System.Net.WebSockets;
 
 public class EbayAddOrder : IEbayAddOrder
 {
@@ -98,8 +97,6 @@ public class EbayAddOrder : IEbayAddOrder
 
     private async Task HandleLogAsync(Nethereum.RPC.Eth.DTOs.FilterLog log, string contractAddress, ChainEnum chainId)
     {
-
-
         if (!_redisDb.LockTake(log.TransactionHash + "EbayADD", 1, TimeSpan.FromSeconds(10)))
         {
             return;

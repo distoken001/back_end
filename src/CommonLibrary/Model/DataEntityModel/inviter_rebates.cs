@@ -1,7 +1,6 @@
-﻿using System;
+﻿using CommonLibrary.Common.Common;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using CommonLibrary.Common.Common;
 
 namespace CommonLibrary.Model.DataEntityModel
 {

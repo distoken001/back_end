@@ -1,28 +1,15 @@
-﻿using Nethereum.Contracts;
+﻿using CommonLibrary.Common.Common;
 using CommonLibrary.DbContext;
-using Nethereum.JsonRpc.WebSocketStreamingClient;
-using Nethereum.RPC.Reactive.Eth.Subscriptions;
-using Newtonsoft.Json;
-using System;
-using System.Reactive.Linq;
-using System.Threading.Tasks;
-using Nethereum.ABI.Model;
 using ListenService.Model;
-using Nethereum.JsonRpc.Client;
-using CommonLibrary.Model.DataEntityModel;
-using CommonLibrary.Common.Common;
 using ListenService.Repository.Interfaces;
-using System.Net.WebSockets;
-using Newtonsoft.Json.Linq;
-using Nethereum.Web3;
+using Nethereum.Contracts;
+using Nethereum.JsonRpc.WebSocketStreamingClient;
 using Nethereum.RPC;
-using Org.BouncyCastle.Asn1.X509;
-using Microsoft.VisualBasic;
-using Microsoft.AspNetCore.Mvc;
-using Telegram.Bot;
-using Microsoft.EntityFrameworkCore;
-using Org.BouncyCastle.Asn1.Ocsp;
+using Nethereum.RPC.Reactive.Eth.Subscriptions;
 using Nethereum.Util;
+using Nethereum.Web3;
+using Newtonsoft.Json.Linq;
+using System.Reactive.Linq;
 
 namespace ListenService.Repository.Implements
 {
@@ -31,12 +18,14 @@ namespace ListenService.Repository.Implements
         private readonly IConfiguration _configuration;
         private readonly IServiceProvider _serviceProvider;
         private readonly ISendMessage _sendMessage;
+
         public AuctionSetOrderInfo(IConfiguration configuration, IServiceProvider serviceProvider, ISendMessage sendMessage)
         {
             _configuration = configuration;
             _serviceProvider = serviceProvider;
             _sendMessage = sendMessage;
         }
+
         public async Task StartAsync(string nodeWss, string nodeHttps, string contractAddress, ChainEnum chain_id)
         {
             StreamingWebSocketClient.ForceCompleteReadTotalMilliseconds = Timeout.Infinite;
@@ -105,20 +94,17 @@ namespace ListenService.Repository.Implements
 
                             _masterDbContext.SaveChanges();
                             _ = _sendMessage.SendMessageAuction((int)decoded.Event.OrderId, chain_id, contractAddress);
-
                         }
                     }
                     else
                     {
                         Console.WriteLine("AuctionSetOrderInfo:Found not standard log");
                     }
-
                 }, onErrorAction);
 
                 await client.StartAsync();
 
                 await subscription.SubscribeAsync(addOrder);
-
             }
             catch (Exception ex)
             {
@@ -130,4 +116,3 @@ namespace ListenService.Repository.Implements
         }
     }
 }
-

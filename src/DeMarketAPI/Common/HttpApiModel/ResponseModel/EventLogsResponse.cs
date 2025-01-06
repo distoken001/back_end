@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CommonLibrary.Common.Common;
+﻿using CommonLibrary.Common.Common;
+using System;
 
 namespace DeMarketAPI.Common.Model.HttpApiModel.ResponseModel
 {

@@ -13,6 +13,7 @@ namespace DeMarketAPI.Common.Model.HttpApiModel.ResponseModel
 
         [JsonProperty("total")]
         public int Total { get; set; }
+
         [JsonProperty("list")]
         public List<TModel> List { get; set; }
     }

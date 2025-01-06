@@ -1,9 +1,6 @@
-﻿using System;
-using Grpc.Core;
+﻿using Nethereum.ABI.FunctionEncoding.Attributes;
 using System.Numerics;
-using Nethereum.ABI.FunctionEncoding.Attributes;
-using CommonLibrary.Common.Common;
-using Nethereum.Util;
+
 namespace ListenService.Model
 {
     [FunctionOutput]
@@ -13,4 +10,3 @@ namespace ListenService.Model
         public BigInteger SellerRatio { get; set; }
     }
 }
-

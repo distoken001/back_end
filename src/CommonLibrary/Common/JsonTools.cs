@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections;
-using System.Dynamic;
-
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
+using System.Collections;
+using System.Dynamic;
 
 namespace CommonLibrary.Common.Common
 {

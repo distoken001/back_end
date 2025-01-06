@@ -1,21 +1,15 @@
 ﻿using CommonLibrary.Common.Common;
-using DeMarketAPI.Common.Model;
+using CommonLibrary.DbContext;
+using CommonLibrary.Model.DataEntityModel;
 using DeMarketAPI.Common.Model.HttpApiModel.RequestModel;
 using DeMarketAPI.Common.Model.HttpApiModel.ResponseModel;
-using CommonLibrary.DbContext;
 using DeMarketAPI.Services.Interfaces;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using Org.BouncyCastle.Ocsp;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using CommonLibrary.Model.DataEntityModel;
-using Microsoft.AspNetCore.Authorization;
 
 namespace DeMarketAPI.Controllers
 {
@@ -23,7 +17,7 @@ namespace DeMarketAPI.Controllers
     [ApiController]
     public class OrderAuctionController : BaseController
     {
-        MySqlMasterDbContext _mySqlMasterDbContext;
+        private MySqlMasterDbContext _mySqlMasterDbContext;
         private readonly ITxCosUploadeService txCosUploadeService;
 
         public OrderAuctionController(MySqlMasterDbContext mySqlMasterDbContext, ITxCosUploadeService txCosUploadeService)
@@ -31,6 +25,7 @@ namespace DeMarketAPI.Controllers
             _mySqlMasterDbContext = mySqlMasterDbContext;
             this.txCosUploadeService = txCosUploadeService;
         }
+
         /// <summary>
         /// 查询拍卖列表
         /// </summary>
@@ -114,6 +109,7 @@ namespace DeMarketAPI.Controllers
                 return Json(new WebApiResult(-1, "服务器异常", ex));
             }
         }
+
         /// <summary>
         /// 猜您喜欢
         /// </summary>
@@ -135,7 +131,6 @@ namespace DeMarketAPI.Controllers
             {
                 queryEntities = queryEntities.Where(p => p.description.Contains(req.description, StringComparison.OrdinalIgnoreCase));
             }
-
 
             if (req.chain_id != 0)
             {
@@ -172,6 +167,7 @@ namespace DeMarketAPI.Controllers
             var res = new PagedModel<OrderAuctionResponse>(totalCount, viewList);
             return Json(new WebApiResult(1, "猜您喜欢" + CurrentLoginAddress, res));
         }
+
         /// <summary>
         /// 收藏（添加收藏或取消收藏）
         /// </summary>
@@ -249,6 +245,7 @@ namespace DeMarketAPI.Controllers
                 return Json(new WebApiResult(-1, "服务器异常", ex));
             }
         }
+
         /// <summary>
         /// 我的收藏
         /// </summary>

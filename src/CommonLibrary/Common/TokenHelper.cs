@@ -1,14 +1,12 @@
 ﻿using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
 namespace CommonLibrary.Common.Common
 {
-    public static class TokenHelper {
-
+    public static class TokenHelper
+    {
         /// <summary>
         /// 生成token
         /// </summary>
@@ -76,5 +74,4 @@ namespace CommonLibrary.Common.Common
             }
         }
     }
-    
 }

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DeMarketAPI.Common.Model.HttpApiModel.RequestModel
+﻿namespace DeMarketAPI.Common.Model.HttpApiModel.RequestModel
 {
     public class CooperateRequest
     {

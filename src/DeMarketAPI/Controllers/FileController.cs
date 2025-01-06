@@ -4,13 +4,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Jpeg;
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats.Jpeg;
-using SixLabors.ImageSharp.Processing;
-using SixLabors.ImageSharp.Formats;
 
 namespace FileUploadExample.Controllers
 {
@@ -19,6 +17,7 @@ namespace FileUploadExample.Controllers
     {
         private readonly IHostEnvironment _environment;
         private readonly IConfiguration _configuration;
+
         public FileController(IHostEnvironment environment, IConfiguration configuration)
         {
             _environment = environment;
@@ -56,6 +55,7 @@ namespace FileUploadExample.Controllers
                 return Json(new WebApiResult(-1, "没有上传的问题"));
             }
         }
+
         [HttpPost("upload_compress")]
         [RequestSizeLimit(200_000_000)]
         public async Task<IActionResult> UploadCompress([FromForm] IFormCollection formCollection)
@@ -82,6 +82,7 @@ namespace FileUploadExample.Controllers
                 return Json(new WebApiResult(-1, "没有上传的问题"));
             }
         }
+
         private void CompressJpegQuality(Stream imageStream, string outputPath)
         {
             var quality = 100;
@@ -113,20 +114,18 @@ namespace FileUploadExample.Controllers
             {
                 quality = 30;
             }
-            else 
+            else
             {
                 quality = 20;
             }
             imageStream.Seek(0, SeekOrigin.Begin); // 将流的位置移回到开头
-                                                   // 
+                                                   //
             using (Image image = Image.Load(imageStream))
             {
                 var encoder = new JpegEncoder { Quality = quality };
                 // 保存图像到指定路径并应用压缩质量
                 image.Save(outputPath, encoder);
             }
-
         }
-
     }
 }

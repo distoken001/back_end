@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace DeMarketAPI.Common.Model.HttpApiModel.ResponseModel
+﻿namespace DeMarketAPI.Common.Model.HttpApiModel.ResponseModel
 {
     public class LoginResponse
     {

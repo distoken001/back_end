@@ -1,6 +1,6 @@
-﻿using System.Reactive.Linq;
-using CommonLibrary.Common.Common;
+﻿using CommonLibrary.Common.Common;
 using ListenService.Repository.Interfaces;
+using System.Reactive.Linq;
 
 namespace ListenService.Service
 {
@@ -8,6 +8,7 @@ namespace ListenService.Service
     {
         private readonly IConfiguration _configuration;
         private readonly IBoxTypeAdded _cardTypeAdded;
+
         public BoxTypeAddedService(IConfiguration configuration, IBoxTypeAdded cardTypeAdded)
         {
             _configuration = configuration;
@@ -56,7 +57,5 @@ namespace ListenService.Service
             cancellationToken.Register(s => ((TaskCompletionSource<bool>)s).SetResult(true), tcs);
             await tcs.Task;
         }
-
-
     }
 }

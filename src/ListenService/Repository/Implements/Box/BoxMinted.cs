@@ -1,12 +1,9 @@
 ﻿using CommonLibrary.Common.Common;
 using CommonLibrary.DbContext;
 using CommonLibrary.Model.DataEntityModel;
-using ListenService.Chains;
 using ListenService.Model;
 using ListenService.Repository.Interfaces;
 using Nethereum.Contracts;
-using Nethereum.JsonRpc.WebSocketStreamingClient;
-using Nethereum.RPC.Reactive;
 using Nethereum.RPC.Reactive.Eth.Subscriptions;
 using StackExchange.Redis;
 using System.Net.WebSockets;
@@ -20,13 +17,15 @@ namespace ListenService.Repository.Implements
         private readonly IServiceProvider _serviceProvider;
         private readonly IDatabase _redisDb;
         private readonly ClientManage _clientManage;
-        public BoxMinted(IConfiguration configuration, IServiceProvider serviceProvider,IDatabase redisDb, ClientManage clientManage)
+
+        public BoxMinted(IConfiguration configuration, IServiceProvider serviceProvider, IDatabase redisDb, ClientManage clientManage)
         {
             _configuration = configuration;
             _serviceProvider = serviceProvider;
             _redisDb = redisDb;
             _clientManage = clientManage;
         }
+
         public async Task StartAsync(string nodeUrl, string contractAddress, ChainEnum chain_id)
         {
             try
@@ -84,34 +83,29 @@ namespace ListenService.Repository.Implements
                             _masterDbContext.SaveChanges();
                         }
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         _clientManage.GetClient().RemoveSubscription(_subscription.SubscriptionId);
                         Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"BoxMinted1:{ex}");
                         await Task.Delay(2000);
                         await StartAsync(nodeUrl, contractAddress, chain_id);
                     }
-                     
-                    
-                }, async(ex) => {
+                }, async (ex) =>
+                {
                     _clientManage.GetClient().RemoveSubscription(_subscription.SubscriptionId);
                     Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"BoxMinted2:{ex}");
                     await Task.Delay(2000);
                     await StartAsync(nodeUrl, contractAddress, chain_id);
                 });
-            
+
                 await _subscription.SubscribeAsync(cardPurchased);
             }
-
             catch (Exception ex)
             {
                 Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"BoxMinted3:{ex}");
                 await Task.Delay(2000);
                 await StartAsync(nodeUrl, contractAddress, chain_id);
             }
-
         }
-
     }
 }
-

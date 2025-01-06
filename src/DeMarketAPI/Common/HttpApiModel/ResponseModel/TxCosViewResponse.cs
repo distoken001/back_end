@@ -4,9 +4,10 @@
     {
         public string ButketName { get; set; }
 
-        public string Region { get; set; }     
+        public string Region { get; set; }
 
-        public TxCosViewResponse() {
+        public TxCosViewResponse()
+        {
             this.ButketName = "demarket-1303108648";
             this.Region = "ap-beijing";
         }

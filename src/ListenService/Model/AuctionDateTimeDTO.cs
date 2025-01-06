@@ -1,8 +1,5 @@
-﻿using System;
-using Grpc.Core;
+﻿using Nethereum.ABI.FunctionEncoding.Attributes;
 using System.Numerics;
-using Nethereum.ABI.FunctionEncoding.Attributes;
-using CommonLibrary.Common.Common;
 
 namespace ListenService.Model
 {
@@ -11,8 +8,8 @@ namespace ListenService.Model
     {
         [Parameter("uint256", "startTime", 1)]
         public BigInteger StartTime { get; set; } // 卖家
+
         [Parameter("uint256", "endTime", 2)]
         public BigInteger EndTime { get; set; } // 买家
     }
 }
-

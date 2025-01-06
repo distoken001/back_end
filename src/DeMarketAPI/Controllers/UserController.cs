@@ -1,22 +1,16 @@
 ﻿using CommonLibrary.Common.Common;
-using DeMarketAPI.Common.Model;
+using CommonLibrary.DbContext;
+using CommonLibrary.Model;
+using CommonLibrary.Model.DataEntityModel;
 using DeMarketAPI.Common.Model.HttpApiModel.RequestModel;
 using DeMarketAPI.Common.Model.HttpApiModel.ResponseModel;
-using CommonLibrary.DbContext;
-using DeMarketAPI.Model;
-using DeMarketAPI.Services;
 using DeMarketAPI.Services.Interfaces;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Nethereum.Contracts.Standards.ERC20.TokenList;
-using Newtonsoft.Json;
-using Org.BouncyCastle.Ocsp;
-using Org.BouncyCastle.Utilities.Encoders;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -24,9 +18,6 @@ using System.Security.Claims;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TencentCloud.Ckafka.V20190819.Models;
-using CommonLibrary.Model;
-using CommonLibrary.Model.DataEntityModel;
-using Microsoft.AspNetCore.Authorization;
 
 namespace DeMarketAPI.Controllers
 {
@@ -34,7 +25,7 @@ namespace DeMarketAPI.Controllers
     [ApiController]
     public class UserController : BaseController
     {
-        MySqlMasterDbContext _mySqlMasterDbContext;
+        private MySqlMasterDbContext _mySqlMasterDbContext;
         private readonly ITxCosUploadeService txCosUploadeService;
         private readonly IConfiguration _configuration;
 
@@ -44,6 +35,7 @@ namespace DeMarketAPI.Controllers
             this.txCosUploadeService = txCosUploadeService;
             _configuration = configuration;
         }
+
         /// <summary>
         /// 登录接口
         /// </summary>
@@ -112,6 +104,7 @@ namespace DeMarketAPI.Controllers
             }
             return new WebApiResult(1, "登录成功", new LoginResponse { token = token, avatar = users.avatar, nick_name = users.nick_name, email = users.email, is_first = is_first, nfts = nfts });
         }
+
         /// <summary>
         /// 重置ip
         /// </summary>
@@ -124,7 +117,6 @@ namespace DeMarketAPI.Controllers
             var users = await _mySqlMasterDbContext.users.FirstOrDefaultAsync(p => p.address.Equals(CurrentLoginAddress, StringComparison.OrdinalIgnoreCase));
             if (users == null)
             {
-
             }
             else
             {
@@ -133,7 +125,6 @@ namespace DeMarketAPI.Controllers
             }
             return new WebApiResult(1, "成功");
         }
-
 
         /// <summary>
         /// 我的详情
@@ -149,6 +140,7 @@ namespace DeMarketAPI.Controllers
             userView.nfts = nfts;
             return new WebApiResult(1, "查询成功", userView);
         }
+
         /// <summary>
         /// 被邀请人列表
         /// </summary>
@@ -217,6 +209,7 @@ namespace DeMarketAPI.Controllers
             await _mySqlMasterDbContext.SaveChangesAsync();
             return new WebApiResult(1, "修改用户", true);
         }
+
         /// <summary>
         /// 修改昵称
         /// </summary>
@@ -251,6 +244,7 @@ namespace DeMarketAPI.Controllers
                 return new WebApiResult(1, "修改成功");
             }
         }
+
         /// <summary>
         /// 修改Telegram账户
         /// </summary>
@@ -269,16 +263,15 @@ namespace DeMarketAPI.Controllers
             {
                 return new WebApiResult(-1, "未找到该用户" + CurrentLoginAddress);
             }
-       
             else
             {
-                var telegramUserChat = _mySqlMasterDbContext.telegram_user_chat.Where(a => a.verify_code == command.VerifyCode && DateTime.Now.AddMinutes(-5) <= a.update_time&&a.state==1).FirstOrDefault();
+                var telegramUserChat = _mySqlMasterDbContext.telegram_user_chat.Where(a => a.verify_code == command.VerifyCode && DateTime.Now.AddMinutes(-5) <= a.update_time && a.state == 1).FirstOrDefault();
                 if (telegramUserChat != null)
                 {
                     telegramUserChat.state = 0;
-                    user.nick_name = telegramUserChat.user_name;user.telegram_id = telegramUserChat.user_id;
+                    user.nick_name = telegramUserChat.user_name; user.telegram_id = telegramUserChat.user_id;
                     await _mySqlMasterDbContext.SaveChangesAsync();
-                    return new WebApiResult(1, "绑定成功",telegramUserChat.user_name);
+                    return new WebApiResult(1, "绑定成功", telegramUserChat.user_name);
                 }
                 else
                 {
@@ -286,6 +279,7 @@ namespace DeMarketAPI.Controllers
                 }
             }
         }
+
         /// <summary>
         /// 修改用户邮箱
         /// </summary>
@@ -312,6 +306,7 @@ namespace DeMarketAPI.Controllers
             await _mySqlMasterDbContext.SaveChangesAsync();
             return new WebApiResult(1, "修改用户", true);
         }
+
         private byte[] ToByteArray(Stream input)
         {
             byte[] buffer = new byte[16 * 1024];
@@ -325,7 +320,6 @@ namespace DeMarketAPI.Controllers
                 return ms.ToArray();
             }
         }
-
 
         private Claim[] ConvertToClaims(object obj)
         {

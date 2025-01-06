@@ -1,36 +1,30 @@
-﻿using CommonLibrary.DbContext;
+﻿using Com.Ctrip.Framework.Apollo;
+using CommonLibrary.DbContext;
+using CommonLibrary.Model;
+using DeMarketAPI.Proxies;
+using DeMarketAPI.Services;
+using DeMarketAPI.Services.Interfaces;
 using DeMarketAPIApis.Filters;
-using DeMarketAPI.Common;
-using DeMarketAPI.Model;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.Swagger;
-using System.Text;
-using DeMarketAPI.Proxies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using Com.Ctrip.Framework.Apollo;
-using DeMarketAPI.Services.Interfaces;
-using DeMarketAPI.Services;
-using AutoMapper;
-using CommonLibrary.Common.Common;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.IO;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Features;
-using CommonLibrary.Model;
+using System.Text;
 
 namespace DeMarketAPI
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration,IHostEnvironment env)
+        public Startup(IConfiguration configuration, IHostEnvironment env)
         {
             //输出debug日志在控制台，方便查找问题
             Com.Ctrip.Framework.Apollo.Logging.LogManager.UseConsoleLogging(Com.Ctrip.Framework.Apollo.Logging.LogLevel.Warning);
@@ -42,13 +36,13 @@ namespace DeMarketAPI
                 .AddDefault();
             Configuration = builder.Build();
         }
+
         public static ServiceProvider privider;
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             //解决文件上传Multipart body length limit 134217728 exceeded
             services.Configure<FormOptions>(x =>
             {
@@ -98,9 +92,10 @@ namespace DeMarketAPI
                 //.AddDbContext<MySqlMasterDbContext>(options => options.UseMySql(identityConn))
                 .AddDbContext<MySqlMasterDbContext>(options => options.UseMySql(deMarketConn, builder => builder.EnableRetryOnFailure()))
                 .AddMvc(
-                options => {
+                options =>
+                {
                     options.Filters.Add<ExLogFilter>();
-                    }
+                }
                 )
                 .AddJsonOptions(options =>
                 {
@@ -144,7 +139,7 @@ namespace DeMarketAPI
                 FileProvider = new PhysicalFileProvider(Path.Combine(grandparentDirectory, "docs")),
                 RequestPath = new PathString("/docs")//对外的访问路径
             });
-           
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -158,7 +153,7 @@ namespace DeMarketAPI
             //Swagger 配置
             if (Configuration["Env"] == "dev" || Configuration["Env"] == "test")
             {
-                //Swagger 配置 
+                //Swagger 配置
                 app.UseSwagger()
               .UseSwaggerUI(c =>
               {

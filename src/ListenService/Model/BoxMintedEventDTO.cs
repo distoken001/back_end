@@ -1,10 +1,8 @@
-﻿using System;
+﻿using Nethereum.ABI.FunctionEncoding.Attributes;
 using System.Numerics;
-using Nethereum.ABI.FunctionEncoding.Attributes;
 
 namespace ListenService.Model
 {
-
     [Event("BoxMinted")]
     public class BoxMintedEventDTO : IEventDTO
     {
@@ -18,4 +16,3 @@ namespace ListenService.Model
         public BigInteger NumberOfBoxs { get; set; }
     }
 }
-

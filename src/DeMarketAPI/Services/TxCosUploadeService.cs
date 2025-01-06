@@ -2,17 +2,10 @@
 using COSXML.Auth;
 using COSXML.Model.Object;
 using DeMarketAPI.Services.Interfaces;
-using Google.Protobuf.WellKnownTypes;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
 using System;
-using System.Threading.Tasks;
-using static COSXML.Model.Tag.ListAllMyBuckets;
-using TencentCloud.Mvj.V20190926.Models;
-using DeMarketAPI.Common.Model.HttpApiModel.RequestModel;
-using DeMarketAPI.Model;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace DeMarketAPI.Services
 {
@@ -25,9 +18,6 @@ namespace DeMarketAPI.Services
         {
             this.configuration = configuration;
         }
-
-
-
 
         public CosXml CosXml
         {
@@ -52,8 +42,6 @@ namespace DeMarketAPI.Services
 
         public async Task<string> Upload(byte[] bytes, string cosName)
         {
-
-
             try
             {
                 var _cosPath = $"de-market/{cosName}";

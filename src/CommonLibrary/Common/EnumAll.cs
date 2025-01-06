@@ -9,22 +9,27 @@
         /// 姓名身份证号码验证
         /// </summary>
         UserInfo = 1,
+
         /// <summary>
         /// 手机号验证
         /// </summary>
         Mobile = 2,
+
         /// <summary>
         /// 银行卡验证
         /// </summary>
         BankCardNum = 3,
+
         /// <summary>
         /// 银行卡归属地
         /// </summary>
         BankLocation = 4,
+
         /// <summary>
         /// 姓名银行卡
         /// </summary>
         NameBank = 5,
+
         /// <summary>
         /// 姓名、身份证号、银行卡和手机号验证
         /// </summary>
@@ -152,6 +157,7 @@
         /// </summary>
         Prod,
     }
+
     public enum OrderStatus
     {
         Initial,//待购买0
@@ -166,7 +172,7 @@
         BuyerRejectCancel,//买家拒绝取消9
         ConsultCancelCompleted//协商取消完成10
     }
-    
+
     public enum OrderAuctionStatus
     {
         Initial, //初始化
@@ -177,12 +183,14 @@
         SellerCancelWithoutDuty, //卖家无责取消
         ConsultCancelCompleted //协商取消完成
     }
+
     public enum OrderAuctionStatusActual
     {
         即将开始 = 1,
         进行中 = 2,
         已结束 = 3
     }
+
     public enum ChainEnum : int
     {
         Tron = -1,
@@ -219,16 +227,17 @@
         HarmonyTest = 1666700000,
         Conflux = 1030,
         OPSepolia = 11155420,
-        Sepolia= 11155111,
-        Base= 8453,
-        Scroll= 534352,
-        ZksyncEra=324,
-        opBNB=204
+        Sepolia = 11155111,
+        Base = 8453,
+        Scroll = 534352,
+        ZksyncEra = 324,
+        opBNB = 204
     }
+
     public enum PostWayEnum : int
     {
-        卖家发布=1,
-        买家发布=2
+        卖家发布 = 1,
+        买家发布 = 2
     }
 
     public enum BelongUserEnum

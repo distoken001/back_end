@@ -1,5 +1,4 @@
-﻿using System;
-using CommonLibrary.Common.Common;
+﻿using CommonLibrary.Common.Common;
 
 namespace ListenService.Repository.Interfaces
 {
@@ -8,4 +7,3 @@ namespace ListenService.Repository.Interfaces
         Task StartAsync(string nodeUrl, string contractAddress, ChainEnum chain_id);
     }
 }
-

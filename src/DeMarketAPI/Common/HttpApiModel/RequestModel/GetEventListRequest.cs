@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace DeMarketAPI.Common.Model.HttpApiModel.RequestModel
+﻿namespace DeMarketAPI.Common.Model.HttpApiModel.RequestModel
 {
     public class GetEventListRequest
     {

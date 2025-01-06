@@ -25,7 +25,7 @@ namespace DeMarketAPI.Services
                     //出异常会执行以下代码
                     onRetry: (exception, ts, context) =>
                     {
-                        Console.WriteLine($"【2】polly.retry：exMsg={ exception.Exception?.Message}, {ts.Minutes * 60 + ts.Seconds}秒后重试");
+                        Console.WriteLine($"【2】polly.retry：exMsg={exception.Exception?.Message}, {ts.Minutes * 60 + ts.Seconds}秒后重试");
                     });
 
             //超时策略
@@ -38,7 +38,7 @@ namespace DeMarketAPI.Services
 
         /// <summary>
         /// 添加可重试的异步HttpClient
-        /// 
+        ///
         /// 网络故障（System.Net.Http.HttpRequestException）
         /// HTTP 5XX状态代码（服务器错误）
         /// HTTP 408状态码（请求超时）
@@ -71,7 +71,7 @@ namespace DeMarketAPI.Services
 
         /// <summary>
         /// 添加可重试的HttpClient
-        /// 
+        ///
         /// 网络故障（System.Net.Http.HttpRequestException）
         /// HTTP 5XX状态代码（服务器错误）
         /// HTTP 408状态码（请求超时）
