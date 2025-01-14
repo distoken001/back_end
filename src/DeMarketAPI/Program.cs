@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
+using NLog.Web;
 using Serilog;
 using Serilog.Events;
 using System;
@@ -54,13 +56,8 @@ namespace DeMarketAPI
             .ConfigureLogging(builder =>
             {
                 builder.ClearProviders();
-                builder.AddSerilog();
-            })
-            //.ConfigureKestrel(options =>
-            //{
-            //    options.ListenAnyIP(5000);
-
-            //})
+                builder.SetMinimumLevel(LogLevel.Trace);
+            }).UseNLog()
             .UseContentRoot(appRoot)
             .UseStartup<Startup>();
         }
