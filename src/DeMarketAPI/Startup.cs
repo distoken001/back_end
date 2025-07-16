@@ -30,10 +30,10 @@ namespace DeMarketAPI
             Com.Ctrip.Framework.Apollo.Logging.LogManager.UseConsoleLogging(Com.Ctrip.Framework.Apollo.Logging.LogLevel.Warning);
             var builder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
-                .AddApollo(configuration.GetSection("apollo"))
-                .AddNamespace("backend.share")
-                .AddDefault();
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true);
+                //.AddApollo(configuration.GetSection("apollo"))
+                //.AddNamespace("backend.share")
+                //.AddDefault();
             Configuration = builder.Build();
         }
 
