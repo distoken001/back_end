@@ -44,22 +44,35 @@ namespace ListenService
                     {
                         try
                         {
-                            if (clientManage.GetClient().WebSocketState != WebSocketState.Open && clientManage.GetClient().WebSocketState != WebSocketState.Connecting)
+                            var currentState = clientManage.GetClient().WebSocketState;
+                            if (currentState != WebSocketState.Open)
                             {
-                                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "连接断开，正在重连..." + clientManage.GetClient().WebSocketState);
+                                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "连接断开，正在重连..." + currentState);
+                                
+                                // 如果状态是关闭状态，先替换客户端
+                                if (currentState == WebSocketState.CloseReceived || currentState == WebSocketState.CloseSent || 
+                                    currentState == WebSocketState.Aborted || currentState == WebSocketState.Closed)
+                                {
+                                    clientManage.ReplaceClient(new WebSocketClientBsc(nodeUrl));
+                                }
+                                
                                 await clientManage.GetClient().StartAsync();
                                 for (int i = 0; i < 5; i++)
                                 {
-                                    if (clientManage.GetClient().WebSocketState == WebSocketState.Open)
+                                    var checkState = clientManage.GetClient().WebSocketState;
+                                    if (checkState == WebSocketState.Open)
                                     {
                                         Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "连接成功！");
                                         break;
                                     }
-                                    if (clientManage.GetClient().WebSocketState == WebSocketState.CloseReceived || clientManage.GetClient().WebSocketState == WebSocketState.CloseSent)
+                                    
+                                    // 如果连接过程中状态变为关闭状态，替换客户端
+                                    if (checkState == WebSocketState.CloseReceived || checkState == WebSocketState.CloseSent || 
+                                        checkState == WebSocketState.Aborted || checkState == WebSocketState.Closed)
                                     {
-                                        //clientManage.GetClient().Dispose();
                                         clientManage.ReplaceClient(new WebSocketClientBsc(nodeUrl));
                                     }
+                                    
                                     await Task.Delay(500).ConfigureAwait(false);
                                 }
                             }
