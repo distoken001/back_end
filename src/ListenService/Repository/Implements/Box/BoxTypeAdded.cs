@@ -18,6 +18,8 @@ namespace ListenService.Repository.Implements
         private readonly IServiceProvider _serviceProvider;
         private readonly IDatabase _redisDb;
         private readonly ClientManage _clientManage;
+        private readonly ReconnectionManager _reconnectionManager;
+        private CancellationTokenSource _cancellationTokenSource;
 
         public BoxTypeAdded(IConfiguration configuration, IServiceProvider serviceProvider, IDatabase redisDb, ClientManage clientManage)
         {
@@ -25,22 +27,19 @@ namespace ListenService.Repository.Implements
             _serviceProvider = serviceProvider;
             _redisDb = redisDb;
             _clientManage = clientManage;
+            _reconnectionManager = new ReconnectionManager(clientManage, "BoxTypeAdded");
+            _cancellationTokenSource = new CancellationTokenSource();
         }
 
         public async Task StartAsync(string nodeUrl, string contractAddress, ChainEnum chain_id)
         {
             try
             {
-                while (true)
+                // 等待连接建立
+                if (!await _reconnectionManager.WaitForConnectionAsync(_cancellationTokenSource.Token))
                 {
-                    if (_clientManage.GetClient().WebSocketState == WebSocketState.Open)
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        await Task.Delay(500).ConfigureAwait(false);
-                    }
+                    Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "BoxTypeAdded等待连接超时");
+                    return;
                 }
                 //// Infura 提供的以太坊节点 WebSocket 地址
                 //string nodeUrl = _configuration["OP:WSS_URL"];
@@ -90,24 +89,22 @@ namespace ListenService.Repository.Implements
                     {
                         _clientManage.GetClient().RemoveSubscription(subscription.SubscriptionId);
                         Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"BoxTypeAdded1:{ex}");
-                        await Task.Delay(2000);
-                        await StartAsync(nodeUrl, contractAddress, chain_id);
+                        await _reconnectionManager.HandleReconnectionAsync(() => StartAsync(nodeUrl, contractAddress, chain_id), _cancellationTokenSource.Token);
                     }
                 }, async (ex) =>
                 {
                     _clientManage.GetClient().RemoveSubscription(subscription.SubscriptionId);
                     Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"BoxTypeAdded2:{ex}");
-                    await Task.Delay(2000);
-                    await StartAsync(nodeUrl, contractAddress, chain_id);
+                    await _reconnectionManager.HandleReconnectionAsync(() => StartAsync(nodeUrl, contractAddress, chain_id), _cancellationTokenSource.Token);
                 });
 
                 await subscription.SubscribeAsync(cardTypeAdded);
+                _reconnectionManager.ResetAttempts(); // 订阅成功，重置重连计数
             }
             catch (Exception ex)
             {
                 Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"BoxTypeAdded3:{ex}");
-                await Task.Delay(2000);
-                await StartAsync(nodeUrl, contractAddress, chain_id);
+                await _reconnectionManager.HandleReconnectionAsync(() => StartAsync(nodeUrl, contractAddress, chain_id), _cancellationTokenSource.Token);
             }
         }
     }
