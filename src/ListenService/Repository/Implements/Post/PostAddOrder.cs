@@ -22,8 +22,6 @@ namespace ListenService.Repository.Implements
         private readonly ISendMessage _sendMessage;
         private readonly IDatabase _redisDb;
         private readonly ClientManage _clientManage;
-        private readonly ReconnectionManager _reconnectionManager;
-        private CancellationTokenSource _cancellationTokenSource;
 
         public PostAddOrder(IConfiguration configuration, IServiceProvider serviceProvider, ISendMessage sendMessage, IDatabase redisDb, ClientManage clientManage)
         {
@@ -32,8 +30,6 @@ namespace ListenService.Repository.Implements
             _sendMessage = sendMessage;
             _redisDb = redisDb;
             _clientManage = clientManage;
-            _reconnectionManager = new ReconnectionManager(clientManage, "PostAddOrder");
-            _cancellationTokenSource = new CancellationTokenSource();
         }
 
         public async Task StartAsync(string nodeWss, string nodeHttps, string contractAddress, ChainEnum chain_id)
@@ -41,11 +37,16 @@ namespace ListenService.Repository.Implements
             Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "PostAddOrder程序启动：" + chain_id.ToString());
             try
             {
-                // 等待连接建立
-                if (!await _reconnectionManager.WaitForConnectionAsync(_cancellationTokenSource.Token))
+                while (true)
                 {
-                    Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "PostAddOrder等待连接超时");
-                    return;
+                    if (_clientManage.GetClient().WebSocketState == WebSocketState.Open)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        await Task.Delay(500).ConfigureAwait(false);
+                    }
                 }
                 // 连接到以太坊区块链网络
                 var web3 = new Web3(nodeHttps);
@@ -108,22 +109,24 @@ namespace ListenService.Repository.Implements
                     {
                         _clientManage.GetClient().RemoveSubscription(subscription.SubscriptionId);
                         Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"PostAddOrder1:{ex}");
-                        await _reconnectionManager.HandleReconnectionAsync(() => StartAsync(nodeWss, nodeHttps, contractAddress, chain_id), _cancellationTokenSource.Token);
+                        await Task.Delay(2000);
+                        await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
                     }
                 }, async (ex) =>
                 {
                     _clientManage.GetClient().RemoveSubscription(subscription.SubscriptionId);
                     Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"PostAddOrder2:{ex}");
-                    await _reconnectionManager.HandleReconnectionAsync(() => StartAsync(nodeWss, nodeHttps, contractAddress, chain_id), _cancellationTokenSource.Token);
+                    await Task.Delay(2000);
+                    await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
                 });
 
                 await subscription.SubscribeAsync(addPost);
-                _reconnectionManager.ResetAttempts(); // 订阅成功，重置重连计数
             }
             catch (Exception ex)
             {
                 Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"PostAddOrder3:{ex} - Chain ID: {chain_id}");
-                await _reconnectionManager.HandleReconnectionAsync(() => StartAsync(nodeWss, nodeHttps, contractAddress, chain_id), _cancellationTokenSource.Token);
+                await Task.Delay(2000);
+                await StartAsync(nodeWss, nodeHttps, contractAddress, chain_id);
             }
         }
     }

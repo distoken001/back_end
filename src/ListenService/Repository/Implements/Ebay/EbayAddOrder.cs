@@ -23,8 +23,6 @@ public class EbayAddOrder : IEbayAddOrder
     private Web3 _web3;   // 将 Web3 实例提升为类成员
     private Contract _contract; // 将 Contract 实例提升为类成员
     private readonly ClientManage _clientManage;
-    private readonly ReconnectionManager _reconnectionManager;
-    private CancellationTokenSource _cancellationTokenSource;
 
     public EbayAddOrder(IConfiguration configuration, IServiceProvider serviceProvider, ISendMessage sendMessage, IDatabase redisDb, ClientManage clientManage)
     {
@@ -33,8 +31,6 @@ public class EbayAddOrder : IEbayAddOrder
         _sendMessage = sendMessage;
         _redisDb = redisDb;
         _clientManage = clientManage;
-        _reconnectionManager = new ReconnectionManager(clientManage, "EbayAddOrder");
-        _cancellationTokenSource = new CancellationTokenSource();
     }
 
     public async Task StartAsync(string nodeWss, string nodeHttps, string contractAddress, ChainEnum chainId)
@@ -43,13 +39,17 @@ public class EbayAddOrder : IEbayAddOrder
 
         try
         {
-            // 等待连接建立
-            if (!await _reconnectionManager.WaitForConnectionAsync(_cancellationTokenSource.Token))
+            while (true)
             {
-                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "EbayAddOrder等待连接超时");
-                return;
+                if (_clientManage.GetClient().WebSocketState == WebSocketState.Open)
+                {
+                    break;
+                }
+                else
+                {
+                    await Task.Delay(500).ConfigureAwait(false);
+                }
             }
-
             // 读取 JSON 文件内容并解析 ABI
             string jsonFilePath = "Ebay.json";
             string jsonString = File.ReadAllText(jsonFilePath);
@@ -74,22 +74,24 @@ public class EbayAddOrder : IEbayAddOrder
                 {
                     _clientManage.GetClient().RemoveSubscription(subscription.SubscriptionId);
                     Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"EbayAddOrder1:{ex}");
-                    await _reconnectionManager.HandleReconnectionAsync(() => StartAsync(nodeWss, nodeHttps, contractAddress, chainId), _cancellationTokenSource.Token);
+                    await Task.Delay(2000);
+                    await StartAsync(nodeWss, nodeHttps, contractAddress, chainId);
                 }
             }, async (ex) =>
             {
                 _clientManage.GetClient().RemoveSubscription(subscription.SubscriptionId);
                 Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"EbayAddOrder2:{ex}");
-                await _reconnectionManager.HandleReconnectionAsync(() => StartAsync(nodeWss, nodeHttps, contractAddress, chainId), _cancellationTokenSource.Token);
+                await Task.Delay(2000);
+                await StartAsync(nodeWss, nodeHttps, contractAddress, chainId);
             });
 
             await subscription.SubscribeAsync(addOrder);
-            _reconnectionManager.ResetAttempts(); // 订阅成功，重置重连计数
         }
         catch (Exception ex)
         {
             Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"EbayAddOrder3:{ex} - Chain ID: {chainId}");
-            await _reconnectionManager.HandleReconnectionAsync(() => StartAsync(nodeWss, nodeHttps, contractAddress, chainId), _cancellationTokenSource.Token);
+            await Task.Delay(2000);
+            await StartAsync(nodeWss, nodeHttps, contractAddress, chainId);
         }
     }
 

@@ -1,6 +1,4 @@
-﻿using System.Net.WebSockets;
-using System.Text;
-using Com.Ctrip.Framework.Apollo;
+﻿using Com.Ctrip.Framework.Apollo;
 using CommonLibrary.DbContext;
 using ListenService.Chains;
 using ListenService.Repository.Implements;
@@ -9,6 +7,8 @@ using ListenService.Service;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
+using System.Net.WebSockets;
+using System.Text;
 
 namespace ListenService
 {
@@ -17,19 +17,13 @@ namespace ListenService
         public Startup(IConfiguration configuration, IHostEnvironment env)
         {
             //输出debug日志在控制台，方便查找问题
-            Com.Ctrip.Framework.Apollo.Logging.LogManager.UseConsoleLogging(
-                Com.Ctrip.Framework.Apollo.Logging.LogLevel.Warning
-            );
+            Com.Ctrip.Framework.Apollo.Logging.LogManager.UseConsoleLogging(Com.Ctrip.Framework.Apollo.Logging.LogLevel.Warning);
             var builder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile(
-                    $"appsettings.{env.EnvironmentName}.json",
-                    optional: true,
-                    reloadOnChange: true
-                );
-            //.AddApollo(configuration.GetSection("apollo"))
-            //.AddNamespace("backend.share")
-            //.AddDefault();
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true);
+                //.AddApollo(configuration.GetSection("apollo"))
+                //.AddNamespace("backend.share")
+                //.AddDefault();
             Configuration = builder.Build();
         }
 
@@ -46,126 +40,37 @@ namespace ListenService
 
                 Task.Run(async () =>
                 {
-                    var reconnectAttempts = 0;
-                    var maxReconnectAttempts = 10;
-                    var baseDelay = 1000; // 基础延迟1秒
-
                     while (true)
                     {
                         try
                         {
-                            var client = clientManage.GetClient();
-                            var currentState = client.WebSocketState;
-
-                            if (
-                                currentState != WebSocketState.Open
-                                && currentState != WebSocketState.Connecting
-                            )
+                            if (clientManage.GetClient().WebSocketState != WebSocketState.Open && clientManage.GetClient().WebSocketState != WebSocketState.Connecting)
                             {
-                                Console.WriteLine(
-                                    DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
-                                        + $"连接断开，正在重连... 状态: {currentState}, 重连次数: {reconnectAttempts + 1}"
-                                );
-
-                                // 如果连接状态是关闭的，先替换客户端
-                                if (
-                                    currentState == WebSocketState.CloseReceived
-                                    || currentState == WebSocketState.CloseSent
-                                    || currentState == WebSocketState.Closed
-                                )
+                                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "连接断开，正在重连..." + clientManage.GetClient().WebSocketState);
+                                await clientManage.GetClient().StartAsync();
+                                for (int i = 0; i < 5; i++)
                                 {
-                                    clientManage.ReplaceClient(new WebSocketClientBsc(nodeUrl));
-                                    client = clientManage.GetClient();
-                                }
-
-                                // 尝试连接
-                                await client.StartAsync();
-
-                                // 等待连接建立，最多等待5秒
-                                var connectionTimeout = 5000;
-                                var startTime = DateTime.Now;
-                                var connected = false;
-
-                                while (
-                                    (DateTime.Now - startTime).TotalMilliseconds < connectionTimeout
-                                )
-                                {
-                                    if (client.WebSocketState == WebSocketState.Open)
+                                    if (clientManage.GetClient().WebSocketState == WebSocketState.Open)
                                     {
-                                        Console.WriteLine(
-                                            DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
-                                                + "连接成功！"
-                                        );
-                                        reconnectAttempts = 0; // 重置重连计数
-                                        connected = true;
+                                        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "连接成功！");
                                         break;
                                     }
-                                    await Task.Delay(200).ConfigureAwait(false);
-                                }
-
-                                if (!connected)
-                                {
-                                    reconnectAttempts++;
-                                    Console.WriteLine(
-                                        DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
-                                            + $"连接超时，重连次数: {reconnectAttempts}"
-                                    );
-
-                                    // 如果重连次数过多，增加延迟时间
-                                    if (reconnectAttempts >= maxReconnectAttempts)
+                                    if (clientManage.GetClient().WebSocketState == WebSocketState.CloseReceived || clientManage.GetClient().WebSocketState == WebSocketState.CloseSent)
                                     {
-                                        var delay = Math.Min(
-                                            baseDelay
-                                                * Math.Pow(
-                                                    2,
-                                                    reconnectAttempts - maxReconnectAttempts
-                                                ),
-                                            30000
-                                        ); // 最大延迟30秒
-                                        Console.WriteLine(
-                                            DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
-                                                + $"重连次数过多，延迟 {delay}ms 后继续重连"
-                                        );
-                                        await Task.Delay((int)delay).ConfigureAwait(false);
-                                        reconnectAttempts = 0; // 重置计数，继续重连
+                                        //clientManage.GetClient().Dispose();
+                                        clientManage.ReplaceClient(new WebSocketClientBsc(nodeUrl));
                                     }
+                                    await Task.Delay(500).ConfigureAwait(false);
                                 }
                             }
-                            else
-                            {
-                                // 连接正常，重置重连计数
-                                reconnectAttempts = 0;
-                            }
-
                             await Task.Delay(1000).ConfigureAwait(false); // 检查间隔
                         }
                         catch (Exception ex)
                         {
-                            reconnectAttempts++;
-                            Console.WriteLine(
-                                DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
-                                    + $"连接错误: {ex.Message}, 重连次数: {reconnectAttempts}"
-                            );
-
-                            // 发生异常时替换客户端
-                            try
-                            {
-                                clientManage.ReplaceClient(new WebSocketClientBsc(nodeUrl));
-                            }
-                            catch (Exception replaceEx)
-                            {
-                                Console.WriteLine(
-                                    DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
-                                        + $"替换客户端失败: {replaceEx.Message}"
-                                );
-                            }
-
-                            // 指数退避延迟
-                            var delay = Math.Min(
-                                baseDelay * Math.Pow(2, Math.Min(reconnectAttempts, 5)),
-                                30000
-                            );
-                            await Task.Delay((int)delay).ConfigureAwait(false);
+                            //clientManage.GetClient().Dispose();
+                            clientManage.ReplaceClient(new WebSocketClientBsc(nodeUrl));
+                            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"连接错误: {ex.Message}");
+                            await Task.Delay(1000).ConfigureAwait(false); // 延迟重试
                         }
                     }
                 });
@@ -175,11 +80,11 @@ namespace ListenService
 
             //解决文件上传Multipart body length limit 134217728 exceeded
             services.Configure<FormOptions>(x =>
-            {
-                x.ValueLengthLimit = int.MaxValue;
-                x.MultipartBodyLengthLimit = int.MaxValue;
-                x.MemoryBufferThreshold = int.MaxValue;
-            });
+             {
+                 x.ValueLengthLimit = int.MaxValue;
+                 x.MultipartBodyLengthLimit = int.MaxValue;
+                 x.MemoryBufferThreshold = int.MaxValue;
+             });
 
             EncodingProvider provider = CodePagesEncodingProvider.Instance;
             Encoding.RegisterProvider(provider);
@@ -191,9 +96,7 @@ namespace ListenService
             services.AddSingleton<IConfiguration>(Configuration);
             //redis
             var redisConn = Configuration["ConnectionStrings:RedisConnection"];
-            services.AddSingleton<IDatabase>(
-                ConnectionMultiplexer.Connect(redisConn).GetDatabase()
-            );
+            services.AddSingleton<IDatabase>(ConnectionMultiplexer.Connect(redisConn).GetDatabase());
 
             services.AddSingleton<IBoxMinted, BoxMinted>();
             services.AddSingleton<IBoxGifted, BoxGifted>();
@@ -230,31 +133,21 @@ namespace ListenService
                 .AddHttpClient()
                 .AddCors(options =>
                 {
-                    options.AddPolicy(
-                        "CorsPolicy",
-                        builder =>
-                        {
-                            builder
-                                .SetIsOriginAllowed((x) => true)
-                                .AllowAnyOrigin()
-                                .AllowAnyHeader()
-                                .AllowAnyMethod();
-                        }
-                    );
+                    options.AddPolicy("CorsPolicy", builder =>
+                    {
+                        builder.SetIsOriginAllowed((x) => true)
+                   .AllowAnyOrigin()
+                   .AllowAnyHeader()
+                   .AllowAnyMethod();
+                    });
                 })
-                //.AddDbContext<MySqlMasterDbContext>(options => options.UseMySql(identityConn))
-                .AddDbContext<MySqlMasterDbContext>(options =>
-                    options.UseMySql(deMarketConn, builder => builder.EnableRetryOnFailure())
-                );
+                 //.AddDbContext<MySqlMasterDbContext>(options => options.UseMySql(identityConn))
+                 .AddDbContext<MySqlMasterDbContext>(options => options.UseMySql(deMarketConn, builder => builder.EnableRetryOnFailure()));
             privider = services.BuildServiceProvider();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(
-            IApplicationBuilder app,
-            IWebHostEnvironment env,
-            Microsoft.AspNetCore.Hosting.IApplicationLifetime lifetime
-        )
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, Microsoft.AspNetCore.Hosting.IApplicationLifetime lifetime)
         {
             app.UseHttpsRedirection();
             app.UseStaticFiles();
