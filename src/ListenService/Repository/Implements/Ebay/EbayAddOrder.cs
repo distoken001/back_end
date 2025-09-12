@@ -13,7 +13,9 @@ using Newtonsoft.Json.Linq;
 using StackExchange.Redis;
 using System.Net.WebSockets;
 
-public class EbayAddOrder : IEbayAddOrder
+namespace ListenService.Repository.Implements
+{
+    public class EbayAddOrder : IEbayAddOrder
 {
     private readonly IConfiguration _configuration;
     private readonly IServiceProvider _serviceProvider;
@@ -23,6 +25,8 @@ public class EbayAddOrder : IEbayAddOrder
     private Web3 _web3;   // 将 Web3 实例提升为类成员
     private Contract _contract; // 将 Contract 实例提升为类成员
     private readonly ClientManage _clientManage;
+    private volatile bool _isRunning = false;
+    private EthLogsObservableSubscription _subscription;
 
     public EbayAddOrder(IConfiguration configuration, IServiceProvider serviceProvider, ISendMessage sendMessage, IDatabase redisDb, ClientManage clientManage)
     {
@@ -35,10 +39,18 @@ public class EbayAddOrder : IEbayAddOrder
 
     public async Task StartAsync(string nodeWss, string nodeHttps, string contractAddress, ChainEnum chainId)
     {
+        if (_isRunning)
+        {
+            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "EbayAddOrder已经在运行中，跳过启动：" + chainId);
+            return;
+        }
+
+        _isRunning = true;
         Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "EbayAddOrder程序启动：" + chainId);
 
         try
         {
+            // 等待WebSocket连接就绪
             while (true)
             {
                 if (_clientManage.GetClient().WebSocketState == WebSocketState.Open)
@@ -50,6 +62,7 @@ public class EbayAddOrder : IEbayAddOrder
                     await Task.Delay(500).ConfigureAwait(false);
                 }
             }
+
             // 读取 JSON 文件内容并解析 ABI
             string jsonFilePath = "Ebay.json";
             string jsonString = File.ReadAllText(jsonFilePath);
@@ -62,34 +75,26 @@ public class EbayAddOrder : IEbayAddOrder
 
             var addOrder = Event<EbayAddOrderEventDTO>.GetEventABI().CreateFilterInput();
             addOrder.Address = new string[] { contractAddress };
-            var subscription = new EthLogsObservableSubscription(_clientManage.GetClient());
+            _subscription = new EthLogsObservableSubscription(_clientManage.GetClient());
 
-            subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
+            _subscription.GetSubscriptionDataResponsesAsObservable().Subscribe(async log =>
             {
-                try
-                {
-                    await HandleLogAsync(log, contractAddress, chainId);
-                }
-                catch (Exception ex)
-                {
-                    _clientManage.GetClient().RemoveSubscription(subscription.SubscriptionId);
-                    Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"EbayAddOrder1:{ex}");
-                    await Task.Delay(2000);
-                    await StartAsync(nodeWss, nodeHttps, contractAddress, chainId);
-                }
+                await HandleLogAsync(log, contractAddress, chainId);
             }, async (ex) =>
             {
-                _clientManage.GetClient().RemoveSubscription(subscription.SubscriptionId);
-                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"EbayAddOrder2:{ex}");
+                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"EbayAddOrder订阅异常:{ex}");
+                _isRunning = false;
                 await Task.Delay(2000);
                 await StartAsync(nodeWss, nodeHttps, contractAddress, chainId);
             });
 
-            await subscription.SubscribeAsync(addOrder);
+            await _subscription.SubscribeAsync(addOrder);
         }
         catch (Exception ex)
         {
-            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"EbayAddOrder3:{ex} - Chain ID: {chainId}");
+            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"EbayAddOrder启动异常:{ex} - Chain ID: {chainId}");
+            _isRunning = false;
+            await CleanupResources();
             await Task.Delay(2000);
             await StartAsync(nodeWss, nodeHttps, contractAddress, chainId);
         }
@@ -162,4 +167,24 @@ public class EbayAddOrder : IEbayAddOrder
             }
         }
     }
+
+    private async Task CleanupResources()
+    {
+        try
+        {
+            if (_subscription != null)
+            {
+                _clientManage.GetClient().RemoveSubscription(_subscription.SubscriptionId);
+                _subscription = null;
+            }
+            
+            _web3 = null;
+            _contract = null;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $"EbayAddOrder清理资源异常:{ex}");
+        }
+    }
+}
 }
