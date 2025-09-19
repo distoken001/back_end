@@ -20,11 +20,12 @@ RUN dotnet restore "src/ListenService/ListenService.csproj"
 COPY . .
 
 # 构建项目
-WORKDIR "/src/ListenService"
+WORKDIR "/src/src/ListenService"
 RUN dotnet build "ListenService.csproj" -c Release -o /app/build
 
 # 发布项目，创建优化的发布版本
 FROM build AS publish
+WORKDIR "/src/src/ListenService"
 RUN dotnet publish "ListenService.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 # 创建最终镜像并运行发布的文件
