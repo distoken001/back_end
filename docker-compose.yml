@@ -1,8 +1,47 @@
-version: '3.4'
+version: '3.8'
 
 services:
-  listenservice:
-    image: ${DOCKER_REGISTRY-}listenservice
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+
+  listenservice1:
+    image: listenservice
     build:
       context: .
-      dockerfile: src/ListenService/Dockerfile
+      dockerfile: src/Dockerfile.listenservice
+    container_name: listenservice1
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - ConnectionStrings__RedisConnection=redis:6379
+    ports:
+      - "9008:9008"
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  listenservice2:
+    image: listenservice
+    build:
+      context: .
+      dockerfile: src/Dockerfile.listenservice
+    container_name: listenservice2
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - ConnectionStrings__RedisConnection=redis:6379
+    ports:
+      - "9009:9008"
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+volumes:
+  redis_data:
