@@ -1,7 +1,7 @@
 # 使用 ASP.NET 6.0 镜像作为基础镜像
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
-EXPOSE 5008
+EXPOSE 9008
 
 
 # 使用 .NET SDK 镜像作为构建镜像
