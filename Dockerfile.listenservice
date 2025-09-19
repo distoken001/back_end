@@ -10,22 +10,22 @@ FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 
 # 将 ListenService 和 CommonLibrary 的项目文件复制到镜像内
-COPY ["src/ListenService/ListenService.csproj", "src/ListenService/"]
-COPY ["src/CommonLibrary/CommonLibrary.csproj", "src/CommonLibrary/"]
+COPY ["src/ListenService/ListenService.csproj", "ListenService/"]
+COPY ["src/CommonLibrary/CommonLibrary.csproj", "CommonLibrary/"]
 
 # 恢复项目的依赖项
-RUN dotnet restore "src/ListenService/ListenService.csproj"
+RUN dotnet restore "ListenService/ListenService.csproj"
 
 # 复制其他源文件到构建上下文中
 COPY . .
 
 # 构建项目
-WORKDIR "/src/src/ListenService"
+WORKDIR "/src/ListenService"
 RUN dotnet build "ListenService.csproj" -c Release -o /app/build
 
 # 发布项目，创建优化的发布版本
 FROM build AS publish
-WORKDIR "/src/src/ListenService"
+WORKDIR "/src/ListenService"
 RUN dotnet publish "ListenService.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 # 创建最终镜像并运行发布的文件
