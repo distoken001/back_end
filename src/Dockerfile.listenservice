@@ -2,6 +2,7 @@
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
 EXPOSE 9008
+ENV ASPNETCORE_URLS=http://+:9008
 
 
 # 使用 .NET SDK 镜像作为构建镜像
