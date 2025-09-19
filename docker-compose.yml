@@ -15,7 +15,7 @@ services:
     image: listenservice
     build:
       context: .
-      dockerfile: src/Dockerfile.listenservice
+      dockerfile: Dockerfile.listenservice
     container_name: listenservice1
     environment:
       - REDIS_HOST=redis
@@ -31,7 +31,7 @@ services:
     image: listenservice
     build:
       context: .
-      dockerfile: src/Dockerfile.listenservice
+      dockerfile: Dockerfile.listenservice
     container_name: listenservice2
     environment:
       - REDIS_HOST=redis
