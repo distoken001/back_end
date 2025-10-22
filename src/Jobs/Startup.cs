@@ -1,9 +1,9 @@
-﻿using Com.Ctrip.Framework.Apollo;
+﻿using System.Text;
+using Com.Ctrip.Framework.Apollo;
 using CommonLibrary.DbContext;
 using Jobs.Jobs;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
-using System.Text;
 
 namespace Jobs
 {
@@ -12,13 +12,19 @@ namespace Jobs
         public Startup(IConfiguration configuration, IHostEnvironment env)
         {
             //输出debug日志在控制台，方便查找问题
-            Com.Ctrip.Framework.Apollo.Logging.LogManager.UseConsoleLogging(Com.Ctrip.Framework.Apollo.Logging.LogLevel.Debug);
+            Com.Ctrip.Framework.Apollo.Logging.LogManager.UseConsoleLogging(
+                Com.Ctrip.Framework.Apollo.Logging.LogLevel.Debug
+            );
             var builder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true);
-                //.AddApollo(configuration.GetSection("apollo"))
-                //.AddNamespace("backend.share")
-                //.AddDefault();
+                .AddJsonFile(
+                    $"appsettings.{env.EnvironmentName}.json",
+                    optional: true,
+                    reloadOnChange: true
+                );
+            //.AddApollo(configuration.GetSection("apollo"))
+            //.AddNamespace("backend.share")
+            //.AddDefault();
             Configuration = builder.Build();
         }
 
@@ -54,26 +60,36 @@ namespace Jobs
                 //.AddSingleton<ApolloConfigs>()
                 .AddCors(options =>
                 {
-                    options.AddPolicy("CorsPolicy", builder =>
-                    {
-                        builder.SetIsOriginAllowed((x) => true)
-                   .AllowAnyOrigin()
-                   .AllowAnyHeader()
-                   .AllowAnyMethod();
-                    });
+                    options.AddPolicy(
+                        "CorsPolicy",
+                        builder =>
+                        {
+                            builder
+                                .SetIsOriginAllowed((x) => true)
+                                .AllowAnyOrigin()
+                                .AllowAnyHeader()
+                                .AllowAnyMethod();
+                        }
+                    );
                 })
                 //.AddDbContext<MySqlMasterDbContext>(options => options.UseMySql(identityConn))
-                .AddDbContext<MySqlMasterDbContext>(options => options.UseMySql(deMarketConn, builder => builder.EnableRetryOnFailure()));
+                .AddDbContext<MySqlMasterDbContext>(options =>
+                    options.UseMySql(deMarketConn, builder => builder.EnableRetryOnFailure())
+                );
 
             privider = services.BuildServiceProvider();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, Microsoft.AspNetCore.Hosting.IApplicationLifetime lifetime)
+        public void Configure(
+            IApplicationBuilder app,
+            IWebHostEnvironment env,
+            Microsoft.AspNetCore.Hosting.IApplicationLifetime lifetime
+        )
         {
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            string grandparentDirectory = Directory.GetParent(Directory.GetParent(env.ContentRootPath).FullName).FullName;
+            //string grandparentDirectory = Directory.GetParent(Directory.GetParent(env.ContentRootPath).FullName).FullName;
             //定时任务
             QuartzStartup.Run().Wait();
             if (env.IsDevelopment())
