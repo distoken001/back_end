@@ -4,6 +4,9 @@ WORKDIR /app
 EXPOSE 80
 ENV ASPNETCORE_URLS=http://+:80
 
+# 创建日志目录
+RUN mkdir -p /app/logs
+
 # 使用 .NET SDK 镜像作为构建镜像
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
@@ -14,9 +17,11 @@ COPY ["src/CommonLibrary/CommonLibrary.csproj", "CommonLibrary/"]
 
 # 恢复项目的依赖项
 RUN dotnet restore "TelegramService/TelegramService.csproj"
+RUN dotnet restore "CommonLibrary/CommonLibrary.csproj"
 
-# 复制其他源文件到构建上下文中
-COPY . .
+# 复制源文件到构建上下文中（只复制必要的源文件）
+COPY ["src/TelegramService/", "TelegramService/"]
+COPY ["src/CommonLibrary/", "CommonLibrary/"]
 
 # 构建项目
 WORKDIR "/src/TelegramService"
