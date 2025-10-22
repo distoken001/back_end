@@ -10,20 +10,20 @@ namespace TelegramService
     {
         public Startup(IConfiguration configuration, IHostEnvironment env)
         {
-            //输出debug日志在控制台，方便查找问题
-            Com.Ctrip.Framework.Apollo.Logging.LogManager.UseConsoleLogging(
-                Com.Ctrip.Framework.Apollo.Logging.LogLevel.Debug
-            );
+            ////输出debug日志在控制台，方便查找问题
+            //Com.Ctrip.Framework.Apollo.Logging.LogManager.UseConsoleLogging(
+            //    Com.Ctrip.Framework.Apollo.Logging.LogLevel.Debug
+            //);
             var builder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile(
                     $"appsettings.{env.EnvironmentName}.json",
                     optional: true,
                     reloadOnChange: true
-                )
-                .AddApollo(configuration.GetSection("apollo"))
-                .AddNamespace("backend.share")
-                .AddDefault();
+                );
+            //.AddApollo(configuration.GetSection("apollo"))
+            //.AddNamespace("backend.share")
+            //.AddDefault();
             Configuration = builder.Build();
         }
 
