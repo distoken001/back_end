@@ -88,8 +88,9 @@ namespace Jobs
         )
         {
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
-            //string grandparentDirectory = Directory.GetParent(Directory.GetParent(env.ContentRootPath).FullName).FullName;
+            //string grandparentDirectory = Directory
+            //    .GetParent(Directory.GetParent(env.ContentRootPath).FullName)
+            //    .FullName;
             //定时任务
             QuartzStartup.Run().Wait();
             if (env.IsDevelopment())

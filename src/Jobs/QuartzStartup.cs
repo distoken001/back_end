@@ -1,9 +1,9 @@
-﻿using CommonLibrary.Common.Common;
+﻿using System.Collections.Specialized;
+using System.Text;
+using CommonLibrary.Common.Common;
 using Quartz;
 using Quartz.Impl;
 using Quartz.Impl.Matchers;
-using System.Collections.Specialized;
-using System.Text;
 
 namespace Jobs
 {
@@ -17,8 +17,10 @@ namespace Jobs
             {
                 var properties = new NameValueCollection
                 {
-                    ["quartz.plugin.triggHistory.type"] = "Quartz.Plugin.History.LoggingJobHistoryPlugin, Quartz.Plugins",
-                    ["quartz.plugin.jobInitializer.type"] = "Quartz.Plugin.Xml.XMLSchedulingDataProcessorPlugin, Quartz.Plugins",
+                    ["quartz.plugin.triggHistory.type"] =
+                        "Quartz.Plugin.History.LoggingJobHistoryPlugin, Quartz.Plugins",
+                    ["quartz.plugin.jobInitializer.type"] =
+                        "Quartz.Plugin.Xml.XMLSchedulingDataProcessorPlugin, Quartz.Plugins",
                     ["quartz.plugin.jobInitializer.fileNames"] = "Jobs.xml",
                     ["quartz.plugin.jobInitializer.failOnFileNotFound"] = "true",
                     ["quartz.plugin.jobInitializer.scanInterval"] = "120",
@@ -71,7 +73,9 @@ namespace Jobs
             var result = new List<JobState>();
             foreach (var jobGroupName in jobGroupNames)
             {
-                var jobKeys = await scheduler.GetJobKeys(GroupMatcher<JobKey>.GroupEquals(jobGroupName));
+                var jobKeys = await scheduler.GetJobKeys(
+                    GroupMatcher<JobKey>.GroupEquals(jobGroupName)
+                );
                 foreach (var jobKey in jobKeys)
                 {
                     string jobName = jobKey.Name;
@@ -99,11 +103,13 @@ namespace Jobs
         {
             var result = new List<string>();
             var currentlyExecutingJobs = await scheduler.GetCurrentlyExecutingJobs();
-            currentlyExecutingJobs.ToList().ForEach(e =>
-            {
-                var jobName = e.Trigger.JobKey.Name;
-                result.Add(jobName);
-            });
+            currentlyExecutingJobs
+                .ToList()
+                .ForEach(e =>
+                {
+                    var jobName = e.Trigger.JobKey.Name;
+                    result.Add(jobName);
+                });
             return result;
         }
 
@@ -145,7 +151,9 @@ namespace Jobs
         /// <returns></returns>
         public static async Task<string> GetBuiltyCurrentlyExecutingJobsAsync()
         {
-            var result = (await QuartzStartup.GetCurrentlyExecutingJobsAsync()).OrderBy(e => e).ToList();
+            var result = (await QuartzStartup.GetCurrentlyExecutingJobsAsync())
+                .OrderBy(e => e)
+                .ToList();
             var str = new StringBuilder();
             result.ForEach(e =>
             {
@@ -166,15 +174,21 @@ namespace Jobs
             {
                 if (e.state == Quartz.TriggerState.Blocked)
                 {
-                    str.Append($"<p>{e.job} :  <span style='background-color:red;'>{QuartzStartup.TranslateTriggerState(e.state)}</span></p>");
+                    str.Append(
+                        $"<p>{e.job} :  <span style='background-color:red;'>{QuartzStartup.TranslateTriggerState(e.state)}</span></p>"
+                    );
                 }
                 else if (e.state == Quartz.TriggerState.Paused)
                 {
-                    str.Append($"<p>{e.job} :  <span  style='background-color:green;'>{QuartzStartup.TranslateTriggerState(e.state)}</span></p>");
+                    str.Append(
+                        $"<p>{e.job} :  <span  style='background-color:green;'>{QuartzStartup.TranslateTriggerState(e.state)}</span></p>"
+                    );
                 }
                 else
                 {
-                    str.Append($"<p>{e.job} : <span style='background-color:yellow;'>{QuartzStartup.TranslateTriggerState(e.state)}</span></p>");
+                    str.Append(
+                        $"<p>{e.job} : <span style='background-color:yellow;'>{QuartzStartup.TranslateTriggerState(e.state)}</span></p>"
+                    );
                 }
             });
             return str.ToString();
