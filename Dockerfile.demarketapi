@@ -1,0 +1,40 @@
+# 使用 ASP.NET 6.0 镜像作为基础镜像
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+WORKDIR /app
+EXPOSE 80
+EXPOSE 443
+ENV ASPNETCORE_URLS=http://+:80
+
+# 创建日志目录
+RUN mkdir -p /app/logs
+
+# 使用 .NET SDK 镜像作为构建镜像
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+WORKDIR /src
+
+# 将 DeMarketAPI 和 CommonLibrary 的项目文件复制到镜像内
+COPY ["src/DeMarketAPI/DeMarketAPI.csproj", "DeMarketAPI/"]
+COPY ["src/CommonLibrary/CommonLibrary.csproj", "CommonLibrary/"]
+
+# 恢复项目的依赖项
+RUN dotnet restore "DeMarketAPI/DeMarketAPI.csproj"
+RUN dotnet restore "CommonLibrary/CommonLibrary.csproj"
+
+# 复制源文件到构建上下文中（只复制必要的源文件）
+COPY ["src/DeMarketAPI/", "DeMarketAPI/"]
+COPY ["src/CommonLibrary/", "CommonLibrary/"]
+
+# 构建项目
+WORKDIR "/src/DeMarketAPI"
+RUN dotnet build "DeMarketAPI.csproj" -c Release -o /app/build
+
+# 发布项目，创建优化的发布版本
+FROM build AS publish
+WORKDIR "/src/DeMarketAPI"
+RUN dotnet publish "DeMarketAPI.csproj" -c Release -o /app/publish /p:UseAppHost=false
+
+# 创建最终镜像并运行发布的文件
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "DeMarketAPI.dll"]

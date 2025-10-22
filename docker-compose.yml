@@ -10,6 +10,8 @@ services:
       - redis_data:/data
     restart: unless-stopped
     command: redis-server --appendonly yes
+    networks:
+      - app-network
 
   listen_service_1:
     image: listen_service
@@ -26,6 +28,8 @@ services:
     depends_on:
       - redis
     restart: unless-stopped
+    networks:
+      - app-network
 
   listen_service_2:
     image: listen_service
@@ -42,6 +46,8 @@ services:
     depends_on:
       - redis
     restart: unless-stopped
+    networks:
+      - app-network
 
   jobs:
     image: jobs
@@ -56,6 +62,8 @@ services:
     depends_on:
       - redis
     restart: unless-stopped
+    networks:
+      - app-network
 
   telegram:
     image: telegram
@@ -70,6 +78,58 @@ services:
     depends_on:
       - redis
     restart: unless-stopped
+    networks:
+      - app-network
+
+  demarket_api:
+    image: demarket_api
+    build:
+      context: .
+      dockerfile: Dockerfile.demarketapi
+    container_name: demarket_api
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - ConnectionStrings__RedisConnection=redis:6379
+      - ASPNETCORE_ENVIRONMENT=Production
+    depends_on:
+      - redis
+    restart: unless-stopped
+    # 不直接暴露端口，通过 nginx 代理访问
+    networks:
+      - app-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf.initial:/etc/nginx/nginx.conf:ro
+      - ./certbot/conf:/etc/letsencrypt:ro
+      - ./certbot/www:/var/www/certbot:ro
+      - nginx_logs:/var/log/nginx
+    depends_on:
+      - demarket_api
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    networks:
+      - app-network
 
 volumes:
   redis_data:
+  nginx_logs:
+
+networks:
+  app-network:
+    driver: bridge
