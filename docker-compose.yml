@@ -16,7 +16,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.listenservice
-    container_name: listenservice1
+    container_name: listenservice_1
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
@@ -32,7 +32,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.listenservice
-    container_name: listenservice2
+    container_name: listenservice_2
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
