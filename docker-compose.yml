@@ -43,6 +43,33 @@ services:
       - redis
     restart: unless-stopped
 
+  # jobs:
+  #   image: jobs
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.jobs
+  #   container_name: jobs
+  #   environment:
+  #     - REDIS_HOST=redis
+  #     - REDIS_PORT=6379
+  #     - ConnectionStrings__RedisConnection=redis:6379
+  #   depends_on:
+  #     - redis
+  #   restart: unless-stopped
+
+  # telegram:
+  #   image: telegram
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.telegram
+  #   container_name: telegram
+  #   environment:
+  #     - REDIS_HOST=redis
+  #     - REDIS_PORT=6379
+  #     - ConnectionStrings__RedisConnection=redis:6379
+  #   depends_on:
+  #     - redis
+  #   restart: unless-stopped
 
 volumes:
   redis_data:
