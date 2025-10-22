@@ -21,8 +21,8 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - ConnectionStrings__RedisConnection=redis:6379
-    ports:
-      - "9008:9008"
+    # ports:
+    #   - "9008:9008"
     depends_on:
       - redis
     restart: unless-stopped
@@ -37,8 +37,8 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - ConnectionStrings__RedisConnection=redis:6379
-    ports:
-      - "9009:9008"
+    # ports:
+    #   - "9009:9008"
     depends_on:
       - redis
     restart: unless-stopped
