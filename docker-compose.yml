@@ -71,5 +71,59 @@ services:
       - redis
     restart: unless-stopped
 
+  demarket_api:
+    image: demarket_api
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: demarket_api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - ConnectionStrings__RedisConnection=redis:6379
+    depends_on:
+      - redis
+    restart: unless-stopped
+    expose:
+      - "80"
+
+  demarket_frontend:
+    image: demarket_frontend
+    build:
+      context: ../front_end
+      dockerfile: Dockerfile
+    container_name: demarket_frontend
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+    expose:
+      - "3000"
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx_proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/certbot/conf:/etc/letsencrypt
+      - ./nginx/certbot/www:/var/www/certbot
+      - ./nginx/logs:/var/log/nginx
+    depends_on:
+      - demarket_api
+      - demarket_frontend
+    restart: unless-stopped
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./nginx/certbot/conf:/etc/letsencrypt
+      - ./nginx/certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+
 volumes:
   redis_data:
