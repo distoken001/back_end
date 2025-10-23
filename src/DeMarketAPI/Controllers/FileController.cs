@@ -1,4 +1,7 @@
-﻿using DeMarketAPI.Common.Model.HttpApiModel.ResponseModel;
+﻿using System;
+using System.IO;
+using System.Threading.Tasks;
+using DeMarketAPI.Common.Model.HttpApiModel.ResponseModel;
 using DeMarketAPI.Controllers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -6,9 +9,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Jpeg;
-using System;
-using System.IO;
-using System.Threading.Tasks;
 
 namespace FileUploadExample.Controllers
 {
@@ -26,7 +26,10 @@ namespace FileUploadExample.Controllers
 
         [HttpPost("upload")]
         [RequestSizeLimit(200_000_000)]
-        public async Task<IActionResult> UploadFile([FromForm] IFormCollection formCollection, string fileName = null)
+        public async Task<IActionResult> UploadFile(
+            [FromForm] IFormCollection formCollection,
+            string fileName = null
+        )
         {
             if ((formCollection == null || formCollection.Files.Count == 0))
             {
@@ -37,7 +40,11 @@ namespace FileUploadExample.Controllers
             {
                 if (string.IsNullOrEmpty(fileName))
                 {
-                    fileName = string.Format("{0}{1}", Guid.NewGuid().ToString(), Path.GetExtension(file.FileName));
+                    fileName = string.Format(
+                        "{0}{1}",
+                        Guid.NewGuid().ToString(),
+                        Path.GetExtension(file.FileName)
+                    );
                 }
                 var uploadDirectory = Path.Combine(_environment.ContentRootPath, "docs"); // 修改为当前目录下的docs文件夹
                 var filePath = Path.Combine(uploadDirectory, fileName);
@@ -66,9 +73,21 @@ namespace FileUploadExample.Controllers
             var file = formCollection.Files[0];
             if (file.Length > 0)
             {
-                var fileName = string.Format("{0}{1}", Guid.NewGuid().ToString(), Path.GetExtension(file.FileName));
+                var fileName = string.Format(
+                    "{0}{1}",
+                    Guid.NewGuid().ToString(),
+                    Path.GetExtension(file.FileName)
+                );
                 _ = UploadFile(formCollection, fileName);
-                var uploadDirectory = Path.Combine(_environment.ContentRootPath, "docs", "compress"); // 修改为当前目录下的docs/compress文件夹
+                var uploadDirectory = Path.Combine(
+                    _environment.ContentRootPath,
+                    "docs",
+                    "compress"
+                ); // 修改为当前目录下的docs/compress文件夹
+                if (!Directory.Exists(uploadDirectory))
+                {
+                    Directory.CreateDirectory(uploadDirectory);
+                }
                 var filePath = Path.Combine(uploadDirectory, fileName);
                 string fileExtension = Path.GetExtension(fileName).TrimStart('.').ToLower();
                 CompressJpegQuality(file.OpenReadStream(), filePath);
@@ -117,7 +136,7 @@ namespace FileUploadExample.Controllers
                 quality = 20;
             }
             imageStream.Seek(0, SeekOrigin.Begin); // 将流的位置移回到开头
-                                                   //
+            //
             using (Image image = Image.Load(imageStream))
             {
                 var encoder = new JpegEncoder { Quality = quality };
