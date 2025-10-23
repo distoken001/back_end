@@ -128,15 +128,15 @@ namespace DeMarketAPI
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, Microsoft.AspNetCore.Hosting.IApplicationLifetime lifetime)
         {
             app.UseHttpsRedirection();
-            string grandparentDirectory = Directory.GetParent(Directory.GetParent(env.ContentRootPath).FullName).FullName;
+            string docsDirectory = Path.Combine(env.ContentRootPath, "docs");
             //app.UseDirectoryBrowser(new DirectoryBrowserOptions
             //{
-            //    FileProvider = new PhysicalFileProvider(Path.Combine(grandparentDirectory, "uploads")),
+            //    FileProvider = new PhysicalFileProvider(Path.Combine(docsDirectory, "uploads")),
             //    RequestPath = "/uploads"
             //});
             app.UseStaticFiles(new StaticFileOptions()
             {
-                FileProvider = new PhysicalFileProvider(Path.Combine(grandparentDirectory, "docs")),
+                FileProvider = new PhysicalFileProvider(docsDirectory),
                 RequestPath = new PathString("/docs")//对外的访问路径
             });
 

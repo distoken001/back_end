@@ -39,8 +39,7 @@ namespace FileUploadExample.Controllers
                 {
                     fileName = string.Format("{0}{1}", Guid.NewGuid().ToString(), Path.GetExtension(file.FileName));
                 }
-                string grandparentDirectory = Directory.GetParent(Directory.GetParent(_environment.ContentRootPath).FullName).FullName;
-                var uploadDirectory = Path.Combine(grandparentDirectory, "docs"); // 修改为你选择的目录
+                var uploadDirectory = Path.Combine(_environment.ContentRootPath, "docs"); // 修改为当前目录下的docs文件夹
                 var filePath = Path.Combine(uploadDirectory, fileName);
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
@@ -69,8 +68,7 @@ namespace FileUploadExample.Controllers
             {
                 var fileName = string.Format("{0}{1}", Guid.NewGuid().ToString(), Path.GetExtension(file.FileName));
                 _ = UploadFile(formCollection, fileName);
-                string grandparentDirectory = Directory.GetParent(Directory.GetParent(_environment.ContentRootPath).FullName).FullName;
-                var uploadDirectory = Path.Combine(grandparentDirectory, "docs/compress"); // 修改为你选择的目录
+                var uploadDirectory = Path.Combine(_environment.ContentRootPath, "docs", "compress"); // 修改为当前目录下的docs/compress文件夹
                 var filePath = Path.Combine(uploadDirectory, fileName);
                 string fileExtension = Path.GetExtension(fileName).TrimStart('.').ToLower();
                 CompressJpegQuality(file.OpenReadStream(), filePath);
