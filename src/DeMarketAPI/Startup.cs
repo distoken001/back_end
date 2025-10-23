@@ -82,6 +82,9 @@ namespace DeMarketAPI
             services.AddControllers();
             services.AddDirectoryBrowser();
             services.AddSingleton<IConfiguration>(Configuration);
+            
+            // 添加健康检查服务
+            services.AddHealthChecks();
             services.AddScoped<ExLogFilter>();
             services.AddSingleton<ITxCosUploadeService, TxCosUploadeService>();
             services.AddScoped<EmailProxy>();
@@ -204,7 +207,12 @@ namespace DeMarketAPI
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseEndpoints(routes => routes.MapControllers());
+            app.UseEndpoints(routes => 
+            {
+                routes.MapControllers();
+                // 添加健康检查端点
+                routes.MapHealthChecks("/api/health");
+            });
             //   app.UseMvc(routes => routes.MapRoute(name: "default", template: "api/{controller=Home}/{action=Index}/{id?}"));
 
             //app.RegisterConsul(lifetime, Configuration, Configuration[StringConstant.DeMarketServiceConsulServiceName]);
