@@ -87,7 +87,7 @@ services:
       context: .
       dockerfile: Dockerfile.demarketapi
     container_name: demarket_api
-            ports:
+    ports:
       - "5000:80"
     environment:
       - REDIS_HOST=redis
