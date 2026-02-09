@@ -363,7 +363,7 @@ namespace ListenService.Repository.Implements
             {
                 try
                 {
-                    client.DefaultRequestHeaders.Add("X-API-KEY", "UjRsgQ1KwcjroH11");
+                    client.DefaultRequestHeaders.Add("X-API-KEY", "tX1hJsBxwgvADek1");
                     foreach (var chatID in chatIDs)
                     {
                         reqeust.group_id = chatID;
