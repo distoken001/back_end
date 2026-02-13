@@ -197,7 +197,7 @@ namespace DeMarketAPI.Controllers
                 var user_seller = users.FirstOrDefault(c => c.address.Equals(a.seller, StringComparison.OrdinalIgnoreCase));
                 if (user_seller != null)
                 {
-                    a.seller_nick = user_seller.nick_name ?? "";
+                    a.seller_telegram_user_name = user_seller.telegram_user_name ?? "";
                     a.seller_email = user_seller.email ?? "";
                     a.seller_nfts = user_nfts.Where(un => un.address.Equals(user_seller.address)).Select(a => a.nft).ToArray();
                 }
@@ -205,7 +205,7 @@ namespace DeMarketAPI.Controllers
                 var user_buyer = users_buy.FirstOrDefault(c => c.address.Equals(a.buyer, StringComparison.OrdinalIgnoreCase));
                 if (user_buyer != null)
                 {
-                    a.buyer_nick = user_buyer.nick_name ?? "";
+                    a.buyer_telegram_user_name = user_buyer.telegram_user_name ?? "";
                     a.buyer_email = user_buyer.email ?? "";
                     a.buyer_nfts = user_nfts.Where(un => un.address.Equals(user_buyer.address)).Select(a => a.nft).ToArray();
                 }
@@ -270,14 +270,14 @@ namespace DeMarketAPI.Controllers
 
                 if (user_seller != null)
                 {
-                    a.seller_nick = user_seller.nick_name ?? "";
+                    a.seller_telegram_user_name = user_seller.telegram_user_name ?? "";
                     a.seller_email = user_seller.email ?? "";
                     a.seller_nfts = user_nfts.Where(un => un.address.Equals(user_seller.address)).Select(a => a.nft).ToArray();
                 }
                 var user_buyer = users_buy.FirstOrDefault(c => c.address.Equals(a.buyer, StringComparison.OrdinalIgnoreCase));
                 if (user_buyer != null)
                 {
-                    a.buyer_nick = user_buyer.nick_name ?? "";
+                    a.buyer_telegram_user_name = user_buyer.telegram_user_name ?? "";
                     a.buyer_email = user_buyer.email ?? "";
                     a.buyer_nfts = user_nfts.Where(un => un.address.Equals(user_buyer.address)).Select(a => a.nft).ToArray();
                 }
@@ -346,7 +346,7 @@ namespace DeMarketAPI.Controllers
                 var user_seller = _mySqlMasterDbContext.users.FirstOrDefault(c => c.address.Equals(re.seller, StringComparison.OrdinalIgnoreCase));
                 if (user_seller != null)
                 {
-                    re.seller_nick = user_seller.nick_name ?? "";
+                    re.seller_telegram_user_name = user_seller.telegram_user_name ?? "";
                     re.seller_email = user_seller.email ?? "";
                     re.seller_nfts = _mySqlMasterDbContext.user_nft.Where(un => un.status == 1 && un.address.Equals(user_seller.address)).Select(a => a.nft).ToArray();
                 }
@@ -354,7 +354,7 @@ namespace DeMarketAPI.Controllers
                 var user_buyer = _mySqlMasterDbContext.users.FirstOrDefault(c => c.address.Equals(re.buyer, StringComparison.OrdinalIgnoreCase));
                 if (user_buyer != null)
                 {
-                    re.buyer_nick = user_buyer.nick_name ?? "";
+                    re.buyer_telegram_user_name = user_buyer.telegram_user_name ?? "";
                     re.buyer_email = user_buyer.email ?? "";
                     re.buyer_nfts = _mySqlMasterDbContext.user_nft.Where(un => un.status == 1 && un.address.Equals(user_buyer.address)).Select(a => a.nft).ToArray();
                 }
@@ -405,7 +405,7 @@ namespace DeMarketAPI.Controllers
                     var user_seller = users.FirstOrDefault(c => c.address.Equals(a.seller, StringComparison.OrdinalIgnoreCase));
                     if (user_seller != null)
                     {
-                        a.seller_nick = user_seller.nick_name ?? "";
+                        a.seller_telegram_user_name = user_seller.telegram_user_name ?? "";
                         a.seller_email = user_seller.email ?? "";
                         a.seller_nfts = user_nfts.Where(un => un.address.Equals(user_seller.address)).Select(a => a.nft).ToArray();
                     }
@@ -413,7 +413,7 @@ namespace DeMarketAPI.Controllers
                     var user_buyer = users.FirstOrDefault(c => c.address.Equals(a.buyer, StringComparison.OrdinalIgnoreCase));
                     if (user_buyer != null)
                     {
-                        a.buyer_nick = user_buyer.nick_name ?? "";
+                        a.buyer_telegram_user_name = user_buyer.telegram_user_name ?? "";
                         a.buyer_email = user_buyer.email ?? "";
                         a.buyer_nfts = user_nfts.Where(un => un.address.Equals(user_buyer.address)).Select(a => a.nft).ToArray();
                     }
