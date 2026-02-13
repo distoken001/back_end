@@ -55,7 +55,7 @@ namespace DeMarketAPI.Common.Model.HttpApiModel.ResponseModel
         /// 社区名称
         /// </summary>
         public string club_name { get; set; }
-
+        public string telegram_user_name { get; set; }
         /// <summary>
         /// 支持哪几种发布商品的方式1:个人 2:店铺 4:社区 注：相加为权限
         /// </summary>
