@@ -266,7 +266,7 @@ namespace DeMarketAPI.Controllers
             else
             {
                 Console.WriteLine("NOW:" + DateTime.Now.ToString());
-                var telegramUserChat = _mySqlMasterDbContext.telegram_user_chat.Where(a => a.verify_code == command.VerifyCode && DateTime.Now.AddMinutes(-5) <= a.update_time && a.state == 1).FirstOrDefault();
+                var telegramUserChat = _mySqlMasterDbContext.telegram_user_chat.Where(a => a.verify_code.Equals(command.VerifyCode) && a.update_time>= DateTime.Now.AddMinutes(-5) && a.state == 1).FirstOrDefault();
                 if (telegramUserChat != null)
                 {
                     telegramUserChat.state = 0;
