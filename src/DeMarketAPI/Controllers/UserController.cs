@@ -265,8 +265,9 @@ namespace DeMarketAPI.Controllers
             }
             else
             {
-                Console.WriteLine("NOW:" + DateTime.Now.ToString());
-                var telegramUserChat = _mySqlMasterDbContext.telegram_user_chat.Where(a => a.verify_code.Equals(command.VerifyCode) && a.state == 1).FirstOrDefault();
+                var fiveMinutesAgo = DateTime.Now.AddMinutes(-5);
+                Console.WriteLine("FiveMinutesAgo:" + fiveMinutesAgo.ToString());
+                var telegramUserChat = _mySqlMasterDbContext.telegram_user_chat.Where(a => a.verify_code.Equals(command.VerifyCode) && a.update_time>= fiveMinutesAgo && a.state == 1).FirstOrDefault();
                 if (telegramUserChat != null)
                 {
                     telegramUserChat.state = 0;
