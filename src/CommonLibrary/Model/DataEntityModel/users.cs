@@ -93,5 +93,7 @@ namespace CommonLibrary.Model.DataEntityModel
         /// 电报id
         /// </summary>
         public long? telegram_id { get; set; }
+
+        public string telegram_user_name { get;set; }
     }
 }

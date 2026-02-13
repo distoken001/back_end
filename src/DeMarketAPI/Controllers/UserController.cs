@@ -271,7 +271,7 @@ namespace DeMarketAPI.Controllers
                 if (telegramUserChat != null)
                 {
                     telegramUserChat.state = 0;
-                    user.nick_name = telegramUserChat.user_name; user.telegram_id = telegramUserChat.user_id;
+                    user.nick_name = "已绑定"; user.telegram_id = telegramUserChat.user_id; user.telegram_user_name = telegramUserChat.user_name;  
                     await _mySqlMasterDbContext.SaveChangesAsync();
                     return new WebApiResult(1, "绑定成功", telegramUserChat.user_name);
                 }
