@@ -16,7 +16,7 @@
         /// 昵称
         /// </summary>
         public string nick_name { get; set; }
-
+        public string telegram_user_name {  get; set; }
         /// <summary>
         /// 邮箱
         /// </summary>

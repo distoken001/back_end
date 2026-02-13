@@ -102,7 +102,7 @@ namespace DeMarketAPI.Controllers
                     users.avatar = "https://api.demarket.io/docs/" + nfts[0] + ".png";
                 }
             }
-            return new WebApiResult(1, "登录成功", new LoginResponse { token = token, avatar = users.avatar, nick_name = users.nick_name, email = users.email, is_first = is_first, nfts = nfts });
+            return new WebApiResult(1, "登录成功", new LoginResponse { token = token, avatar = users.avatar, nick_name = users.nick_name, telegram_user_name = users.telegram_user_name, email = users.email, is_first = is_first, nfts = nfts });
         }
 
         /// <summary>
