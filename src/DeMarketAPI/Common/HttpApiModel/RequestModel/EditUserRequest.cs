@@ -16,7 +16,7 @@
         public string NickName { get; set; }
 
         /// <summary>
-        /// 昵称
+        /// 验证码
         /// </summary>
         public string VerifyCode { get; set; }
     }
